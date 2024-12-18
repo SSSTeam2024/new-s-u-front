@@ -1,0 +1,33 @@
+.search-box {
+    position: relative;
+  }
+  
+  .search-box input.search {
+    padding-right: 2rem;
+  }
+  
+  .search-box .search-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.2rem;
+    color: #888;
+  }
+  
+  .legend-row {
+    margin-bottom: 0.5rem; /* Adjust spacing between rows */
+  }
+  
+  .legend-item {
+    display: flex;
+    align-items: center;
+  }
+  
+  .legend-icon {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 8px;
+  }
