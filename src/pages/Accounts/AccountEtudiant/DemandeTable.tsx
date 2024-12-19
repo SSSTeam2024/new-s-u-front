@@ -19,17 +19,19 @@ import img1 from "assets/images/users/avatar-1.jpg";
 import { useFetchDemandeEtudiantQuery } from "features/demandeEtudiant/demandeEtudiantSlice";
 
 const DemandeTable = () => {
-  document.title = "table Demande Etudiant | Smart University";
+  document.title = "table Demande Etudiant | Smart Institute";
 
   const location = useLocation();
   const studentDetails = location.state;
+  console.log("student details", studentDetails);
 
-  const idStudent = studentDetails?._id!;
+  const idStudent = studentDetails?._id;
+  console.log("id student", idStudent);
 
   const { data: demandes, error, isLoading } = useFetchDemandeEtudiantQuery();
   const filteredDemandes = demandes?.filter(
     (demande) =>
-      (demande.studentId as unknown as { _id: string })?._id! === idStudent
+      (demande?.studentId! as unknown as { _id: string })?._id! === idStudent
   );
 
   console.log("filtered demandes", filteredDemandes);

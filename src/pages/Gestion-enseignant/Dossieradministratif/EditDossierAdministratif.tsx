@@ -3,10 +3,14 @@ import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
 import "flatpickr/dist/flatpickr.min.css";
 import Swal from "sweetalert2";
-import { useFetchEnseignantsQuery } from "features/enseignant/enseignantSlice";
+import {
+  useFetchEnseignantsQuery,
+} from "features/enseignant/enseignantSlice";
 import Flatpickr from "react-flatpickr";
 import { format } from "date-fns";
-import { useUpdateDossierAdministratifMutation } from "features/dossierAdministratif/dossierAdministratif";
+import {
+  useUpdateDossierAdministratifMutation,
+} from "features/dossierAdministratif/dossierAdministratif";
 import { useFetchPapierAdministratifQuery } from "features/papierAdministratif/papierAdministratif";
 
 export interface PapierAdministratif {
@@ -38,7 +42,8 @@ export interface DossierAdministratif {
 }
 
 const EditDossierAdministratifEnseignants = () => {
-  document.title = "Modifier dossier Administratif | Smart University";
+  document.title =
+    "Modifier dossier Administratif | Application Smart Institute";
   const navigate = useNavigate();
   const { state: dossierAdministratif } = useLocation();
   const [editDossierAdministratif] = useUpdateDossierAdministratifMutation();
@@ -78,8 +83,7 @@ const EditDossierAdministratifEnseignants = () => {
     }
   }, [dossierAdministratif]);
 
-  const [selectedCategory, setSelectedCategory] =
-    useState<string>("enseignant");
+  const [selectedCategory, setSelectedCategory] = useState<string>("enseignant");
 
   const filterByCategory = (category: string) => {
     return allPapierAdministratifs.filter((paper) =>
@@ -128,17 +132,17 @@ const EditDossierAdministratifEnseignants = () => {
   ) => {
     const selectedEnseignantId = event.target.value;
     const doesSelectedEnseignantExist = allEnseignants.some(
-      (enseignant: any) =>
+      (enseignant:any) =>
         enseignant._id.trim().toLowerCase() ===
-        selectedEnseignantId.trim().toLowerCase()
+      selectedEnseignantId.trim().toLowerCase()
     );
-    allEnseignants.forEach((enseignant: any, index: any) => {
+    allEnseignants.forEach((enseignant:any, index:any) => {
       console.log(`Enseignant ${index}:`, enseignant);
     });
     const selectedEnseignant = allEnseignants.find(
-      (enseignant: any) =>
+      (enseignant:any) =>
         enseignant._id.trim().toLowerCase() ===
-        selectedEnseignantId.trim().toLowerCase()
+      selectedEnseignantId.trim().toLowerCase()
     ) || {
       _id: "",
       nom_fr: "",
@@ -147,6 +151,7 @@ const EditDossierAdministratifEnseignants = () => {
       prenom_ar: "",
     };
     setFormData((prevData) => {
+      console.log("Previous Form Data:", prevData);
       return {
         ...prevData,
         personnel: selectedEnseignant,
@@ -190,7 +195,7 @@ const EditDossierAdministratifEnseignants = () => {
   //   if (file) {
   //     try {
   //       const { base64Data, extension } = await convertToBase64(file);
-
+  
   //       // Update formData to store the base64 string and extension
   //       setFormData((prevData) => ({
   //         ...prevData,
@@ -367,7 +372,7 @@ const EditDossierAdministratifEnseignants = () => {
                             formData?.enseignant?.nom_fr || ""
                           }`}
                         </option>
-                      </select>
+                        </select>
                     </div>
                   </Col>
                   <Col lg={10}>

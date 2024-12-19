@@ -1,14 +1,17 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Button,
   Card,
   Col,
   Container,
+  Dropdown,
   Form,
+  Image,
   InputGroup,
   Row,
 } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import Breadcrumb from "Common/BreadCrumb";
+import { Link, useNavigate } from "react-router-dom";
 import {
   useAddActualiteMutation,
   Actualite,
@@ -17,14 +20,19 @@ import Flatpickr from "react-flatpickr";
 import Dropzone from "react-dropzone";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import SimpleBar from "simplebar-react";
+import country from "Common/country";
 import Swal from "sweetalert2";
+
+import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
 import { RootState } from "app/store";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "features/account/authSlice";
+import Select from "react-select";
 
 const AjouterActualite = () => {
-  document.title = "Ajouter Actualité | Smart University";
+  document.title = "Ajouter Actualité | Smart Institute";
   const navigate = useNavigate();
 
   const user = useSelector((state: RootState) => selectCurrentUser(state));
@@ -48,9 +56,7 @@ const AjouterActualite = () => {
     createdAt: "",
   });
   const onChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     setFormData((prevState: any) => ({
       ...prevState,
@@ -127,7 +133,7 @@ const AjouterActualite = () => {
       galleryExtensions: base64Images.map((img) => img.extension),
     }));
   };
-
+  console.log("galleryExtension", formData);
   const handleDeleteFile = (indexToRemove: number) => {
     setFormData((prevData) => {
       const newGallery = prevData.gallery?.filter(
@@ -179,7 +185,7 @@ const AjouterActualite = () => {
                       <input type="hidden" id="_id" />
                       <Row>
                         <Row>
-                          <Col lg={10}>
+                        <Col lg={10}>
                             <div className="mb-3">
                               <Form.Label htmlFor="title">
                                 <h4 className="card-title mb-0">Titre</h4>
@@ -196,7 +202,7 @@ const AjouterActualite = () => {
                         </Row>
                         <Row>
                           {/* First Name  == Done */}
-
+                          
                           <Col lg={4}>
                             <div className="mb-3">
                               <Form.Label htmlFor="titre">

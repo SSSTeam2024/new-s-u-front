@@ -28,7 +28,7 @@ import {
 } from "features/demandeEtudiant/demandeEtudiantSlice";
 
 const ListeDemandeEtudiant = () => {
-  document.title = "Demande Etudiant | Smart University";
+  document.title = "Demande Etudiant | Smart Institute";
 
   const user = useSelector((state: RootState) => selectCurrentUser(state));
 
@@ -56,7 +56,7 @@ const ListeDemandeEtudiant = () => {
         confirmButtonColor: "#3085d6",
         cancelButtonColor: "#d33",
         confirmButtonText: "Yes, delete it!",
-      }).then(async (result: any) => {
+      }).then(async (result) => {
         if (result.isConfirmed) {
           await deleteDemandeEtudiant(id).unwrap();
           MySwal.fire(
@@ -141,7 +141,7 @@ const ListeDemandeEtudiant = () => {
       {
         Header: "Classe",
         accessor: (row: any) =>
-          row?.studentId?.groupe_classe?.nom_classe_fr! || "",
+          row.studentId.groupe_classe?.nom_classe_fr || "",
         disableFilters: true,
         filterable: true,
       },

@@ -10,7 +10,7 @@ export interface Section {
 export const sectionSlice = createApi({
   reducerPath: "Section",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:5000/api/section-classe/",
+    baseUrl: `${process.env.REACT_APP_API_URL}/api/section-classe/`,
   }),
   tagTypes: ["Section"],
   endpoints(builder) {

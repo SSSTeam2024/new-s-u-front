@@ -2,56 +2,6 @@ import { Navigate } from "react-router-dom";
 
 import Dashboard from "pages/Dashboard";
 
-//new routes
-
-//Product
-import ListView from "pages/Products/ListView";
-import GridView from "pages/Products/GridView";
-import Overview from "pages/Products/Overview";
-import CreateProduct from "pages/Products/CreateProduct";
-import Categories from "pages/Products/Categories";
-import SubCategories from "pages/Products/SubCategories";
-
-// Orders
-import OrdersListView from "pages/Orders/ListView";
-import OrdersOverview from "pages/Orders/Overview";
-
-// Calender
-import Calendar from "pages/Calendar";
-
-// Sellers
-import SellersListView from "pages/Sellers/ListView";
-import SellersGridView from "pages/Sellers/GridView";
-import SellersOverview from "pages/Sellers/Overview";
-
-// Invoice
-import InvoiceList from "pages/Invoices/InvoiceList";
-import InvoiceDetails from "pages/Invoices/InvoiceDetails";
-import CreateInvoice from "pages/Invoices/CreateInvoice";
-
-// User List
-import UsersList from "pages/UsersList";
-
-// Shipping
-import Shipments from "pages/Shipping/Shipments";
-import ShippingList from "pages/Shipping/ShippingList";
-
-// Coupons
-import Coupons from "pages/Coupons";
-
-//Review & Rating
-import ReviewRating from "pages/Reviews-Rating";
-
-//Brands
-import Brands from "pages/Brands";
-
-//statistics
-import Statistics from "pages/Statistics";
-
-// Localization
-import Transactions from "pages/Localization/Transactions";
-import CurrencyRates from "pages/Localization/CurrencyRates";
-
 // Accounts
 import MyAccount from "pages/Accounts/AccountEtudiant";
 import Settings from "pages/Accounts/Settings";
@@ -72,116 +22,168 @@ import Logout from "pages/Authentication/Logout";
 import Register from "pages/Authentication/Register";
 import ForgotPassword from "pages/Authentication/ForgotPassword";
 import UserProfile from "pages/Authentication/user-profile";
-import AccountPersonnel from "pages/Accounts/AccountPersonnel";
-import AjouterEtudiant from "pages/Gestion-etudiant/AjouterEtudiant";
-import ListEtudiants from "pages/Gestion-etudiant/ListeEtudiant";
-import EditProfilEtudiant from "pages/Gestion-etudiant/EditProfilEtudiant";
+
+import DemandeEnseignant from "pages/Demande-enseignant/ListeDemandeEnseignant";
+
 import AjouterEnseignant from "pages/Gestion-enseignant/AjouterEnseignant";
-import ListEnseignants from "pages/Gestion-enseignant/ListeEnseignant";
-import AccountEnseignant from "pages/Accounts/AccountEnseignant";
-import AddDossieradministratif from "pages/Gestion-enseignant/Dossieradministratif/AddDossieradministratif";
-import ListeDossierAdministratif from "pages/Gestion-enseignant/Dossieradministratif/ListeDossierAdministratif";
-import ViewDossierAdministratif from "pages/Gestion-enseignant/Dossieradministratif/ViewDossierAdministratif";
-import EditDossierAdministratifEnseignants from "pages/Gestion-enseignant/Dossieradministratif/EditDossierAdministratif";
-import AjouterPersonnels from "pages/Gestion-personnel/AjouterPersonnel";
-import ListePersonnels from "pages/Gestion-personnel/ListePersonnels";
-import AddDossieradministratifPersonnels from "pages/Gestion-personnel/Dossieradministratif/AddDossierAdministratifPersonnels";
-import ListeDossierAdministratifPersonnels from "pages/Gestion-personnel/Dossieradministratif/ListeDossierAdministratifPersonnels";
-import ViewDossierAdministratifPersonnel from "pages/Gestion-personnel/Dossieradministratif/ViewDossierAdministratifPersonnel";
-import EditDossierAdministratifPersonnels from "pages/Gestion-personnel/Dossieradministratif/EditDossierAdministratif";
-import ListeAvisEtudiant from "pages/avis-etudiant/ListeAvisEtudiant";
+
 import AjouterAvisEtudiant from "pages/avis-etudiant/AjouterAvisEtudiant";
-import SingleAvisEtudiant from "pages/avis-etudiant/SingleAvisEtudiant";
-import EditAvisEtudiant from "pages/avis-etudiant/EditAvisEtudiant";
+import ListeAvisEtudiant from "pages/avis-etudiant/ListeAvisEtudiant";
+import ListeAvisEnseignant from "pages/avis-enseignant/ListeAvisEnseignant";
+import AjouterAvisEnseignant from "pages/avis-enseignant/AjouterAvisEnseignant";
+import AjouterAvisPersonnel from "pages/avis-personnel/AjouterAvisPersonnel";
+import ListeAvisPersonnel from "pages/avis-personnel/ListeAvisPersonnel";
 import ListeActualite from "pages/actualite/ListeActualite";
 import AjouterActualite from "pages/actualite/AjouterActualite";
-import EditActualite from "pages/actualite/EditActualite";
-import SingleActualite from "pages/actualite/SingleActualite";
-import EditDemandeEtudiant from "pages/Demande-etudiant/EditDemandeEtudiant";
-import AjouterDemandeEtudiant from "pages/Demande-etudiant/AjouterDemandeEtudiant";
-import GenerateDemande from "pages/Demande-etudiant/GenerateDemande";
+import SingleAvisEtudiant from "pages/avis-etudiant/SingleAvisEtudiant";
+import SingleAvisEnseignant from "pages/avis-enseignant/SingleAvisEnseignant";
+import SingleAvisPersonnel from "pages/avis-personnel/SingleAvisPersonnel";
 import ListeDemandeEtudiant from "pages/Demande-etudiant/ListeDemandeEtudiant";
 import SingleDemandeEtudiant from "pages/Demande-etudiant/SingleDemandeEtudiant";
+import EditDemandeEtudiant from "pages/Demande-etudiant/EditDemandeEtudiant";
+import SingleActualite from "pages/actualite/SingleActualite";
 import ListeDemandeEnseignant from "pages/Demande-enseignant/ListeDemandeEnseignant";
 import SingleDemandeEnseignant from "pages/Demande-enseignant/SingleDemandeEnseignant";
 import EditDemandeEnseignant from "pages/Demande-enseignant/EditDemandeEnseignant";
-import AjouterDemandeEnseignant from "pages/Demande-enseignant/AjouterDemandeEnseignant";
 import ListeDemandePersonnel from "pages/Demande-personnel/ListeDemandePersonnel";
 import SingleDemandePersonnel from "pages/Demande-personnel/SingleDemandePersonnel";
 import EditDemandePersonnel from "pages/Demande-personnel/EditDemandePersonnel";
-import AjouterDemandePersonnel from "pages/Demande-personnel/AjouterDemandePersonnel";
+import AccountEnseignant from "pages/Accounts/AccountEnseignant";
+import AccountPersonnel from "pages/Accounts/AccountPersonnel";
 import ListeReclamationEtudiant from "pages/Reclamation-etudiant/ListeReclamationEtudiant";
 import SingleReclamationEtudiant from "pages/Reclamation-etudiant/SingleReclamationEtudiant";
 import EditReclamationEtudiant from "pages/Reclamation-etudiant/EditReclamationEtudiant";
-import AjouterReclamationEtudiant from "pages/Reclamation-etudiant/AjouterReclamationEtudiant";
 import ListeReclamationEnseignant from "pages/Reclamation-enseignant/ListeReclamationEnseignant";
 import SingleReclamationEnseignant from "pages/Reclamation-enseignant/SingleReclamationEnseignant";
 import EditReclamationEnseignant from "pages/Reclamation-enseignant/EditReclamationEnseignant";
-import AjouterReclamationEnseignant from "pages/Reclamation-enseignant/AjouterReclamationEnseignant";
 import ListeReclamationPersonnel from "pages/Reclamation-personnel/ListeReclamationPersonnel";
 import SingleReclamationPersonnel from "pages/Reclamation-personnel/SingleReclamationPersonnel";
 import EditReclamationPersonnel from "pages/Reclamation-personnel/EditReclamationPersonnel";
-import AjouterReclamationPersonnel from "pages/Reclamation-personnel/AjouterReclamationPersonnel";
+import ListEtudiants from "pages/Gestion-etudiant/ListeEtudiant";
+import ListEnseignants from "pages/Gestion-enseignant/ListeEnseignant";
+import AjouterPersonnels from "pages/Gestion-personnel/AjouterPersonnel";
+import ListPersonnels from "pages/Gestion-personnel/ListePersonnels";
 import ListParametresEtudiants from "pages/Parametres/ParametresEtudiants/EtatEtudiant/ListParametreEtudiants";
+import ListeInscriptionEtudiants from "pages/Parametres/ParametresEtudiants/InscriptionEtudiant/ListeInscriptionEtudiants";
+import ListEtatEnseignants from "pages/Parametres/ParametresEnseignants/ListEtatEnseignants";
+import ListGradeEnseignants from "pages/Parametres/ParametresEnseignants/ListGradeEnseignant";
+import ListePostEnseignants from "pages/Parametres/ParametresEnseignants/ListePostEnseignants";
+import ListSpecialiteEnseignants from "pages/Parametres/ParametresEnseignants/ListSpecialiteEnseignants";
+import ListEtatPersonnels from "pages/Parametres/ParametresPersonnels/ListEtatPersonnels";
+import ListGradePersonnels from "pages/Parametres/ParametresPersonnels/ListGradePersonnels";
+import ListePostPersonnels from "pages/Parametres/ParametresPersonnels/ListPostePersonnels";
+import ListCategoriePersonnels from "pages/Parametres/ParametresPersonnels/ListCategoriePersonnels";
+import ListMatieres from "pages/Departements/GestionMatieres/ListMatieres";
+import AffecterMatiere from "pages/AffecterMatiere/AffecterMatiere";
+import ListSalles from "pages/Departements/GestionSalles/ListSalles";
+import ListDepartement from "pages/Departements/GestionDepartements/ListDepartement";
+import ListClasses from "pages/Departements/GestionClasses/ListClasses";
+import ListNiveau from "pages/Departements/GestionClasses/NiveauScolaire/ListNiveau";
+import ListSections from "pages/Departements/GestionClasses/Section/ListSections";
+import ListEspaceTelechargement from "pages/EspaceTelechargement/ListEspaceTelechargement";
+import ListLienUtilst from "pages/LiensUtils/ListLienUtils";
+import AjouterEtudiant from "pages/Gestion-etudiant/AjouterEtudiant";
+import Permissions from "pages/Permissions/Permissions";
+import ListeAdmin from "pages/Permissions/ListeAdmin";
 import AddEtatEtudiant from "pages/Parametres/ParametresEtudiants/EtatEtudiant/AddEtatEtudiant";
 import EditEtatEtudiant from "pages/Parametres/ParametresEtudiants/EtatEtudiant/EditEtatEtudiant";
-import ListeInscriptionEtudiants from "pages/Parametres/ParametresEtudiants/InscriptionEtudiant/ListeInscriptionEtudiants";
 import AddTypeInscriptionEtudiant from "pages/Parametres/ParametresEtudiants/InscriptionEtudiant/AddInscriptionEtudiant";
 import EditTypeInscriptionEtudiant from "pages/Parametres/ParametresEtudiants/InscriptionEtudiant/EditInscriptionEtudiant";
-import ListEtatEnseignants from "pages/Parametres/ParametresEnseignants/ListEtatEnseignants";
 import AddEtatEnseignant from "pages/Parametres/ParametresEnseignants/AddEtatEnseignants";
 import EditEtatEnseignant from "pages/Parametres/ParametresEnseignants/EditEtatEnseignant";
-import ListGradeEnseignants from "pages/Parametres/ParametresEnseignants/ListGradeEnseignant";
 import AddGradeEnseignant from "pages/Parametres/ParametresEnseignants/AddGradeEnseignant";
 import EditGradeEnseignant from "pages/Parametres/ParametresEnseignants/EditGradeEnseignant";
-import ListePostEnseignants from "pages/Parametres/ParametresEnseignants/ListePostEnseignants";
 import AddPosteEnseignant from "pages/Parametres/ParametresEnseignants/AddPosteEnseignant";
 import EditPosteEnseignant from "pages/Parametres/ParametresEnseignants/EditPosteEnseignant";
-import ListSpecialiteEnseignants from "pages/Parametres/ParametresEnseignants/ListSpecialiteEnseignants";
 import AddSpecialiteEnseignant from "pages/Parametres/ParametresEnseignants/AddSpecialiteEnseignant";
 import EditSpecialiteEnseignant from "pages/Parametres/ParametresEnseignants/EditSpecialiteEnseignant";
-import ListEtatPersonnels from "pages/Parametres/ParametresPersonnels/ListEtatPersonnels";
 import AddEtatPersonnel from "pages/Parametres/ParametresPersonnels/AddEtatPersonnel";
 import EditEtatPersonnel from "pages/Parametres/ParametresPersonnels/EditEtatPersonnel";
-import ListGradePersonnels from "pages/Parametres/ParametresPersonnels/ListGradePersonnels";
 import AddGradePersonnel from "pages/Parametres/ParametresPersonnels/AddGradePersonnel";
 import EditGradePersonnel from "pages/Parametres/ParametresPersonnels/EditGradePersonnel";
+import AddPostePersonnel from "pages/Parametres/ParametresPersonnels/AddPostePersonnel";
+import EditPostePersonnel from "pages/Parametres/ParametresPersonnels/EditPostePersonnels";
+import AddCategoriePersonnel from "pages/Parametres/ParametresPersonnels/AddCategoriePersonnels";
+import EditCategoriePersonnel from "pages/Parametres/ParametresPersonnels/EditCategoriePersonnel";
 import ListServicesPersonnels from "pages/Parametres/ParametresPersonnels/ListServicesPersonnels";
 import AddServicesPersonnel from "pages/Parametres/ParametresPersonnels/AddServicePersonnel";
 import EditServicesPersonnel from "pages/Parametres/ParametresPersonnels/EditServicesPersonnel";
-import ListePostPersonnels from "pages/Parametres/ParametresPersonnels/ListPostePersonnels";
-import AddPostePersonnel from "pages/Parametres/ParametresPersonnels/AddPostePersonnel";
-import EditPostePersonnel from "pages/Parametres/ParametresPersonnels/EditPostePersonnels";
-import ListCategoriePersonnels from "pages/Parametres/ParametresPersonnels/ListCategoriePersonnels";
-import AddCategoriePersonnel from "pages/Parametres/ParametresPersonnels/AddCategoriePersonnels";
-import EditCategoriePersonnel from "pages/Parametres/ParametresPersonnels/EditCategoriePersonnel";
-import ListMatieres from "pages/Departements/GestionMatieres/ListMatieres";
 import AddMatiere from "pages/Departements/GestionMatieres/AddMatiere";
 import EditMatiere from "pages/Departements/GestionMatieres/EditMatiere";
-import ListSalles from "pages/Departements/GestionSalles/ListSalles";
 import AddSalle from "pages/Departements/GestionSalles/AjouterSalle";
 import EditSalle from "pages/Departements/GestionSalles/EditSalle";
-import ListClasses from "pages/Departements/GestionClasses/ListClasses";
 import AddClasse from "pages/Departements/GestionClasses/AjouterClasse";
-import AffecterMatiere from "pages/AffecterMatiere/AffecterMatiere";
-import ListNiveau from "pages/Departements/GestionClasses/NiveauScolaire/ListNiveau";
 import AddNiveau from "pages/Departements/GestionClasses/NiveauScolaire/AddNiveau";
 import EditNiveau from "pages/Departements/GestionClasses/NiveauScolaire/EditNiveau";
-import ListSections from "pages/Departements/GestionClasses/Section/ListSections";
 import AddSection from "pages/Departements/GestionClasses/Section/AddSection";
 import EditSection from "pages/Departements/GestionClasses/Section/EditSection";
-import ListTypeSeances from "pages/Departements/TypeSeances/ListTypeSeances";
-import AddTypeSeance from "pages/Departements/TypeSeances/AddTypeSeance";
-import ListDepartement from "pages/Departements/GestionDepartements/ListDepartement";
 import AddDepartement from "pages/Departements/GestionDepartements/AjouterDepaetement";
 import EditDepartement from "pages/Departements/GestionDepartements/EditDepartement";
+import SingleAdmin from "pages/Permissions/SingleAdmin";
+import EditAdmin from "pages/Permissions/EditAdmin";
+import HistoryAdmin from "pages/Permissions/HistoryAdmin";
+import TemplateBody from "pages/TemplateBody";
+import NewTemplateBody from "pages/TemplateBody/NewTemplateBody";
+import ShortCode from "pages/ShortCode";
+import NewShortCode from "pages/ShortCode/NewShortCode";
+import AjouterVariablesGlobales from "pages/VariableGlobal/AjouterVariableGlobale";
+import EditActualite from "pages/actualite/EditActualite";
+import ProfilEnseignant from "pages/Accounts/AccountEnseignant/ProfilEnseignant";
+import EditAvisEtudiant from "pages/avis-etudiant/EditAvisEtudiant";
+import AjouterReclamationEnseignant from "pages/Reclamation-enseignant/AjouterReclamationEnseignant";
+import AjouterReclamationPersonnel from "pages/Reclamation-personnel/AjouterReclamationPersonnel";
+import AjouterReclamationEtudiant from "pages/Reclamation-etudiant/AjouterReclamationEtudiant";
+import AjouterDemandeEnseignant from "pages/Demande-enseignant/AjouterDemandeEnseignant";
+import AjouterDemandePersonnel from "pages/Demande-personnel/AjouterDemandePersonnel";
+import AjouterDemandeEtudiant from "pages/Demande-etudiant/AjouterDemandeEtudiant";
+import TemplateBodyDetail from "pages/TemplateBody/singleTemplateBody";
+import EditDossierAdministratifPersonnels from "pages/Gestion-personnel/Dossieradministratif/EditDossierAdministratif";
+import ViewDossierAdministratifPersonnel from "pages/Gestion-personnel/Dossieradministratif/ViewDossierAdministratifPersonnel";
+import ListeDossierAdministratifPersonnels from "pages/Gestion-personnel/Dossieradministratif/ListeDossierAdministratifPersonnels";
+import AddDossieradministratifPersonnels from "pages/Gestion-personnel/Dossieradministratif/AddDossierAdministratifPersonnels";
+import ViewDossierAdministratif from "pages/Gestion-enseignant/Dossieradministratif/ViewDossierAdministratif";
+import ListeDossierAdministratif from "pages/Gestion-enseignant/Dossieradministratif/ListeDossierAdministratif";
+import AddDossieradministratif from "pages/Gestion-enseignant/Dossieradministratif/AddDossieradministratif";
+import AddPapierAdministratif from "pages/Papier-Administratif/AddPapierAdministratif";
+import ListePapierAdministratifs from "pages/Papier-Administratif/ListePapierAdministratif";
+
+import EditDossierAdministratifEnseignants from "pages/Gestion-enseignant/Dossieradministratif/EditDossierAdministratif";
+import CreateAdmin from "pages/Permissions/AjouterAdmin";
+import GenerateDemande from "pages/Demande-etudiant/GenerateDemande";
+import ListeLeaveType from "pages/Gestion-solde-conge/ListeTypeConge";
+import AjouterLeaveType from "pages/Gestion-solde-conge/AjouterTypeConge";
+import ListeSoldeConge from "pages/Gestion-solde-conge/ListeSoldeConge";
+import AjouterDemandeConge from "pages/Gestion-demande-conge/AjouterDemandeConge";
+import ListeDemandeConge from "pages/Gestion-demande-conge/ListeDemandeConge";
+import DemandeCongeDetails from "pages/Gestion-demande-conge/DemandeCongeDetails";
+import EditDemandeConge from "pages/Gestion-demande-conge/EditDemandeConge";
+import AjouterSoldeConge from "pages/Gestion-solde-conge/AjouterSoldeConge";
+import EditAnnuelLeaveType from "pages/Gestion-solde-conge/ParamCongeAnnuel";
+import EditProfilEtudiant from "pages/Gestion-etudiant/EditProfilEtudiant";
+import ListTypeSeances from "pages/Departements/TypeSeances/ListTypeSeances";
+import AddTypeSeance from "pages/Departements/TypeSeances/AddTypeSeance";
+import ListClassPeriods from "pages/Departements/Emploi/ClassPeriods";
+import TableauChargesHoraires from "pages/Departements/EmploiEnseignant/TableauChargesHoraires";
+import GestionSeances from "pages/Departements/Emploi/GestionSeances";
+import AjouterRattrapage from "pages/Rattrapages/AjouterRattrapage";
+import ListeRattrapages from "pages/Rattrapages/ListeRattrapages";
+import ListeEmploiEnseignants from "pages/Departements/EmploiEnseignant/ListeEmploiEnseignants";
+import TeacherPeriod from "pages/Departements/EmploiEnseignant/TeacherPeriod";
+import SingleEmploiEnseignant from "pages/Departements/EmploiEnseignant/GestionEmploiEnseignant";
 import AddFicheVoeux from "pages/Departements/FicheVoeux/AddFicheVoeux";
 import ListFicheVoeux from "pages/Departements/FicheVoeux/ListeFicheVoeux";
 import EditFicheVoeux from "pages/Departements/FicheVoeux/EditFicheVoeux";
+import SingleEmploiClasse from "pages/Departements/Emploi/GestionEmploiClasse";
+import ListeEmploisClasse from "pages/Departements/Emploi/ListeEmploisClasse";
+import EditProfilEnseignant from "pages/Gestion-enseignant/EditProfilEnseignant";
+import GestionEmploiEnseignant from "pages/Departements/EmploiEnseignant/GestionEmploiEnseignant";
+import TableauChargesHorairesClasses from "pages/Departements/Emploi/TableauChargesHorairesClasses";
+import EditProfilPersonnel from "pages/Gestion-personnel/EditProfilPersonnel";
+
 const authProtectedRoutes = [
   { path: "/dashboard", component: <Dashboard /> },
 
-  //! Avis Etudiant
+  //avis etudiant
   {
     path: "/avis-etudiant/liste-avis-etudiant",
     component: <ListeAvisEtudiant />,
@@ -200,30 +202,38 @@ const authProtectedRoutes = [
   },
 
   //avis enseignant
-  // { path: "/avis-enseignant/liste-avis-enseignant", component: <ListeAvisEnseignant /> },
-  // { path: "/avis-enseignant/ajouter-avis-enseignant", component: <AjouterAvisEnseignant /> },
-  // { path: "/avis-enseignant/single-avis-enseignant", component: <SingleAvisEnseignant /> },
-  //! Avis Personnel
-  // {
-  //   path: "/avis-personnel/liste-avis-personnel",
-  //   component: <ListeAvisPersonnel />,
-  // },
-  // {
-  //   path: "/avis-personnel/ajouter-avis-personnel",
-  //   component: <AjouterAvisPersonnel />,
-  // },
-  // {
-  //   path: "/avis-personnel/single-avis-personnel",
-  //   component: <SingleAvisPersonnel />,
-  // },
-
-  //! Actualite
+  {
+    path: "/avis-enseignant/liste-avis-enseignant",
+    component: <ListeAvisEnseignant />,
+  },
+  {
+    path: "/avis-enseignant/ajouter-avis-enseignant",
+    component: <AjouterAvisEnseignant />,
+  },
+  {
+    path: "/avis-enseignant/single-avis-enseignant",
+    component: <SingleAvisEnseignant />,
+  },
+  // avis personnel
+  {
+    path: "/avis-personnel/liste-avis-personnel",
+    component: <ListeAvisPersonnel />,
+  },
+  {
+    path: "/avis-personnel/ajouter-avis-personnel",
+    component: <AjouterAvisPersonnel />,
+  },
+  {
+    path: "/avis-personnel/single-avis-personnel",
+    component: <SingleAvisPersonnel />,
+  },
+  // actualite
   { path: "/actualite/liste-actualite", component: <ListeActualite /> },
   { path: "/actualite/ajouter-actualite", component: <AjouterActualite /> },
   { path: "/actualite/details-actualite", component: <SingleActualite /> },
   { path: "/actualite/edit-actualite", component: <EditActualite /> },
 
-  //! Gestion Etudiant
+  // gestion etudiant
   { path: "/gestion-etudiant/compte-etudiant", component: <MyAccount /> },
   { path: "/gestion-etudiant/liste-etudiants", component: <ListEtudiants /> },
   {
@@ -234,7 +244,7 @@ const authProtectedRoutes = [
     path: "/gestion-etudiant/edit-compte-etudiant",
     component: <EditProfilEtudiant />,
   },
-  //! Gestion Enseignant
+  //gestion enseignant
   {
     path: "/gestion-enseignant/ajouter-enseignant",
     component: <AjouterEnseignant />,
@@ -247,8 +257,11 @@ const authProtectedRoutes = [
     path: "/gestion-enseignant/compte-enseignant",
     component: <AccountEnseignant />,
   },
-
-  //! Dossier Administratif Enseignant
+  {
+    path: "/gestion-enseignant/edit-compte-enseignant",
+    component: <EditProfilEnseignant />,
+  },
+  // Dossier Administratif Enseignant
   {
     path: "/gestion-enseignant/ajouter-dossier-administartif",
     component: <AddDossieradministratif />,
@@ -266,21 +279,24 @@ const authProtectedRoutes = [
     component: <EditDossierAdministratifEnseignants />,
   },
 
-  //! Gestion Personnel
+  //gestion personnel
   {
     path: "/gestion-personnel/ajouter-personnel",
     component: <AjouterPersonnels />,
   },
   {
     path: "/gestion-personnel/liste-personnels",
-    component: <ListePersonnels />,
+    component: <ListPersonnels />,
   },
   {
     path: "/gestion-personnel/compte-personnel",
     component: <AccountPersonnel />,
   },
-
-  //! Dossier Administratif Personnel
+  {
+    path: "/gestion-personnel/edit-compte-personnel",
+    component: <EditProfilPersonnel />,
+  },
+  //Dossier administratif personnel
   {
     path: "/gestion-personnel/ajouter-dossier-administartif",
     component: <AddDossieradministratifPersonnels />,
@@ -298,7 +314,7 @@ const authProtectedRoutes = [
     component: <EditDossierAdministratifPersonnels />,
   },
 
-  //! Demande Etudiant
+  //demande etudiant
   {
     path: "/demandes-etudiant/Liste-demandes-etudiant",
     component: <ListeDemandeEtudiant />,
@@ -320,7 +336,7 @@ const authProtectedRoutes = [
     component: <GenerateDemande />,
   },
 
-  //! Demande Enseignant
+  //demande enseignant
   {
     path: "/demandes-enseignant/liste-demande-enseignant",
     component: <ListeDemandeEnseignant />,
@@ -338,7 +354,7 @@ const authProtectedRoutes = [
     component: <AjouterDemandeEnseignant />,
   },
 
-  //! Demande Personnel
+  //demande personnel
   {
     path: "/demandes-personnel/liste-demande-personnel",
     component: <ListeDemandePersonnel />,
@@ -356,7 +372,7 @@ const authProtectedRoutes = [
     component: <AjouterDemandePersonnel />,
   },
 
-  //! Reclamation Etudiant
+  //reclamation etudiant
   {
     path: "/reclamation-etudiant/liste-reclamation-etudiant",
     component: <ListeReclamationEtudiant />,
@@ -373,7 +389,7 @@ const authProtectedRoutes = [
     path: "/reclamation-etudiant/ajouter-reclamation-etudiant",
     component: <AjouterReclamationEtudiant />,
   },
-  //! Reclamation Enseignant
+  //reclamation enseignant
   {
     path: "/reclamation-enseignant/liste-reclamation-enseignant",
     component: <ListeReclamationEnseignant />,
@@ -390,7 +406,7 @@ const authProtectedRoutes = [
     path: "/reclamation-enseignant/ajouter-reclamation-enseignant",
     component: <AjouterReclamationEnseignant />,
   },
-  //! Reclamation Personnel
+  //reclamation personnel
   {
     path: "/reclamation-personnel/liste-reclamation-personnel",
     component: <ListeReclamationPersonnel />,
@@ -408,7 +424,7 @@ const authProtectedRoutes = [
     component: <AjouterReclamationPersonnel />,
   },
 
-  //! Parametre Compte  Etudiants (etat et inscription)
+  //parametre Compte  Etudiants (etat et inscription)
   {
     path: "/parametre-etudiant/etat/liste-etat-etudiant",
     component: <ListParametresEtudiants />,
@@ -434,7 +450,7 @@ const authProtectedRoutes = [
     component: <EditTypeInscriptionEtudiant />,
   },
 
-  //! Parametre Compte Enseignant
+  //parametre Compte Enseignant
   {
     path: "/parametre-enseignant/etat/liste-etat-enseignant",
     component: <ListEtatEnseignants />,
@@ -484,7 +500,7 @@ const authProtectedRoutes = [
     component: <EditSpecialiteEnseignant />,
   },
 
-  //! Parametre Compte Personnel
+  //parametre Compte Personnel
   {
     path: "/parametre-personnel/etat/liste-etat-personnel",
     component: <ListEtatPersonnels />,
@@ -546,7 +562,7 @@ const authProtectedRoutes = [
     component: <EditCategoriePersonnel />,
   },
 
-  //! Gestion des matieres
+  // Gestion des matieres
   {
     path: "/departement/gestion-matieres/liste-matieres",
     component: <ListMatieres />,
@@ -560,7 +576,7 @@ const authProtectedRoutes = [
     component: <EditMatiere />,
   },
 
-  //! Gestion des salles
+  // Gestion des salles
   {
     path: "/departement/gestion-salles/liste-salles",
     component: <ListSalles />,
@@ -571,7 +587,7 @@ const authProtectedRoutes = [
   },
   { path: "/departement/gestion-salles/edit-salle", component: <EditSalle /> },
 
-  //! Gestion des classes
+  // Gestion des classes
   {
     path: "/departement/gestion-classes/liste-classes",
     component: <ListClasses />,
@@ -609,7 +625,7 @@ const authProtectedRoutes = [
     component: <EditSection />,
   },
 
-  //! Gestion Type seance
+  // Gestion Type seance
 
   {
     path: "/departement/gestion-types-seances/liste-types-seances",
@@ -617,7 +633,7 @@ const authProtectedRoutes = [
   },
   { path: "/parametre/add-type-seance", component: <AddTypeSeance /> },
 
-  //! Gestion des departements
+  //Gestion des departements
   {
     path: "/departement/gestion-departements/liste-departements",
     component: <ListDepartement />,
@@ -631,50 +647,77 @@ const authProtectedRoutes = [
     component: <EditDepartement />,
   },
 
-  // //liste lien utils
-  // { path: "/liens-utils", component: <ListLienUtilst /> },
+  //liste lien utils
+  { path: "/liens-utils", component: <ListLienUtilst /> },
 
-  // // Liste espaces de telechargements
-  // { path: "/espace-telechargement", component: <ListEspaceTelechargement /> },
+  // Liste espaces de telechargements
+  { path: "/espace-telechargement", component: <ListEspaceTelechargement /> },
 
-  // //Permission
+  //Permission
 
-  // { path: "/permissions", component: <Permissions /> },
-  // { path: "/admin/liste-admins", component: <ListeAdmin /> },
-  // { path: "/admin/single-admin", component: <SingleAdmin /> },
-  // { path: "/admin/edit-admin", component: <EditAdmin /> },
-  // { path: "/admin/history-admin", component: <HistoryAdmin /> },
-  // { path: "/admin/ajouter-admin", component: <CreateAdmin /> },
+  { path: "/permissions", component: <Permissions /> },
+  { path: "/admin/liste-admins", component: <ListeAdmin /> },
+  { path: "/admin/single-admin", component: <SingleAdmin /> },
+  { path: "/admin/edit-admin", component: <EditAdmin /> },
+  { path: "/admin/history-admin", component: <HistoryAdmin /> },
+  { path: "/admin/ajouter-admin", component: <CreateAdmin /> },
 
-  // //template Body
-  // { path: "/template/liste-template-body", component: <TemplateBody /> },
-  // { path: "/template/ajouter-template-body", component: <NewTemplateBody /> },
-  // { path: "/template/single-template-body", component: <TemplateBodyDetail /> },
-  // //short code
-  // { path: "/shortCode/liste-short-code", component: <ShortCode /> },
-  // { path: "/shortCode/ajouter-short-code", component: <NewShortCode /> },
-  // // variable globale
-  // { path: "/variable/ajouter-variables-globales", component: <AjouterVariablesGlobales /> },
+  //template Body
+  { path: "/template/liste-template-body", component: <TemplateBody /> },
+  { path: "/template/ajouter-template-body", component: <NewTemplateBody /> },
+  { path: "/template/single-template-body", component: <TemplateBodyDetail /> },
+  //short code
+  { path: "/shortCode/liste-short-code", component: <ShortCode /> },
+  { path: "/shortCode/ajouter-short-code", component: <NewShortCode /> },
+  // variable globale
+  {
+    path: "/variable/ajouter-variables-globales",
+    component: <AjouterVariablesGlobales />,
+  },
 
-  // // Papier administratif
-  // { path: "/papier-administratif/ajouter-papier", component: <AddPapierAdministratif />, },
-  // { path: "/papier-administratif/lister-papier", component: <ListePapierAdministratifs />,},
+  // Papier administratif
+  {
+    path: "/papier-administratif/ajouter-papier",
+    component: <AddPapierAdministratif />,
+  },
+  {
+    path: "/papier-administratif/lister-papier",
+    component: <ListePapierAdministratifs />,
+  },
 
-  // // gestion des Types de congés
-  // { path: "/type-conge/Liste-type-conge", component: <ListeLeaveType />,},
-  // { path: "/type-conge/ajouter-type-conge", component: <AjouterLeaveType />,},
-  // { path: "/type-conge/edit-annuel-type-conge", component: <EditAnnuelLeaveType />,},
-  // // gestion des demandes congés
-  // { path: "/demande-conge/ajouter-demande-conge", component: <AjouterDemandeConge />,},
-  // { path: "/demande-conge/liste-demande-conge", component: <ListeDemandeConge />,},
-  // { path: "/demande-conge/single-demande-conge", component: <DemandeCongeDetails />,},
-  // { path: "/demande-conge/edit-demande-conge", component:<EditDemandeConge/>},
+  // gestion des Types de congés
+  { path: "/type-conge/Liste-type-conge", component: <ListeLeaveType /> },
+  { path: "/type-conge/ajouter-type-conge", component: <AjouterLeaveType /> },
+  {
+    path: "/type-conge/edit-annuel-type-conge",
+    component: <EditAnnuelLeaveType />,
+  },
+  // gestion des demandes congés
+  {
+    path: "/demande-conge/ajouter-demande-conge",
+    component: <AjouterDemandeConge />,
+  },
+  {
+    path: "/demande-conge/liste-demande-conge",
+    component: <ListeDemandeConge />,
+  },
+  {
+    path: "/demande-conge/single-demande-conge",
+    component: <DemandeCongeDetails />,
+  },
+  {
+    path: "/demande-conge/edit-demande-conge",
+    component: <EditDemandeConge />,
+  },
 
-  // // gestion des soldes congés
-  // { path: "/solde-conge/Ajouter-solde-conge", component: <AjouterSoldeConge />,},
-  // { path: "/solde-conge/liste-solde-conge", component: <ListeSoldeConge />,},
+  // gestion des soldes congés
+  {
+    path: "/solde-conge/Ajouter-solde-conge",
+    component: <AjouterSoldeConge />,
+  },
+  { path: "/solde-conge/liste-solde-conge", component: <ListeSoldeConge /> },
 
-  //! Gestion  Des fiches des voeux
+  // Gestion  Des fiches des voeux
   {
     path: "/gestion-emplois/gestion-fiche-voeux/add-fiche-voeux",
     component: <AddFicheVoeux />,
@@ -688,70 +731,49 @@ const authProtectedRoutes = [
     component: <EditFicheVoeux />,
   },
 
-  //   // liste des rattrapages
-  //   { path: "/ajouter-rattrapage",component: <AjouterRattrapage />,},
+  // liste des rattrapages
+  { path: "/rattrapage/ajouter-rattrapage", component: <AjouterRattrapage /> },
+  { path: "/rattrapage/liste-rattrapages", component: <ListeRattrapages /> },
 
-  //   //gestion emploi classes periods
-  //   { path: "/gestion-emplois/emploi-classe/liste-emplois",component: <ListeEmploisClasse />, }, // liste classe
-  //   { path: "/gestion-emplois/emploi-classe/single-emplois", component: <SingleEmploiClasse />, }, //view
-  //   { path: "/gestion-emplois/emploi-classe/liste-seance", component: <GestionSeances /> }, //view tableau des seance
-  //   { path: "/gestion-emplois/emploi-classe/periodes-classes", component: <ListClassPeriods /> },// creeer periode d emploi
+  //gestion emploi classes periods
+  {
+    path: "/gestion-emplois/emploi-classe/liste-emplois",
+    component: <ListeEmploisClasse />,
+  }, // liste classe
+  {
+    path: "/gestion-emplois/emploi-classe/single-emplois",
+    component: <SingleEmploiClasse />,
+  }, //view
+  {
+    path: "/gestion-emplois/emploi-classe/liste-seance",
+    component: <GestionSeances />,
+  }, //view tableau des seance
+  {
+    path: "/gestion-emplois/emploi-classe/periodes-classes",
+    component: <ListClassPeriods />,
+  }, // creeer periode d emploi
+  {
+    path: "/gestion-emplois/emploi-classe/tableau-des-charges-horaires-classes",
+    component: <TableauChargesHorairesClasses />,
+  },
 
-  //   //gestion emploi enseignant
-  //  { path: "/gestion-emplois/emlpoi-enseignant/single-emplois", component: <SingleEmploiEnseignant /> },
-  //  {path: "/gestion-emplois/emlpoi-enseignant/liste-emplois",component: <ListeEmploiEnseignants />,},
-  //  {path: "/gestion-emplois/emlpoi-enseignant/tableau-charges-horaires",component: <TableauChargesHoraires />,},
-
-  //  //liset rattrapages
-
-  //  { path: "/liste-rattrapages", component: <ListeRattrapages /> },
-
-  //Product
-  { path: "/products-list", component: <ListView /> },
-  { path: "/products-grid", component: <GridView /> },
-  { path: "/product-overview", component: <Overview /> },
-  { path: "/product-create", component: <CreateProduct /> },
-  { path: "/categories", component: <Categories /> },
-  { path: "/sub-categories", component: <SubCategories /> },
-
-  // Orders
-  { path: "/orders-list-view", component: <OrdersListView /> },
-  { path: "/orders-overview", component: <OrdersOverview /> },
-
-  // Sellers
-  { path: "/sellers-list-view", component: <SellersListView /> },
-  { path: "/seller-grid-view", component: <SellersGridView /> },
-  { path: "/seller-overview", component: <SellersOverview /> },
-
-  // Invoice
-  { path: "/invoices-list", component: <InvoiceList /> },
-  { path: "/invoices-details", component: <InvoiceDetails /> },
-  { path: "/invoices-create", component: <CreateInvoice /> },
-
-  // User List
-  { path: "/users-list", component: <UsersList /> },
-
-  // Shipping
-  { path: "/shipping-list", component: <ShippingList /> },
-  { path: "/shipments", component: <Shipments /> },
-
-  // Coupons
-  { path: "/coupons", component: <Coupons /> },
-
-  { path: "/calendar", component: <Calendar /> },
-
-  //Review & Rating
-  { path: "/reviews-ratings", component: <ReviewRating /> },
-
-  //Review & Rating
-  { path: "/brands", component: <Brands /> },
-
-  //statistics
-  { path: "/statistics", component: <Statistics /> },
-
-  // Localization
-  { path: "/transactions", component: <Transactions /> },
-  { path: "/currency-rates", component: <CurrencyRates /> },
+  //gestion emploi enseignant
+  {
+    path: "/gestion-emplois/emlpoi-enseignant/single-emplois",
+    component: <SingleEmploiEnseignant />,
+  },
+  {
+    path: "/gestion-emplois/emlpoi-enseignant/liste-emplois",
+    component: <ListeEmploiEnseignants />,
+  },
+  {
+    path: "/gestion-emplois/emlpoi-enseignant/tableau-charges-horaires",
+    component: <TableauChargesHoraires />,
+  },
+  {
+    path: "/gestion-emplois/emlpoi-enseignant/teacher-period",
+    component: <TeacherPeriod />,
+  },
 
   // Accounts
   { path: "/account", component: <MyAccount /> },

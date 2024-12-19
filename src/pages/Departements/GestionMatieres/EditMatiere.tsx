@@ -1,15 +1,12 @@
-import React, {useEffect, useState } from "react";
-import {
-  Button,
-  Col,
-  Container,
-  Form,
-  Row,
-} from "react-bootstrap";
-import {useLocation, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Button, Col, Container, Form, Row } from "react-bootstrap";
+import { useLocation, useNavigate } from "react-router-dom";
 import "flatpickr/dist/flatpickr.min.css";
 import Swal from "sweetalert2";
-import { useAddMatiereMutation, useUpdateMatiereMutation } from "features/matiere/matiere";
+import {
+  useAddMatiereMutation,
+  useUpdateMatiereMutation,
+} from "features/matiere/matiere";
 
 const EditMatiere = () => {
   document.title = " Modifier Matière | Application Smart Institute";
@@ -32,12 +29,11 @@ const EditMatiere = () => {
       setFormData({
         _id: matiere._id,
         nbr_elimination: matiere.nbr_elimination,
-        semestre:matiere.semestre,
+        semestre: matiere.semestre,
         volume: matiere.volume,
         type: matiere.type,
         matiere: matiere.matiere,
-        code_matiere: matiere.code_matiere
-
+        code_matiere: matiere.code_matiere,
       });
     }
   }, [matiere]);
@@ -96,7 +92,9 @@ const EditMatiere = () => {
                 <Row>
                   <Col lg={4}>
                     <div className="mb-3">
-                      <Form.Label htmlFor="code_matiere">Code Matière</Form.Label>
+                      <Form.Label htmlFor="code_matiere">
+                        Code Matière
+                      </Form.Label>
                       <Form.Control
                         type="text"
                         id="code_matiere"
@@ -123,10 +121,7 @@ const EditMatiere = () => {
                   </Col>
 
                   <Col lg={4}>
-                    <div
-                      className="mb-3"
-                     
-                    >
+                    <div className="mb-3">
                       <Form.Label htmlFor="type">Type</Form.Label>
                       <Form.Control
                         type="text"
@@ -139,10 +134,7 @@ const EditMatiere = () => {
                     </div>
                   </Col>
                   <Col lg={4}>
-                    <div
-                      className="mb-3"
-                     
-                    >
+                    <div className="mb-3">
                       <Form.Label htmlFor="semestre">Semestre</Form.Label>
                       <Form.Control
                         type="text"
@@ -155,13 +147,10 @@ const EditMatiere = () => {
                     </div>
                   </Col>
                   <Col lg={4}>
-                    <div
-                      className="mb-3"
-                      
-                    >
+                    <div className="mb-3">
                       <Form.Label htmlFor="volume">Volume</Form.Label>
                       <Form.Control
-                        type="text"
+                        type="number"
                         id="volume"
                         placeholder=""
                         required
@@ -171,11 +160,10 @@ const EditMatiere = () => {
                     </div>
                   </Col>
                   <Col lg={4}>
-                    <div
-                      className="mb-3"
-                      
-                    >
-                      <Form.Label htmlFor="nbr_elimination">Nombre Elimination</Form.Label>
+                    <div className="mb-3">
+                      <Form.Label htmlFor="nbr_elimination">
+                        Nombre Elimination
+                      </Form.Label>
                       <Form.Control
                         type="text"
                         id="nbr_elimination"
@@ -186,7 +174,6 @@ const EditMatiere = () => {
                       />
                     </div>
                   </Col>
-
                 </Row>
 
                 <div className="modal-footer">
@@ -194,7 +181,9 @@ const EditMatiere = () => {
                     <Button
                       className="btn-ghost-danger"
                       onClick={() => {
-                        navigate("/departement/gestion-matieres/liste-matieres")
+                        navigate(
+                          "/departement/gestion-matieres/liste-matieres"
+                        );
                       }}
                     >
                       Retour

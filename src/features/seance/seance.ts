@@ -23,7 +23,7 @@ export interface teacherSessionsPayload {
 export const seanceSlice = createApi({
   reducerPath: "Seance",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:5000/api/seance/",
+    baseUrl: `${process.env.REACT_APP_API_URL}/api/seance/`,
   }),
   tagTypes: ["Seance"],
   endpoints(builder) {
@@ -81,6 +81,16 @@ export const seanceSlice = createApi({
           invalidatesTags: ["Seance"],
         }
       ),
+
+      getPeriodicSessionsByTeacher: builder.query<any, any>({
+        query: (payload) => ({
+          url: `/get-periodic-sessions-by-teacher`,
+          body: payload,
+          method: "POST",
+        }),
+        providesTags: ["Seance"],
+      }),
+
       updateSeance: builder.mutation<void, Seance>({
         query: ({ _id, ...rest }) => ({
           url: `/update-seance/${_id}`,
@@ -122,4 +132,5 @@ export const {
   useGetSeancesByTeacherMutation,
   useGetAllSessionsByScheduleIdMutation,
   useGetSeancesByIdTeacherAndSemestreQuery,
+  useGetPeriodicSessionsByTeacherQuery,
 } = seanceSlice;

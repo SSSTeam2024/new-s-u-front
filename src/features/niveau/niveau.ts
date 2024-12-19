@@ -12,7 +12,7 @@ export interface Niveau {
 export const niveauSlice = createApi({
   reducerPath: "Niveau",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:5000/api/niveau-classe/",
+    baseUrl: `${process.env.REACT_APP_API_URL}/api/niveau-classe/`,
   }),
   tagTypes: ["Niveau"],
   endpoints(builder) {

@@ -18,9 +18,14 @@ import {
   useDeleteGradeEnseignantMutation,
   useFetchGradesEnseignantQuery,
 } from "features/gradeEnseignant/gradeEnseignant";
+import { actionAuthorization } from 'utils/pathVerification';
+import { RootState } from 'app/store';
+import { useSelector } from 'react-redux';
+import { selectCurrentUser } from 'features/account/authSlice';
 
 const ListGradeEnseignants = () => {
   document.title = "Liste grades des enseignants | Smart University";
+  const user = useSelector((state: RootState) => selectCurrentUser(state));
 
   const navigate = useNavigate();
 
@@ -31,7 +36,7 @@ const ListGradeEnseignants = () => {
   }
 
   function tog_AddGradeEnseignant() {
-    navigate("/parametre/add-grade-enseignant");
+    navigate("/parametre-enseignant/grade/ajouter-grade-enseignant");
   }
   const [searchQuery, setSearchQuery] = useState("");
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -130,9 +135,10 @@ const ListGradeEnseignants = () => {
         accessor: (gradeEnseignant: GradeEnseignant) => {
           return (
             <ul className="hstack gap-2 list-unstyled mb-0">
+               {actionAuthorization("/parametre-enseignant/grade/edit-grade-enseignant",user?.permissions!)? 
               <li>
                 <Link
-                  to="/parametre/edit-grade-enseignants"
+                  to="/parametre-enseignant/grade/edit-grade-enseignant"
                   state={gradeEnseignant}
                   className="badge bg-primary-subtle text-primary edit-item-btn"
                 >
@@ -151,7 +157,8 @@ const ListGradeEnseignants = () => {
                     }
                   ></i>
                 </Link>
-              </li>
+              </li>  : <></> }
+              {actionAuthorization("/parametre-enseignant/grade/supprimer-grade-enseignant",user?.permissions!)? 
               <li>
                 <Link
                   to="#"
@@ -173,7 +180,7 @@ const ListGradeEnseignants = () => {
                     onClick={() => AlertDelete(gradeEnseignant?._id!)}
                   ></i>
                 </Link>
-              </li>
+              </li> : <></> }
             </ul>
           );
         },

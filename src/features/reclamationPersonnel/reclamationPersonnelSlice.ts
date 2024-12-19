@@ -23,7 +23,7 @@ export interface Reclamation {
   export const reclamationsPersonnelSlice = createApi({
     reducerPath: 'reclamationsPersonnelApi',
     baseQuery: fetchBaseQuery({
-      baseUrl: `${process.env.REACT_APP_API_URL}/reclamation-personnel/`, // Adjust endpoint base URL
+      baseUrl: `${process.env.REACT_APP_API_URL}/api/reclamation-personnel/`, // Adjust endpoint base URL
     }),
     tagTypes: ['Reclamations'],
     endpoints(builder) {

@@ -10,7 +10,7 @@ export interface TypeSeance {
 export const typeSeanceSlice = createApi({
   reducerPath: "TypeSeance",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:5000/api/type-seance/",
+    baseUrl: `${process.env.REACT_APP_API_URL}/api/type-seance/`,
   }),
   tagTypes: ["TypeSeance"],
   endpoints(builder) {

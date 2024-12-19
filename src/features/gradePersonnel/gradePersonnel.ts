@@ -9,7 +9,7 @@ export interface GradePersonnel {
 export const gradePersonnelSlice = createApi({
   reducerPath: "GradePersonnel",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:5000/api/grade-personnel/",
+    baseUrl: `${process.env.REACT_APP_API_URL}/api/grade-personnel/`,
   }),
   tagTypes: ["GradePersonnel"],
   endpoints(builder) {

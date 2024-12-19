@@ -218,7 +218,7 @@ interface TimetablePDFProps {
   maxSessions: number;
 }
 
-const SingleEmploiClasse = () => {
+const GestionEmploiClasse = () => {
   document.title = " Gestion emploi classe | Application Smart Institute";
   const { data: paramsData = [] } = useFetchTimeTableParamsQuery();
   const { data: variableGlobales = [] } = useFetchVaribaleGlobaleQuery();
@@ -911,49 +911,119 @@ const SingleEmploiClasse = () => {
     return new Date(year, month - 1, day);
   };
 
-  const formatDate = (date: Date) => {
-    const day = date.getDate().toString().padStart(2, "0");
-    const month = (date.getMonth() + 1).toString().padStart(2, "0");
-    const year = date.getFullYear();
-    return `${day}-${month}-${year}`;
-  };
+  // const formatDate = (date: Date) => {
+  //   const day = date.getDate().toString().padStart(2, "0");
+  //   const month = (date.getMonth() + 1).toString().padStart(2, "0");
+  //   const year = date.getFullYear();
+  //   return `${day}-${month}-${year}`;
+  // };
 
-  const mergeIntervals = (intervals: any[]) => {
+  // const mergeIntervals = (intervals: any[]) => {
+  //   const sortedIntervals = [...intervals];
+
+  //   sortedIntervals.sort(
+  //     (a: any, b: any) =>
+  //       parseDate(a?.id_classe_period?.date_debut!).getTime() -
+  //       parseDate(b?.id_classe_period?.date_debut!).getTime()
+  //   );
+
+  //   const splitIntervals: any[] = [];
+  //   for (let interval of sortedIntervals) {
+  //     const startDate = parseDate(interval.id_classe_period?.date_debut!);
+  //     const endDate = parseDate(interval.id_classe_period?.date_fin!);
+  //     const hours = Number(interval.nbr_heure);
+
+  //     splitIntervals.push({ date: startDate, hours });
+  //     splitIntervals.push({
+  //       date: new Date(endDate.getTime() + 1),
+  //       hours: -hours,
+  //     });
+  //   }
+
+  //   splitIntervals.sort((a, b) => a.date.getTime() - b.date.getTime());
+
+  //   const result: any[] = [];
+  //   let currentStartDate = splitIntervals[0].date;
+  //   let currentHours = 0;
+
+  //   for (let i = 0; i < splitIntervals.length - 1; i++) {
+  //     const { date, hours } = splitIntervals[i];
+  //     currentHours += hours;
+  //     const nextDate = splitIntervals[i + 1].date;
+  //     if (date.getTime() !== nextDate.getTime()) {
+  //       result.push({
+  //         start_date: formatDate(currentStartDate),
+  //         end_date: formatDate(new Date(nextDate.getTime() - 1)),
+  //         nbr_heure: currentHours,
+  //       });
+  //       currentStartDate = nextDate;
+  //     }
+  //   }
+
+  //   let refinedResult = [];
+
+  //   for (const element of result) {
+  //     if (element.start_date !== element.end_date) {
+  //       refinedResult.push(element);
+  //     }
+  //   }
+
+  //   return refinedResult;
+  // };
+
+  const mergeIntervals = (intervals: any) => {
     const sortedIntervals = [...intervals];
 
+    // Sort intervals by start date
     sortedIntervals.sort(
-      (a: any, b: any) =>
-        parseDate(a?.id_classe_period?.date_debut!).getTime() -
-        parseDate(b?.id_classe_period?.date_debut!).getTime()
+      (a, b) =>
+        parseDateV2(a.id_classe_period.date_debut).getTime() -
+        parseDateV2(b.id_classe_period.date_debut).getTime()
     );
 
-    const splitIntervals: any[] = [];
+    const splitIntervals = [];
     for (let interval of sortedIntervals) {
-      const startDate = parseDate(interval.id_classe_period?.date_debut!);
-      const endDate = parseDate(interval.id_classe_period?.date_fin!);
+      const startDate = parseDateV2(interval.id_classe_period.date_debut);
+      const endDate = parseDateV2(interval.id_classe_period.date_fin);
       const hours = Number(interval.nbr_heure);
 
-      splitIntervals.push({ date: startDate, hours });
       splitIntervals.push({
-        date: new Date(endDate.getTime() + 1),
+        date: startDate,
+        hours,
+        id: interval.id_classe_period._id,
+      });
+      splitIntervals.push({
+        date: new Date(endDate.getTime() + 86400000), // Add one day to include the end date
         hours: -hours,
+        id: interval.id_classe_period._id,
       });
     }
 
+    // Sort by date
     splitIntervals.sort((a, b) => a.date.getTime() - b.date.getTime());
 
-    const result: any[] = [];
+    const result = [];
     let currentStartDate = splitIntervals[0].date;
     let currentHours = 0;
+    let currentIds = new Set();
 
     for (let i = 0; i < splitIntervals.length - 1; i++) {
-      const { date, hours } = splitIntervals[i];
+      const { date, hours, id } = splitIntervals[i];
       currentHours += hours;
+
+      // Add or remove ids based on hours being added or subtracted
+      if (hours > 0) {
+        currentIds.add(id);
+      } else {
+        currentIds.delete(id);
+      }
+
       const nextDate = splitIntervals[i + 1].date;
       if (date.getTime() !== nextDate.getTime()) {
         result.push({
+          ids: Array.from(currentIds),
           start_date: formatDate(currentStartDate),
-          end_date: formatDate(new Date(nextDate.getTime() - 1)),
+          end_date: formatDate(new Date(nextDate.getTime() - 86400000)), // Subtract one day
           nbr_heure: currentHours,
         });
         currentStartDate = nextDate;
@@ -962,6 +1032,7 @@ const SingleEmploiClasse = () => {
 
     let refinedResult = [];
 
+    // Filter out intervals where start_date equals end_date
     for (const element of result) {
       if (element.start_date !== element.end_date) {
         refinedResult.push(element);
@@ -969,6 +1040,18 @@ const SingleEmploiClasse = () => {
     }
 
     return refinedResult;
+  };
+
+  const parseDateV2 = (dateStr: any) => {
+    const [day, month, year] = dateStr.split("-").map(Number);
+    return new Date(Date.UTC(year, month - 1, day));
+  };
+
+  const formatDate = (date: any) => {
+    const day = String(date.getUTCDate()).padStart(2, "0");
+    const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+    const year = date.getUTCFullYear();
+    return `${day}-${month}-${year}`;
   };
 
   const calculateWeeksInInterval = (start_date: string, end_date: string) => {
@@ -1706,7 +1789,7 @@ const SingleEmploiClasse = () => {
                       </>
                       <>
                         <Link
-                          to="/gestion-seances-classe"
+                          to="/gestion-emplois/emploi-classe/liste-seance"
                           state={classeDetails}
                         >
                           <Button
@@ -2279,13 +2362,17 @@ const SingleEmploiClasse = () => {
                 )}
 
                 <div className="modal-footer">
-                  <Button
-                    variant="dark"
-                    style={{ height: "50px", marginBottom: "10px" }}
-                    onClick={handlePrintPDF}
-                  >
-                    Print/Download PDF
-                  </Button>
+                  {canAddSession == false ? (
+                    <Button
+                      variant="dark"
+                      style={{ height: "50px", marginBottom: "10px" }}
+                      onClick={handlePrintPDF}
+                    >
+                      Télécharger PDF
+                    </Button>
+                  ) : (
+                    <></>
+                  )}
                 </div>
               </Form>
             </Col>
@@ -2296,4 +2383,4 @@ const SingleEmploiClasse = () => {
   );
 };
 
-export default SingleEmploiClasse;
+export default GestionEmploiClasse;

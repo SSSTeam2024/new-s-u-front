@@ -9,7 +9,7 @@ export interface PosteEnseignant {
 export const posteEnseignantSlice = createApi({
   reducerPath: "PosteEnseignant",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:5000/api/poste-enseignant/",
+    baseUrl: `${process.env.REACT_APP_API_URL}/api/poste-enseignant/`,
   }),
   tagTypes: ["PosteEnseignant"],
   endpoints(builder) {

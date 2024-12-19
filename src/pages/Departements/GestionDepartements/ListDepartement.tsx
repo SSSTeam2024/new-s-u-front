@@ -125,7 +125,7 @@ const ListDepartement = () => {
         disableFilters: true,
         filterable: true,
         Cell: ({ cell: { value } }: any) => (
-          <a href={`http://localhost:5000/files/departementFiles/${value}`} target="_blank" rel="noopener noreferrer">
+          <a href={`${process.env.REACT_APP_API_URL}/files/departementFiles/${value}`} target="_blank" rel="noopener noreferrer">
             <i className="bi bi-file-pdf" style={{ cursor: "pointer", fontSize: "1.5em", marginLeft:"30px" }}></i>
           </a>
         ),

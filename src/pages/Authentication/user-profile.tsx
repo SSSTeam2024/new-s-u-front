@@ -7,6 +7,7 @@ import { useFormik } from "formik";
 
 //redux
 import { useSelector, useDispatch } from "react-redux";
+import { createSelector } from 'reselect';
 
 import withRouter from "Common/withRouter";
 
@@ -24,16 +25,24 @@ const UserProfile = () => {
 
     const dispatch = useDispatch<any>();
 
-    const [email, setemail] = useState("");
-    const [name, setname] = useState("");
-    const [idx, setidx] = useState(1);
+    const [email, setemail] = useState("admin@gmail.com");
+    const [name, setname] = useState("Admin");
+    const [idx, setidx] = useState("1");
 
-    const { error, success } = useSelector((state: any) => ({
-        error: state.Profile.error,
-        success: state.Profile.success,
-    }));
+    const selectLayoutState = (state: any) => state.Profile;
+    const selectProperties = createSelector(
+        selectLayoutState,
+        (state: any) => ({
+            user: state.user,
+            success: state.success,
+            error: state.error
+        })
+    );
+
+    const { error, success } = useSelector(selectProperties);
 
     useEffect(() => {
+
         if (localStorage.getItem("authUser")) {
             const obj = JSON.parse(localStorage.getItem("authUser") || "{}");
             if (process.env.REACT_APP_DEFAULTAUTH === "firebase") {
@@ -48,19 +57,20 @@ const UserProfile = () => {
                 setemail(obj.email);
                 setidx(obj.uid);
             }
+
             setTimeout(() => {
                 dispatch(resetProfileFlag());
             }, 3000);
         }
-    }, [dispatch, success]);
+    }, [dispatch, success, error]);
 
     const validation = useFormik({
         // enableReinitialize : use this flag when initial values needs to be changed
         enableReinitialize: true,
 
         initialValues: {
-            username: name || '',
-            idx: idx || '',
+            username: name || 'Admin',
+            idx: idx || '1',
         },
         validationSchema: Yup.object({
             username: Yup.string().required("Please Enter Your UserName"),
@@ -69,6 +79,7 @@ const UserProfile = () => {
             dispatch(editProfile(values));
         }
     });
+
 
     return (
         <React.Fragment>
@@ -121,7 +132,6 @@ const UserProfile = () => {
                                     <Form.Label>User Name</Form.Label>
                                     <Form.Control
                                         name="username"
-                                        // value={name}
                                         className="form-control"
                                         placeholder="Enter User Name"
                                         type="text"

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useAppSelector } from "app/hooks";
 import { selectCurrentUser } from "features/account/authSlice";
 import { RootState } from "../app/store";
 import { useSelector } from "react-redux";
@@ -7,10 +6,6 @@ import { useFetchUserPermissionsByUserIdQuery } from "../features/userPermission
 
 const Navdata = () => {
   const user: any = useSelector((state: RootState) => selectCurrentUser(state));
-
-  // const { data: userPermissions } = useFetchUserPermissionsByUserIdQuery({ userId: user?._id! });
-  // console.log(userPermissions)
-
   const {
     data: userPermissions,
     error,
@@ -201,11 +196,9 @@ const Navdata = () => {
       label: "Dashboard",
       icon: "bi bi-speedometer2",
       link: "/dashboard",
-      //   badgeName: "Hot",
-      //   badgeColor: "danger",
     },
 
-    //! gestion etudiant
+    // gestion etudiant
     {
       id: "Gestion-des-Etudiants",
       label: "Gestion des Etudiants",
@@ -235,7 +228,7 @@ const Navdata = () => {
         },
       ],
     },
-    //! Gestion Enseignant
+    // gestion enseignant
     {
       id: "gestion-enseignant",
       label: "Gestion Enseignants",
@@ -820,6 +813,12 @@ const Navdata = () => {
               id: 1,
               label: "Liste Des Emplois",
               link: "/gestion-emplois/emploi-classe/liste-emplois",
+              icon: "bi bi-list-task",
+            },
+            {
+              id: 2,
+              label: "Equilibre horaires",
+              link: "/gestion-emplois/emploi-classe/tableau-des-charges-horaires-classes",
               icon: "bi bi-list-task",
             },
           ],

@@ -1,0 +1,81 @@
+.titre-emploi {
+    font-size: 25px;
+    color: rgb(56 169 237);
+  }
+  
+  .time-table {
+    border-collapse: collapse;
+    margin: 20px auto;
+    background-color: #fff;
+    border: 2px solid #dee2e6;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .time-th,
+  .time-td {
+    border: 1px solid #dee2e6;
+    padding: 10px;
+    text-align: center;
+    vertical-align: middle;
+  }
+  .session-row {
+    position: relative;
+  }
+  .timeTh {
+    background-color: #f2f2f2;
+    color: #343a40;
+  }
+  
+  .highlight {
+    background-color: #f8f9fa;
+  }
+  
+  .special {
+    background-color: #f0f0f0;
+  }
+  .diagonalCross2 {
+    background: linear-gradient(
+      to top right,
+      #fff calc(50% - 1px),
+      black,
+      #fff calc(50% + 1px)
+    );
+  }
+  
+  .flyingFifteen {
+    position: absolute;
+    right: 6px;
+    bottom: 0;
+    background: black;
+    color: white;
+    border-radius: 3px;
+    padding: 1px;
+    width: 22px;
+  }
+  
+  .react_time_range__track__disabled {
+    background: repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 3px,
+      /* #fcbb08 4px,
+      #b87d00 2px */ #fc0808 4px,
+      #b80000 2px
+    ) !important;
+  }
+  
+  .no-time-range {
+    background: rgb(217 217 217 / 50%);
+    border-radius: 4px;
+    width: 80%;
+    height: 70px;
+  }
+  .badge-faite {
+    background-color: #007bff; /* Blue color */
+    color: white;
+  }
+  
+  .badge-non-faite {
+    background-color: #6c757d; /* Grey color */
+    color: white;
+  }

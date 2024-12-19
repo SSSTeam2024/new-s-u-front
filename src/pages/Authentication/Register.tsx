@@ -14,6 +14,7 @@ import { registerUser, apiError, resetRegisterFlag } from "slices/thunk";
 
 //redux
 import { useSelector, useDispatch } from "react-redux";
+import { createSelector } from 'reselect';
 
 import { Link, useNavigate } from "react-router-dom";
 
@@ -48,10 +49,16 @@ const Register = () => {
         }
     });
 
-    const { error, success } = useSelector((state: any) => ({
-        success: state.Account.success,
-        error: state.Account.error
-    }));
+
+    const selectProperties = createSelector(
+        (state: any) => state.Account,
+        (account) => ({
+            success: account.success,
+            error: account.error
+        })
+    );
+
+    const { error, success } = useSelector(selectProperties);
 
     useEffect(() => {
         dispatch(apiError());
@@ -66,7 +73,7 @@ const Register = () => {
         setTimeout(() => {
             dispatch(resetRegisterFlag());
         }, 3000);
-        
+
         setLoader(false)
     }, [dispatch, success, error, navigate]);
 

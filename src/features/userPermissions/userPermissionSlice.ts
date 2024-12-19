@@ -37,7 +37,7 @@ export interface UserPermissionHistoryItem {
 export const permissionSlice = createApi({
   reducerPath: "permissionApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: `${process.env.REACT_APP_API_URL}/user-permissions/`,
+    baseUrl: `${process.env.REACT_APP_API_URL}/api/user-permissions/`,
   }),
   tagTypes: ["Permissions", "UserPermissions"],
   endpoints: (builder) => ({

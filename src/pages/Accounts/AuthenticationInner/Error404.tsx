@@ -45,7 +45,7 @@ const Error404 = () => {
                         </Row>
                     </Container>
                 </div>
-                <div className="w-100">
+                <div style={{width: "100%"}}>
                     <Container>
                         <Row className="justify-content-center">
                             <Col lg={6}>

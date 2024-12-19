@@ -25,8 +25,9 @@ const TopCategories = () => {
                     </Card.Header>
             
                     <Card.Body>
-                        <div id="multiple_radialbar" data-colors='["--tb-primary", "--tb-danger", "--tb-success", "--tb-secondary"]' className="apex-charts" dir="ltr"></div>
+                        <div id="multiple_radialbar" dir="ltr">
                         <TopCategoriesChart dataColors='["--tb-primary", "--tb-danger", "--tb-success", "--tb-secondary"]' />
+                        </div>
 
                         <Row className="g-3">
                             <Col md={6}>

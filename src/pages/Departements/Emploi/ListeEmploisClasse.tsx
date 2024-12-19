@@ -34,7 +34,7 @@ const ListeEmploisClasse = () => {
   }
 
   function tog_AddClasse() {
-    navigate("/departement/gestion-classes/add-classe");
+    navigate("/departement/gestion-classes/ajouter-classe");
   }
   const { data = [] } = useFetchClassesQuery();
   // console.log("classe data ", data)

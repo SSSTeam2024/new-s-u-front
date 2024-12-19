@@ -1,5 +1,5 @@
 import React, { forwardRef, useRef } from "react";
-import { Text, View, Image, Font } from "@react-pdf/renderer";
+import { Font } from "@react-pdf/renderer";
 import { Departement } from "features/departement/departement";
 import { Enseignant } from "features/enseignant/enseignantSlice";
 import { Etudiant } from "features/etudiant/etudiantSlice";
@@ -32,56 +32,6 @@ Font.register({
     },
   ],
 });
-// interface TableRendererProps {
-//   newBody: string;
-// }
-// const TableRenderer: React.FC<TableRendererProps> = ({ newBody }) => {
-//   // Function to strip non-table tags and retain their content
-//   const stripTags = (htmlString: string) => {
-//     // Parse the HTML string
-//     const parser = new DOMParser();
-//     const doc = parser.parseFromString(htmlString, 'text/html');
-
-//     // Remove non-table tags but keep their content
-//     const walker = document.createTreeWalker(doc.body, NodeFilter.SHOW_ELEMENT, {
-//       acceptNode: (node) => {
-//         // Keep only table-related elements
-//         if (
-//           node.nodeName === 'TABLE' ||
-//           node.nodeName === 'TR' ||
-//           node.nodeName === 'TD' ||
-//           node.nodeName === 'TH' ||
-//           node.nodeName === 'TBODY' ||
-//           node.nodeName === 'THEAD'
-//         ) {
-//           return NodeFilter.FILTER_ACCEPT;
-//         }
-//         return NodeFilter.FILTER_SKIP;
-//       }
-//     });
-
-//     // Collect text content outside of tables
-//     let currentNode = doc.body.firstChild;
-//     while (currentNode) {
-//       // Check if the node is an element and not a table-related element
-//       if (currentNode.nodeType === Node.ELEMENT_NODE && !['TABLE', 'TR', 'TD', 'TH', 'TBODY', 'THEAD'].includes(currentNode.nodeName)) {
-//         // Replace the element with its text content
-//         const textNode = document.createTextNode(currentNode.textContent || '');
-//         currentNode.parentNode?.replaceChild(textNode, currentNode);
-//       }
-//       currentNode = currentNode.nextSibling;
-//     }
-
-//     return doc.body.innerHTML;
-//   };
-//   const cleanedHTML = stripTags(newBody);
-
-//   return (
-//     <div
-//       dangerouslySetInnerHTML={{ __html: cleanedHTML }}
-//     />
-//   );
-// };
 
 const BodyPDF = forwardRef<HTMLDivElement, ChildProps>((props: any, ref) => {
   const {

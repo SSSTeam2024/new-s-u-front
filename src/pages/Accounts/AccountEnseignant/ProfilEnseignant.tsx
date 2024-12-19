@@ -1,22 +1,9 @@
 import React, { useEffect, useState } from "react";
-import {
-  Card,
-  Nav,
-  Tab,
-  Row,
-  Col,
-  Table,
-  Image,
-  Modal,
-  Form,
-} from "react-bootstrap";
+import { Card, Nav, Tab, Row, Col, Table, Image, Modal, Form } from "react-bootstrap";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import DemandeTableEnseignant from "./DemandeTableEnseignant";
 import ReclamationTableEnseignant from "./ReclamationTableEnseignant";
-import {
-  useFetchEnseignantByIdQuery,
-  Enseignant,
-} from "../../../features/enseignant/enseignantSlice";
+import { useFetchEnseignantByIdQuery, Enseignant } from "features/enseignant/enseignantSlice";
 
 import "./hover.css";
 import "swiper/css";
@@ -33,35 +20,25 @@ const ProfilEnseignant = () => {
   const [idFromRoute, setIdFromRoute] = useState<string | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
-  const locationState = location.state as
-    | Enseignant
-    | { _id: string }
-    | undefined;
-  const passedId = locationState
-    ? (locationState as Enseignant)._id
-    : undefined;
-
+  const locationState = location.state as Enseignant | { _id: string } | undefined;
+  const passedId = locationState ? (locationState as Enseignant)._id : undefined;
+  
   const { data: fetchedEnseignant, isLoading } = useFetchEnseignantByIdQuery(
-    { _id: idFromRoute! },
+    { _id: idFromRoute! }, 
     { skip: !idFromRoute }
   );
 
   // Fetch the article by ID if passed, otherwise use location state data
-  const { data: fetchedArticle, isLoading: isLoadingById } =
-    useFetchEnseignantByIdQuery(
-      { _id: passedId || "" },
-      {
-        skip: !passedId,
-      }
-    );
+  const { data: fetchedArticle, isLoading: isLoadingById } = useFetchEnseignantByIdQuery({ _id: passedId || "" }, {
+    skip: !passedId,
+  });
 
-  const enseignantDetails = passedId
-    ? fetchedArticle
-    : (locationState as Enseignant);
+  const enseignantDetails = passedId ? fetchedArticle : (locationState as Enseignant);
 
   useEffect(() => {
     if (!passedId && !enseignantDetails) {
-      navigate("/gestion-etudiant/liste-etudiants");
+     
+      navigate('/gestion-etudiant/liste-etudiants');
     }
   }, [passedId, enseignantDetails, navigate]);
 
@@ -70,10 +47,11 @@ const ProfilEnseignant = () => {
   }
 
   if (!enseignantDetails) {
-    return <p>enseignantDetails non trouvé.</p>;
+    return <p>enseignant  non trouvé.</p>;
   }
 
-  console.log("enseignantDetails", enseignantDetails);
+
+  console.log("enseignantDetails",enseignantDetails);
   const handleImageClick = (imageSrc: any) => {
     setClickedImage(imageSrc);
     setShowModal(true);
@@ -135,7 +113,7 @@ const ProfilEnseignant = () => {
   return (
     <React.Fragment>
       <Tab.Container defaultActiveKey="Profil">
-        <div className="d-flex align-items-center gap-3 mb-4">
+      <div className="d-flex align-items-center gap-3 mb-4">
           <Nav as="ul" className="nav nav-pills flex-grow-1 mb-0">
             <Nav.Item as="li">
               <Nav.Link eventKey="Profil">Profil</Nav.Link>
@@ -148,7 +126,7 @@ const ProfilEnseignant = () => {
             </Nav.Item>
           </Nav>
           <div className="flex-shrink-0">
-            <Link to="/settings" className="btn btn-success">
+            <Link to="/gestion-enseignant/edit-compte-enseignant" className="btn btn-success">
               Modifier le profil
             </Link>
           </div>
@@ -162,7 +140,7 @@ const ProfilEnseignant = () => {
                     className="rounded-start img-fluid h-70 object-cover"
                     src={
                       enseignantDetails.photo_profil
-                        ? `http://localhost:5000/files/enseignantFiles/PhotoProfil/${enseignantDetails.photo_profil}`
+                        ? `${process.env.REACT_APP_API_URL}/files/enseignantFiles/PhotoProfil/${enseignantDetails.photo_profil}`
                         : userImage
                     }
                     alt="Photo Profile"
@@ -275,6 +253,7 @@ const ProfilEnseignant = () => {
                             {enseignantDetails.lieu_naissance_fr}
                           </td>
                         </tr>
+
 
                         <tr>
                           <td> Adresse:</td>
@@ -444,31 +423,39 @@ const ProfilEnseignant = () => {
                       <tbody>
                         <tr>
                           <td>Nom du conjoint:</td>
-                          <td className="fw-medium">
-                            {enseignantDetails.nom_conjoint}
-                          </td>
+                          <td className="fw-medium">{enseignantDetails.nom_conjoint}</td>
                         </tr>
 
                         <tr>
                           <td>Profession du conjoint:</td>
-                          <td className="fw-medium">
-                            {enseignantDetails.job_conjoint}
-                          </td>
+                          <td className="fw-medium">{enseignantDetails.job_conjoint
+                          }</td>
                         </tr>
                         <tr>
                           <td>Nombre des enfants:</td>
-                          <td className="fw-medium">
-                            {enseignantDetails.nombre_fils}
-                          </td>
+                          <td className="fw-medium">{enseignantDetails.nombre_fils}</td>
                         </tr>
+                     
                       </tbody>
                     </Table>
                   </div>
                 </Col>
               </Row>
-              <Row className="p-2"></Row>
+              <Row className="p-2">
+             
+               
+              </Row>
             </Card>
 
+         
+
+           
+          
+
+           
+          
+         
+           
             <Modal show={showModal} onHide={handleCloseModal}>
               <Modal.Body>
                 {clickedImage && (

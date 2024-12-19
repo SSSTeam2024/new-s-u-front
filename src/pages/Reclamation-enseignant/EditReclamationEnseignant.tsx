@@ -51,9 +51,8 @@ const EditReclamationEnseignant = () => {
   const enseignantId = location.state?.enseignantId?._id!;
   const state = location.state as ReclamationState; // Adjust based on your type
   const [response, setResponse] = useState(location.state?.response || "");
-  console.log("response", location.state.response);
-  const [updateReclamationEnseignant] =
-    useUpdateReclamationEnseignantMutation();
+  console.log("response",location.state.response)
+  const [updateReclamationEnseignant] = useUpdateReclamationEnseignantMutation();
 
   const navigate = useNavigate();
   const Navigate = (enseignantId: any) => {
@@ -121,10 +120,9 @@ const EditReclamationEnseignant = () => {
                     <Card.Body>
                       <div className="mt-n5">
                         <Image
-                          src={`http://localhost:5000/files/enseignantFiles/PhotoProfil/${location.state?.enseignantId?.photo_profil}`}
+                          src={`${process.env.REACT_APP_API_URL}/files/enseignantFiles/PhotoProfil/${location.state?.enseignantId?.photo_profil}`}
                           alt=""
-                          className="rounded-circle p-1 bg-body mt-n5"
-                          width="150"
+                          className="rounded-circle p-1 bg-body mt-n5" width="150"
                         />
                       </div>
                     </Card.Body>

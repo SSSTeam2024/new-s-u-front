@@ -25,56 +25,56 @@ const TopProducts = () => {
             
                     <Card.Body>
                         <div className="mb-4">
-                            <span className="badge badge-soft-dark float-end">90%</span>
+                            <span className="badge bg-dark-subtle text-body float-end">90%</span>
                             <h6 className="mb-2">Fashion & Clothing</h6>
                             <div className="progress progress-sm" role="progressbar">
                                 <div className="progress-bar bg-success bg-opacity-50 progress-bar-striped progress-bar-animated" style={{width: "90%"}}></div>
                             </div>
                         </div>
                         <div className="mb-4">
-                            <span className="badge badge-soft-dark float-end">64%</span>
+                            <span className="badge bg-dark-subtle text-body float-end">64%</span>
                             <h6 className="mb-2">Lighting</h6>
                             <div className="progress progress-sm" role="progressbar">
                                 <div className="progress-bar bg-warning bg-opacity-50 progress-bar-striped progress-bar-animated" style={{width: "64%"}}></div>
                             </div>
                         </div>
                         <div className="mb-4">
-                            <span className="badge badge-soft-dark float-end">77%</span>
+                            <span className="badge bg-dark-subtle text-body float-end">77%</span>
                             <h6 className="mb-2">Footwear</h6>
                             <div className="progress progress-sm" role="progressbar">
                                 <div className="progress-bar bg-danger bg-opacity-50 progress-bar-striped progress-bar-animated" style={{width: "77%"}}></div>
                             </div>
                         </div>
                         <div className="mb-4">
-                            <span className="badge badge-soft-dark float-end">53%</span>
+                            <span className="badge bg-dark-subtle text-body float-end">53%</span>
                             <h6 className="mb-2">Electronics</h6>
                             <div className="progress progress-sm" role="progressbar">
                                 <div className="progress-bar bg-info bg-opacity-50 progress-bar-striped progress-bar-animated" style={{width: "53%"}}></div>
                             </div>
                         </div>
                         <div className="mb-4">
-                            <span className="badge badge-soft-dark float-end">81%</span>
+                            <span className="badge bg-dark-subtle text-body float-end">81%</span>
                             <h6 className="mb-2">Beauty & Personal Care</h6>
                             <div className="progress progress-sm" role="progressbar">
                                 <div className="progress-bar bg-primary bg-opacity-50 progress-bar-striped progress-bar-animated" style={{width: "81%"}}></div>
                             </div>
                         </div>
                         <div className="mb-4">
-                            <span className="badge badge-soft-dark float-end">96%</span>
+                            <span className="badge bg-dark-subtle text-body float-end">96%</span>
                             <h6 className="mb-2">Books</h6>
                             <div className="progress progress-sm" role="progressbar">
                                 <div className="progress-bar bg-secondary bg-opacity-50 progress-bar-striped progress-bar-animated" style={{width: "96%"}}></div>
                             </div>
                         </div>
                         <div className="mb-4">
-                            <span className="badge badge-soft-dark float-end">69%</span>
+                            <span className="badge bg-dark-subtle text-body float-end">69%</span>
                             <h6 className="mb-2">Furniture</h6>
                             <div className="progress progress-sm" role="progressbar">
                                 <div className="progress-bar bg-success bg-opacity-50 progress-bar-striped progress-bar-animated" style={{width: "69%"}}></div>
                             </div>
                         </div>
                         <div>
-                            <span className="badge badge-soft-dark float-end">63%</span>
+                            <span className="badge bg-dark-subtle text-body float-end">63%</span>
                             <h6 className="mb-2">Mobile Accessories</h6>
                             <div className="progress progress-sm" role="progressbar">
                                 <div className="progress-bar bg-dark bg-opacity-50 progress-bar-striped progress-bar-animated" style={{width: "63%"}}></div>

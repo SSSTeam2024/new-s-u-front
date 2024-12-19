@@ -18,7 +18,7 @@ export interface AvisPersonnel {
   export const avisPersonnelSlice = createApi({
     reducerPath: 'avisPersonnelApi',
     baseQuery: fetchBaseQuery({
-      baseUrl: `${process.env.REACT_APP_API_URL}/avis-personnel/`, // Adjust endpoint base URL
+      baseUrl: `${process.env.REACT_APP_API_URL}/api/avis-personnel/`, // Adjust endpoint base URL
     }),
     tagTypes: ['Avis'],
     endpoints(builder) {

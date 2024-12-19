@@ -9,7 +9,7 @@ export interface EtatPersonnel {
 export const etatPersonnelSlice = createApi({
   reducerPath: "EtatPersonnel",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:5000/api/etat-personnel/",
+    baseUrl: `${process.env.REACT_APP_API_URL}/api/etat-personnel/`,
   }),
   tagTypes: ["EtatPersonnel"],
   endpoints(builder) {

@@ -67,7 +67,7 @@ const Widgets = () => {
                                     <CountUp start={0} end={item.amount} separator="," decimals={item.decimal && 2} />
                                     </span></h4>
                                 <div className="d-flex align-items-center gap-2">
-                                    <h5 className={"badge badge-soft-" + item.badgeColor + " mb-0"}>
+                                    <h5 className={"mb-0 badge bg-" + item.badgeColor + "-subtle text-" + item.badgeColor}>
                                         <i className={item.badgeColor === "success" ? "ri-arrow-right-up-line align-bottom" : "ri-arrow-right-down-line align-bottom"}></i> {item.perstange} %
                                     </h5>
                                     <p className="text-muted mb-0">than last week</p>

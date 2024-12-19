@@ -9,8 +9,15 @@ import html2canvas from "html2canvas";
 import img4 from "assets/images/small/img-4.jpg";
 import student from "assets/images/etudiant.png";
 import file from "assets/images/demande.png";
+import createPDFHeader from "Common/HeaderPDF"; // Corrected import
+import FooterPDF from "Common/FooterPDF";
+import TitlePDF from "Common/TitlePDF";
 import BodyPDF from "Common/BodyPDF";
+import SignaturePDF from "Common/SignaturePDF";
+import { getTitleText } from "Common/TitlePDF";
 import { useFetchVaribaleGlobaleQuery } from "features/variableGlobale/variableGlobaleSlice";
+import ArFooterPDF from "Common/ArFooterPDF";
+import ArSignaturePDF from "Common/ArSignaturePDF";
 
 const styles = {
   body: {
@@ -80,7 +87,7 @@ const SingleDemandeEtudiant = (props: any) => {
       doc.save("document.pdf");
     } catch (error) {
       console.error("Error generating PDF: ", error);
-    } finally {
+    }finally {
       setIsGenerating(false);
     }
   };
@@ -90,7 +97,7 @@ const SingleDemandeEtudiant = (props: any) => {
       <div className="page-content">
         <Container fluid={true}>
           <div
-            style={{
+             style={{
               visibility: "hidden", // Hide it but keep it rendered on the page
               position: "absolute",
               pointerEvents: "none", // Prevent interactions
@@ -129,7 +136,7 @@ const SingleDemandeEtudiant = (props: any) => {
                     <Card.Body>
                       <div className="mt-n5">
                         <img
-                          src={`http://localhost:5000/files/etudiantFiles/PhotoProfil/${state.state?.studentId.photo_profil}`}
+                          src={`${process.env.REACT_APP_API_URL}/files/etudiantFiles/PhotoProfil/${state.state?.studentId.photo_profil}`}
                           alt=""
                           className="rounded-circle p-1 bg-body mt-n5"
                           width="150"
@@ -224,16 +231,17 @@ const SingleDemandeEtudiant = (props: any) => {
                     Détails de la demande
                   </h5>
                   <div className="flex-shrink-0">
-                    <Link
-                      to="/demandes-etudiant/generer-demande-etudiant"
-                      // onClick={()=>navigate("")}
-                      // type="button"
-                      state={state.state}
-                      className="btn btn-danger btn-label m-1"
-                    >
-                      <i className="bi bi-file-earmark-pdf label-icon align-middle fs-16 me-2"></i>
-                      Generer
-                    </Link>
+                  <Link
+                  to="/demandes-etudiant/generer-demande-etudiant"
+        // onClick={()=>navigate("")}
+        // type="button"
+        state={state.state}
+        className="btn btn-danger btn-label m-1"
+        
+      >
+        <i className="bi bi-file-earmark-pdf label-icon align-middle fs-16 me-2"></i>
+        Generer
+      </Link>
                     <Button type="button" className="btn btn-success btn-label">
                       <i className="bi bi-postcard label-icon align-middle fs-16 me-2"></i>
                       Notifier l'étudiant

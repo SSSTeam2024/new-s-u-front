@@ -50,15 +50,14 @@ const SingleReclamationEnseignant = () => {
   const photoUrls = location.state?.photos
     ? location.state?.photos.map(
         (photo: any) =>
-          `http://localhost:5000/files/reclamationEnseignantFiles/photo/${photo}`
+          `${process.env.REACT_APP_API_URL}/files/reclamationEnseignantFiles/photo/${photo}`
       )
     : [];
   const pdfUrl = location.state?.pdf
-    ? `http://localhost:5000/files/reclamationEnseignantFiles/pdf/${location.state.pdf}`
+     ? `${process.env.REACT_APP_API_URL}/files/reclamationEnseignantFiles/pdf/${location.state.pdf}`
     : "";
-  const videoUrl = location.state?.video
-    ? `http://localhost:5000/files/reclamationEnseignantFiles/video/${location.state.video}`
-    : "";
+  const videoUrl = location.state?.video ? `${process.env.REACT_APP_API_URL}/files/reclamationEnseignantFiles/video/${location.state.video}`
+  : "";
   console.log("currentStatus", currentStatus);
   console.log("photoUrls:", photoUrls);
   console.log("pdfUrl:", pdfUrl);
@@ -82,7 +81,7 @@ const SingleReclamationEnseignant = () => {
       <div className="page-content">
         <Container fluid={true}>
           <Breadcrumb
-            title="Réclamation Enseignant"
+            title="Réclamation Etudiant"
             pageTitle="Modifier la réclamation"
           />
           <Row>
@@ -100,7 +99,7 @@ const SingleReclamationEnseignant = () => {
                     <Card.Body>
                       <div className="mt-n5">
                         <Image
-                          src={`http://localhost:5000/files/enseignantFiles/PhotoProfil/${location.state?.enseignantId?.photo_profil}`}
+                          src={`${process.env.REACT_APP_API_URL}/files/enseignantFiles/PhotoProfil/${location.state?.enseignantId?.photo_profil}`}
                           alt=""
                           className="rounded-circle p-1 bg-body mt-n5"
                           width="150"
@@ -254,55 +253,51 @@ const SingleReclamationEnseignant = () => {
                         </Card>
                       </Col>
                       <Col xxl={2} lg={2}>
-                        <Card className="categrory-widgets overflow-hidden">
-                          <div className="card-header d-flex align-items-center">
-                            <h5 className="card-title flex-grow-1 mb-0">
-                              Pièce-jointe
-                            </h5>
-                          </div>
-                          <Card.Body className="text-center d-flex flex-column align-items-center justify-content-center">
-                            <div
-                              className="btn-group-vertical"
-                              role="group"
-                              aria-label="Media options"
-                            >
-                              {/* Show Image button if there are photos */}
-                              {photoUrls.length > 0 && (
-                                <Button
-                                  variant="outline-primary"
-                                  className="mb-2"
-                                  onClick={() =>
-                                    handleShow("image", photoUrls[0])
-                                  } // Show the first image in the modal
-                                >
-                                  <i className="bi bi-image"></i> Image
-                                </Button>
-                              )}
+  <Card className="categrory-widgets overflow-hidden">
+    <div className="card-header d-flex align-items-center">
+      <h5 className="card-title flex-grow-1 mb-0">Pièce-jointe</h5>
+    </div>
+    <Card.Body className="text-center d-flex flex-column align-items-center justify-content-center">
+      <div
+        className="btn-group-vertical"
+        role="group"
+        aria-label="Media options"
+      >
+        {/* Show Image button if there are photos */}
+        {photoUrls.length > 0 && (
+          <Button
+            variant="outline-primary"
+            className="mb-2"
+            onClick={() => handleShow("image", photoUrls[0])} // Show the first image in the modal
+          >
+            <i className="bi bi-image"></i> Image
+          </Button>
+        )}
 
-                              {/* Show Video button if there is a video */}
-                              {videoUrl && (
-                                <Button
-                                  variant="outline-success"
-                                  className="mb-2"
-                                  onClick={() => handleShow("video", videoUrl)}
-                                >
-                                  <i className="bi bi-camera-video"></i> Video
-                                </Button>
-                              )}
+        {/* Show Video button if there is a video */}
+        {videoUrl && (
+          <Button
+            variant="outline-success"
+            className="mb-2"
+            onClick={() => handleShow("video", videoUrl)}
+          >
+            <i className="bi bi-camera-video"></i> Video
+          </Button>
+        )}
 
-                              {/* Show PDF button if there is a PDF */}
-                              {pdfUrl && (
-                                <Button
-                                  variant="outline-danger"
-                                  onClick={() => handleShow("pdf", pdfUrl)}
-                                >
-                                  <i className="bi bi-file-earmark-pdf"></i> PDF
-                                </Button>
-                              )}
-                            </div>
-                          </Card.Body>
-                        </Card>
-                      </Col>
+        {/* Show PDF button if there is a PDF */}
+        {pdfUrl && (
+          <Button
+            variant="outline-danger"
+            onClick={() => handleShow("pdf", pdfUrl)}
+          >
+            <i className="bi bi-file-earmark-pdf"></i> PDF
+          </Button>
+        )}
+      </div>
+    </Card.Body>
+  </Card>
+</Col>
                       {/* <Col xxl={2} lg={2}>
                         <Card className="categrory-widgets overflow-hidden">
                           <div className="card-header d-flex align-items-center">
@@ -357,39 +352,37 @@ const SingleReclamationEnseignant = () => {
         </Container>
 
         {/* Modal */}
-
+    
         <Modal show={showModal} onHide={handleClose} size="lg">
-          <Modal.Header closeButton>
-            <Modal.Title>
-              {mediaType.charAt(0).toUpperCase() + mediaType.slice(1)}
-            </Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            {mediaType === "image" && (
-              <Carousel>
-                {photoUrls.map((url: any, index: any) => (
-                  <Carousel.Item key={index}>
-                    <Image src={url} alt={`Image ${index + 1}`} fluid />
-                  </Carousel.Item>
-                ))}
-              </Carousel>
-            )}
-            {mediaType === "video" && (
-              <video controls width="100%">
-                <source src={mediaUrl} type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
-            )}
-            {mediaType === "pdf" && (
-              <iframe src={mediaUrl} width="100%" height="600px" />
-            )}
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={handleClose}>
-              Close
-            </Button>
-          </Modal.Footer>
-        </Modal>
+  <Modal.Header closeButton>
+    <Modal.Title>{mediaType.charAt(0).toUpperCase() + mediaType.slice(1)}</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>
+    {mediaType === 'image' && (
+      <Carousel>
+        {photoUrls.map((url:any, index:any) => (
+          <Carousel.Item key={index}>
+            <Image src={url} alt={`Image ${index + 1}`} fluid />
+          </Carousel.Item>
+        ))}
+      </Carousel>
+    )}
+    {mediaType === 'video' && (
+      <video controls width="100%">
+        <source src={mediaUrl} type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+    )}
+    {mediaType === 'pdf' && (
+      <iframe src={mediaUrl} width="100%" height="600px" />
+    )}
+  </Modal.Body>
+  <Modal.Footer>
+    <Button variant="secondary" onClick={handleClose}>
+      Close
+    </Button>
+  </Modal.Footer>
+</Modal>
       </div>
     </React.Fragment>
   );

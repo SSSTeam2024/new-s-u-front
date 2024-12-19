@@ -1,13 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Button,
-  Form,
-  Container,
-  Card,
-  Col,
-  InputGroup,
-  Row,
-} from "react-bootstrap";
+import { Button, Form, Container, Card, Col, InputGroup, Row,} from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   useFetchActualiteByIdQuery,
@@ -45,9 +37,7 @@ const EditActualite = () => {
   }, [actualite]);
 
   const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     if (formData) {
@@ -57,19 +47,19 @@ const EditActualite = () => {
       });
     }
   };
-
+ 
   const onDescriptionChange = (event: any, editor: any) => {
     const data = editor.getData();
-    setFormData((prevState: any) => ({
+    setFormData((prevState:any) => ({
       ...prevState,
       description: data,
     }));
   };
-
+  
   const handleDateChange = (selectedDates: Date[]) => {
     if (selectedDates.length > 0) {
       const selectedDate = selectedDates[0];
-      setFormData((prevState: any) => ({
+      setFormData((prevState:any) => ({
         ...prevState,
         date_actualite: selectedDate,
       }));
@@ -78,11 +68,11 @@ const EditActualite = () => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (formData) {
-      updateActualite(formData);
+        updateActualite(formData);
     }
     notify();
     navigate("/actualite/liste-actualite");
-  };
+};
   const notify = () => {
     Swal.fire({
       position: "center",
@@ -92,9 +82,7 @@ const EditActualite = () => {
       timer: 2000,
     });
   };
-  function convertToBase64(
-    file: File
-  ): Promise<{ base64Data: string; extension: string }> {
+  function convertToBase64(file: File): Promise<{ base64Data: string; extension: string }> {
     return new Promise((resolve, reject) => {
       const fileReader = new FileReader();
       fileReader.onload = () => {
@@ -117,37 +105,29 @@ const EditActualite = () => {
         return {
           base64Data,
           extension,
-          fileName: file.name,
+          fileName: file.name
         };
       })
     );
-
+  
     setFormData((prevState) => {
       if (!prevState || !prevState._id) return prevState; // Ensure _id exists
       return {
         ...prevState,
-        gallery: base64Images.map(
-          (img) => img.base64Data + "." + img.extension
-        ),
-        galleryBase64Strings: base64Images.map((img) => img.base64Data),
-        galleryExtensions: base64Images.map((img) => img.extension),
+        gallery: base64Images.map(img => img.base64Data + "." + img.extension),
+        galleryBase64Strings: base64Images.map(img => img.base64Data),
+        galleryExtensions: base64Images.map(img => img.extension),
       };
     });
   };
-
+  
   const handleDeleteFile = (indexToRemove: number) => {
     setFormData((prevData) => {
       if (!prevData || !prevData._id) return prevData; // Ensure _id exists
-      const newGallery = prevData.gallery?.filter(
-        (_, index) => index !== indexToRemove
-      );
-      const newGalleryBase64Strings = prevData.galleryBase64Strings?.filter(
-        (_, index) => index !== indexToRemove
-      );
-      const newGalleryExtensions = prevData.galleryExtensions?.filter(
-        (_, index) => index !== indexToRemove
-      );
-
+      const newGallery = prevData.gallery?.filter((_, index) => index !== indexToRemove);
+      const newGalleryBase64Strings = prevData.galleryBase64Strings?.filter((_, index) => index !== indexToRemove);
+      const newGalleryExtensions = prevData.galleryExtensions?.filter((_, index) => index !== indexToRemove);
+  
       return {
         ...prevData,
         gallery: newGallery,
@@ -183,9 +163,10 @@ const EditActualite = () => {
     <React.Fragment>
       <div className="page-content">
         <Container fluid={true}>
-          <Row>
+        <Row>
             <Col lg={12}>
               <Card>
+               
                 <Card.Body>
                   <Card.Header>
                     <div className="d-flex">
@@ -202,12 +183,15 @@ const EditActualite = () => {
                     </div>
                   </Card.Header>
                   <div className="mb-2">
-                    {isError && <p>Error: {getErrorMessage(error)}</p>}
-                    <Form className="tablelist-form" onSubmit={handleSubmit}>
-                      <input type="hidden" id="_id" />
+          
+          {isError && <p>Error: {getErrorMessage(error)}</p>}
+          <Form className="tablelist-form" onSubmit={handleSubmit}>
+           
+
+             <input type="hidden" id="_id"/>
                       <Row>
                         <Row>
-                          <Col lg={10}>
+                        <Col lg={10}>
                             <div className="mb-3">
                               <Form.Label htmlFor="title">
                                 <h4 className="card-title mb-0">Titre</h4>
@@ -223,6 +207,8 @@ const EditActualite = () => {
                           </Col>
                         </Row>
                         <Row>
+                        
+                          
                           <Col lg={4}>
                             <div className="mb-3">
                               <Form.Label htmlFor="titre">
@@ -244,15 +230,15 @@ const EditActualite = () => {
                                 <h4 className="card-title mb-0">Date</h4>
                               </Form.Label>
                               <Flatpickr
-                                value={formData?.date_actualite ?? undefined}
-                                onChange={handleDateChange}
-                                className="form-control flatpickr-input"
-                                placeholder="Selectionner une date"
-                                options={{
-                                  dateFormat: "d M, Y",
-                                }}
-                                id="date_actualite"
-                              />
+                              value={formData?.date_actualite ?? undefined}
+                              onChange={handleDateChange}
+                              className="form-control flatpickr-input"
+                              placeholder="Selectionner une date"
+                              options={{
+                                dateFormat: "d M, Y",
+                              }}
+                              id="date_actualite"
+                            />
                             </div>
                           </Col>
                           <Col lg={4}>
@@ -284,6 +270,7 @@ const EditActualite = () => {
                               </Form.Select>
                             </div>
                           </Col>
+                         
                         </Row>
                         <Row>
                           <Col lg={12}>
@@ -292,11 +279,11 @@ const EditActualite = () => {
                                 <h4 className="card-title mb-0">Description</h4>
                               </Card.Header>
                               <CKEditor
-                                editor={ClassicEditor}
-                                data={formData?.description}
-                                onChange={onDescriptionChange}
-                                id="description"
-                              />
+                          editor={ClassicEditor}
+                          data={formData?.description}
+                          onChange={onDescriptionChange}
+                          id="description"
+                        />
                             </Card>
                           </Col>
                         </Row>
@@ -313,29 +300,28 @@ const EditActualite = () => {
                                 </h4>
                               </label>
                               <Form.Control
-                                name="legalcardBase64String"
-                                type="file"
-                                id="legalcardBase64String"
-                                accept=".pdf"
-                                placeholder="Choose File"
-                                className="text-muted"
-                                onChange={async (e) => {
-                                  const input = e.target as HTMLInputElement;
-                                  const file = input.files?.[0];
-                                  if (file) {
-                                    const { base64Data, extension } =
-                                      await convertToBase64(file);
-                                    setFormData((prev) => {
-                                      if (!prev) return null; // Add a null check to handle cases where prev might be null
-                                      return {
-                                        ...prev,
-                                        pdfBase64String: base64Data,
-                                        pdfExtension: extension,
-                                      };
-                                    });
-                                  }
-                                }}
-                              />
+  name="legalcardBase64String"
+  type="file"
+  id="legalcardBase64String"
+  accept=".pdf"
+  placeholder="Choose File"
+  className="text-muted"
+  onChange={async (e) => {
+    const input = e.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (file) {
+      const { base64Data, extension } = await convertToBase64(file);
+      setFormData((prev) => {
+        if (!prev) return null; // Add a null check to handle cases where prev might be null
+        return {
+          ...prev,
+          pdfBase64String: base64Data,
+          pdfExtension: extension,
+        };
+      });
+    }
+  }}
+/>
                             </div>
                           </Col>
                           <Col lg={6}>
@@ -363,64 +349,48 @@ const EditActualite = () => {
                           </Col>
                         </Row>
                         <Form.Group className="mb-3">
-                          <Form.Label>Galerie</Form.Label>
-                          <Dropzone
-                            onDrop={(acceptedFiles) =>
-                              handleAcceptedFiles(acceptedFiles)
-                            }
-                          >
-                            {({ getRootProps, getInputProps }) => (
-                              <div
-                                className="dropzone dz-clickable text-center"
-                                {...getRootProps()}
-                              >
-                                <div className="dz-message needsclick">
-                                  <div className="mb-3">
-                                    <i className="display-4 text-muted ri-upload-cloud-2-fill" />
-                                  </div>
-                                  <h5>
-                                    Déposez des photos ici ou cliquez pour
-                                    télécharger.
-                                  </h5>
+                        <Form.Label>Galerie</Form.Label>
+                        <Dropzone onDrop={(acceptedFiles) => handleAcceptedFiles(acceptedFiles)}>
+                          {({ getRootProps, getInputProps }) => (
+                            <div className="dropzone dz-clickable text-center" {...getRootProps()}>
+                              <div className="dz-message needsclick">
+                                <div className="mb-3">
+                                  <i className="display-4 text-muted ri-upload-cloud-2-fill" />
                                 </div>
-                                <input {...getInputProps()} />
+                                <h5>
+                                  Déposez des photos ici ou cliquez pour télécharger.
+                                </h5>
                               </div>
-                            )}
-                          </Dropzone>
-                          <div className="mt-3">
-                            {formData?.gallery?.map((image, index) => (
-                              <div key={index} className="image-preview">
-                                <img
-                                  src={image}
-                                  alt={`Image ${index + 1}`}
-                                  className="img-thumbnail"
-                                />
-                                <Button
-                                  variant="danger"
-                                  size="sm"
-                                  onClick={() => handleDeleteFile(index)}
-                                >
-                                  Supprimer
-                                </Button>
-                              </div>
-                            ))}
-                          </div>
-                        </Form.Group>
+                              <input {...getInputProps()} />
+                            </div>
+                          )}
+                        </Dropzone>
+                        <div className="mt-3">
+                          {formData?.gallery?.map((image, index) => (
+                            <div key={index} className="image-preview">
+                              <img src={image} alt={`Image ${index + 1}`} className="img-thumbnail" />
+                              <Button
+                                variant="danger"
+                                size="sm"
+                                onClick={() => handleDeleteFile(index)}
+                              >
+                                Supprimer
+                              </Button>
+                            </div>
+                          ))}
+                        </div>
+                      </Form.Group>
 
                         <Col lg={12}>
                           <div className="hstack gap-2 justify-content-end">
-                            <Button
-                              variant="primary"
-                              type="submit"
-                              disabled={isUpdating}
-                            >
-                              {isUpdating ? "Updating..." : "Modifier"}
-                            </Button>
+                          <Button variant="primary" type="submit" disabled={isUpdating}>
+              {isUpdating ? "Updating..." : "Modifier"}
+            </Button>
                           </div>
                         </Col>
                       </Row>
-                    </Form>
-                  </div>
+          </Form>
+            </div>
                 </Card.Body>
               </Card>
             </Col>

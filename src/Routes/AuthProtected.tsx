@@ -17,7 +17,7 @@ const AuthProtected = (props: any) => {
       setCanAccess(false);
     } else {
       axios
-        .post(`${process.env.REACT_APP_API_URL}/user/get-user-by-token`, {
+        .post(`${process.env.REACT_APP_API_URL}/api/user/get-user-by-token`, {
           token: tokenc,
         })
         .then((res: any) => {

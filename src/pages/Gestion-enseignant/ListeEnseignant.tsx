@@ -6,15 +6,12 @@ import { Link, useNavigate } from "react-router-dom";
 import TableContainer from "Common/TableContainer";
 import Swal from "sweetalert2";
 import userImage from "../../assets/images/profile-bg.jpg";
-import {
-  Enseignant,
-  useDeleteEnseignantMutation,
-  useFetchEnseignantsQuery,
-} from "features/enseignant/enseignantSlice";
-import { actionAuthorization } from "utils/pathVerification";
-import { RootState } from "app/store";
-import { useSelector } from "react-redux";
-import { selectCurrentUser } from "features/account/authSlice";
+import {Enseignant,useDeleteEnseignantMutation,useFetchEnseignantsQuery,} from "features/enseignant/enseignantSlice";
+import { actionAuthorization } from 'utils/pathVerification';
+import { RootState } from 'app/store';
+import { useSelector } from 'react-redux';
+import { selectCurrentUser } from 'features/account/authSlice';
+
 
 const ListEnseignants = () => {
   document.title = "Liste des enseignants | Smart University";
@@ -25,11 +22,13 @@ const ListEnseignants = () => {
   const [modal_AddEnseignantModals, setmodal_AddEnseignantModals] =
     useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState("");
+ 
 
   function tog_AddEnseignant() {
     navigate("/gestion-enseignant/ajouter-enseignant");
   }
   const { data = [] } = useFetchEnseignantsQuery();
+  console.log(data);
   const [filterStatus, setFilterStatus] = useState("All");
   const [enseignantCount, setEnseignantCount] = useState(0);
   const handleFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -129,7 +128,7 @@ const ListEnseignants = () => {
             <div className="d-flex align-items-center gap-2">
               <div className="flex-shrink-0">
                 <img
-                  src={`http://localhost:5000/files/enseignantFiles/PhotoProfil/${enseignants.photo_profil}`}
+                  src={`${process.env.REACT_APP_API_URL}/files/enseignantFiles/PhotoProfil/${enseignants.photo_profil}`}
                   alt="etudiant-img"
                   id="photo_profil"
                   className="avatar-xs rounded-circle user-profile-img"
@@ -236,93 +235,79 @@ const ListEnseignants = () => {
         accessor: (enseignant: Enseignant) => {
           return (
             <ul className="hstack gap-2 list-unstyled mb-0">
-              {actionAuthorization(
-                "/gestion-etudiant/compte-etudiant",
-                user?.permissions!
-              ) ? (
-                <li>
-                  <Link
-                    to="/gestion-enseignant/compte-enseignant"
-                    className="badge bg-info-subtle text-info view-item-btn"
-                    state={enseignant}
-                  >
-                    <i
-                      className="ph ph-eye"
-                      style={{
-                        transition: "transform 0.3s ease-in-out",
-                        cursor: "pointer",
-                        fontSize: "1.5em",
-                      }}
-                      onMouseEnter={(e) =>
-                        (e.currentTarget.style.transform = "scale(1.4)")
-                      }
-                      onMouseLeave={(e) =>
-                        (e.currentTarget.style.transform = "scale(1)")
-                      }
-                    ></i>
-                  </Link>
-                </li>
-              ) : (
-                <></>
-              )}
-              {actionAuthorization(
-                "/gestion-enseignant/edit-compte-enseignant",
-                user?.permissions!
-              ) ? (
-                <li>
-                  <Link
-                    to="/gestion-enseignant/edit-compte-enseignant"
-                    className="badge bg-primary-subtle text-primary edit-item-btn"
-                    state={enseignant}
-                  >
-                    <i
-                      className="ph ph-pencil-line"
-                      style={{
-                        transition: "transform 0.3s ease-in-out",
-                        cursor: "pointer",
-                        fontSize: "1.5em",
-                      }}
-                      onMouseEnter={(e) =>
-                        (e.currentTarget.style.transform = "scale(1.2)")
-                      }
-                      onMouseLeave={(e) =>
-                        (e.currentTarget.style.transform = "scale(1)")
-                      }
-                    ></i>
-                  </Link>
-                </li>
-              ) : (
-                <></>
-              )}
-              {actionAuthorization(
-                "/gestion-enseignant/supprimer-compte-enseignant",
-                user?.permissions!
-              ) ? (
-                <li>
-                  <Link
-                    to="#"
-                    className="badge bg-danger-subtle text-danger remove-item-btn"
-                  >
-                    <i
-                      className="ph ph-trash"
-                      style={{
-                        transition: "transform 0.3s ease-in-out",
-                        cursor: "pointer",
-                        fontSize: "1.5em",
-                      }}
-                      onMouseEnter={(e) =>
-                        (e.currentTarget.style.transform = "scale(1.2)")
-                      }
-                      onMouseLeave={(e) =>
-                        (e.currentTarget.style.transform = "scale(1)")
-                      }
-                      onClick={() => AlertDelete(enseignant?._id!)}
-                    ></i>
-                  </Link>
-                </li>
-              ) : (
-                <></>
-              )}
+        {actionAuthorization("/gestion-etudiant/compte-etudiant",user?.permissions!)? 
+
+              <li>
+
+                <Link
+                  to="/gestion-enseignant/compte-enseignant"
+                  className="badge bg-info-subtle text-info view-item-btn"
+                  state={enseignant}
+                >
+                  <i
+                    className="ph ph-eye"
+                    style={{
+                      transition: "transform 0.3s ease-in-out",
+                      cursor: "pointer",
+                      fontSize: "1.5em",
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.transform = "scale(1.4)")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.transform = "scale(1)")
+                    }
+                  ></i>
+                </Link>
+              </li> : <></> }
+              {actionAuthorization("/gestion-enseignant/edit-compte-enseignant",user?.permissions!)?
+
+              <li>
+                <Link
+                  to="/gestion-enseignant/edit-compte-enseignant"
+                  className="badge bg-primary-subtle text-primary edit-item-btn"
+                  state={enseignant}
+                >
+                  <i
+                    className="ph ph-pencil-line"
+                    style={{
+                      transition: "transform 0.3s ease-in-out",
+                      cursor: "pointer",
+                      fontSize: "1.5em",
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.transform = "scale(1.2)")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.transform = "scale(1)")
+                    }
+                  ></i>
+                </Link>
+              </li>  : <></> }
+              {actionAuthorization("/gestion-enseignant/supprimer-compte-enseignant",user?.permissions!)?
+
+              <li>
+                <Link
+                  to="#"
+                  className="badge bg-danger-subtle text-danger remove-item-btn"
+                >
+                  <i
+                    className="ph ph-trash"
+                    style={{
+                      transition: "transform 0.3s ease-in-out",
+                      cursor: "pointer",
+                      fontSize: "1.5em",
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.transform = "scale(1.2)")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.transform = "scale(1)")
+                    }
+                    onClick={() => AlertDelete(enseignant?._id!)}
+                  ></i>
+                </Link>
+              </li> : <></> }
             </ul>
           );
         },

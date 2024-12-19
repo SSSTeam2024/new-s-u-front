@@ -19,7 +19,7 @@ export interface Avis {
   export const avisEtudiantSlice = createApi({
     reducerPath: 'avisEtudiantApi',
     baseQuery: fetchBaseQuery({
-      baseUrl: `${process.env.REACT_APP_API_URL}/avis-etudiant/`, // Adjust endpoint base URL
+      baseUrl: `${process.env.REACT_APP_API_URL}/api/avis-etudiant/`, // Adjust endpoint base URL
     }),
     tagTypes: ['Avis'],
     endpoints(builder) {

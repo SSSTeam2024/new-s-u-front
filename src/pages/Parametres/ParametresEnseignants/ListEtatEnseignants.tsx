@@ -20,9 +20,15 @@ import {
   useFetchEtatsEnseignantQuery,
   useUpdateEtatEnseignantMutation,
 } from "features/etatEnseignant/etatEnseignant";
+import { actionAuthorization } from 'utils/pathVerification';
+import { RootState } from 'app/store';
+import { useSelector } from 'react-redux';
+import { selectCurrentUser } from 'features/account/authSlice';
+
 
 const ListEtatEnseignants = () => {
   document.title = "Liste états des enseignants | Smart University";
+  const user = useSelector((state: RootState) => selectCurrentUser(state));
 
   const navigate = useNavigate();
   const [modal_AddOrderModals, setmodal_AddOrderModals] =
@@ -138,7 +144,7 @@ const ListEtatEnseignants = () => {
       await createEtatEnseignant(formData).unwrap();
       notify();
       setAddModalOpen(false);
-      navigate("/parametre/etat-enseignants");
+      navigate("/parametre-enseignant/etat/liste-etat-enseignant");
     } catch (error: any) {
       console.log(error);
     }
@@ -199,6 +205,7 @@ const ListEtatEnseignants = () => {
         accessor: (etatCompteEnseignant: EtatEnseignant) => {
           return (
             <ul className="hstack gap-2 list-unstyled mb-0">
+                {actionAuthorization("/parametre-enseignant/etat/edit-etat-enseignant",user?.permissions!)? 
               <li>
                 <Link
                   to=""
@@ -224,7 +231,8 @@ const ListEtatEnseignants = () => {
                     }
                   ></i>
                 </Link>
-              </li>
+              </li>   : <></> }
+              {actionAuthorization("/parametre-enseignant/etat/supprimer-etat-enseignant",user?.permissions!)? 
               <li>
                 <Link
                   to="#"
@@ -246,7 +254,7 @@ const ListEtatEnseignants = () => {
                     onClick={() => AlertDelete(etatCompteEnseignant?._id!)}
                   ></i>
                 </Link>
-              </li>
+              </li> : <></> }
             </ul>
           );
         },
@@ -283,6 +291,7 @@ const ListEtatEnseignants = () => {
 
                     <Col className="col-lg-auto ms-auto">
                       <div className="hstack gap-2">
+                      {actionAuthorization("/parametre-enseignant/etat/ajouter-etat-enseignant",user?.permissions!)? 
                         <Button
                           variant="primary"
                           className="add-btn"
@@ -290,6 +299,7 @@ const ListEtatEnseignants = () => {
                         >
                           Ajouter Etat Compte
                         </Button>
+                        : <></> }
                       </div>
                     </Col>
                   </Row>

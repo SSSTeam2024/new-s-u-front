@@ -39,7 +39,8 @@ export interface DossierAdministratif {
 }
 
 const EditDossierAdministratifPersonnels = () => {
-  document.title = "Modifier dossier Administratif | Smart University";
+  document.title =
+    "Modifier dossier Administratif | Application Smart Institute";
   const navigate = useNavigate();
   const { state: dossierAdministratif } = useLocation();
   const [editDossierAdministratif] = useUpdateDossierAdministratifMutation();

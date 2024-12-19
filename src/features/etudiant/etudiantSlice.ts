@@ -95,7 +95,7 @@ export interface Etudiant {
 export const etudiantSlice = createApi({
   reducerPath: "Etudiant",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:5000/api/etudiant/",
+    baseUrl: `${process.env.REACT_APP_API_URL}/api/etudiant/`,
   }),
   tagTypes: ["Etudiant"],
   endpoints(builder) {

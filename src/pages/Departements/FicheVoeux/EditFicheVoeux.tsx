@@ -188,7 +188,7 @@ const EditFicheVoeux = () => {
   }, [allClasses, allClassesFetched, hasProcessed]);
 
   const teachersWithoutWishCard = allTeachers.filter(
-    (teacher:any) =>
+    (teacher) =>
       !allVoeux.some(
         (voeux) =>
           voeux.enseignant._id === teacher._id &&
@@ -268,7 +268,7 @@ const EditFicheVoeux = () => {
 
         /*---------------- Subjects selection ---------------- */
         let selectedTeacher = teachersWithoutWishCard.filter(
-          (teacher:any) => teacher._id === e.target.value
+          (teacher) => teacher._id === e.target.value
         );
 
         let classes: any;
@@ -625,7 +625,7 @@ const EditFicheVoeux = () => {
 
     /*---------------- Subjects selection ---------------- */
     let selectedTeacher = teachersWithoutWishCard.filter(
-      (teacher:any) => teacher._id === selectedTeacherId
+      (teacher) => teacher._id === selectedTeacherId
     );
 
     let classes: any;
@@ -731,22 +731,24 @@ const EditFicheVoeux = () => {
                 <Row>
                   <Col lg={3}>
                     <div className="mb-3">
-                      <Form.Label htmlFor="semestre">Semestre</Form.Label>
+                      <Form.Label htmlFor="semestre">
+                        Semestre {formData.semestre === "S2" ? <>2</> : <>1</>}
+                      </Form.Label>
                       <div className="form-check form-switch form-switch-lg from-switch-info">
-                        <input
+                        {/* <input
                           className="form-check-input"
                           type="checkbox"
                           role="switch"
                           id="SwitchCheck6"
                           checked={formData.semestre === "S2"}
                           onChange={toggleSemestre}
-                        />
-                        <label
+                        /> */}
+                        {/* <label
                           className="form-check-label"
                           htmlFor="SwitchCheck6"
                         >
                           {formData.semestre}
-                        </label>
+                        </label> */}
                       </div>
                     </div>
                   </Col>

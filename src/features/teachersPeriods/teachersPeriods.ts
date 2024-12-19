@@ -15,7 +15,7 @@ export interface Payload {
 export const teachersPeriodsSlice = createApi({
   reducerPath: "TeacherPeriod",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:5000/api/teacher-period/",
+    baseUrl: `${process.env.REACT_APP_API_URL}/api/teacher-period/`,
   }),
   tagTypes: ["TeacherPeriod"],
   endpoints(builder) {
@@ -51,6 +51,25 @@ export const teachersPeriodsSlice = createApi({
         },
         invalidatesTags: ["TeacherPeriod"],
       }),
+      // getTeacherPeriodsBySemesterAndIdTeacher: builder.mutation<void, any>({
+      //   query(payload) {
+      //     return {
+      //       url: "/periods",
+      //       method: "POST",
+      //       body: payload,
+      //     };
+      //   },
+      //   invalidatesTags: ["TeacherPeriod"],
+      // }),
+
+      getTeacherPeriodsBySemesterAndIdTeacher: builder.query<any, any>({
+        query: (payload) => ({
+          url: `/periods`,
+          body: payload,
+          method: "POST",
+        }),
+        providesTags: ["TeacherPeriod"],
+      }),
       // updateClassePeriod: builder.mutation<void, TeacherPeriod>({
       //   query: (payload) => ({
       //     url: `/update-class-emploi-period`,
@@ -66,4 +85,6 @@ export const teachersPeriodsSlice = createApi({
 export const {
   useGetTeachersPeriodsMutation,
   useGetTeacherPeriodsByTeacherIdMutation,
+  // useGetTeacherPeriodsBySemesterAndIdTeacherMutation,
+  useGetTeacherPeriodsBySemesterAndIdTeacherQuery,
 } = teachersPeriodsSlice;

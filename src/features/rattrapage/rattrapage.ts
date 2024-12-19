@@ -17,7 +17,7 @@ export interface Rattrapage {
 export const rattrapageSlice = createApi({
   reducerPath: "Rattrapage",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:5000/api/rattrapage/",
+    baseUrl: `${process.env.REACT_APP_API_URL}/api/rattrapage/`,
   }),
   tagTypes: ["Rattrapage"],
   endpoints(builder) {

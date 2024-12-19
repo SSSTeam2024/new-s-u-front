@@ -9,7 +9,7 @@ export interface PostePersonnel {
 export const postePersonnelSlice = createApi({
   reducerPath: "PostePersonnel",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:5000/api/poste-personnel/",
+    baseUrl: `${process.env.REACT_APP_API_URL}/api/poste-personnel/`,
   }),
   tagTypes: ["PostePersonnel"],
   endpoints(builder) {

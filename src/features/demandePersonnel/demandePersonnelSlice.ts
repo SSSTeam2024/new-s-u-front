@@ -17,7 +17,7 @@ export interface Demande {
   export const demandePersonnelSlice = createApi({
     reducerPath: 'demandePersonnelApi',
     baseQuery: fetchBaseQuery({
-      baseUrl: `${process.env.REACT_APP_API_URL}/demande-personnel/`, // Adjust endpoint base URL
+      baseUrl: `${process.env.REACT_APP_API_URL}/api/demande-personnel/`, // Adjust endpoint base URL
     }),
     tagTypes: ['Demandes'],
     endpoints(builder) {

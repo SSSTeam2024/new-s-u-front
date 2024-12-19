@@ -2,7 +2,10 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Button, Card, Col, Container, Form, Row } from "react-bootstrap";
 import { Link, useLocation } from "react-router-dom";
 import "flatpickr/dist/flatpickr.min.css";
-import { useGetSeancesByIdTeacherAndSemestreQuery } from "features/seance/seance";
+import {
+  useGetPeriodicSessionsByTeacherQuery,
+  useGetSeancesByIdTeacherAndSemestreQuery,
+} from "features/seance/seance";
 
 import CustomLoader from "Common/CustomLoader/CustomLoader";
 import "jspdf-autotable";
@@ -185,6 +188,7 @@ interface Session {
   heure_fin: string;
   matiere: {
     matiere: string;
+    type: string;
   };
   salle: {
     salle: string;
@@ -203,7 +207,7 @@ interface TimetablePDFProps {
   maxSessions: number;
 }
 
-const SingleEmploiEnseignant = () => {
+const GestionEmploiEnseignant = () => {
   document.title = " Gestion emploi enseignant | Application Smart Institute";
 
   const [canAddSession, setCanAddSession] = useState<boolean>(false);
@@ -211,17 +215,27 @@ const SingleEmploiEnseignant = () => {
   const [showAlert, setShowAlert] = useState(false);
   const [showAlertMessage, setAlertMessage] = useState("");
   const location = useLocation();
-  const { enseignant, semestre } = location?.state! || {};
+  const { teacher, ids, semestre, interval } = location?.state! || {};
+  console.log("teacher", teacher);
   //console.log("enseignant", enseignant);
+  // const { data: seances = [], isSuccess: sessionClassFetched } =
+  //   useGetSeancesByIdTeacherAndSemestreQuery({
+  //     enseignantId: enseignant?._id!,
+  //     semestre: semestre,
+  //   });
+
   const { data: seances = [], isSuccess: sessionClassFetched } =
-    useGetSeancesByIdTeacherAndSemestreQuery({
-      enseignantId: enseignant?._id!,
-      semestre: semestre,
+    useGetPeriodicSessionsByTeacherQuery({
+      teacher_id: teacher?._id!,
+      emplois_periodiques_ids: ids,
     });
+
+  console.log("seances", seances);
 
   const { data: variableGlobales = [] } = useFetchVaribaleGlobaleQuery();
 
   const { data: typeSeances = [] } = useFetchTypeSeancesQuery();
+  console.log("typeSeances", typeSeances);
 
   const typesFromSeances = useMemo(() => {
     if (
@@ -252,6 +266,37 @@ const SingleEmploiEnseignant = () => {
   const [td, setTd] = useState("");
   const [ci, setCi] = useState("");
 
+  //* Dynamic CoefficientSums **//
+  // const [coefficientSums, setCoefficentSums] = useState<any>(null);
+
+  // useEffect(() => {
+  //   let sums: any = {};
+
+  //   console.log("typeSeances", typeSeances);
+
+  //   for (const type of typeSeances) {
+  //     sums[type.abreviation] = 0;
+  //   }
+
+  //   console.log("sums", sums);
+
+  //   typeSeances.forEach((types: any) => {
+  //     seances.forEach((seance: any) => {
+  //       const heureDebut = new Date(`1970-01-01T${seance?.heure_debut}`);
+  //       const heureFin = new Date(`1970-01-01T${seance?.heure_fin}`);
+  //       const duration =
+  //         (heureFin.getTime() - heureDebut.getTime()) / (60 * 1000); // minutes
+  //       sums[types?.abreviation] = Number(types.charge) * (duration / 60);
+  //     });
+  //   });
+
+  //   setCoefficentSums(sums);
+
+  //   console.log("sums", sums);
+  // }, [typeSeances, seances]);
+
+  //* **//
+
   useEffect(() => {
     let tempCours = 0;
     let tempTp = 0;
@@ -260,21 +305,22 @@ const SingleEmploiEnseignant = () => {
 
     typesFromSeances.forEach((types: any) => {
       seances.forEach((seance: any) => {
+        console.log("seance", seance);
         const heureDebut = new Date(`1970-01-01T${seance?.heure_debut}`);
         const heureFin = new Date(`1970-01-01T${seance?.heure_fin}`);
         const duration =
           (heureFin.getTime() - heureDebut.getTime()) / (60 * 1000); // minutes
 
-        if (types?.abreviation === "C") {
+        if (types?.abreviation === "C" && seance.matiere.type === "C") {
           tempCours = 1.83 * (duration / 60);
         }
-        if (types?.abreviation === "CI") {
+        if (types?.abreviation === "CI" && seance.matiere.type === "CI") {
           tempCi = 1.55 * (duration / 60);
         }
-        if (types?.abreviation === "TP") {
+        if (types?.abreviation === "TP" && seance.matiere.type === "TP") {
           tempTp = 0.86 * (duration / 60);
         }
-        if (types?.abreviation === "TD") {
+        if (types?.abreviation === "TD" && seance.matiere.type === "TD") {
           tempTd = 1 * (duration / 60);
         }
       });
@@ -286,10 +332,6 @@ const SingleEmploiEnseignant = () => {
     setTd(tempTd.toFixed(2));
     setCi(tempCi.toFixed(2));
   }, [typesFromSeances, seances]);
-
-  const filteredSessions = seances?.filter(
-    (session) => session?.semestre! === semestre
-  );
 
   const timeSlotsDynamic: any = [];
   for (let i = 16; i < 38; i++) {
@@ -317,7 +359,7 @@ const SingleEmploiEnseignant = () => {
 
   const groupSessionsByDay = (sessions: any) => {
     const grouped: any = {};
-
+    console.log("sessions grouped sessions", sessions);
     // Group sessions by day
     sessions.forEach((session: any) => {
       const { jour, heure_debut, heure_fin, matiere, salle, classe } = session;
@@ -344,8 +386,8 @@ const SingleEmploiEnseignant = () => {
     return grouped;
   };
 
-  const groupedSessions = groupSessionsByDay(filteredSessions) || {};
-  // console.log("groupedSessions", groupedSessions);
+  const groupedSessions = groupSessionsByDay(seances) || {};
+  console.log("groupedSessions", groupedSessions);
   const days = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
   const maxSessions = Math.max(
     ...days.map((day) =>
@@ -412,26 +454,31 @@ const SingleEmploiEnseignant = () => {
               <Text style={styles.headerText}>
                 Nom et Prénom:{" "}
                 <Text style={{ fontWeight: "bold", fontSize: "12" }}>
-                  {enseignant.nom_fr} {enseignant.prenom_fr}
+                  {teacher?.nom_fr} {teacher?.prenom_fr}
                 </Text>
               </Text>
               <Text style={styles.headerText}>
                 Grade:{" "}
                 <Text style={{ fontWeight: "bold", fontSize: "12" }}>
-                  {enseignant?.grade?.grade_fr}
+                  {teacher?.grade?.grade_fr}
                 </Text>
               </Text>
             </View>
             {/* Left: Periodic Date Section */}
             <View style={styles.periodicDateContainer}>
               <Text style={styles.periodicDate}>
-                Période: 09-09-2024 / 09-10-2024
+                Période: {interval.start_date} / {interval.end_date}
               </Text>
             </View>
 
             {/* Right: Course Load Table */}
             <View style={styles.courseLoadContainer}>
               <View style={styles.courseLoadRow}>
+                {/* {typeSeances.map((type, index) => (
+                  <Text style={styles.courseLoadHeader}>
+                    {type.abreviation}
+                  </Text>
+                ))} */}
                 <Text style={styles.courseLoadHeader}>C</Text>
                 <Text style={styles.courseLoadHeader}>CI</Text>
                 <Text style={styles.courseLoadHeader}>TP</Text>
@@ -473,7 +520,9 @@ const SingleEmploiEnseignant = () => {
                     {session.heure_debut || "N/A"} -{" "}
                     {session.heure_fin || "N/A"}
                     {"\n"}
-                    {session.matiere?.matiere || "No Subject"} {"\n"}
+                    {session.matiere?.matiere + " | " + session.matiere?.type ||
+                      "No Subject"}{" "}
+                    {"\n"}
                     {session.salle?.salle || "No Room"} {"\n"}
                     {session.classe?.nom_classe_fr || "No Class"}
                   </Text>
@@ -506,14 +555,14 @@ const SingleEmploiEnseignant = () => {
         <View style={styles.footerRowTitle}>
           <View style={styles.leftColumn}>
             <Text style={styles.footerText}>
-              {enseignant.departements.nom_chef_dep}
+              {teacher?.departements.nom_chef_dep}
             </Text>
           </View>
           {/* Left: Periodic Date Section */}
           <View style={styles.periodicDateContainer}>
             <Text style={styles.footerText}>
               <Text>
-                {enseignant.nom_fr} {enseignant.prenom_fr}
+                {teacher?.nom_fr} {teacher?.prenom_fr}
               </Text>
             </Text>
           </View>
@@ -601,8 +650,8 @@ const SingleEmploiEnseignant = () => {
                 <input type="hidden" id="id-field" />
                 <Row className=" fw-bold titre-emploi">
                   <h2 className="text-center">
-                    Emploi de Temps - {enseignant.prenom_fr} {enseignant.nom_fr}{" "}
-                    - Semestre {semestre}
+                    Emploi de Temps - {teacher.prenom_fr} {teacher.nom_fr} -
+                    Semestre {semestre}
                   </h2>
                 </Row>
                 {canAddSession === false ? (
@@ -631,6 +680,8 @@ const SingleEmploiEnseignant = () => {
                                             </div>
                                             <div>
                                               {session?.matiere?.matiere!}
+                                              {" | "}
+                                              {session.matiere?.type}
                                             </div>
                                             <div>{session?.salle?.salle!}</div>
                                             <div>
@@ -680,7 +731,7 @@ const SingleEmploiEnseignant = () => {
                 <div className="modal-footer">
                   {" "}
                   <Button variant="dark" onClick={handlePrintPDF}>
-                    Print/Download PDF
+                    Télécharger PDF
                   </Button>
                 </div>
               </Form>
@@ -692,4 +743,4 @@ const SingleEmploiEnseignant = () => {
   );
 };
 
-export default SingleEmploiEnseignant;
+export default GestionEmploiEnseignant;

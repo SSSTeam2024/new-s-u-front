@@ -15,7 +15,6 @@ const TitlePDF: React.FC<ChildProps> = ({ piece_demande }) => {
   );
 };
 
-// Helper function to get the text from the component for jsPDF
 export const getTitleText = (piece_demande: TemplateBody): string => {
   return piece_demande?.title || "Default Title";
 };

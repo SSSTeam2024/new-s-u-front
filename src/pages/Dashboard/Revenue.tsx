@@ -5,6 +5,7 @@ import Flatpickr from "react-flatpickr";
 import { RevenueCharts } from './DashboardCharts';
 import CountUp from 'react-countup';
 import { useSelector, useDispatch } from 'react-redux';
+import { createSelector } from 'reselect';
 
 //import images
 import bodyLight from "assets/images/sidebar/body-light-1.png";
@@ -20,9 +21,14 @@ const Revenue = () => {
 
     const [activeChart, setactiveChart] = useState<string>("yearly");
 
-    const { revenueChartData } = useSelector((state: any) => ({
-        revenueChartData: state.Dashboard.chartData
-    }));
+    const selectProperties = createSelector(
+        (state: any) => state.Dashboard,
+        (dashboard) => ({
+            revenueChartData: dashboard.chartData
+        })
+    );
+
+    const { revenueChartData } = useSelector(selectProperties);
 
     useEffect(() => {
         setchartData(revenueChartData);

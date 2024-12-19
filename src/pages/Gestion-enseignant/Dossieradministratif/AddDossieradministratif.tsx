@@ -38,7 +38,8 @@ export interface DossierAdministratif {
 }
 
 const AddDossieradministratif = () => {
-  document.title = "Ajouter Dossier Administratif | Smart University";
+  document.title =
+    "Ajouter Dossier Administratif | Application Smart Institute";
   const navigate = useNavigate();
 
   function tog_retourParametres() {
@@ -107,12 +108,13 @@ const AddDossieradministratif = () => {
   };
 
   const handleTeacherChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    console.log("handle change teachers functions all teachers",allTeachers)
     const selectedTeacherId = event.target.value;
-    allTeachers.forEach((teacher: any, index: any) => {
+    allTeachers.forEach((teacher:any, index:any) => {
       console.log(`Teacher ${index}:`, teacher);
     });
     const selectedTeacher = allTeachers.find(
-      (teacher: any) =>
+      (teacher:any) =>
         teacher._id.trim().toLowerCase() ===
         selectedTeacherId.trim().toLowerCase()
     ) || {
@@ -200,10 +202,7 @@ const AddDossieradministratif = () => {
   const onSubmitDossier = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (
-      !formData.enseignant?._id ||
-      !isValidObjectId(formData?.enseignant?._id)
-    ) {
+    if (!formData.enseignant?._id || !isValidObjectId(formData?.enseignant?._id)) {
       console.error("Enseignant ID is missing or invalid.");
       return;
     }
@@ -301,10 +300,9 @@ const AddDossieradministratif = () => {
                         <option value="">Sélectionner Enseignant</option>
                         {allTeachers
                           .filter(
-                            (enseignant: any) =>
-                              enseignant?.papers?.length === 0
+                            (enseignant:any) => enseignant?.papers?.length === 0
                           )
-                          .map((enseignant: any) => (
+                          .map((enseignant:any) => (
                             <option key={enseignant._id} value={enseignant._id}>
                               {`${enseignant.prenom_fr} ${enseignant.nom_fr}`}
                             </option>

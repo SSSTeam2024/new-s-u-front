@@ -38,15 +38,15 @@ export interface DossierAdministratif {
 }
 
 const AddDossieradministratifPersonnels = () => {
-  document.title = "Ajouter dossier administratif | Smart University";
+  document.title =
+    "Ajouter dossier administratif | Application Smart Institute";
   const navigate = useNavigate();
   function tog_retourParametres() {
     navigate("/listeDossierAdministartifPersonnel");
   }
 
   const [createDossierAdministratif] = useAddDossierAdministratifMutation();
-  const { data: allPersonnels = [], refetch: refetchPersonnels } =
-    useFetchPersonnelsQuery();
+  const { data: allPersonnels = [], refetch: refetchPersonnels } = useFetchPersonnelsQuery();
 
   const { data: allPapierAdministratifs = [] } =
     useFetchPapierAdministratifQuery();
@@ -273,7 +273,7 @@ const AddDossieradministratifPersonnels = () => {
       papers: prevData.papers.filter((_, i) => i !== index),
     }));
   };
-
+  
   return (
     <React.Fragment>
       <div className="page-content">
@@ -286,7 +286,7 @@ const AddDossieradministratifPersonnels = () => {
                   className="d-none alert alert-danger py-2"
                 ></div>
                 <input type="hidden" id="id-field" />
-                <Row>
+                <Row>         
                   <Col lg={2}>
                     <div className="mb-3">
                       <Form.Label htmlFor="personnel">Personnel</Form.Label>

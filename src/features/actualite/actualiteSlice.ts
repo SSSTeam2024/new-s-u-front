@@ -20,7 +20,7 @@ export interface Actualite {
   export const actualiteSlice = createApi({
     reducerPath: 'actualiteApi',
     baseQuery: fetchBaseQuery({
-      baseUrl: `${process.env.REACT_APP_API_URL}/actualite/`, // Adjust endpoint base URL
+      baseUrl: `${process.env.REACT_APP_API_URL}/api/actualite/`, // Adjust endpoint base URL
     }),
     tagTypes: ['Actualite'],
     endpoints(builder) {

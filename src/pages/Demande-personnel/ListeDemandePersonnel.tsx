@@ -9,7 +9,9 @@ import {
   Row,
 } from "react-bootstrap";
 import Breadcrumb from "Common/BreadCrumb";
+import CountUp from "react-countup";
 import TableContainer from "Common/TableContainer";
+
 import Flatpickr from "react-flatpickr";
 import dummyImg from "../../assets/images/users/user-dummy-img.jpg";
 import { Link, useNavigate } from "react-router-dom";
@@ -27,7 +29,7 @@ import {
 } from "features/demandePersonnel/demandePersonnelSlice";
 
 const ListeDemandePersonnel = () => {
-  document.title = "Demande Personnel | Smart University";
+  document.title = "Demande Personnel | Smart Institute";
 
   const user = useSelector((state: RootState) => selectCurrentUser(state));
   const MySwal = withReactContent(Swal);

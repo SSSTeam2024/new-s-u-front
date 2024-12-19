@@ -19,7 +19,7 @@ const HeaderPDF: React.FC<HeaderPDFProps> = ({
           style={{
             width: 100,
           }}
-          src={`http://localhost:5000/files/variableGlobaleFiles/logoEtablissementFiles/${logo_etablissement}`}
+          src={`${process.env.REACT_APP_API_URL}/files/variableGlobaleFiles/logoEtablissementFiles/${logo_etablissement}`}
         />
       </Col>
       <Col>
@@ -27,7 +27,7 @@ const HeaderPDF: React.FC<HeaderPDFProps> = ({
           style={{
             width: 50,
           }}
-          src={`http://localhost:5000/files/variableGlobaleFiles/logoRepubliqueFiles/${logo_republique}`}
+          src={`${process.env.REACT_APP_API_URL}/files/variableGlobaleFiles/logoRepubliqueFiles/${logo_republique}`}
         />
       </Col>
       <Col>
@@ -35,7 +35,7 @@ const HeaderPDF: React.FC<HeaderPDFProps> = ({
           style={{
             width: 100,
           }}
-          src={`http://localhost:5000/files/variableGlobaleFiles/logoUniversiteFiles/${logo_universite}`}
+          src={`${process.env.REACT_APP_API_URL}/files/variableGlobaleFiles/logoUniversiteFiles/${logo_universite}`}
         />
       </Col>
     </Row>

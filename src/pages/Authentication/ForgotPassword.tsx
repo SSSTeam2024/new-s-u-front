@@ -2,6 +2,7 @@ import React from 'react';
 import { Alert, Button, Card, Col, Container, Form, Row } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from "react-redux";
+import { createSelector } from 'reselect';
 
 // Import Images
 import logoDark from 'assets/images/logo-dark.png'
@@ -37,10 +38,15 @@ const ForgotPassword = (props: any) => {
         }
     });
 
-    const { forgetError, forgetSuccessMsg } = useSelector((state: any) => ({
-        forgetError: state.ForgetPassword.forgetError,
-        forgetSuccessMsg: state.ForgetPassword.forgetSuccessMsg,
-    }));
+    const selectProperties = createSelector(
+        (state: any) => state.ForgetPassword,
+        (forgetPassword) => ({
+            forgetError: forgetPassword.forgetError,
+            forgetSuccessMsg: forgetPassword.forgetSuccessMsg,
+        })
+    );
+
+    const { forgetError, forgetSuccessMsg } = useSelector(selectProperties);
 
     return (
         <React.Fragment>

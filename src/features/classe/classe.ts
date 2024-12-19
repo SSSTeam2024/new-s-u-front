@@ -29,7 +29,7 @@ export interface AssignMatieresPayload {
 export const classeSlice = createApi({
   reducerPath: "Classe",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:5000/api/classe/",
+    baseUrl: `${process.env.REACT_APP_API_URL}/api/classe/`,
   }),
   tagTypes: ["Classe"],
   endpoints(builder) {

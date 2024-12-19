@@ -6,11 +6,12 @@ import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 
 const EditAvisEtudiant = () => {
-  document.title = "Modifier Avis Etudiant | Smart University";
+  document.title = "Avis Etudiant | Smart Institute";
   const location = useLocation();
   const { title, gallery, description, auteurId, date_avis, createdAt, lien } =
-    location?.state!;
+    location.state;
 
+  // Format the createdAt timestamp
   const formattedDate = formatDistanceToNow(new Date(createdAt), {
     addSuffix: true,
     locale: fr,
@@ -30,7 +31,7 @@ const EditAvisEtudiant = () => {
                   <Carousel.Item key={index}>
                     <Image
                       className="d-block w-100"
-                      src={`http://localhost:5000/files/avisEtudiantFiles/photo/${photo}`}
+                      src={`${process.env.REACT_APP_API_URL}/files/avisEtudiantFiles/photo/${photo}`}
                       alt={`Slide ${index + 1}`}
                       style={{ maxHeight: "500px", objectFit: "cover" }}
                     />

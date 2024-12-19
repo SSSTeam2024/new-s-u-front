@@ -148,14 +148,14 @@ const ListMatieres = () => {
         disableFilters: true,
         filterable: true,
       },
-
+  
       {
         Header: "Volume",
         accessor: (row: Matiere) => row.volume || "---",
         disableFilters: true,
         filterable: true,
       },
-
+  
       {
         Header: "Nbr élimination",
         accessor: (row: Matiere) => row.nbr_elimination || "---",

@@ -9,7 +9,7 @@ export interface ServicePersonnel {
 export const servicePersonnelSlice = createApi({
   reducerPath: "ServicePersonnel",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:5000/api/service-personnel/",
+    baseUrl: `${process.env.REACT_APP_API_URL}/api/service-personnel/`,
   }),
   tagTypes: ["ServicePersonnel"],
   endpoints(builder) {

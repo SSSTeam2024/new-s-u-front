@@ -12,7 +12,7 @@ export interface Matiere {
 export const matiereSlice = createApi({
   reducerPath: "Matiere",
   baseQuery: fetchBaseQuery({
-    baseUrl: `${process.env.REACT_APP_API_URL}/matiere/`,
+    baseUrl: `${process.env.REACT_APP_API_URL}/api/matiere/`,
   }),
   tagTypes: ["Matiere"],
   endpoints(builder) {

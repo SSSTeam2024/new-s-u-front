@@ -22,7 +22,7 @@ export interface LeaveBalance {
   export const leaveBalanceSlice = createApi({
     reducerPath: 'leaveBalanceApi',
     baseQuery: fetchBaseQuery({
-      baseUrl: `${process.env.REACT_APP_API_URL}/LeaveBalance/`, // Adjust endpoint base URL
+      baseUrl: `${process.env.REACT_APP_API_URL}/api/LeaveBalance/`, // Adjust endpoint base URL
     }),
     tagTypes: ['LeaveBalances'],
     endpoints(builder) {

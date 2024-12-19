@@ -6,11 +6,11 @@ import { stockReport } from "../../Common/data";
 const Status = ({ status }: any) => {
     switch (status) {
         case "In Stock":
-            return (<span className="badge badge-soft-success"> {status}</span>)
+            return (<span className="badge bg-success-subtle text-success"> {status}</span>)
         case "Low Stock":
-            return (<span className="badge badge-soft-warning"> {status}</span>)
+            return (<span className="badge bg-warning-subtle text-warning"> {status}</span>)
         default:
-            return (<span className="badge badge-soft-danger"> {status}</span>)
+            return (<span className="badge bg-danger-subtle text-danger"> {status}</span>)
     }
 }
 

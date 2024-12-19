@@ -10,7 +10,7 @@ export interface PapierAdministratif {
 export const papierAdministratifSlice = createApi({
   reducerPath: "PapierAdministratif",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:5000/api/papierAdministratif/",
+    baseUrl: `${process.env.REACT_APP_API_URL}/api/papierAdministratif/`,
   }),
   tagTypes: ["PapierAdministratif"],
   endpoints(builder) {

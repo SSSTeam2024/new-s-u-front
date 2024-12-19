@@ -19,9 +19,15 @@ import {
   useFetchPostesEnseignantQuery,
   useUpdatePosteEnseignantMutation,
 } from "features/posteEnseignant/posteEnseignant";
+import { actionAuthorization } from 'utils/pathVerification';
+import { RootState } from 'app/store';
+import { useSelector } from 'react-redux';
+import { selectCurrentUser } from 'features/account/authSlice';
 
 const ListePostEnseignants = () => {
   document.title = "Liste postes des enseignants | Smart University";
+  const user = useSelector((state: RootState) => selectCurrentUser(state));
+
 
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
@@ -105,6 +111,7 @@ const ListePostEnseignants = () => {
         accessor: (posteEnseignant: PosteEnseignant) => {
           return (
             <ul className="hstack gap-2 list-unstyled mb-0">
+               {actionAuthorization("/parametre-enseignant/poste/edit-poste-enseignant",user?.permissions!)? 
               <li>
                 <Link
                   to=""
@@ -130,7 +137,8 @@ const ListePostEnseignants = () => {
                     }
                   ></i>
                 </Link>
-              </li>
+              </li>  : <></> }
+              {actionAuthorization("/parametre-enseignant/poste/supprimer-poste-enseignant",user?.permissions!)? 
               <li>
                 <Link
                   to="#"
@@ -152,7 +160,7 @@ const ListePostEnseignants = () => {
                     onClick={() => AlertDelete(posteEnseignant?._id!)}
                   ></i>
                 </Link>
-              </li>
+              </li> : <></> }
             </ul>
           );
         },
@@ -220,7 +228,7 @@ const ListePostEnseignants = () => {
       await createPosteEnseignant(formData).unwrap();
       notify();
       setAddModalOpen(false);
-      navigate("/parametre/poste-enseignants");
+      navigate("/parametre-enseignant/poste/liste-poste-enseignant");
     } catch (error: any) {
       console.log(error);
     }
@@ -287,13 +295,14 @@ const ListePostEnseignants = () => {
                     </Col>
                     <Col className="col-lg-auto ms-auto">
                       <div className="hstack gap-2">
+                      {actionAuthorization("/parametre-enseignant/poste/ajouter-poste-enseignant",user?.permissions!)? 
                         <Button
                           variant="primary"
                           className="add-btn"
                           onClick={() => handleAddClick()}
                         >
                           Ajouter poste enseignant
-                        </Button>
+                        </Button> : <></> }
                       </div>
                     </Col>
                   </Row>

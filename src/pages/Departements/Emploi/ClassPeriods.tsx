@@ -22,10 +22,11 @@ import TableContainer from "Common/TableContainer";
 import { format } from "date-fns";
 import Flatpickr from "react-flatpickr";
 import { useFetchTimeTableParamsQuery } from "features/timeTableParams/timeTableParams";
+import { options } from "@fullcalendar/core/preact";
 
 const ListClassPeriods = () => {
   document.title = "Liste périodes des emplois classes | Smart University";
-
+  const navigate = useNavigate();
   const location = useLocation();
   const classeDetails = location.state;
   console.log("classeDetails", classeDetails);
@@ -51,7 +52,7 @@ const ListClassPeriods = () => {
   console.log("data", classTimeTables);
 
   const schedules = classTimeTables.filter(
-    (tt) => tt.semestre === classeDetails.semestre
+    (tt: any) => tt.semestre === classeDetails.semestre
   );
 
   const [createPeriodicSchedule] = useAddClassePeriodMutation();
@@ -70,9 +71,11 @@ const ListClassPeriods = () => {
   const handleAddClick = async () => {
     if (schedules.length > 0) {
       const currentDate = new Date();
-      const dateParam = formatDate(currentDate)
+      const dateStr = formatDate(currentDate);
       const { nextSunday, nextMonday } = getNextSundayAndMonday(
-        convertStringToDate(/* "10-11-2024" */ dateParam) /* currentDate */
+        convertStringToDate(
+          /* "10-11-2024"  currentDate*/ dateStr
+        ) /* currentDate */
       );
       console.log("Next Saturday:", nextSunday);
       console.log("Next Monday:", nextMonday);
@@ -109,7 +112,6 @@ const ListClassPeriods = () => {
   };
 
   const convertStringToDate = (dateStr: any) => {
-    console.log("date str",dateStr)
     const [day, month, year] = dateStr.split("-").map(Number);
     // Months are 0-indexed in JavaScript Date (0 = January, 1 = February, etc.)
     return new Date(year, month - 1, day);
@@ -184,14 +186,6 @@ const ListClassPeriods = () => {
       .then(async (result) => {
         if (result.isConfirmed) {
           console.log("formData", formData);
-          await updatePrevPeriodicSchedule({
-            _id: schedules[schedules.length - 1]._id,
-            date_debut: schedules[schedules.length - 1].date_debut,
-            date_fin: date_fin_prev_period,
-            semestre: schedules[schedules.length - 1].semestre,
-            id_classe: classeDetails.classe._id,
-            etat: "Cloturé",
-          }).unwrap();
           await createPeriodicSchedule({
             date_debut: date_debut_next_period,
             date_fin: date_fin_next_period,
@@ -199,11 +193,19 @@ const ListClassPeriods = () => {
             id_classe: classeDetails.classe._id,
             etat: "En élaboration",
           }).unwrap();
-          swalWithBootstrapButtons.fire(
-            "",
-            "Un nouveau emploi a été crée.",
-            "success"
-          );
+
+          swalWithBootstrapButtons
+            .fire("", "Un nouveau emploi a été crée.", "success")
+            .then(async () => {
+              await updatePrevPeriodicSchedule({
+                _id: schedules[schedules.length - 1]._id,
+                date_debut: schedules[schedules.length - 1].date_debut,
+                date_fin: date_fin_prev_period,
+                semestre: schedules[schedules.length - 1].semestre,
+                id_classe: classeDetails.classe._id,
+                etat: "Cloturé",
+              }).unwrap();
+            });
         } else if (result.dismiss === Swal.DismissReason.cancel) {
           swalWithBootstrapButtons.fire("Annulé", "", "error");
         }

@@ -36,9 +36,7 @@ const ListCategoriePersonnels = () => {
     setmodal_AddParametreModals(!modal_AddParametreModals);
   }
 
-  function tog_AddCategoriePersonnel() {
-    navigate("/parametre/add-categorie-personnels");
-  }
+ 
   const { data = [] } = useFetchCategoriesPersonnelQuery();
   const [deleteCategoriePersonnel] = useDeleteCategoriePersonnelMutation();
 

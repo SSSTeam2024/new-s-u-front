@@ -12,8 +12,8 @@ import {
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Carousel, Image } from "react-bootstrap";
 import Breadcrumb from "Common/BreadCrumb";
-import "./style.css";
-import { useUpdateReclamationMutation } from "features/reclamationEtudiant/recalamationEtudiantSlice";
+import "./style.css"
+import {useUpdateReclamationMutation}  from "features/reclamationEtudiant/recalamationEtudiantSlice";
 
 // Import images
 import img1 from "assets/images/small/img-1.jpg";
@@ -29,14 +29,14 @@ import Swal from "sweetalert2";
 
 // Define types for location state and update payload
 type ReclamationState = {
-  _id: string;
-  studentId: string;
-  title: string;
-  description: string;
-  response: string;
-  status: string;
-  createdAt: Date;
-  updatedAt: Date;
+  _id:string,
+  studentId: string,
+  title:  string,
+  description: string,
+  response: string,
+  status: string,
+  createdAt:Date,
+  updatedAt:Date,
   pdf: string;
   pdfBase64String: string;
   pdfExtension: string;
@@ -51,13 +51,14 @@ type ReclamationState = {
 type UpdateDemandePayload = {
   _id: string;
   response: string;
-  status: string;
+  status: string
+
 };
 const EditReclamationEtudiant = () => {
   document.title = "Modifier Réclamation Etudiant | Smart University";
   const location = useLocation();
   console.log("state", location);
-  const studentId = location.state?.studentId?._id!;
+  const studentId= location.state?.studentId?._id!
   const state = location.state as ReclamationState; // Adjust based on your type
   const [response, setResponse] = useState(location.state?.response || "");
   const [updateReclamationEtudiant] = useUpdateReclamationMutation();
@@ -67,6 +68,9 @@ const EditReclamationEtudiant = () => {
     navigate("/reclamation-etudiant/single-reclamation-etudiant");
   };
 
+
+
+
   // Handle form submission
   const handleSubmit = async () => {
     try {
@@ -75,10 +79,10 @@ const EditReclamationEtudiant = () => {
         response: response,
         status: "traité", // Update status to "traité" implicitly
       } as unknown as UpdateDemandePayload).unwrap();
-
+  
       // Show notification
       notify();
-
+  
       // Delay navigation to allow the notification to be visible
       setTimeout(() => {
         navigate("/reclamation-etudiant/liste-reclamation-etudiant");
@@ -94,7 +98,7 @@ const EditReclamationEtudiant = () => {
       });
     }
   };
-
+  
   const notify = () => {
     Swal.fire({
       position: "center",
@@ -116,6 +120,7 @@ const EditReclamationEtudiant = () => {
           <Row>
             <Col lg={12}>
               <Card>
+              
                 <Card.Body>
                   <Card className="border-0 shadow-none mb-0">
                     <Card.Body
@@ -128,95 +133,86 @@ const EditReclamationEtudiant = () => {
                     <Card.Body>
                       <div className="mt-n5">
                         <Image
-                          src={`http://localhost:5000/files/etudiantFiles/PhotoProfil/${location.state?.studentId.photo_profil}`}
+                           src={`${process.env.REACT_APP_API_URL}/files/etudiantFiles/PhotoProfil/${location.state?.studentId.photo_profil}`}
                           alt=""
-                          className="rounded-circle p-1 bg-body mt-n5"
-                          width="150"
+                         className="rounded-circle p-1 bg-body mt-n5" width="150"
                         />
                       </div>
                     </Card.Body>
                     <Row>
-                      <Col xxl={6} lg={6}>
-                        <Card className="categrory-widgets overflow-hidden">
-                          <div className="card-header d-flex align-items-center">
-                            <h5 className="card-title flex-grow-1 mb-0">
-                              Détails de l'étudiant{" "}
-                              {/* <i className="bi bi-mortarboard-fill"></i> */}
-                            </h5>
-                            <div className="flex-shrink-0">
-                              <Button
-                                onClick={() => Navigate(studentId)}
-                                type="button"
-                                className="btn btn-info btn-label m-1"
-                              >
-                                <i className="bi bi-eye label-icon align-middle fs-16 me-2"></i>
-                                Voir étudiant{" "}
-                              </Button>
-                            </div>
-                          </div>
-                          <div className="card-body">
-                            <div className="text-center">
-                              <i className="bi bi-mortarboard fs-1 text-muted"></i>
-                            </div>
-                            <div className="table-responsive">
-                              <table className="table table-sm table-borderless align-middle description-table mb-0">
-                                <tbody>
-                                  <tr>
-                                    <td className="">Nom et prénom:</td>
-                                    <td>
-                                      <span className="mb-1 ">
-                                        {location.state?.studentId?.nom_fr!}{" "}
-                                        {location.state?.studentId?.prenom_fr!}
-                                      </span>
-                                    </td>
-                                  </tr>
-                                  <tr>
-                                    <td className="">CIN:</td>
-                                    <td>
-                                      <span className="mb-1 ">
-                                        {location.state?.studentId?.num_CIN!}
-                                      </span>
-                                    </td>
-                                  </tr>
-                                  <tr>
-                                    <td className="">Classe:</td>
-                                    <td>
-                                      <span className="mb-1 ">
-                                        {
-                                          location.state?.studentId
-                                            ?.groupe_classe!
-                                        }
-                                      </span>
-                                    </td>
-                                  </tr>
-                                  <tr>
-                                    <td className="">E-mail:</td>
-                                    <td>
-                                      <span className="mb-1 ">
-                                        {location.state?.studentId?.email!}
-                                      </span>
-                                    </td>
-                                  </tr>
-                                  <tr>
-                                    <td className="">Téléphone:</td>
-                                    <td>
-                                      <span className="mb-1 ">
-                                        {location.state?.studentId?.num_phone!}
-                                      </span>
-                                    </td>
-                                  </tr>
-                                </tbody>
-                              </table>
-                            </div>
-                          </div>
-                          <img
-                            src={student}
-                            alt=""
-                            className="img-fluid category-img object-fit-cover"
-                          />
-                        </Card>
-                      </Col>
-                      <Col xxl={6} lg={6}>
+            <Col xxl={6} lg={6}>
+              <Card className="categrory-widgets overflow-hidden">
+                <div className="card-header d-flex align-items-center">
+                  <h5 className="card-title flex-grow-1 mb-0">
+                    Détails de l'étudiant{" "}
+                    {/* <i className="bi bi-mortarboard-fill"></i> */}
+                  </h5>
+                  <div className="flex-shrink-0">
+                    <Button
+                      onClick={() => Navigate(studentId)}
+                      type="button"
+                      className="btn btn-info btn-label m-1"
+                    >
+                      <i className="bi bi-eye label-icon align-middle fs-16 me-2"></i>
+                      Voir étudiant{" "}
+                    </Button>
+                  </div>
+                </div>
+                <div className="card-body">
+                  <div className="text-center">
+                    <i className="bi bi-mortarboard fs-1 text-muted"></i>
+                  </div>
+                  <div className="table-responsive">
+                    <table className="table table-sm table-borderless align-middle description-table mb-0">
+                      <tbody>
+                        <tr>
+                          <td className="">Nom et prénom:</td>
+                          <td>
+                            <span className="mb-1 ">
+                              {location.state?.studentId?.nom_fr!} {location.state?.studentId?.prenom_fr!}
+                            </span>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="">CIN:</td>
+                          <td>
+                            <span className="mb-1 ">{location.state?.studentId?.num_CIN!}</span>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="">Classe:</td>
+                          <td>
+                            <span className="mb-1 ">
+                            {location.state?.studentId?.groupe_classe!}
+                            </span>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="">E-mail:</td>
+                          <td>
+                            <span className="mb-1 ">
+                            {location.state?.studentId?.email!}
+                            </span>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="">Téléphone:</td>
+                          <td>
+                            <span className="mb-1 ">{location.state?.studentId?.num_phone!}</span>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <img
+                  src={student}
+                  alt=""
+                  className="img-fluid category-img object-fit-cover"
+                />
+              </Card>
+            </Col>
+            <Col xxl={6} lg={6}>
                         <Card className="categrory-widgets overflow-hidden">
                           <div className="card-header d-flex align-items-center">
                             <h5 className="card-title flex-grow-1 mb-0">
@@ -243,7 +239,7 @@ const EditReclamationEtudiant = () => {
                                     <td className="">Description:</td>
                                     <td>
                                       <span className="mb-1 ">
-                                        {location.state.description}
+                                       {location.state.description}
                                       </span>
                                     </td>
                                   </tr>
@@ -263,10 +259,8 @@ const EditReclamationEtudiant = () => {
                                         id="response"
                                         placeholder="Taper votre réponse"
                                         rows={2}
-                                        value={response}
-                                        onChange={(e) =>
-                                          setResponse(e.target.value)
-                                        }
+                                         value={response}
+                                    onChange={(e) => setResponse(e.target.value)}
                                       ></textarea>
                                       <Button
                                         type="button"
@@ -294,12 +288,14 @@ const EditReclamationEtudiant = () => {
                 /> */}
                         </Card>
                       </Col>
-                    </Row>
+          </Row>
                   </Card>
                 </Card.Body>
               </Card>
             </Col>
           </Row>
+          
+         
         </Container>
       </div>
     </React.Fragment>

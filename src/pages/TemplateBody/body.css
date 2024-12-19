@@ -1,0 +1,23 @@
+.a4-landscape {
+  width: 1169px; /* A4 width in landscape orientation */
+  height: 827px; /* A4 height in landscape orientation */
+  margin: 0 auto; /* Center the paper */
+  border: 1px solid #ccc; /* Add a border */
+  border-radius: 5px; /* Rounded corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow for depth */
+  padding: 20px; /* Inner padding */
+  overflow: auto; /* Allow scrolling if content overflows */
+  background-color: white; /* White background for paper */
+}
+.word-like-editor {
+  width: 210mm; /* Largeur de la page A4 */
+  height: 297mm; /* Hauteur de la page A4 */
+  margin: 0 auto; /* Centrer la page */
+  padding: 20px; /* Espacement interne pour le contenu */
+  border: 1px solid #ddd; /* Bordure fine */
+  background-color: white; /* Fond blanc */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ombre pour donner de la profondeur */
+  overflow: auto; /* Activer le défilement si nécessaire */
+  font-family: 'Times New Roman', serif; /* Typographie similaire à Word */
+  line-height: 1.6; /* Hauteur de ligne pour espacement du texte */
+}

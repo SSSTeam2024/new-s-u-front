@@ -15,7 +15,7 @@ export interface TimeTableParams {
 export const timeTableParamsSlice = createApi({
   reducerPath: "TimeTableParams",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:5000/api/timeTableParams/",
+    baseUrl: `${process.env.REACT_APP_API_URL}/api/timeTableParams/`,
   }),
   tagTypes: ["TimeTableParams"],
   endpoints(builder) {

@@ -9,7 +9,7 @@ export interface EtatEtudiant {
 export const etatEtudiantSlice = createApi({
   reducerPath: "EtatEtudiant",
   baseQuery: fetchBaseQuery({
-    baseUrl: `${process.env.REACT_APP_API_URL}/etat-etudiant/`,
+    baseUrl: `${process.env.REACT_APP_API_URL}/api/etat-etudiant/`,
   }),
   tagTypes: ["EtatEtudiant"],
   endpoints(builder) {

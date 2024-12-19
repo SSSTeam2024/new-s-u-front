@@ -1,87 +1,26 @@
-import React, { useEffect, useState } from "react";
-import {
-  Alert,
-  Button,
-  Card,
-  Col,
-  Container,
-  Form,
-  Row,
-  Spinner,
-} from "react-bootstrap";
+import React, { useEffect } from "react";
+import { Button, Card, Col, Container, Form, Row } from "react-bootstrap";
 
-// Import Images
-import logoDark from "assets/images/logo-dark.png";
-import logoLight from "assets/images/logo-light.png";
 import logo from "assets/images/logo-sm.png";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
 //redux
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 
-// Formik validation
-import * as Yup from "yup";
-import { useFormik } from "formik";
-
-import { loginUser, socialLogin, resetLoginFlag } from "slices/thunk";
 import withRouter from "Common/withRouter";
-
-//Social Media Imports
-import { GoogleLogin } from "react-google-login";
-// import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props";
-
-//Import config
-import { facebook, google } from "../../config";
-import {
-  LoginRequest,
-  UserResponse,
-  useLoginMutation,
-} from "features/account/accountSlice";
+import { LoginRequest, useLoginMutation } from "features/account/accountSlice";
 import { setCredentials } from "features/account/authSlice";
 
 import Cookies from "js-cookie";
 
 const Login = (props: any) => {
   document.title = "Login | Smart University";
-
   const [login, { isLoading }] = useLoginMutation();
-
   const [formState, setFormState] = React.useState<LoginRequest>({
     login: "",
     password: "",
   });
-
-  useEffect(() => {
-    console.log("hey token");
-    if (localStorage.getItem("auth")) {
-      console.log("hey token2");
-      navigate("/map-tracking");
-    }
-  }, [localStorage.getItem("auth")]);
-  //   const [formResponse, setFormResponse] = React.useState<UserResponse>({
-  //     results: {
-  //       accessToken: "",
-  //       school: {
-  //         _id: "",
-  //         name: "",
-  //         login: "",
-  //         password: "",
-  //         email: "",
-  //         phone: "",
-  //         activity: "",
-  //         address: "",
-  //         status: "",
-  //         legal_status: "",
-  //         account_name: "",
-  //         sort_code: 0,
-  //         account_number: 0,
-  //         bank_name: "",
-  //         id_creation_date: "",
-  //         id_file: "",
-  //       },
-  //     },
-  //   });
 
   const notify = () => {
     Swal.fire({
@@ -150,11 +89,6 @@ const Login = (props: any) => {
                         <Col lg={4} className="col-3">
                           <img src={logo} alt="" className="img-fluid" />
                         </Col>
-                        {/* <Col lg={8} className="col-9">
-                          <h1 className="text-white lh-base fw-lighter">
-                            Join Our Toner Store
-                          </h1>
-                        </Col> */}
                       </Row>
                     </Card.Header>
                     <Card.Body>
@@ -165,13 +99,11 @@ const Login = (props: any) => {
                           <Form.Control
                             type="email"
                             className="form-control"
-                            //   id="username"
                             placeholder="Enter username"
                             onChange={handleChange}
                             name="login"
                           />
                         </div>
-
                         <div className="mb-3">
                           <div className="float-end">
                             <Link to="/forgot-password" className="text-muted">
@@ -190,7 +122,6 @@ const Login = (props: any) => {
                               onChange={handleChange}
                               type={show ? "text" : "password"}
                             />
-
                             <Button
                               variant="link"
                               className="position-absolute end-0 top-0 text-decoration-none text-muted password-addon"
@@ -202,7 +133,6 @@ const Login = (props: any) => {
                             </Button>
                           </div>
                         </div>
-
                         <div className="form-check">
                           <Form.Check
                             type="checkbox"
@@ -213,27 +143,6 @@ const Login = (props: any) => {
                             Remember me
                           </Form.Label>
                         </div>
-
-                        <div className="mt-4">
-                          {/* <Button
-                              variant="primary"
-                              className="w-100"
-                              type="submit"
-                              disabled={!error ? loader : false}
-                            >
-                              {!error
-                                ? loader && (
-                                    <Spinner
-                                      size="sm"
-                                      animation="border"
-                                      className="me-2"
-                                    />
-                                  )
-                                : ""}
-                              Sign In
-                            </Button> */}
-                        </div>
-
                         <div>
                           <Button
                             variant="primary"
@@ -244,20 +153,15 @@ const Login = (props: any) => {
                                 const user: any = await login(
                                   formState
                                 ).unwrap();
-                                console.log(user);
                                 if (user) {
                                   if (user.user.status === "Active") {
                                     dispatch(setCredentials(user));
-                                    // localStorage.setItem(
-                                    //   "auth",
-                                    //   user?.school.api_token
-                                    // );
+
                                     Cookies.set("astk", user.user.api_token, {
                                       expires: 1 / 4,
                                     });
                                     notify();
                                   }
-
                                   if (user.user.status !== "Active") {
                                     Errornotify("Your Account is Inactive!");
                                   }
@@ -265,7 +169,6 @@ const Login = (props: any) => {
                                   Errornotify(msgError);
                                 }
                               } catch (err: any) {
-                                //Errornotify(err);
                                 console.log(err);
                               }
                             }}

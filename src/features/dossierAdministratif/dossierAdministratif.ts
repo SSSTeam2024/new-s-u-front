@@ -43,7 +43,7 @@ export interface DossierAdministratif {
 export const dossierAdministratifSlice = createApi({
   reducerPath: "DossierAdministratif",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:5000/api/dossierAdministratif/",
+    baseUrl: `${process.env.REACT_APP_API_URL}/api/dossierAdministratif/`,
   }),
   tagTypes: ["DossierAdministratif"],
   endpoints(builder) {

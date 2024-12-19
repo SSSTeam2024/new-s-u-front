@@ -15,7 +15,7 @@ export interface AssignMatieresPayload {
 export const classePeriodSlice = createApi({
   reducerPath: "ClassePeriod",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:5000/api/class-period/",
+    baseUrl: `${process.env.REACT_APP_API_URL}/api/class-period/`,
   }),
   tagTypes: ["ClassePeriod"],
   endpoints(builder) {

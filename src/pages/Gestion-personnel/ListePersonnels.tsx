@@ -89,8 +89,8 @@ const ListePersonnels = () => {
             <div className="d-flex align-items-center gap-2">
               <div className="flex-shrink-0">
                 <img
-                  style={{ borderRadius: "50%" }}
-                  src={`http://localhost:5000/files/personnelFiles/PhotoProfil/${personnels.photo_profil}`}
+                style={{borderRadius:"50%"}}
+                  src={`${process.env.REACT_APP_API_URL}/files/personnelFiles/PhotoProfil/${personnels.photo_profil}`}
                   alt="etudiant-img"
                   id="photo_profil"
                   className="avatar-xs rounded-circle user-profile-img"
@@ -209,7 +209,7 @@ const ListePersonnels = () => {
               </li>
               <li>
                 <Link
-                  to="/EditProfilePersonnel"
+                  to="/gestion-personnel/edit-compte-personnel"
                   className="badge bg-primary-subtle text-primary edit-item-btn"
                   state={personnel}
                 >
@@ -775,18 +775,18 @@ const ListePersonnels = () => {
                     className="table align-middle table-nowrap"
                     id="customerTable"
                   > */}
-                  <TableContainer
-                    columns={columns || []}
-                    data={data || []}
-                    // isGlobalFilter={false}
-                    iscustomPageSize={false}
-                    isBordered={false}
-                    customPageSize={10}
-                    className="custom-header-css table align-middle table-nowrap"
-                    tableClass="table-centered align-middle table-nowrap mb-0"
-                    theadClass="text-muted table-light"
-                    SearchPlaceholder="Search Products..."
-                  />
+                    <TableContainer
+                      columns={columns || []}
+                      data={data || []}
+                      // isGlobalFilter={false}
+                      iscustomPageSize={false}
+                      isBordered={false}
+                      customPageSize={10}
+                      className="custom-header-css table align-middle table-nowrap"
+                      tableClass="table-centered align-middle table-nowrap mb-0"
+                      theadClass="text-muted table-light"
+                      SearchPlaceholder="Search Products..."
+                    />
                   {/* </table> */}
                   {/* </div> */}
                   <div className="noresult" style={{ display: "none" }}>

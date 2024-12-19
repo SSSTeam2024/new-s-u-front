@@ -23,10 +23,14 @@ const ListEtudiants = () => {
 
   const navigate = useNavigate();
 
+  const [modal_AddEnseignantModals, setmodal_AddEnseignantModals] =
+    useState<boolean>(false);
+
   function tog_AddEtudiant() {
     navigate("/gestion-etudiant/ajouter-etudiant");
   }
   const { data = [] } = useFetchEtudiantsQuery();
+  console.log("data", data);
   const [studentCount, setStudentCount] = useState(0);
 
   useEffect(() => {
@@ -88,7 +92,7 @@ const ListEtudiants = () => {
             <div className="d-flex align-items-center gap-2">
               <div className="flex-shrink-0">
                 <img
-                  src={`http://localhost:5000/files/etudiantFiles/PhotoProfil/${etudiants.photo_profil}`}
+                  src={`${process.env.REACT_APP_API_URL}/files/etudiantFiles/PhotoProfil/${etudiants.photo_profil}`}
                   alt="etudiant-img"
                   id="photo_profil"
                   className="avatar-xs rounded-circle user-profile-img"

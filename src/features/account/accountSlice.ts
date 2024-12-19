@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { RootState } from "../../app/store"
+import { RootState } from "app/store";
 
 export interface UserResponse {
   user: {
@@ -35,10 +35,9 @@ export interface LoginRequest {
 export const accountSlice = createApi({
   reducerPath: "account",
   baseQuery: fetchBaseQuery({
-    baseUrl: `${process.env.REACT_APP_API_URL}/user/`,
+    baseUrl: `${process.env.REACT_APP_API_URL}/api/user/`,
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as RootState).auth?.user?.api_token;
-      console.log("user token", token)
       if (token) {
         headers.set("authorization", `Bearer ${token}`);
       }

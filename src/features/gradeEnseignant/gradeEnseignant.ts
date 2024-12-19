@@ -47,7 +47,7 @@ export interface GradeEnseignant {
 export const gradeEnseignantSlice = createApi({
   reducerPath: "GradeEnseignant",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:5000/api/grade-enseignant/",
+    baseUrl: `${process.env.REACT_APP_API_URL}/api/grade-enseignant/`,
   }),
   tagTypes: ["GradeEnseignant"],
   endpoints(builder) {

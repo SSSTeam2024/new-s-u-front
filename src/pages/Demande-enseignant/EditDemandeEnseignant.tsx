@@ -21,11 +21,11 @@ import img4 from "assets/images/small/img-4.jpg";
 import img5 from "assets/images/small/img-5.jpg";
 import img6 from "assets/images/small/img-6.jpg";
 import avatar1 from "assets/images/users/avatar-1.jpg";
-import student from "assets/images/etudiant.png";
-import file from "assets/images/demande.png";
+import student from "assets/images/etudiant.png"
+import file from "assets/images/demande.png"
 
 const EditDemandeEnseignant = () => {
-  document.title = "Modifier demande Etudiant | Smart University";
+  document.title = "Modifier demande Etudiant | Smart Institute";
   const state = useLocation();
   console.log("state", state);
 
@@ -81,9 +81,9 @@ const EditDemandeEnseignant = () => {
                   </div>
                 </div>
                 <div className="card-body">
-                  <div className="text-center">
+                <div className="text-center">
                     <i className="bi bi-mortarboard fs-1 text-muted"></i>
-                  </div>
+                    </div>
                   <div className="table-responsive">
                     <table className="table table-sm table-borderless align-middle description-table mb-0">
                       <tbody>
@@ -123,11 +123,7 @@ const EditDemandeEnseignant = () => {
                     </table>
                   </div>
                 </div>
-                <img
-                  src={student}
-                  alt=""
-                  className="img-fluid category-img object-fit-cover"
-                />
+                <img src={student} alt="" className="img-fluid category-img object-fit-cover" />
               </Card>
             </Col>
             <Col xxl={6} lg={6}>
@@ -165,18 +161,13 @@ const EditDemandeEnseignant = () => {
                       </span>
                     </p>
                     <p className="mb-3 fs-5">
-                      Etat de la demande:
-                      <span className="badge bg-danger-subtle text-danger">
-                        {state.state?.status!}
-                      </span>
+                     Etat de la demande:<span className="badge bg-danger-subtle text-danger">
+                     {state.state?.status!}
+                      </span> 
                     </p>
                   </div>
                 </div>
-                <img
-                  src={file}
-                  alt=""
-                  className="img-fluid category-img object-fit-cover"
-                />
+                <img src={file} alt="" className="img-fluid category-img object-fit-cover" />
               </Card>
             </Col>
           </Row>

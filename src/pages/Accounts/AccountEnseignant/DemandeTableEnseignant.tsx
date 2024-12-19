@@ -1,16 +1,32 @@
 import React, { useState, useMemo, useCallback } from "react";
-import { Col } from "react-bootstrap";
+import {
+  Button,
+  Card,
+  Col,
+  Container,
+  Form,
+  Modal,
+  Row,
+  Table,
+} from "react-bootstrap";
+import Breadcrumb from "Common/BreadCrumb";
+import CountUp from "react-countup";
 import TableContainer from "Common/TableContainer";
+import Flatpickr from "react-flatpickr";
+import dummyImg from "../../assets/images/users/user-dummy-img.jpg";
 import { Link, useLocation } from "react-router-dom";
-import { useFetchDemandeEnseignantQuery } from "../../../features/demandeEnseignant/demandeEnseignantSlice";
+import img1 from "assets/images/users/avatar-1.jpg";
+import { useFetchDemandeEnseignantQuery } from "features/demandeEnseignant/demandeEnseignantSlice";
 
 const DemandeTableEnseignant = () => {
   document.title = "table Demande Enseignant | Smart University";
 
   const location = useLocation();
   const EnseignantDetails = location.state;
+  console.log("EnseignantDetails", EnseignantDetails);
 
   const idEnseignant = EnseignantDetails?._id;
+  console.log("id enseignant", idEnseignant);
 
   const { data: demandes, error, isLoading } = useFetchDemandeEnseignantQuery();
   // Filter demandes only if idEnseignant is defined
@@ -22,6 +38,7 @@ const DemandeTableEnseignant = () => {
         idEnseignant
     );
   }, [demandes, idEnseignant]);
+  console.log("filtered demandes", filteredDemandes);
 
   const [modal_AddUserModals, setmodal_AddUserModals] =
     useState<boolean>(false);

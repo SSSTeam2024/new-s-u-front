@@ -32,7 +32,6 @@ import { useNavigate } from "react-router-dom";
 import { RootState } from "app/store";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "features/account/authSlice";
-
 const AjouterDemandeEnseignant = () => {
   document.title = "Ajouter Demande Enseignant | Smart University";
   const navigate = useNavigate();

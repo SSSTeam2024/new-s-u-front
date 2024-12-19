@@ -32,7 +32,7 @@ export type UpdateLeaveTypePayload = {
   export const leaveTypeSlice = createApi({
     reducerPath: 'leaveTypeApi',
     baseQuery: fetchBaseQuery({
-      baseUrl: `${process.env.REACT_APP_API_URL}/LeaveType/`, // Adjust endpoint base URL
+      baseUrl: `${process.env.REACT_APP_API_URL}/api/LeaveType/`, // Adjust endpoint base URL
     }),
     tagTypes: ['leaveTypes'],
     endpoints(builder) {

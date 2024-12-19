@@ -10,7 +10,7 @@ import {
 import Swal from "sweetalert2";
 
 const ViewDossierAdministratifPersonnel = () => {
-  document.title = " Visualiser dossier personnel | Smart University";
+  document.title = " Visualiser dossier personnel | Smart Institute";
   const location = useLocation();
   const dossierAdministratif = location.state;
   const { data: allDossiers = [] } = useFetchDossierAdministratifQuery();
@@ -57,10 +57,7 @@ const ViewDossierAdministratifPersonnel = () => {
               file: paper.file ?? "",
             };
             try {
-              console.log(
-                "Attempting to delete paper with dossierId:",
-                dossierId
-              );
+              console.log("Attempting to delete paper with dossierId:", dossierId);
               console.log("Paper details:", paperDetails);
               await deleteSpecificPaper({
                 dossierId,
@@ -72,6 +69,7 @@ const ViewDossierAdministratifPersonnel = () => {
             } catch (error) {
               console.error("Erreur lors de la suppression du papier:", error);
             }
+            
 
             swalWithBootstrapButtons.fire(
               "Supprimé!",
@@ -138,7 +136,7 @@ const ViewDossierAdministratifPersonnel = () => {
         filterable: true,
         Cell: ({ cell: { value } }: { cell: { value: string } }) => (
           <a
-            href={`http://localhost:5000/files/dossierFiles/${value}`}
+            href={`${process.env.REACT_APP_API_URL}/files/dossierFiles/${value}`}
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -166,7 +164,9 @@ const ViewDossierAdministratifPersonnel = () => {
                 <div
                   className="badge bg-danger-subtle text-danger remove-item-btn"
                   onClick={() => {
-                    AlertDelete(dossierId!, paper);
+                  
+                      AlertDelete(dossierId!, paper);
+                    
                   }}
                   style={{
                     transition: "transform 0.3s ease-in-out",
@@ -246,8 +246,8 @@ const ViewDossierAdministratifPersonnel = () => {
             <div className="text-center">
               <h5 className="mt-2">Désolé ! Aucun résultat trouvé</h5>
               <p className="text-muted mb-0">
-                Nous avons cherché dans plus de 150+ dossiers, mais aucun
-                résultat ne correspond à votre recherche.
+              Nous avons cherché dans plus de 150+ dossiers, mais
+              aucun résultat ne correspond à votre recherche.
               </p>
             </div>
           </div>

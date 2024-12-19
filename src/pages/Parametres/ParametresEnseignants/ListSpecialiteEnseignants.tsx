@@ -20,9 +20,14 @@ import {
   useFetchSpecialitesEnseignantQuery,
   useUpdateSpecialiteEnseignantMutation,
 } from "features/specialiteEnseignant/specialiteEnseignant";
+import { actionAuthorization } from 'utils/pathVerification';
+import { RootState } from 'app/store';
+import { useSelector } from 'react-redux';
+import { selectCurrentUser } from 'features/account/authSlice';
 
 const ListSpecialiteEnseignants = () => {
   document.title = "Liste spécialités des enseignants | Smart University";
+  const user = useSelector((state: RootState) => selectCurrentUser(state));
 
   const navigate = useNavigate();
 
@@ -36,9 +41,7 @@ const ListSpecialiteEnseignants = () => {
     setSearchQuery(event.target.value.toLowerCase());
   };
 
-  function tog_AddSpecialiteEnseignant() {
-    navigate("/parametre/add-specialite-enseignant");
-  }
+
   const { data = [] } = useFetchSpecialitesEnseignantQuery();
   const filteredSpecialiteEnseignants = useMemo(() => {
     let result = data;
@@ -142,7 +145,7 @@ const ListSpecialiteEnseignants = () => {
       await createSpecialiteEnseignant(formData).unwrap();
       notify();
       setAddModalOpen(false);
-      navigate("/parametre/specialite-enseignants");
+      navigate("/parametre-enseignant/specialite/liste-specialite-enseignant");
     } catch (error: any) {
       console.log(error);
     }
@@ -199,6 +202,8 @@ const ListSpecialiteEnseignants = () => {
         accessor: (specialiteEnseignant: SpecialiteEnseignant) => {
           return (
             <ul className="hstack gap-2 list-unstyled mb-0">
+            {actionAuthorization("/parametre-enseignant/specialite/edit-specialite-enseignant",user?.permissions!)? 
+
               <li>
                 <Link
                   to=""
@@ -224,7 +229,8 @@ const ListSpecialiteEnseignants = () => {
                     }
                   ></i>
                 </Link>
-              </li>
+              </li>  : <></> }
+              {actionAuthorization("/parametre-enseignant/specialite/supprimer-specialite-enseignant",user?.permissions!)? 
               <li>
                 <Link
                   to="#"
@@ -246,7 +252,7 @@ const ListSpecialiteEnseignants = () => {
                     onClick={() => AlertDelete(specialiteEnseignant?._id!)}
                   ></i>
                 </Link>
-              </li>
+              </li> : <></> }
             </ul>
           );
         },
@@ -288,13 +294,14 @@ const ListSpecialiteEnseignants = () => {
 
                     <Col className="col-lg-auto ms-auto">
                       <div className="hstack gap-2">
+                      {actionAuthorization("/parametre-enseignant/specialite/ajouter-specialite-enseignant",user?.permissions!)? 
                         <Button
                           variant="primary"
                           className="add-btn"
                           onClick={handleAddClick}
                         >
                           Ajouter spécialité enseignant
-                        </Button>
+                        </Button> : <></> }
                       </div>
                     </Col>
                   </Row>

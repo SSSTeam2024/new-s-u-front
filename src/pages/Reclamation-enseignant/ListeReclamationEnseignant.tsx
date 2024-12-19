@@ -27,7 +27,7 @@ import {
   useDeleteReclamationEnseignantMutation,
 } from "features/reclamationEnseignant/reclamationEnseignantSlice";
 const ListeReclamationEnseignant = () => {
-  document.title = "Reclamation Enseignant | Smart Institute";
+  document.title = "Reclamation Enseignant| Smart Institute";
 
   const user = useSelector((state: RootState) => selectCurrentUser(state));
   const MySwal = withReactContent(Swal);
@@ -294,7 +294,7 @@ const ListeReclamationEnseignant = () => {
       <div className="page-content">
         <Container fluid={true}>
           <Breadcrumb
-            title="Réclamation Enseignant"
+            title="Réclamation Etudiant"
             pageTitle="Liste des réclamations"
           />
 

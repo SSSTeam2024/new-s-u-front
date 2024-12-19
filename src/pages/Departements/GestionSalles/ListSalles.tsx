@@ -57,23 +57,16 @@ const ListSalles = () => {
   const checkRoomIsCleanAndDelete = async (_id: string) => {
     let res = await getSessionsByRoomId(_id).unwrap();
     console.log(res);
-    if (res.length === 0) {
+    if(res.length === 0) {
       await AlertDelete(_id);
-    } else {
+    }else{
       let classNames = "";
-      for (let session of res) {
-        classNames +=
-          "\n- " +
-          session.classe.nom_classe_fr +
-          " | Semestre " +
-          session.semestre;
+      for(let session of res){
+        classNames += "\n- " + session.classe.nom_classe_fr + " | Semestre " + session.semestre;
       }
-      alert(
-        "Cette salle est présente dans les emplois de temps des classes suivantes: " +
-          classNames
-      );
+      alert("Cette salle est présente dans les emplois de temps des classes suivantes: " + classNames);
     }
-  };
+  }
 
   const AlertDelete = async (_id: string) => {
     swalWithBootstrapButtons
@@ -106,6 +99,7 @@ const ListSalles = () => {
 
   const columns = useMemo(
     () => [
+    
       {
         Header: "Salle",
         accessor: "salle",
@@ -185,6 +179,7 @@ const ListSalles = () => {
                     onMouseLeave={(e) =>
                       (e.currentTarget.style.transform = "scale(1)")
                     }
+                    
                   ></i>
                 </Link>
               </li>
@@ -276,7 +271,9 @@ const ListSalles = () => {
                     <input type="hidden" id="id-field" />
 
                     <div className="mb-3">
-                      <Form.Label htmlFor="item-stock-field">Salle</Form.Label>
+                      <Form.Label htmlFor="item-stock-field">
+                        Salle
+                      </Form.Label>
                       <Form.Control
                         type="text"
                         id="item-stock-field"

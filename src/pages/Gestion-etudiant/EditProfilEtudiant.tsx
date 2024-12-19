@@ -670,7 +670,7 @@ const EditProfilEtudiant = () => {
   //       const fetchImageData = async () => {
   //         try {
   //           const response = await fetch(
-  //             `http://localhost:5000/files/etudiantFiles/PhotoProfil/${etudiant.photo_profil}`
+  //             `${process.env.REACT_APP_API_URL}/files/etudiantFiles/PhotoProfil/${etudiant.photo_profil}`
   //           );
   //           if (!response.ok) throw new Error("Network response was not ok");
 
@@ -716,7 +716,7 @@ const EditProfilEtudiant = () => {
   //     try {
   //       console.log("Fetching student data...");
   //       const response = await fetch(
-  //         `http://localhost:5000/api/etudiant/get-etudiant/${etudiant._id}`
+  //         `${process.env.REACT_APP_API_URL}/api/etudiant/get-etudiant/${etudiant._id}`
   //       );
   //       const data = await response.json();
   //       setStudentTypeInscription(data.type_inscription);
@@ -754,7 +754,7 @@ const EditProfilEtudiant = () => {
   //         const fetchImageData = async () => {
   //           try {
   //             const response = await fetch(
-  //               `http://localhost:5000/files/etudiantFiles/PhotoProfil/${data.photo_profil}`
+  //               `${process.env.REACT_APP_API_URL}/files/etudiantFiles/PhotoProfil/${data.photo_profil}`
   //             );
   //             if (!response.ok) throw new Error("Network response was not ok");
 
@@ -784,7 +784,7 @@ const EditProfilEtudiant = () => {
   //         const fetchImageData = async () => {
   //           try {
   //             const response = await fetch(
-  //               `http://localhost:5000/files/etudiantFiles/Face1CIN/${data.face_1_CIN}`
+  //               `${process.env.REACT_APP_API_URL}/files/etudiantFiles/Face1CIN/${data.face_1_CIN}`
   //             );
   //             if (!response.ok) throw new Error("Network response was not ok");
 
@@ -813,7 +813,7 @@ const EditProfilEtudiant = () => {
   //         const fetchImageData = async () => {
   //           try {
   //             const response = await fetch(
-  //               `http://localhost:5000/files/etudiantFiles/Face2CIN/${data.face_2_CIN}`
+  //               `${process.env.REACT_APP_API_URL}/files/etudiantFiles/Face2CIN/${data.face_2_CIN}`
   //             );
   //             if (!response.ok) throw new Error("Network response was not ok");
 
@@ -842,7 +842,7 @@ const EditProfilEtudiant = () => {
   //         const fetchImageData = async () => {
   //           try {
   //             const response = await fetch(
-  //               `http://localhost:5000/files/etudiantFiles/FichePaiement/${data.fiche_paiement}`
+  //               `${process.env.REACT_APP_API_URL}/files/etudiantFiles/FichePaiement/${data.fiche_paiement}`
   //             );
   //             if (!response.ok) throw new Error("Network response was not ok");
 
@@ -876,9 +876,9 @@ const EditProfilEtudiant = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // console.log("Fetching student data...");
+       // console.log("Fetching student data...");
         const response = await fetch(
-          `http://localhost:5000/api/etudiant/get-etudiant/${etudiant._id}`
+          `${process.env.REACT_APP_API_URL}/api/etudiant/get-etudiant/${etudiant._id}`
         );
         const data = await response.json();
         console.log("Student Data:", data);
@@ -939,7 +939,7 @@ const EditProfilEtudiant = () => {
         if (!data.PhotoProfilFileBase64String && data.photo_profil) {
           //console.log("Fetching photo profile from server...");
           await fetchImageData(
-            `http://localhost:5000/files/etudiantFiles/PhotoProfil/${data.photo_profil}`,
+            `${process.env.REACT_APP_API_URL}/files/etudiantFiles/PhotoProfil/${data.photo_profil}`,
             "PhotoProfil"
           );
         }
@@ -953,9 +953,9 @@ const EditProfilEtudiant = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // console.log("Fetching student data...");
+       // console.log("Fetching student data...");
         const response = await fetch(
-          `http://localhost:5000/api/etudiant/get-etudiant/${etudiant._id}`
+          `${process.env.REACT_APP_API_URL}/api/etudiant/get-etudiant/${etudiant._id}`
         );
         const data = await response.json();
         //console.log("Student Data:", data);
@@ -1009,6 +1009,7 @@ const EditProfilEtudiant = () => {
       },
     }));
   };
+
 
   const handleFileTypeInscriptionUpload = (event: any, index: any) => {
     const file = event.target.files[0];
@@ -1199,7 +1200,7 @@ const EditProfilEtudiant = () => {
     if (file) {
       const { base64Data, extension } = await convertToBase64(file);
       const newPDF = base64Data + "." + extension;
-      // console.log(extension);
+     // console.log(extension);
       setFormData({
         ...formData,
         face_1_CIN: newPDF,

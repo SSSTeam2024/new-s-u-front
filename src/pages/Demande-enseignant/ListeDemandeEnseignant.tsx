@@ -30,7 +30,7 @@ import {
 } from "features/demandeEnseignant/demandeEnseignantSlice";
 
 const ListeDemandeEnseignant = () => {
-  document.title = "Demande Enseignant | Smart University";
+  document.title = "Demande Etudiant | Smart Institute";
 
   const user = useSelector((state: RootState) => selectCurrentUser(state));
 
@@ -287,10 +287,7 @@ const ListeDemandeEnseignant = () => {
     <React.Fragment>
       <div className="page-content">
         <Container fluid={true}>
-          <Breadcrumb
-            title="Demande Enseignant"
-            pageTitle="Liste des demandes"
-          />
+          <Breadcrumb title="Demande Etudiant" pageTitle="Liste des demandes" />
 
           <Row id="usersList">
             <Col lg={12}>

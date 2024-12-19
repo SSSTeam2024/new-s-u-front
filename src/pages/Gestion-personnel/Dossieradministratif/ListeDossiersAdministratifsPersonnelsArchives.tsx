@@ -1,32 +1,30 @@
 import React, { useMemo, useState } from "react";
-import { Button, Card, Col, Container, Row } from "react-bootstrap";
+import {
+  Button,
+  Card,
+  Col,
+  Container,
+  Row,
+} from "react-bootstrap";
 import Breadcrumb from "Common/BreadCrumb";
 import { Link, useNavigate } from "react-router-dom";
 import TableContainer from "Common/TableContainer";
-import {
-  DossierAdministratif,
-  useFetchDossierAdministratifQuery,
-  useRemoveSpecificPaperMutation,
-  useRestoreDossierAdministratifMutation,
-} from "features/dossierAdministratif/dossierAdministratif";
+import { DossierAdministratif, useFetchDossierAdministratifQuery, useRemoveSpecificPaperMutation, useRestoreDossierAdministratifMutation } from "features/dossierAdministratif/dossierAdministratif";
 
 const ListeDossiersAdministratifsPersonnelsArchives = () => {
-  document.title =
-    "Liste Dossiers Administratifs Personnels Archivés | Smart University";
+  document.title = "Liste Dossiers Administratifs Personnels Archivés  | Smart University";
 
   const { data = [] } = useFetchDossierAdministratifQuery();
-  const personnelsDossiers = data.filter(
-    (dossier) => dossier.personnel && dossier.isArchived == true
-  );
+  const personnelsDossiers = data.filter(dossier => dossier.personnel && dossier.isArchived == true);
 
-  const [restoreDossierAdministratif] =
-    useRestoreDossierAdministratifMutation();
+  const [restoreDossierAdministratif] = useRestoreDossierAdministratifMutation();
 
   const handleRestoreDossier = async (dossierId: any) => {
+
     try {
-      await restoreDossierAdministratif({ dossierId }).unwrap();
+      await restoreDossierAdministratif({ dossierId }).unwrap(); 
     } catch (error) {
-      console.error("Failed to archive the dossier: ", error);
+      console.error('Failed to archive the dossier: ', error);
     }
   };
   const columns = useMemo(
@@ -41,19 +39,20 @@ const ListeDossiersAdministratifsPersonnelsArchives = () => {
       {
         Header: "Papier Administratif",
         accessor: (row) => {
-          return row.papers ? row.papers.length : 0;
+         return row.papers ? row.papers.length : 0;
         },
         disableFilters: true,
         filterable: true,
       },
-
+      
       {
         Header: "Date de création",
         accessor: "createdAt",
         Cell: ({ value }: any) => new Date(value).toLocaleDateString("fr-FR"),
         disableFilters: true,
         filterable: true,
-      },
+      }
+,      
       {
         Header: "Action",
         disableFilters: true,
@@ -61,7 +60,7 @@ const ListeDossiersAdministratifsPersonnelsArchives = () => {
         accessor: (dossierAdministratif: DossierAdministratif) => {
           return (
             <ul className="hstack gap-2 list-unstyled mb-0">
-              <li>
+               <li>
                 <Link
                   to="/detailsDossierAdministratifPersonnel"
                   className="badge bg-info-subtle text-info view-item-btn"
@@ -80,7 +79,9 @@ const ListeDossiersAdministratifsPersonnelsArchives = () => {
                     onMouseLeave={(e) =>
                       (e.currentTarget.style.transform = "scale(1)")
                     }
-                    onClick={() => {}}
+                    onClick={() => {
+                    
+                    }}
                   ></i>
                 </Link>
               </li>
@@ -103,6 +104,7 @@ const ListeDossiersAdministratifsPersonnelsArchives = () => {
                     onMouseLeave={(e) =>
                       (e.currentTarget.style.transform = "scale(1)")
                     }
+                  
                   ></i>
                 </Link>
               </li>
@@ -124,9 +126,7 @@ const ListeDossiersAdministratifsPersonnelsArchives = () => {
                     onMouseLeave={(e) =>
                       (e.currentTarget.style.transform = "scale(1)")
                     }
-                    onClick={() =>
-                      handleRestoreDossier(dossierAdministratif._id)
-                    }
+                    onClick={() => handleRestoreDossier(dossierAdministratif._id)}
                   ></i>
                 </Link>
               </li>
@@ -205,8 +205,8 @@ const ListeDossiersAdministratifsPersonnelsArchives = () => {
                       </div>
                       <h5 className="mt-2">Désolé ! Aucun résultat trouvé</h5>
                       <p className="text-muted mb-0">
-                        Nous avons cherché dans plus de 150+ dossiers, mais
-                        aucun résultat ne correspond à votre recherche.
+                      Nous avons cherché dans plus de 150+ dossiers, mais
+                      aucun résultat ne correspond à votre recherche.
                       </p>
                     </div>
                   </div>

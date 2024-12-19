@@ -11,7 +11,7 @@ const AddTypeInscriptionEtudiant = () => {
   const navigate = useNavigate();
 
   function tog_retourParametres() {
-    navigate("/parametre/inscription-etudiants");
+    navigate("/parametre-etudiant/inscription/liste-inscription-etudiant");
   }
 
   const [createTypeInscriptionEtudiant] =

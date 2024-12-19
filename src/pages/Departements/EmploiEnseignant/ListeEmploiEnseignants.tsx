@@ -129,11 +129,11 @@ const ListeEmploiEnseignants = () => {
         accessor:  (enseignant: Enseignant) => {
           return (
             <ul className="hstack gap-2 list-unstyled mb-0">
-              {actionAuthorization("/gestion-emplois/emlpoi-enseignant/single-emplois", user?.permissions!) ? (
+              {actionAuthorization("/gestion-emplois/emlpoi-enseignant/teacher-period", user?.permissions!) ? (
                 <>
                   <li>
                     <Link
-                      to="/gestion-emplois/emlpoi-enseignant/single-emplois"
+                      to="/gestion-emplois/emlpoi-enseignant/teacher-period"
                       className="badge bg-primary-subtle text-primary edit-item-btn"
                       state={{ enseignant, semestre: "1" }}
                     >
@@ -143,9 +143,9 @@ const ListeEmploiEnseignants = () => {
                   <span>|</span>
                   <li>
                     <Link
-                      to="/gestion-emplois/emlpoi-enseignant/single-emplois"
+                      to="/gestion-emplois/emlpoi-enseignant/teacher-period"
                       className="badge bg-info-subtle text-info remove-item-btn"
-                      state={{ enseignant, semestre: "1" }}
+                      state={{ enseignant, semestre: "2" }}
                     >
                       S2
                     </Link>

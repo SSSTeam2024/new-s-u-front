@@ -10,7 +10,7 @@ export interface TypeInscriptionEtudiant {
 export const typeInscriptionEtudiantSlice = createApi({
   reducerPath: "TypeInscriptionEtudiant",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:5000/api/type-inscription-etudiant/",
+    baseUrl: `${process.env.REACT_APP_API_URL}/api/type-inscription-etudiant/`
   }),
   tagTypes: ["TypeInscriptionEtudiant"],
   endpoints(builder) {

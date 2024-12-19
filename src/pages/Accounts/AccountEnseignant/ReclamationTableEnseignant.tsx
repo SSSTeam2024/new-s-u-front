@@ -1,8 +1,22 @@
 import React, { useState, useMemo, useCallback } from "react";
-import { Col } from "react-bootstrap";
+import {
+  Button,
+  Card,
+  Col,
+  Container,
+  Form,
+  Modal,
+  Row,
+  Table,
+} from "react-bootstrap";
+import Breadcrumb from "Common/BreadCrumb";
+import CountUp from "react-countup";
 import TableContainer from "Common/TableContainer";
+import Flatpickr from "react-flatpickr";
+import dummyImg from "../../assets/images/users/user-dummy-img.jpg";
 import { Link, useLocation } from "react-router-dom";
-import { useFetchReclamationsEnseignantQuery } from "../../../features/reclamationEnseignant/reclamationEnseignantSlice";
+import img1 from "assets/images/users/avatar-1.jpg";
+import { useFetchReclamationsEnseignantQuery } from "features/reclamationEnseignant/reclamationEnseignantSlice";
 
 const ReclamationEnseignantTable = () => {
   document.title = "Table Reclamation Enseignant | Smart University";

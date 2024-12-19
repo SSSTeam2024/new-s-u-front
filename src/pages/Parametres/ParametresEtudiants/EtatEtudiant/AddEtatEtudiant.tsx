@@ -16,7 +16,7 @@ const AddEtatEtudiant = () => {
   const navigate = useNavigate();
 
   function tog_retourParametres() {
-    navigate("/parametre/etat-etudiants");
+    navigate("/parametre-etudiant/etat/liste-etat-etudiant");
   }
 
   const [createEtatEtudiant] = useAddEtatEtudiantMutation();

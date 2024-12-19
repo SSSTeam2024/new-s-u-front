@@ -12,7 +12,7 @@ export interface TemplateBody {
   export const templateBodySlice = createApi({
     reducerPath: 'templateBody',
     baseQuery: fetchBaseQuery({
-      baseUrl: `${process.env.REACT_APP_API_URL}/template-body/`,
+      baseUrl: `${process.env.REACT_APP_API_URL}/api/template-body/`,
     }),
     tagTypes: ['TemplateBody'],
     endpoints(builder) {

@@ -42,7 +42,7 @@ export interface DemandeConge {
   export const demandeCongeSlice = createApi({
     reducerPath: 'demandeCongeApi',
     baseQuery: fetchBaseQuery({
-      baseUrl: `${process.env.REACT_APP_API_URL}/demandeConge/`, // Adjust endpoint base URL
+      baseUrl: `${process.env.REACT_APP_API_URL}/api/demandeConge/`, // Adjust endpoint base URL
     }),
     tagTypes: ['DemandeConges'],
     endpoints(builder) {

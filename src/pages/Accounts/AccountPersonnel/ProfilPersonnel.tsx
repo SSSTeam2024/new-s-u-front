@@ -106,7 +106,7 @@ const ProfilPersonnel = () => {
                     className="rounded-start img-fluid h-70 object-cover"
                     src={
                       personnelDetails.photo_profil
-                        ? `http://localhost:5000/files/personnelFiles/PhotoProfil/${personnelDetails.photo_profil}`
+                        ? `${process.env.REACT_APP_API_URL}/files/personnelFiles/PhotoProfil/${personnelDetails.photo_profil}`
                         : userImage
                     }
                     alt="Photo Profile"

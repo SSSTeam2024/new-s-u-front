@@ -1,13 +1,15 @@
 import React, { useMemo } from "react";
-import { Button, Card, Col, Container, Row } from "react-bootstrap";
+import {
+  Button,
+  Card,
+  Col,
+  Container,
+  Row,
+} from "react-bootstrap";
 import Breadcrumb from "Common/BreadCrumb";
 import { Link, useNavigate } from "react-router-dom";
 import TableContainer from "Common/TableContainer";
-import {
-  DossierAdministratif,
-  useArchiveDossierAdministratifMutation,
-  useFetchDossierAdministratifQuery,
-} from "features/dossierAdministratif/dossierAdministratif";
+import { DossierAdministratif, useArchiveDossierAdministratifMutation, useFetchDossierAdministratifQuery } from "features/dossierAdministratif/dossierAdministratif";
 const ListeDossierAdministratif = () => {
   document.title = "Liste Dossiers Administratifs | Smart University";
 
@@ -18,16 +20,15 @@ const ListeDossierAdministratif = () => {
   }
   const { data = [] } = useFetchDossierAdministratifQuery();
 
-  const enseignantDossiers = data.filter(
-    (dossier) => dossier.enseignant && !dossier.isArchived
-  );
+  const enseignantDossiers = data.filter(dossier => dossier.enseignant && !dossier.isArchived);
 
   const [archiveDossier] = useArchiveDossierAdministratifMutation();
   const handleArchive = async (dossierId: any) => {
+
     try {
-      await archiveDossier({ dossierId }).unwrap();
+      await archiveDossier({ dossierId }).unwrap(); 
     } catch (error) {
-      console.error("Failed to archive the dossier: ", error);
+      console.error('Failed to archive the dossier: ', error);
     }
   };
   const columns = useMemo(
@@ -42,19 +43,20 @@ const ListeDossierAdministratif = () => {
       {
         Header: "Papier Administratif",
         accessor: (row) => {
-          return row.papers ? row.papers.length : 0;
+         return row.papers ? row.papers.length : 0;
         },
         disableFilters: true,
         filterable: true,
       },
-
+      
       {
         Header: "Date de création",
         accessor: "createdAt",
         Cell: ({ value }: any) => new Date(value).toLocaleDateString("fr-FR"),
         disableFilters: true,
         filterable: true,
-      },
+      }
+,      
       {
         Header: "Action",
         disableFilters: true,
@@ -62,9 +64,9 @@ const ListeDossierAdministratif = () => {
         accessor: (dossierAdministratif: DossierAdministratif) => {
           return (
             <ul className="hstack gap-2 list-unstyled mb-0">
-              <li>
+               <li>
                 <Link
-                  to="/detailsDossierAdministratif"
+                  to="/gestion-enseignant/details-dossier-administratif"
                   className="badge bg-info-subtle text-info view-item-btn"
                   state={dossierAdministratif}
                 >
@@ -86,7 +88,7 @@ const ListeDossierAdministratif = () => {
               </li>
               <li>
                 <Link
-                  to="/editDossierAdministratifEnseignant"
+                  to="/gestion-enseignant/edit-dossier-administratif"
                   state={dossierAdministratif}
                   className="badge bg-primary-subtle text-primary edit-item-btn"
                 >
@@ -136,6 +138,7 @@ const ListeDossierAdministratif = () => {
     []
   );
 
+
   return (
     <React.Fragment>
       <div className="page-content">
@@ -160,7 +163,7 @@ const ListeDossierAdministratif = () => {
                         <i className="ri-search-line search-icon"></i>
                       </div>
                     </Col>
-
+                
                     <Col className="col-lg-auto ms-auto">
                       <div className="hstack gap-3">
                         <Button
@@ -204,8 +207,8 @@ const ListeDossierAdministratif = () => {
                       </div>
                       <h5 className="mt-2">Désolé ! Aucun résultat trouvé</h5>
                       <p className="text-muted mb-0">
-                        Nous avons cherché dans plus de 150+ dossiers, mais
-                        aucun résultat ne correspond à votre recherche.
+                      Nous avons cherché dans plus de 150+ dossiers, mais
+                      aucun résultat ne correspond à votre recherche.
                       </p>
                     </div>
                   </div>
@@ -216,6 +219,7 @@ const ListeDossierAdministratif = () => {
           </Row>
         </Container>
       </div>
+
     </React.Fragment>
   );
 };

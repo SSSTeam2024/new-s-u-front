@@ -20,7 +20,7 @@ export interface Salle {
 export const salleSlice = createApi({
   reducerPath: "Salle",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:5000/api/salle/",
+    baseUrl: `${process.env.REACT_APP_API_URL}/api/salle/`,
   }),
   tagTypes: ["Salle"],
   endpoints(builder) {

@@ -96,7 +96,7 @@ const AddSalle = () => {
       <div className="page-content">
         <Container fluid={true}>
           {requestStatus.isLoading === true ? (
-            <h6>Loading ...</h6>
+            <CustomLoader text="Ajout en progression"></CustomLoader>
           ) : (
             <Row>
               <Col lg={12}>

@@ -82,7 +82,7 @@
 // export const enseignantSlice = createApi({
 //   reducerPath: "Enseignant",
 //   baseQuery: fetchBaseQuery({
-//     baseUrl: "http://localhost:5000/api/enseignant/",
+//     baseUrl: "${process.env.REACT_APP_API_URL}/api/enseignant/",
 //   }),
 //   tagTypes: ["Enseignant"],
 //   endpoints(builder) {
@@ -265,7 +265,7 @@ export interface Enseignant {
 export const enseignantSlice = createApi({
   reducerPath: "Enseignant",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:5000/api/enseignant/",
+    baseUrl: `${process.env.REACT_APP_API_URL}/api/enseignant/`,
   }),
   tagTypes: ["Enseignant", "TeacherPeriod"],
   endpoints(builder) {

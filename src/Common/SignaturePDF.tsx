@@ -27,7 +27,7 @@ const SignaturePDF: React.FC<ChildProps> = ({
             style={{
               width: 100,
             }}
-            src={`http://localhost:5000/files/variableGlobaleFiles/signatureDirecteurFiles/${signature_directeur}`}
+            src={`${process.env.REACT_APP_API_URL}/files/variableGlobaleFiles/signatureDirecteurFiles/${signature_directeur}`}
           />
         </View>
       </View>

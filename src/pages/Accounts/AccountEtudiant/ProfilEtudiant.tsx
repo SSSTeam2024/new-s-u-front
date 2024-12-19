@@ -12,8 +12,8 @@ const MyAccount = () => {
   const navigate = useNavigate();
 
   const location = useLocation();
-   const locationState = location.state as Etudiant | { _id: string } | undefined;
-  const passedId = locationState ? (locationState as Etudiant)._id : undefined;
+   const locationState = location?.state! as Etudiant | { _id: string } | undefined;
+  const passedId = locationState ? (locationState as Etudiant)._id! : undefined;
   
   const { data: fetchedEtudiant, isLoading } = useFetchEtudiantByIdQuery(
     { _id: idFromRoute! }, 
@@ -124,7 +124,7 @@ const MyAccount = () => {
                     className="rounded-start img-fluid h-100 object-cover"
                     src={
                       etudiant.photo_profil
-                        ? `http://localhost:5000/files/etudiantFiles/PhotoProfil/${etudiant.photo_profil}`
+                        ? `${process.env.REACT_APP_API_URL}/files/etudiantFiles/PhotoProfil/${etudiant?.photo_profil!}`
                         : userImage
                     }
                     alt="Photo Profile"
@@ -136,9 +136,9 @@ const MyAccount = () => {
                 <Col md={9}>
                   <Card.Header>
                     <div className="flex-grow-1 card-title mb-0">
-                      <h5>{etudiant.nom_fr} {etudiant.prenom_fr}</h5>
+                      <h5>{etudiant?.nom_fr!} {etudiant?.prenom_fr!}</h5>
                       <p className="text-muted mb-0">
-                        {etudiant.nom_ar} {etudiant.prenom_ar}
+                        {etudiant?.nom_ar!} {etudiant?.prenom_ar!}
                       </p>
                     </div>
                   </Card.Header>
@@ -153,11 +153,11 @@ const MyAccount = () => {
                             </tr>
                             <tr>
                               <td>Cin</td>
-                              <td className="fw-medium">{etudiant.num_CIN}</td>
+                              <td className="fw-medium">{etudiant?.num_CIN!}</td>
                             </tr>
                             <tr>
                               <td>Téléphone</td>
-                              <td className="fw-medium">{etudiant.num_phone}</td>
+                              <td className="fw-medium">{etudiant?.num_phone!}</td>
                             </tr>
                             <tr>
                               <td>Compte Verifié</td>
@@ -213,29 +213,29 @@ const MyAccount = () => {
                     <tbody>
                       <tr>
                         <td>Genre</td>
-                        <td className="fw-medium">{etudiant.sexe}</td>
+                        <td className="fw-medium">{etudiant?.sexe!}</td>
                       </tr>
                       <tr>
                         <td>Etat civil</td>
-                        <td className="fw-medium">{etudiant.etat_civil}</td>
+                        <td className="fw-medium">{etudiant?.etat_civil!}</td>
                       </tr>
                       <tr>
                         <td>Date naissance</td>
-                        <td className="fw-medium">{etudiant.date_naissance}</td>
+                        <td className="fw-medium">{etudiant?.date_naissance!}</td>
                       </tr>
                       <tr>
                         <td>Lieu de naissance</td>
                         <td className="fw-medium">
-                          {etudiant.lieu_naissance_ar} / {etudiant.lieu_naissance_fr}
+                          {etudiant?.lieu_naissance_ar!} / {etudiant?.lieu_naissance_fr!}
                         </td>
                       </tr>
                       <tr>
                         <td>Téléphone Etudiant</td>
-                        <td className="fw-medium">{etudiant.num_phone}</td>
+                        <td className="fw-medium">{etudiant?.num_phone!}</td>
                       </tr>
                       <tr>
                         <td>Email</td>
-                        <td className="fw-medium">{etudiant.email}</td>
+                        <td className="fw-medium">{etudiant?.email!}</td>
                       </tr>
                     </tbody>
                   </Table>
@@ -246,23 +246,23 @@ const MyAccount = () => {
                     <tbody>
                       <tr>
                         <td>Nationalité</td>
-                        <td className="fw-medium">{etudiant.nationalite}</td>
+                        <td className="fw-medium">{etudiant?.nationalite!}</td>
                       </tr>
                       <tr>
                         <td>Gouvernorat</td>
-                        <td className="fw-medium">{etudiant.state}</td>
+                        <td className="fw-medium">{etudiant?.state!}</td>
                       </tr>
                       <tr>
                         <td>Ville</td>
-                        <td className="fw-medium">{etudiant.dependence}</td>
+                        <td className="fw-medium">{etudiant?.dependence!}</td>
                       </tr>
                       <tr>
                         <td>Adresse</td>
-                        <td className="fw-medium">{etudiant.adress_fr}</td>
+                        <td className="fw-medium">{etudiant?.adress_fr!}</td>
                       </tr>
                       <tr>
                         <td>Code postale</td>
-                        <td className="fw-medium">{etudiant.code_postale}</td>
+                        <td className="fw-medium">{etudiant.code_postale!}</td>
                       </tr>
                     </tbody>
                   </Table>
