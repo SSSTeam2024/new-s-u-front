@@ -38,7 +38,7 @@ const ListeLeaveType = () => {
 
   // Fetch reclamations query hook
   const { data: leaveTypes, error, isLoading } = useFetchLeaveTypeQuery();
-
+  console.log("leaveTypes", leaveTypes);
   const navigate = useNavigate();
   const handleNavigate = () => {
     navigate("/type-conge/ajouter-type-conge");
