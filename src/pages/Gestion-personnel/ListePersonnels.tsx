@@ -19,12 +19,10 @@ const ListePersonnels = () => {
 
   const [modal_AddEnseignantModals, setmodal_AddEnseignantModals] =
     useState<boolean>(false);
-  function tog_AddEnseignantModals() {
-    navigate("/AjouterPersonnel");
-  }
+ 
 
   function tog_AddPersonnel() {
-    navigate("/AjouterPersonnel");
+    navigate("/gestion-personnel/ajouter-personnel");
   }
   const { data = [] } = useFetchPersonnelsQuery();
   const [personnelCount, setPersonnelCount] = useState(0);
