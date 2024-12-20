@@ -10,7 +10,7 @@ import {
   useFetchEtudiantsQuery,
 } from "features/etudiant/etudiantSlice";
 import { format } from "date-fns";
-import userImage from "../../assets/images/profile-bg.jpg";
+import userImage from "../../assets/images/users/user-dummy-img.jpg";
 import Swal from "sweetalert2";
 import { actionAuthorization } from "utils/pathVerification";
 import { RootState } from "app/store";

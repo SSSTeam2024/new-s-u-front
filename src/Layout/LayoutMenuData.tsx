@@ -263,6 +263,14 @@ const Navdata = () => {
           parentId: "Gestion-enseignant",
           icon: "bi bi-person-lines-fill",
         },
+        {
+          id: "GestionEnseignant",
+          label: "Liste des dossiers archivés",
+          link: "/gestion-enseignant/liste-archive-dossier-administratif",
+          parentId: "Gestion-enseignant",
+          icon: "bi bi-person-lines-fill",
+        },
+       
       ],
     },
     //gestion personnel
@@ -297,6 +305,13 @@ const Navdata = () => {
           id: "GestionPersonnel",
           label: "Dossier Administratif",
           link: "/gestion-personnel/liste-dossier-administartif",
+          parentId: "Gestion-Personnel",
+          icon: "bi bi-person-lines-fill",
+        },
+        {
+          id: "GestionPersonnel",
+          label: "Liste des dossiers archivés",
+          link: "/gestion-personnel/liste-archive-dossier-administratif",
           parentId: "Gestion-Personnel",
           icon: "bi bi-person-lines-fill",
         },
