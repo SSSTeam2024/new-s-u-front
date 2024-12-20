@@ -236,54 +236,21 @@ const authProtectedRoutes = [
   // gestion etudiant
   { path: "/gestion-etudiant/compte-etudiant", component: <MyAccount /> },
   { path: "/gestion-etudiant/liste-etudiants", component: <ListEtudiants /> },
-  {
-    path: "/gestion-etudiant/ajouter-etudiant",
-    component: <AjouterEtudiant />,
-  },
-  {
-    path: "/gestion-etudiant/edit-compte-etudiant",
-    component: <EditProfilEtudiant />,
-  },
+  { path: "/gestion-etudiant/ajouter-etudiant", component: <AjouterEtudiant />, },
+  { path: "/gestion-etudiant/edit-compte-etudiant", component: <EditProfilEtudiant />,},
   //gestion enseignant
-  {
-    path: "/gestion-enseignant/ajouter-enseignant",
-    component: <AjouterEnseignant />,
-  },
-  {
-    path: "/gestion-enseignant/liste-enseignants",
-    component: <ListEnseignants />,
-  },
-  {
-    path: "/gestion-enseignant/compte-enseignant",
-    component: <AccountEnseignant />,
-  },
-  {
-    path: "/gestion-enseignant/edit-compte-enseignant",
-    component: <EditProfilEnseignant />,
-  },
+  {path: "/gestion-enseignant/ajouter-enseignant",component: <AjouterEnseignant />,},
+  {path: "/gestion-enseignant/liste-enseignants",component: <ListEnseignants />,},
+  { path: "/gestion-enseignant/compte-enseignant",component: <AccountEnseignant />, },
+  { path: "/gestion-enseignant/edit-compte-enseignant", component: <EditProfilEnseignant />, },
   // Dossier Administratif Enseignant
-  {
-    path: "/gestion-enseignant/ajouter-dossier-administartif",
-    component: <AddDossieradministratif />,
-  },
-  {
-    path: "/gestion-enseignant/liste-dossier-administartif",
-    component: <ListeDossierAdministratif />,
-  },
-  {
-    path: "/gestion-enseignant/details-dossier-administratif",
-    component: <ViewDossierAdministratif />,
-  },
-  {
-    path: "/gestion-enseignant/edit-dossier-administratif",
-    component: <EditDossierAdministratifEnseignants />,
-  },
+  { path: "/gestion-enseignant/ajouter-dossier-administartif", component: <AddDossieradministratif />,},
+  { path: "/gestion-enseignant/liste-dossier-administartif", component: <ListeDossierAdministratif />, },
+  { path: "/gestion-enseignant/details-dossier-administratif", component: <ViewDossierAdministratif />, },
+  { path: "/gestion-enseignant/edit-dossier-administratif",component: <EditDossierAdministratifEnseignants />,},
 
   //gestion personnel
-  {
-    path: "/gestion-personnel/ajouter-personnel",
-    component: <AjouterPersonnels />,
-  },
+  {path: "/gestion-personnel/ajouter-personnel", component: <AjouterPersonnels />, },
   {
     path: "/gestion-personnel/liste-personnels",
     component: <ListPersonnels />,

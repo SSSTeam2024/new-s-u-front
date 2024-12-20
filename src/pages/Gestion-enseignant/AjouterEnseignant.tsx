@@ -679,7 +679,7 @@ const AjouterEnseignant = () => {
     try {
       await createEnseignant(formData).unwrap();
       notify();
-      navigate("/ListeEnseignants");
+      navigate("/gestion-enseignant/liste-enseignants");
     } catch (error: any) {
       console.log(error);
     }

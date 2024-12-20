@@ -793,7 +793,7 @@ const AjouterEtudiant = () => {
     try {
       await createEtudiant(formData).unwrap();
       notify();
-      navigate("/ListeEtudiants");
+      navigate("/gestion-etudiant/liste-etudiants");
     } catch (error: any) {
       console.log(error);
     }
