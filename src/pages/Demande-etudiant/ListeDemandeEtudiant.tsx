@@ -141,7 +141,7 @@ const ListeDemandeEtudiant = () => {
       {
         Header: "Classe",
         accessor: (row: any) =>
-          row.studentId.groupe_classe?.nom_classe_fr || "",
+          row.studentId?.groupe_classe?.nom_classe_fr! || "",
         disableFilters: true,
         filterable: true,
       },

@@ -165,10 +165,6 @@ const PDF_REPORT = (props: any) => {
 const SingleDemandeEnseignant = () => {
   document.title = "Demande Enseignant | Smart University";
  
-       
-
-  
-
   const location = useLocation();
     const navigate = useNavigate();
 
@@ -372,7 +368,7 @@ console.log(location.state?.enseignantId)
                           <td className="fs-5">Pièce demandée:</td>
                           <td>
                             <span className="mb-1 fs-5">
-                            {location.state.piece_demande.title}
+                            {location.state.piece_demande?.title!}
                             </span>
                           </td>
                         </tr>
@@ -394,7 +390,7 @@ console.log(location.state?.enseignantId)
                           <td className="fs-5">Nombre de copie:</td>
                           <td>
                           <span className="badge bg-secondary-subtle text-secondary">
-                          {location.state.nombre_copie}
+                          {location.state?.nombre_copie!}
                       </span>
                           </td>
                         </tr>

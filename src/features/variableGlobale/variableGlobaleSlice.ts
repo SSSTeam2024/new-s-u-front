@@ -36,7 +36,7 @@ export interface VaribaleGlobale {
   export const varibaleGlobaleSlice = createApi({
     reducerPath: 'varibaleGlobale',
     baseQuery: fetchBaseQuery({
-      baseUrl: `${process.env.REACT_APP_API_URL}/variable-globale/`,
+      baseUrl: `${process.env.REACT_APP_API_URL}/api/variable-globale/`,
     }),
     tagTypes: ['VaribaleGlobale'],
     endpoints(builder) {

@@ -262,12 +262,22 @@ export interface Enseignant {
   PhotoProfilFileBase64String: string;
   papers?: string[];
 }
+
+export interface EnseignantGroupedByGrade {
+  _id: string;
+  gradeLabel: string;
+  teachers: {
+    id: string;
+    fullName: string;
+  }[];
+}
+
 export const enseignantSlice = createApi({
   reducerPath: "Enseignant",
   baseQuery: fetchBaseQuery({
     baseUrl: `${process.env.REACT_APP_API_URL}/api/enseignant/`,
   }),
-  tagTypes: ["Enseignant", "TeacherPeriod"],
+  tagTypes: ["Enseignant", "TeacherPeriod", "EnseignantGroupedByGrade"],
   endpoints(builder) {
     return {
       fetchEnseignants: builder.query<Enseignant[], number | void>({
@@ -286,6 +296,17 @@ export const enseignantSlice = createApi({
         }),
         providesTags: ["TeacherPeriod"],
       }),
+      fetchEnseignantsGroupedByGrade: builder.query<
+      EnseignantGroupedByGrade[],
+      number | void
+    >({
+      query: () => ({
+        //return `get-all-enseignant`;
+        url: `/get-enseignants-grouped-by-grade`,
+        method: "GET",
+      }),
+      providesTags: ["EnseignantGroupedByGrade"],
+    }),
 
       addEnseignant: builder.mutation<void, Enseignant>({
         query(payload) {
@@ -333,4 +354,5 @@ export const {
   useDeleteEnseignantMutation,
   useUpdateEnseignantMutation,
   useFetchTeachersPeriodsQuery,
+  useFetchEnseignantsGroupedByGradeQuery,
 } = enseignantSlice;

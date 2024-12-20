@@ -4,25 +4,27 @@ import Breadcrumb from "Common/BreadCrumb";
 import { Link, useNavigate } from "react-router-dom";
 import TableContainer from "Common/TableContainer";
 import {
+  useFetchEnseignantsGroupedByGradeQuery,
   useFetchEnseignantsQuery,
   useFetchTeachersPeriodsQuery,
 } from "features/enseignant/enseignantSlice";
 import CustomLoader from "Common/CustomLoader/CustomLoader";
 import { useFetchClassesQuery } from "features/classe/classe";
 import { useFetchSeancesQuery } from "features/seance/seance";
+import { useFetchGradesEnseignantQuery } from "features/gradeEnseignant/gradeEnseignant";
+import { useFetchTimeTableParamsQuery } from "features/timeTableParams/timeTableParams";
 import CountUp from "react-countup";
 
 export interface outputData {
-  classe: any;
-  charge_s1: string;
-  charge_s2: string;
-  defaut_s1: string;
-  defaut_s2: string;
-  emploi_s1: string;
-  emploi_s2: string;
+  grade: string;
+  nbr: string;
+  charge: string;
+  total_semaine: string;
+  total_s1: string;
+  total_s2: string;
 }
 
-const TableauChargesHorairesClasses = () => {
+const EquilibreHorairesGrade = () => {
   document.title = "Equilibre horaires des classes | Smart University";
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -30,135 +32,117 @@ const TableauChargesHorairesClasses = () => {
     setSearchQuery(event.target.value.toLowerCase());
   };
 
+  const { data: params = [], isSuccess: areParamsFetched } =
+    useFetchTimeTableParamsQuery();
+
+  const { data: grades = [], isSuccess: areGradesFetched } =
+    useFetchGradesEnseignantQuery();
+
+  const { data: groupedTeachers = [], isSuccess: areGroupedTeachersFetched } =
+    useFetchEnseignantsGroupedByGradeQuery();
+
   const { data: classes = [], isSuccess: areClassesFetched } =
     useFetchClassesQuery();
 
-  const { data: seances = [], isSuccess: areAllSeancesFetched } =
-    useFetchSeancesQuery();
   const [hasProcessed, setHasProcessed] = useState(false);
   const [tableData, setTableData] = useState<outputData[]>([]);
 
-  const [totalChS1, setTotalChS1] = useState(0);
-  const [totalChS2, setTotalChS2] = useState(0);
+  const [totalS1, setTotalS1] = useState(0);
+  const [totalS2, setTotalS2] = useState(0);
 
-  const [totalDefautS1, setTotalDefautS1] = useState(0);
-  const [totalDefautS2, setTotalDefautS2] = useState(0);
-
-  const [totalEmploiS1, setTotalEmploiS1] = useState(0);
-  const [totalEmploiS2, setTotalEmploiS2] = useState(0);
+  const [ecartS1, setEcartS1] = useState(0);
+  const [ecartS2, setEcartS2] = useState(0);
 
   useEffect(() => {
-    if (areClassesFetched && areAllSeancesFetched && !hasProcessed) {
-      console.log("classes fetched", classes);
-      console.log("seances", seances);
+    if (
+      areGroupedTeachersFetched &&
+      areParamsFetched &&
+      areClassesFetched &&
+      !hasProcessed
+    ) {
+      console.log("groupedTeachers fetched", groupedTeachers);
 
       // Perform your logic here
-      processBothData(classes, seances);
+      processBothData(groupedTeachers, classes);
 
       // Mark as processed
       setHasProcessed(true);
     }
-  }, [areClassesFetched, areAllSeancesFetched, classes, seances, hasProcessed]);
+  }, [
+    areGroupedTeachersFetched,
+    areParamsFetched,
+    areClassesFetched,
+    groupedTeachers,
+    params,
+    classes,
+    hasProcessed,
+  ]);
 
-  const processBothData = (classes: any, seances: any) => {
-    console.log("Processing combined data:", classes, seances);
-    let tch1 = 0;
-    let tch2 = 0;
-
-    let te1 = 0;
-    let te2 = 0;
-
-    let td1 = 0;
-    let td2 = 0;
-
+  const processBothData = (groupedTeachers: any, classes: any) => {
+    console.log("Processing combined data:", groupedTeachers);
     let output = [];
-    for (const classe of classes) {
+
+    let tS1 = 0;
+    let tS2 = 0;
+
+    let tcS1 = 0;
+    let tcS2 = 0;
+
+    for (const element of groupedTeachers) {
       let outputElement: outputData = {
-        classe: classe,
-        charge_s1: "0",
-        charge_s2: "0",
-        defaut_s1: "0",
-        defaut_s2: "0",
-        emploi_s1: "0",
-        emploi_s2: "0",
+        grade: element?.gradeLabel?.grade_fr!,
+        charge: "0",
+        nbr: String(element?.teachers?.length),
+        total_semaine: "0",
+        total_s1: "0",
+        total_s2: "0",
       };
-      let semester1Sessions = seances.filter(
-        (seance: any) =>
-          seance.classe._id === classe._id && seance.semestre === "1"
+
+      outputElement.charge = element?.gradeLabel?.charge_horaire.s1MaxHE;
+
+      outputElement.total_semaine = String(
+        Number(element?.gradeLabel?.charge_horaire.s1MaxHE) *
+          Number(outputElement.nbr)
       );
-      console.log("semester1Sessions", semester1Sessions);
 
-      let semester2Sessions = seances.filter(
-        (seance: any) =>
-          seance.classe._id === classe._id && seance.semestre === "2"
+      const weeksS1 = calculateWeeksAdjusted(
+        params[0].semestre1_start,
+        params[0].semestre1_end
       );
-      console.log("semester2Sessions", semester2Sessions);
-
-      outputElement.charge_s1 = calculerChargeSemestriel(classe.matieres, "1");
-      tch1 += Number(outputElement.charge_s1);
-
-      outputElement.charge_s2 = calculerChargeSemestriel(classe.matieres, "2");
-      tch2 += Number(outputElement.charge_s2);
-
-      outputElement.emploi_s1 = calculerHESemestriel(semester1Sessions);
-      te1 += Number(outputElement.emploi_s1);
-
-      outputElement.emploi_s2 = calculerHESemestriel(semester2Sessions);
-      te2 += Number(outputElement.emploi_s2);
-
-      outputElement.defaut_s1 = String(
-        Number(outputElement.charge_s1) - Number(outputElement.emploi_s1)
+      console.log("weeksS1", weeksS1);
+      const weeksS2 = calculateWeeksAdjusted(
+        params[0].semestre2_start,
+        params[0].semestre2_end
       );
-      td1 += Number(outputElement.defaut_s1);
+      console.log("weeksS2", weeksS2);
 
-      outputElement.defaut_s2 = String(
-        Number(outputElement.charge_s2) - Number(outputElement.emploi_s2)
+      console.log("outputElement", outputElement);
+
+      outputElement.total_s1 = String(
+        weeksS1 * Number(outputElement.total_semaine)
       );
-      td2 += Number(outputElement.defaut_s2);
+      tS1 += Number(outputElement.total_s1);
+      outputElement.total_s2 = String(
+        weeksS2 * Number(outputElement.total_semaine)
+      );
+      tS2 += Number(outputElement.total_s2);
 
       output.push(outputElement);
     }
 
-    setTotalChS1(tch1);
-    setTotalChS2(tch2);
-
-    setTotalEmploiS1(te1);
-    setTotalEmploiS2(te2);
-
-    setTotalDefautS1(td1);
-    setTotalDefautS2(td2);
+    for (const classe of classes) {
+      tcS1 += Number(calculerChargeSemestriel(classe.matieres, "1"));
+      tcS2 += Number(calculerChargeSemestriel(classe.matieres, "2"));
+    }
 
     console.log("output", output);
     setTableData(output);
-  };
 
-  const getHoursNumber = (start: any, end: any) => {
-    // Parse hours and minutes from the start and end times
-    const [startHour, startMinute] = start.split(":").map(Number);
-    const [endHour, endMinute] = end.split(":").map(Number);
+    setTotalS1(tS1);
+    setTotalS2(tS2);
 
-    // Convert to total minutes
-    const startTotalMinutes = startHour * 60 + startMinute;
-    const endTotalMinutes = endHour * 60 + endMinute;
-
-    // Calculate the difference in minutes
-    const durationMinutes = endTotalMinutes - startTotalMinutes;
-
-    // Convert minutes to decimal hours
-    return durationMinutes / 60;
-  };
-
-  //* Heures d'enseignement *//
-  const calculerHESemestriel = (seances: any[]) => {
-    console.log("seances", seances);
-    let volumeTotal = 0;
-
-    for (const seance of seances) {
-      let duration = getHoursNumber(seance.heure_debut, seance.heure_fin);
-      volumeTotal += duration;
-    }
-
-    return volumeTotal.toFixed(2);
+    setEcartS1(tS1 - tcS1);
+    setEcartS2(tS2 - tcS2);
   };
 
   const calculerChargeSemestriel = (matieres: any[], semestre: string) => {
@@ -188,54 +172,69 @@ const TableauChargesHorairesClasses = () => {
     return sum;
   };
 
+  const calculateWeeksAdjusted = (start: string, end: string) => {
+    // Step 1: Parse the given dates
+    const startDate = new Date(start.split("-").reverse().join("-")); // Convert to YYYY-MM-DD
+    const endDate = new Date(end.split("-").reverse().join("-"));
+
+    // Step 2: Find the Monday of the week for the start date
+    const startMonday = new Date(startDate);
+    startMonday.setDate(
+      startDate.getDate() -
+        startDate.getDay() +
+        (startDate.getDay() === 0 ? -6 : 1)
+    ); // Move to Monday
+
+    // Step 3: Find the Sunday of the week for the end date
+    const endSunday = new Date(endDate);
+    endSunday.setDate(
+      endDate.getDate() +
+        (7 - endDate.getDay() - (endDate.getDay() === 0 ? 7 : 0))
+    ); // Move to Sunday
+
+    // Step 4: Calculate the total number of weeks (inclusive)
+    const totalDays =
+      (endSunday.getTime() - startMonday.getTime()) / (1000 * 60 * 60 * 24); // Difference in days
+    const totalWeeks = Math.floor(totalDays / 7) + 1; // Count overlapping weeks only
+
+    return totalWeeks;
+  };
+
   const columns = useMemo(
     () => [
       {
-        Header: "Classes",
-        accessor: (row: any) => `${row?.classe?.nom_classe_fr!}`,
+        Header: "Grades",
+        accessor: (row: any) => `${row?.grade!}`,
         disableFilters: true,
         filterable: true,
       },
       {
-        Header: "Charges S1",
-        accessor: (row: any) => `${row?.charge_s1!}`,
-        disableFilters: true,
-        filterable: true,
-      },
-      // {
-      //   Header: "Type matière / Heures",
-      //   accessor: (row: any) => `TD: 3 | C: 5 | TP: 4 | CI: 3.5`,
-      //   disableFilters: true,
-      //   filterable: true,
-      // },
-      {
-        Header: "Emploi S1",
-        accessor: (row: any) => `${row?.emploi_s1!}`,
+        Header: "Nombre d'enseignants",
+        accessor: (row: any) => `${row?.nbr!}`,
         disableFilters: true,
         filterable: true,
       },
       {
-        Header: "Défauts S1",
-        accessor: (row: any) => `${row?.defaut_s1!}`,
+        Header: "Charge",
+        accessor: (row: any) => `${row?.charge!}`,
         disableFilters: true,
         filterable: true,
       },
       {
-        Header: "Charges S2",
-        accessor: (row: any) => `${row?.charge_s2!}`,
+        Header: "Nombre d'heures/semaine",
+        accessor: (row: any) => `${row?.total_semaine!}`,
         disableFilters: true,
         filterable: true,
       },
       {
-        Header: "Emploi S2",
-        accessor: (row: any) => `${row?.emploi_s2!}`,
+        Header: "Total des heures S1",
+        accessor: (row: any) => `${row?.total_s1!}`,
         disableFilters: true,
         filterable: true,
       },
-
       {
-        Header: "Défauts S2",
-        accessor: (row: any) => `${row?.defaut_s2!}`,
+        Header: "Total des heures S2",
+        accessor: (row: any) => `${row?.total_s2!}`,
         disableFilters: true,
         filterable: true,
       },
@@ -283,7 +282,7 @@ const TableauChargesHorairesClasses = () => {
                   ) : (
                     <>
                       <Row>
-                        <Col xl={2} md={6}>
+                        <Col xl={3} md={6}>
                           <Card className="card-animate bg-info-subtle border-0 overflow-hidden">
                             <div className="position-absolute end-0 start-0 top-0 z-0">
                               <svg
@@ -428,7 +427,7 @@ const TableauChargesHorairesClasses = () => {
                               <div className="d-flex align-items-center">
                                 <div className="flex-grow-1">
                                   <p className="text-uppercase fs-14 fw-medium text-muted mb-0">
-                                    Total Charges S1
+                                    Total des heures S1
                                   </p>
                                 </div>
                               </div>
@@ -436,7 +435,7 @@ const TableauChargesHorairesClasses = () => {
                                 <div>
                                   <h4 className="fs-24 fw-semibold mb-4">
                                     <CountUp
-                                      end={totalChS1}
+                                      end={totalS1}
                                       decimals={2}
                                       suffix="H"
                                     />
@@ -452,7 +451,7 @@ const TableauChargesHorairesClasses = () => {
                           </Card>
                         </Col>
 
-                        <Col xl={2} md={6}>
+                        <Col xl={3} md={6}>
                           <Card className="card-animate bg-success-subtle border-0 overflow-hidden">
                             <div className="position-absolute end-0 start-0 top-0 z-0">
                               <svg
@@ -597,7 +596,7 @@ const TableauChargesHorairesClasses = () => {
                               <div className="d-flex align-items-center">
                                 <div className="flex-grow-1">
                                   <p className="text-uppercase fs-14 fw-medium text-muted mb-0">
-                                    Total Emploi S1
+                                    Ecart Enseignants / Classes S1
                                   </p>
                                 </div>
                               </div>
@@ -605,7 +604,7 @@ const TableauChargesHorairesClasses = () => {
                                 <div>
                                   <h4 className="fs-24 fw-semibold mb-4">
                                     <CountUp
-                                      end={totalEmploiS1}
+                                      end={ecartS1}
                                       decimals={2}
                                       suffix="H"
                                     />
@@ -613,7 +612,7 @@ const TableauChargesHorairesClasses = () => {
                                 </div>
                                 <div className="avatar-sm flex-shrink-0">
                                   <span className="avatar-title bg-white text-success rounded fs-3">
-                                    <i className="ph-clock"></i>
+                                    <i className="ph ph-plus-minus"></i>
                                   </span>
                                 </div>
                               </div>
@@ -621,8 +620,8 @@ const TableauChargesHorairesClasses = () => {
                           </Card>
                         </Col>
 
-                        <Col xl={2} md={6}>
-                          <Card className="card-animate bg-danger-subtle border-0 overflow-hidden">
+                        <Col xl={3} md={6}>
+                          <Card className="card-animate bg-warning-subtle border-0 overflow-hidden">
                             <div className="position-absolute end-0 start-0 top-0 z-0">
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -766,7 +765,7 @@ const TableauChargesHorairesClasses = () => {
                               <div className="d-flex align-items-center">
                                 <div className="flex-grow-1">
                                   <p className="text-uppercase fs-14 fw-medium text-muted mb-0">
-                                    Total Défauts S1
+                                    Total des heures S2
                                   </p>
                                 </div>
                               </div>
@@ -774,183 +773,14 @@ const TableauChargesHorairesClasses = () => {
                                 <div>
                                   <h4 className="fs-24 fw-semibold mb-4">
                                     <CountUp
-                                      end={totalDefautS1}
+                                      end={totalS2}
                                       decimals={2}
                                       suffix="H"
                                     />
                                   </h4>
                                 </div>
                                 <div className="avatar-sm flex-shrink-0">
-                                  <span className="avatar-title bg-white text-danger rounded fs-3">
-                                    <i className="ph ph-plus-minus"></i>
-                                  </span>
-                                </div>
-                              </div>
-                            </Card.Body>
-                          </Card>
-                        </Col>
-
-                        <Col xl={2} md={6}>
-                          <Card className="card-animate bg-info-subtle border-0 overflow-hidden">
-                            <div className="position-absolute end-0 start-0 top-0 z-0">
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                version="1.1"
-                                // xmlns:xlink="http://www.w3.org/1999/xlink"
-                                width="400"
-                                height="250"
-                                preserveAspectRatio="none"
-                                viewBox="0 0 400 250"
-                              >
-                                <g mask='url("#SvgjsMask1560")' fill="none">
-                                  <path
-                                    d="M306 65L446 -75"
-                                    strokeWidth="8"
-                                    stroke="url(#SvgjsLinearGradient1558)"
-                                    strokeLinecap="round"
-                                    className="BottomLeft"
-                                  ></path>
-                                  <path
-                                    d="M399 2L315 86"
-                                    strokeWidth="10"
-                                    stroke="url(#SvgjsLinearGradient1559)"
-                                    strokeLinecap="round"
-                                    className="TopRight"
-                                  ></path>
-                                  <path
-                                    d="M83 77L256 -96"
-                                    strokeWidth="6"
-                                    stroke="url(#SvgjsLinearGradient1559)"
-                                    strokeLinecap="round"
-                                    className="TopRight"
-                                  ></path>
-                                  <path
-                                    d="M281 212L460 33"
-                                    strokeWidth="6"
-                                    stroke="url(#SvgjsLinearGradient1559)"
-                                    strokeLinecap="round"
-                                    className="TopRight"
-                                  ></path>
-                                  <path
-                                    d="M257 62L76 243"
-                                    strokeWidth="6"
-                                    stroke="url(#SvgjsLinearGradient1559)"
-                                    strokeLinecap="round"
-                                    className="TopRight"
-                                  ></path>
-                                  <path
-                                    d="M305 123L214 214"
-                                    strokeWidth="6"
-                                    stroke="url(#SvgjsLinearGradient1558)"
-                                    strokeLinecap="round"
-                                    className="BottomLeft"
-                                  ></path>
-                                  <path
-                                    d="M327 222L440 109"
-                                    strokeWidth="6"
-                                    stroke="url(#SvgjsLinearGradient1558)"
-                                    strokeLinecap="round"
-                                    className="BottomLeft"
-                                  ></path>
-                                  <path
-                                    d="M287 109L362 34"
-                                    strokeWidth="10"
-                                    stroke="url(#SvgjsLinearGradient1559)"
-                                    strokeLinecap="round"
-                                    className="TopRight"
-                                  ></path>
-                                  <path
-                                    d="M259 194L332 121"
-                                    strokeWidth="8"
-                                    stroke="url(#SvgjsLinearGradient1559)"
-                                    strokeLinecap="round"
-                                    className="TopRight"
-                                  ></path>
-                                  <path
-                                    d="M376 186L240 322"
-                                    strokeWidth="8"
-                                    stroke="url(#SvgjsLinearGradient1559)"
-                                    strokeLinecap="round"
-                                    className="TopRight"
-                                  ></path>
-                                  <path
-                                    d="M308 153L123 338"
-                                    strokeWidth="6"
-                                    stroke="url(#SvgjsLinearGradient1559)"
-                                    strokeLinecap="round"
-                                    className="TopRight"
-                                  ></path>
-                                  <path
-                                    d="M218 62L285 -5"
-                                    strokeWidth="8"
-                                    stroke="url(#SvgjsLinearGradient1558)"
-                                    strokeLinecap="round"
-                                    className="BottomLeft"
-                                  ></path>
-                                </g>
-                                <defs>
-                                  <mask id="SvgjsMask1560">
-                                    <rect
-                                      width="400"
-                                      height="250"
-                                      fill="#ffffff"
-                                    ></rect>
-                                  </mask>
-                                  <linearGradient
-                                    x1="100%"
-                                    y1="0%"
-                                    x2="0%"
-                                    y2="100%"
-                                    id="SvgjsLinearGradient1558"
-                                  >
-                                    <stop
-                                      stopColor="rgba(var(--tb-danger-rgb), 0)"
-                                      offset="0"
-                                    ></stop>
-                                    <stop
-                                      stopColor="rgba(var(--tb-danger-rgb), 0.1)"
-                                      offset="1"
-                                    ></stop>
-                                  </linearGradient>
-                                  <linearGradient
-                                    x1="0%"
-                                    y1="100%"
-                                    x2="100%"
-                                    y2="0%"
-                                    id="SvgjsLinearGradient1559"
-                                  >
-                                    <stop
-                                      stopColor="rgba(var(--tb-danger-rgb), 0)"
-                                      offset="0"
-                                    ></stop>
-                                    <stop
-                                      stopColor="rgba(var(--tb-danger-rgb), 0.1)"
-                                      offset="1"
-                                    ></stop>
-                                  </linearGradient>
-                                </defs>
-                              </svg>
-                            </div>
-                            <Card.Body className="position-relative">
-                              <div className="d-flex align-items-center">
-                                <div className="flex-grow-1">
-                                  <p className="text-uppercase fs-14 fw-medium text-muted mb-0">
-                                    Total Charges S2
-                                  </p>
-                                </div>
-                              </div>
-                              <div className="d-flex align-items-end justify-content-between mt-4">
-                                <div>
-                                  <h4 className="fs-24 fw-semibold mb-4">
-                                    <CountUp
-                                      end={totalChS2}
-                                      decimals={2}
-                                      suffix="H"
-                                    />
-                                  </h4>
-                                </div>
-                                <div className="avatar-sm flex-shrink-0">
-                                  <span className="avatar-title bg-white text-info rounded fs-3">
+                                  <span className="avatar-title bg-white text-warning rounded fs-3">
                                     <i className="ph-clock"></i>
                                   </span>
                                 </div>
@@ -959,175 +789,7 @@ const TableauChargesHorairesClasses = () => {
                           </Card>
                         </Col>
 
-                        <Col xl={2} md={6}>
-                          <Card className="card-animate bg-success-subtle border-0 overflow-hidden">
-                            <div className="position-absolute end-0 start-0 top-0 z-0">
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                version="1.1"
-                                // xmlns:xlink="http://www.w3.org/1999/xlink"
-                                width="400"
-                                height="250"
-                                preserveAspectRatio="none"
-                                viewBox="0 0 400 250"
-                              >
-                                <g mask='url("#SvgjsMask1560")' fill="none">
-                                  <path
-                                    d="M306 65L446 -75"
-                                    strokeWidth="8"
-                                    stroke="url(#SvgjsLinearGradient1558)"
-                                    strokeLinecap="round"
-                                    className="BottomLeft"
-                                  ></path>
-                                  <path
-                                    d="M399 2L315 86"
-                                    strokeWidth="10"
-                                    stroke="url(#SvgjsLinearGradient1559)"
-                                    strokeLinecap="round"
-                                    className="TopRight"
-                                  ></path>
-                                  <path
-                                    d="M83 77L256 -96"
-                                    strokeWidth="6"
-                                    stroke="url(#SvgjsLinearGradient1559)"
-                                    strokeLinecap="round"
-                                    className="TopRight"
-                                  ></path>
-                                  <path
-                                    d="M281 212L460 33"
-                                    strokeWidth="6"
-                                    stroke="url(#SvgjsLinearGradient1559)"
-                                    strokeLinecap="round"
-                                    className="TopRight"
-                                  ></path>
-                                  <path
-                                    d="M257 62L76 243"
-                                    strokeWidth="6"
-                                    stroke="url(#SvgjsLinearGradient1559)"
-                                    strokeLinecap="round"
-                                    className="TopRight"
-                                  ></path>
-                                  <path
-                                    d="M305 123L214 214"
-                                    strokeWidth="6"
-                                    stroke="url(#SvgjsLinearGradient1558)"
-                                    strokeLinecap="round"
-                                    className="BottomLeft"
-                                  ></path>
-                                  <path
-                                    d="M327 222L440 109"
-                                    strokeWidth="6"
-                                    stroke="url(#SvgjsLinearGradient1558)"
-                                    strokeLinecap="round"
-                                    className="BottomLeft"
-                                  ></path>
-                                  <path
-                                    d="M287 109L362 34"
-                                    strokeWidth="10"
-                                    stroke="url(#SvgjsLinearGradient1559)"
-                                    strokeLinecap="round"
-                                    className="TopRight"
-                                  ></path>
-                                  <path
-                                    d="M259 194L332 121"
-                                    strokeWidth="8"
-                                    stroke="url(#SvgjsLinearGradient1559)"
-                                    strokeLinecap="round"
-                                    className="TopRight"
-                                  ></path>
-                                  <path
-                                    d="M376 186L240 322"
-                                    strokeWidth="8"
-                                    stroke="url(#SvgjsLinearGradient1559)"
-                                    strokeLinecap="round"
-                                    className="TopRight"
-                                  ></path>
-                                  <path
-                                    d="M308 153L123 338"
-                                    strokeWidth="6"
-                                    stroke="url(#SvgjsLinearGradient1559)"
-                                    strokeLinecap="round"
-                                    className="TopRight"
-                                  ></path>
-                                  <path
-                                    d="M218 62L285 -5"
-                                    strokeWidth="8"
-                                    stroke="url(#SvgjsLinearGradient1558)"
-                                    strokeLinecap="round"
-                                    className="BottomLeft"
-                                  ></path>
-                                </g>
-                                <defs>
-                                  <mask id="SvgjsMask1560">
-                                    <rect
-                                      width="400"
-                                      height="250"
-                                      fill="#ffffff"
-                                    ></rect>
-                                  </mask>
-                                  <linearGradient
-                                    x1="100%"
-                                    y1="0%"
-                                    x2="0%"
-                                    y2="100%"
-                                    id="SvgjsLinearGradient1558"
-                                  >
-                                    <stop
-                                      stopColor="rgba(var(--tb-danger-rgb), 0)"
-                                      offset="0"
-                                    ></stop>
-                                    <stop
-                                      stopColor="rgba(var(--tb-danger-rgb), 0.1)"
-                                      offset="1"
-                                    ></stop>
-                                  </linearGradient>
-                                  <linearGradient
-                                    x1="0%"
-                                    y1="100%"
-                                    x2="100%"
-                                    y2="0%"
-                                    id="SvgjsLinearGradient1559"
-                                  >
-                                    <stop
-                                      stopColor="rgba(var(--tb-danger-rgb), 0)"
-                                      offset="0"
-                                    ></stop>
-                                    <stop
-                                      stopColor="rgba(var(--tb-danger-rgb), 0.1)"
-                                      offset="1"
-                                    ></stop>
-                                  </linearGradient>
-                                </defs>
-                              </svg>
-                            </div>
-                            <Card.Body className="position-relative">
-                              <div className="d-flex align-items-center">
-                                <div className="flex-grow-1">
-                                  <p className="text-uppercase fs-14 fw-medium text-muted mb-0">
-                                    Total Emploi S2
-                                  </p>
-                                </div>
-                              </div>
-                              <div className="d-flex align-items-end justify-content-between mt-4">
-                                <div>
-                                  <h4 className="fs-24 fw-semibold mb-4">
-                                    <CountUp
-                                      end={totalEmploiS2}
-                                      decimals={2}
-                                      suffix="H"
-                                    />
-                                  </h4>
-                                </div>
-                                <div className="avatar-sm flex-shrink-0">
-                                  <span className="avatar-title bg-white text-success rounded fs-3">
-                                    <i className="ph-clock"></i>
-                                  </span>
-                                </div>
-                              </div>
-                            </Card.Body>
-                          </Card>
-                        </Col>
-                        <Col xl={2} md={6}>
+                        <Col xl={3} md={6}>
                           <Card className="card-animate bg-danger-subtle border-0 overflow-hidden">
                             <div className="position-absolute end-0 start-0 top-0 z-0">
                               <svg
@@ -1272,7 +934,7 @@ const TableauChargesHorairesClasses = () => {
                               <div className="d-flex align-items-center">
                                 <div className="flex-grow-1">
                                   <p className="text-uppercase fs-14 fw-medium text-muted mb-0">
-                                    Total Défauts S2
+                                    Ecart Enseignants / Classes S2
                                   </p>
                                 </div>
                               </div>
@@ -1280,7 +942,7 @@ const TableauChargesHorairesClasses = () => {
                                 <div>
                                   <h4 className="fs-24 fw-semibold mb-4">
                                     <CountUp
-                                      end={totalDefautS2}
+                                      end={ecartS2}
                                       decimals={2}
                                       suffix="H"
                                     />
@@ -1296,7 +958,6 @@ const TableauChargesHorairesClasses = () => {
                           </Card>
                         </Col>
                       </Row>
-
                       <table
                         className="table align-middle table-nowrap"
                         id="customerTable"
@@ -1304,7 +965,6 @@ const TableauChargesHorairesClasses = () => {
                         <TableContainer
                           columns={columns || []}
                           data={tableData}
-                          // isGlobalFilter={false}
                           iscustomPageSize={false}
                           isBordered={false}
                           customPageSize={10}
@@ -1338,4 +998,4 @@ const TableauChargesHorairesClasses = () => {
   );
 };
 
-export default TableauChargesHorairesClasses;
+export default EquilibreHorairesGrade;

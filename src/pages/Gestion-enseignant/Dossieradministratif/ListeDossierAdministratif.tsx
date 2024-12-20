@@ -16,7 +16,7 @@ const ListeDossierAdministratif = () => {
   const navigate = useNavigate();
 
   function tog_AddDossierAdministratif() {
-    navigate("/AjouterDossierAdministartif");
+    navigate("/gestion-enseignant/ajouter-dossier-administartif");
   }
   const { data = [] } = useFetchDossierAdministratifQuery();
 
