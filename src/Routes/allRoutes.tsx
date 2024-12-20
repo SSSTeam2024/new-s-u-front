@@ -179,7 +179,7 @@ import EditProfilEnseignant from "pages/Gestion-enseignant/EditProfilEnseignant"
 import GestionEmploiEnseignant from "pages/Departements/EmploiEnseignant/GestionEmploiEnseignant";
 import TableauChargesHorairesClasses from "pages/Departements/Emploi/TableauChargesHorairesClasses";
 import EditProfilPersonnel from "pages/Gestion-personnel/EditProfilPersonnel";
-
+import EquilibreHorairesGrade from "pages/Departements/EmploiEnseignant/EquilibreHorairesGrade"
 const authProtectedRoutes = [
   { path: "/dashboard", component: <Dashboard /> },
 
@@ -773,6 +773,10 @@ const authProtectedRoutes = [
   {
     path: "/gestion-emplois/emlpoi-enseignant/teacher-period",
     component: <TeacherPeriod />,
+  },
+  {
+    path: "/gestion-emplois/emlpoi-enseignant/liste-charges-grade",
+    component: <EquilibreHorairesGrade />,
   },
 
   // Accounts
