@@ -738,7 +738,7 @@ const ListEtudiants = () => {
             </Col>
           </Row>
 
-          <Row id="sellersList">
+          <Row>
             <Col lg={12}>
               <Card>
                 <Card.Body>

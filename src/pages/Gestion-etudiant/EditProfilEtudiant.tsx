@@ -876,7 +876,7 @@ const EditProfilEtudiant = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-       // console.log("Fetching student data...");
+        // console.log("Fetching student data...");
         const response = await fetch(
           `${process.env.REACT_APP_API_URL}/api/etudiant/get-etudiant/${etudiant._id}`
         );
@@ -953,7 +953,7 @@ const EditProfilEtudiant = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-       // console.log("Fetching student data...");
+        // console.log("Fetching student data...");
         const response = await fetch(
           `${process.env.REACT_APP_API_URL}/api/etudiant/get-etudiant/${etudiant._id}`
         );
@@ -1009,7 +1009,6 @@ const EditProfilEtudiant = () => {
       },
     }));
   };
-
 
   const handleFileTypeInscriptionUpload = (event: any, index: any) => {
     const file = event.target.files[0];
@@ -1200,7 +1199,7 @@ const EditProfilEtudiant = () => {
     if (file) {
       const { base64Data, extension } = await convertToBase64(file);
       const newPDF = base64Data + "." + extension;
-     // console.log(extension);
+      // console.log(extension);
       setFormData({
         ...formData,
         face_1_CIN: newPDF,

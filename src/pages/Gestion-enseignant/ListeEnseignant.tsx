@@ -6,12 +6,15 @@ import { Link, useNavigate } from "react-router-dom";
 import TableContainer from "Common/TableContainer";
 import Swal from "sweetalert2";
 import userImage from "../../assets/images/profile-bg.jpg";
-import {Enseignant,useDeleteEnseignantMutation,useFetchEnseignantsQuery,} from "features/enseignant/enseignantSlice";
-import { actionAuthorization } from 'utils/pathVerification';
-import { RootState } from 'app/store';
-import { useSelector } from 'react-redux';
-import { selectCurrentUser } from 'features/account/authSlice';
-
+import {
+  Enseignant,
+  useDeleteEnseignantMutation,
+  useFetchEnseignantsQuery,
+} from "features/enseignant/enseignantSlice";
+import { actionAuthorization } from "utils/pathVerification";
+import { RootState } from "app/store";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "features/account/authSlice";
 
 const ListEnseignants = () => {
   document.title = "Liste des enseignants | Smart University";
@@ -19,16 +22,12 @@ const ListEnseignants = () => {
 
   const navigate = useNavigate();
 
-  const [modal_AddEnseignantModals, setmodal_AddEnseignantModals] =
-    useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState("");
- 
 
   function tog_AddEnseignant() {
     navigate("/gestion-enseignant/ajouter-enseignant");
   }
   const { data = [] } = useFetchEnseignantsQuery();
-  console.log(data);
   const [filterStatus, setFilterStatus] = useState("All");
   const [enseignantCount, setEnseignantCount] = useState(0);
   const handleFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -151,18 +150,11 @@ const ListEnseignants = () => {
         filterable: true,
       },
       // {
-      //   Header: "Matricule CNRPS",
-      //   accessor: (row: Enseignant) => row.mat_cnrps || "---",
+      //   Header: "Nom et Prénom",
+      //   accessor: (row: any) => `${row.prenom_ar} ${row.nom_ar}`,
       //   disableFilters: true,
       //   filterable: true,
       // },
-      {
-        Header: "Nom et Prénom",
-        accessor: (row: any) => `${row.prenom_ar} ${row.nom_ar}`,
-        disableFilters: true,
-        filterable: true,
-      },
-
       {
         Header: "Spécialité",
         accessor: (row: any) => row?.specilaite?.specialite_fr || "",
@@ -235,79 +227,93 @@ const ListEnseignants = () => {
         accessor: (enseignant: Enseignant) => {
           return (
             <ul className="hstack gap-2 list-unstyled mb-0">
-        {actionAuthorization("/gestion-etudiant/compte-etudiant",user?.permissions!)? 
-
-              <li>
-
-                <Link
-                  to="/gestion-enseignant/compte-enseignant"
-                  className="badge bg-info-subtle text-info view-item-btn"
-                  state={enseignant}
-                >
-                  <i
-                    className="ph ph-eye"
-                    style={{
-                      transition: "transform 0.3s ease-in-out",
-                      cursor: "pointer",
-                      fontSize: "1.5em",
-                    }}
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.transform = "scale(1.4)")
-                    }
-                    onMouseLeave={(e) =>
-                      (e.currentTarget.style.transform = "scale(1)")
-                    }
-                  ></i>
-                </Link>
-              </li> : <></> }
-              {actionAuthorization("/gestion-enseignant/edit-compte-enseignant",user?.permissions!)?
-
-              <li>
-                <Link
-                  to="/gestion-enseignant/edit-compte-enseignant"
-                  className="badge bg-primary-subtle text-primary edit-item-btn"
-                  state={enseignant}
-                >
-                  <i
-                    className="ph ph-pencil-line"
-                    style={{
-                      transition: "transform 0.3s ease-in-out",
-                      cursor: "pointer",
-                      fontSize: "1.5em",
-                    }}
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.transform = "scale(1.2)")
-                    }
-                    onMouseLeave={(e) =>
-                      (e.currentTarget.style.transform = "scale(1)")
-                    }
-                  ></i>
-                </Link>
-              </li>  : <></> }
-              {actionAuthorization("/gestion-enseignant/supprimer-compte-enseignant",user?.permissions!)?
-
-              <li>
-                <Link
-                  to="#"
-                  className="badge bg-danger-subtle text-danger remove-item-btn"
-                >
-                  <i
-                    className="ph ph-trash"
-                    style={{
-                      transition: "transform 0.3s ease-in-out",
-                      cursor: "pointer",
-                      fontSize: "1.5em",
-                    }}
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.transform = "scale(1.2)")
-                    }
-                    onMouseLeave={(e) =>
-                      (e.currentTarget.style.transform = "scale(1)")
-                    }
-                    onClick={() => AlertDelete(enseignant?._id!)}
-                  ></i>
-                </Link>
-              </li> : <></> }
+              {actionAuthorization(
+                "/gestion-etudiant/compte-etudiant",
+                user?.permissions!
+              ) ? (
+                <li>
+                  <Link
+                    to="/gestion-enseignant/compte-enseignant"
+                    className="badge bg-info-subtle text-info view-item-btn"
+                    state={enseignant}
+                  >
+                    <i
+                      className="ph ph-eye"
+                      style={{
+                        transition: "transform 0.3s ease-in-out",
+                        cursor: "pointer",
+                        fontSize: "1.5em",
+                      }}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.transform = "scale(1.4)")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.transform = "scale(1)")
+                      }
+                    ></i>
+                  </Link>
+                </li>
+              ) : (
+                <></>
+              )}
+              {actionAuthorization(
+                "/gestion-enseignant/edit-compte-enseignant",
+                user?.permissions!
+              ) ? (
+                <li>
+                  <Link
+                    to="/gestion-enseignant/edit-compte-enseignant"
+                    className="badge bg-primary-subtle text-primary edit-item-btn"
+                    state={enseignant}
+                  >
+                    <i
+                      className="ph ph-pencil-line"
+                      style={{
+                        transition: "transform 0.3s ease-in-out",
+                        cursor: "pointer",
+                        fontSize: "1.5em",
+                      }}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.transform = "scale(1.2)")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.transform = "scale(1)")
+                      }
+                    ></i>
+                  </Link>
+                </li>
+              ) : (
+                <></>
+              )}
+              {actionAuthorization(
+                "/gestion-enseignant/supprimer-compte-enseignant",
+                user?.permissions!
+              ) ? (
+                <li>
+                  <Link
+                    to="#"
+                    className="badge bg-danger-subtle text-danger remove-item-btn"
+                  >
+                    <i
+                      className="ph ph-trash"
+                      style={{
+                        transition: "transform 0.3s ease-in-out",
+                        cursor: "pointer",
+                        fontSize: "1.5em",
+                      }}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.transform = "scale(1.2)")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.transform = "scale(1)")
+                      }
+                      onClick={() => AlertDelete(enseignant?._id!)}
+                    ></i>
+                  </Link>
+                </li>
+              ) : (
+                <></>
+              )}
             </ul>
           );
         },
@@ -782,7 +788,7 @@ const ListEnseignants = () => {
             </Col>
           </Row>
 
-          <Row id="sellersList">
+          <Row>
             <Col lg={12}>
               <Card>
                 <Card.Body>
@@ -832,39 +838,39 @@ const ListEnseignants = () => {
 
               <Card>
                 <Card.Body className="p-0">
-                  {/* <div className="table-responsive table-card mb-1"> */}
-                  <table
-                    className="table align-middle table-nowrap"
-                    id="customerTable"
-                  >
-                    <TableContainer
-                      columns={columns || []}
-                      data={filteredEnseignants || []}
-                      // isGlobalFilter={false}
-                      iscustomPageSize={false}
-                      isBordered={false}
-                      customPageSize={10}
-                      className="custom-header-css table align-middle table-nowrap"
-                      tableClass="table-centered align-middle table-nowrap mb-0"
-                      theadClass="text-muted table-light"
-                      SearchPlaceholder="Search Products..."
-                    />
-                  </table>
-                  <div className="noresult" style={{ display: "none" }}>
-                    <div className="text-center py-4">
-                      <div className="avatar-md mx-auto mb-4">
-                        <div className="avatar-title bg-primary-subtle text-primary rounded-circle fs-24">
-                          <i className="bi bi-search"></i>
+                  <div className="table-responsive mb-1 p-0">
+                    <table
+                      className="table align-middle table-nowrap"
+                      id="customerTable"
+                    >
+                      <TableContainer
+                        columns={columns || []}
+                        data={filteredEnseignants || []}
+                        // isGlobalFilter={false}
+                        iscustomPageSize={false}
+                        isBordered={false}
+                        customPageSize={10}
+                        className="custom-header-css table align-middle table-nowrap"
+                        tableClass="table-centered align-middle table-nowrap mb-0"
+                        theadClass="text-muted table-light"
+                        SearchPlaceholder="Search Products..."
+                      />
+                    </table>
+                    <div className="noresult" style={{ display: "none" }}>
+                      <div className="text-center py-4">
+                        <div className="avatar-md mx-auto mb-4">
+                          <div className="avatar-title bg-primary-subtle text-primary rounded-circle fs-24">
+                            <i className="bi bi-search"></i>
+                          </div>
                         </div>
+                        <h5 className="mt-2">Sorry! No Result Found</h5>
+                        <p className="text-muted mb-0">
+                          We've searched more than 150+ seller We did not find
+                          any seller for you search.
+                        </p>
                       </div>
-                      <h5 className="mt-2">Sorry! No Result Found</h5>
-                      <p className="text-muted mb-0">
-                        We've searched more than 150+ seller We did not find any
-                        seller for you search.
-                      </p>
                     </div>
                   </div>
-                  {/* </div> */}
                 </Card.Body>
               </Card>
             </Col>
