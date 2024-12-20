@@ -10,7 +10,6 @@ export interface Subcategory {
 }
 
 export interface DemandeConge {
-
   _id:string,
   personnelId:string,
   leaveType:string,
@@ -39,10 +38,11 @@ export interface DemandeConge {
   dateResponse: Date;
 
   }
+  
   export const demandeCongeSlice = createApi({
     reducerPath: 'demandeCongeApi',
     baseQuery: fetchBaseQuery({
-      baseUrl: `${process.env.REACT_APP_API_URL}/api/demandeConge/`, // Adjust endpoint base URL
+      baseUrl: `${process.env.REACT_APP_API_URL}/api/demandeConge/`,
     }),
     tagTypes: ['DemandeConges'],
     endpoints(builder) {
@@ -72,7 +72,6 @@ export interface DemandeConge {
     
         updateDemandeConge: builder.mutation<void, Partial<DemandeConge>>({
           query(leaveBalance) {
-          
             return {
               url: `edit-demande-conge`,
               method: 'PUT',

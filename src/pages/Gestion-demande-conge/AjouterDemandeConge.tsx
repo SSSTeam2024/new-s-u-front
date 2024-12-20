@@ -197,6 +197,17 @@ const AjouterDemandeConge = () => {
 
   const onSubmitDemandeConge = (e: any) => {
     e.preventDefault();
+
+    if (
+      formData?.requestedDays! > totalRemainingDays &&
+      totalRemainingDays !== 0
+    ) {
+      alert(
+        "Le nombre de jours demandés dépasse le nombre de jours restants !"
+      );
+      return;
+    }
+
     if (formData.subcategory) {
       formData.subcategory._id = selectedsubcat?.value?._id;
       formData.subcategory.Accumulable = selectedsubcat?.value?.Accumulable;
@@ -390,7 +401,8 @@ const AjouterDemandeConge = () => {
                             className="text-center"
                             style={{
                               color:
-                                formData?.requestedDays! > totalRemainingDays
+                                formData?.requestedDays! > totalRemainingDays &&
+                                totalRemainingDays !== 0
                                   ? "red"
                                   : "black",
                             }}
