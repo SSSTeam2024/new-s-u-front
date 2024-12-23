@@ -81,7 +81,7 @@ const AddTypeInscriptionEtudiant = () => {
     try {
       await createTypeInscriptionEtudiant(formData).unwrap();
       notify();
-      navigate("/parametre/inscription-etudiants");
+      navigate("/parametre-etudiant/inscription/liste-inscription-etudiant");
     } catch (error: any) {
       if (error.status === 400) {
         errorAlert("La valeur doit être unique.");

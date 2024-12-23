@@ -79,7 +79,7 @@ const ListeAvisEtudiant = () => {
          
             {
                 Header: "Auteur",
-                accessor: (row: any) => row.auteurId?.name || "",
+                accessor: (row: any) => row.auteurId?.login || "",
                 disableFilters: true,
                 filterable: true,
             },

@@ -114,12 +114,16 @@ return (
             <Card className="categrory-widgets overflow-hidden">
               <div className="card-header d-flex align-items-center">
                 <h5 className="card-title flex-grow-1 mb-0">
-                  Détails de l'étudiant{" "}
+                  Détails du personnel{" "}
                   {/* <i className="bi bi-mortarboard-fill"></i> */}
                 </h5>
                 <div className="flex-shrink-0">
                   <Button
-                    onClick={() => Navigate(personnelId)}
+                     onClick={() =>
+                      navigate(`/gestion-personnel/compte-personnel`, {
+                        state: { _id: location.state?.personnelId._id },
+                      })
+                    }
                     type="button"
                     className="btn btn-info btn-label m-1"
                   >

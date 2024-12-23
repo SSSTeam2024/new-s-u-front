@@ -42,7 +42,7 @@ const AddDossieradministratifPersonnels = () => {
     "Ajouter dossier administratif | Application Smart Institute";
   const navigate = useNavigate();
   function tog_retourParametres() {
-    navigate("/listeDossierAdministartifPersonnel");
+    navigate("/gestion-personnel/liste-dossier-administartif");
   }
 
   const [createDossierAdministratif] = useAddDossierAdministratifMutation();
@@ -229,7 +229,7 @@ const AddDossieradministratifPersonnels = () => {
       await createDossierAdministratif(preparedData).unwrap();
       notify();
       refetchPersonnels();
-      navigate("/listeDossierAdministartifPersonnel");
+      navigate("/gestion-personnel/liste-dossier-administartif");
     } catch (error: any) {
       console.log("Error submitting form:", error);
     }

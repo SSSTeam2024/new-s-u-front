@@ -22,6 +22,7 @@ import { useFetchPostesPersonnelQuery } from "features/postePersonnel/postePerso
 import { useFetchGradesPersonnelQuery } from "features/gradePersonnel/gradePersonnel";
 import { useFetchCategoriesPersonnelQuery } from "features/categoriePersonnel/categoriePersonnel";
 import { useFetchServicesPersonnelQuery } from "features/servicePersonnel/servicePersonnel";
+
 type Wilaya =
   | "اريانة"
   | "بن عروس"
@@ -635,7 +636,7 @@ const EditProfilPersonnel = () => {
       console.log("Submitting form with data:", formData);
       await editPersonnel(formData).unwrap();
       notify();
-      navigate("/ListePersonnels");
+      navigate("/gestion-personnel/liste-personnels");
     } catch (error: any) {
       console.log(error);
     }

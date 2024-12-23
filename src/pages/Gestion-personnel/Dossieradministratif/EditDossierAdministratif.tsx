@@ -45,7 +45,7 @@ const EditDossierAdministratifPersonnels = () => {
   const { state: dossierAdministratif } = useLocation();
   const [editDossierAdministratif] = useUpdateDossierAdministratifMutation();
   function tog_retourParametres() {
-    navigate("/listeDossierAdministartifPersonnel");
+    navigate("/gestion-personnel/liste-dossier-administartif");
   }
 
   const { data: allPersonnels = [] } = useFetchPersonnelsQuery();
@@ -351,7 +351,7 @@ const EditDossierAdministratifPersonnels = () => {
     try {
       await editDossierAdministratif(preparedData).unwrap();
       notify();
-      navigate("/listeDossierAdministartifPersonnel");
+      navigate("/gestion-personnel/liste-dossier-administartif");
     } catch (error: any) {
       console.log("Error submitting form:", error);
     }

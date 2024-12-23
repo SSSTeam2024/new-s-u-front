@@ -49,7 +49,7 @@ const EditEtatPersonnel = () => {
     try {
       await editEtatPersonnel(formData).unwrap();
       notify();
-      navigate("/parametre/etat-personnels");
+      // navigate("/parametre-personnel/etat/liste-etat-personnel");
     } catch (error: any) {
       if (error.status === 400) {
         errorAlert("La valeur doit être unique.");

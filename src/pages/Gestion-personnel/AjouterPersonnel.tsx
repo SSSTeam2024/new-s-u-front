@@ -620,7 +620,7 @@ const AjouterPersonnels = () => {
     try {
       await createPersonnel(formData).unwrap();
       notify();
-      navigate("/ListePersonnels");
+      navigate("/gestion-personnel/liste-personnels");
     } catch (error: any) {
       console.log(error);
     }
@@ -664,10 +664,8 @@ const AjouterPersonnels = () => {
     ).files[0];
     if (file) {
       const { base64Data, extension } = await convertToBase64(file);
-      console.log(base64Data);
-      console.log(extension);
       const newFile = base64Data + "." + extension;
-      console.log(newFile);
+ 
       setFormData({
         ...formData,
         photo_profil: newFile,

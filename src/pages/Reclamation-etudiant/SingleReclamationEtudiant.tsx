@@ -117,7 +117,11 @@ const getBadgeClasses = (statusValue: string) => {
                   </h5>
                   <div className="flex-shrink-0">
                     <Button
-                      onClick={() => Navigate(studentId)}
+                       onClick={() =>
+                        navigate(`/gestion-etudiant/compte-etudiant`, {
+                          state: { _id: location.state?.studentId._id },
+                        })
+                      }
                       type="button"
                       className="btn btn-info btn-label m-1"
                     >

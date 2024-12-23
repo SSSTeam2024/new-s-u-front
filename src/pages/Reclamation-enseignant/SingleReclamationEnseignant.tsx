@@ -111,12 +111,16 @@ const SingleReclamationEnseignant = () => {
                         <Card className="categrory-widgets overflow-hidden">
                           <div className="card-header d-flex align-items-center">
                             <h5 className="card-title flex-grow-1 mb-0">
-                              Détails de l'étudiant{" "}
+                              Détails de l'enseignant{" "}
                               {/* <i className="bi bi-mortarboard-fill"></i> */}
                             </h5>
                             <div className="flex-shrink-0">
                               <Button
-                                onClick={() => Navigate(enseignantId)}
+                                onClick={() =>
+                                  navigate(`/gestion-enseignant/compte-enseignant`, {
+                                    state: { _id: location.state?.enseignantId._id },
+                                  })
+                                }
                                 type="button"
                                 className="btn btn-info btn-label m-1"
                               >

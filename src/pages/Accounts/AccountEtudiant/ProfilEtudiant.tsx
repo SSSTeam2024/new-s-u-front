@@ -107,11 +107,11 @@ const MyAccount = () => {
               <Nav.Link eventKey="Reclamation">Réclamations</Nav.Link>
             </Nav.Item>
           </Nav>
-          <div className="flex-shrink-0">
+          {/* <div className="flex-shrink-0">
             <Link to="/settings" className="btn btn-success">
               Modifier le profil
             </Link>
-          </div>
+          </div> */}
         </div>
         
         {/* Profile Tab Content */}
