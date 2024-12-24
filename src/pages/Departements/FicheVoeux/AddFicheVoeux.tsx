@@ -27,7 +27,7 @@ const AddFicheVoeux = () => {
   const navigate = useNavigate();
 
   function tog_retourParametres() {
-    navigate("/gestion-fiche-voeux/liste-fiche-voeux");
+    navigate("/gestion-emplois/gestion-fiche-voeux/liste-fiche-voeux");
   }
 
   const [createFicheVoeux] = useAddFicheVoeuxMutation();
@@ -249,7 +249,7 @@ const AddFicheVoeux = () => {
       console.log("formData submit fiche voeux", formData);
       await createFicheVoeux(formData).unwrap();
       notify();
-      navigate("/gestion-fiche-voeux/liste-fiche-voeux");
+      navigate("/gestion-emplois/gestion-fiche-voeux/liste-fiche-voeux");
     } catch (error: any) {
       console.log(error);
     }

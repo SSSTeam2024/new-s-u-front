@@ -685,7 +685,7 @@ const Navdata = () => {
         },
         {
           id: "salles",
-          label: "Gestions Des Salles",
+          label: "Salles",
           icon: "bi bi-door-closed-fill",
           link: "/departement/gestion-salles/liste-salles",
           isChildItem: true,
@@ -735,7 +735,7 @@ const Navdata = () => {
             },
             {
               id: 3,
-              label: "listes des séctions",
+              label: "Listes des séctions",
               link: "/departement/gestion-classes/liste-section",
               icon: "bi bi-diagram-3-fill",
             },

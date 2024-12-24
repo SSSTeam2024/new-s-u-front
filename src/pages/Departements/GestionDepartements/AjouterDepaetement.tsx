@@ -11,7 +11,7 @@ const AddDepartement = () => {
   const navigate = useNavigate();
 
   function tog_retourParametres() {
-    navigate("/gestion-departements/liste-departements");
+    navigate("/departement/gestion-departements/liste-departements");
   }
 
   const [createDepartement] = useAddDepartementMutation();
@@ -48,7 +48,7 @@ const AddDepartement = () => {
     try {
       await createDepartement(formData).then(() => setFormData(formData));
       notify();
-      navigate("/gestion-departements/liste-departements");
+      navigate("/departement/gestion-departements/liste-departements");
     } catch (error: any) {
       console.log(error);
     }

@@ -27,7 +27,7 @@ const ListDepartement = () => {
   }
 
   function tog_AddNiveau() {
-    navigate("/gestion-departements/departements/add-departement");
+    navigate("/departement/gestion-departements/departements/add-departement");
   }
   const { data = [] } = useFetchDepartementsQuery();
   const [deleteDepartement] = useDeleteDepartementMutation();
@@ -140,7 +140,7 @@ const ListDepartement = () => {
             <ul className="hstack gap-2 list-unstyled mb-0">
               <li>
                 <Link
-                  to="/gestion-departements/departements/edit-departement"
+                  to="/departement/gestion-departements/departements/edit-departement"
                   state={departement}
                   className="badge bg-primary-subtle text-primary edit-item-btn"
                 >

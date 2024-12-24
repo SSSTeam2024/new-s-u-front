@@ -26,7 +26,7 @@ const ListClasses = () => {
   }
 
   function tog_AddClasse() {
-    navigate("/departement/gestion-classes/add-classe");
+    navigate("/departement/gestion-classes/ajouter-classe");
   }
   const { data = [] } = useFetchClassesQuery();
   console.log(data);
@@ -123,7 +123,7 @@ const ListClasses = () => {
                   <ul className="hstack gap-2 list-unstyled mb-0">
                     <li>
                       <Link
-                        to="/gestion-departement/classes/affecter-matiere"
+                        to="/departement/gestion-classes/affecter-matiere"
                         className="badge bg-success-subtle text-success remove-item-btn"
                         state={classe}
                       >
