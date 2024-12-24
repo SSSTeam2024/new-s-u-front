@@ -1,28 +1,21 @@
 import React, { useState, useEffect, useMemo } from "react";
-import {
-  Button,
-  Card,
-  Col,
-  Container,
-  Row,
-  Carousel,
-} from "react-bootstrap";
+import { Button, Card, Col, Container, Row, Carousel } from "react-bootstrap";
 import Breadcrumb from "Common/BreadCrumb";
 import { Link, useNavigate } from "react-router-dom";
 import {
   useFetchActualiteQuery,
   Actualite,
-  useDeleteActualiteMutation
+  useDeleteActualiteMutation,
 } from "features/actualite/actualiteSlice";
 import { RootState } from "app/store";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "features/account/authSlice";
 import actualite from "assets/images/actualite.jpg";
-import DOMPurify from 'dompurify';
-import Swal from 'sweetalert2';
+import DOMPurify from "dompurify";
+import Swal from "sweetalert2";
 
 const ListeActualite = () => {
-  document.title = "Actualité | Smart University";
+  document.title = "Actualité | ENIGA";
   const navigate = useNavigate();
 
   const user = useSelector((state: RootState) => selectCurrentUser(state));
@@ -50,7 +43,9 @@ const ListeActualite = () => {
     if (selectedCategory === "all") {
       return actualiteData;
     } else {
-      return actualiteData.filter((data: Actualite) => data.category === selectedCategory);
+      return actualiteData.filter(
+        (data: Actualite) => data.category === selectedCategory
+      );
     }
   }, [actualiteData, selectedCategory]);
 
@@ -75,8 +70,8 @@ const ListeActualite = () => {
     if (search && filteredData) {
       search = search.toLowerCase();
       setCurrentpages(
-        filteredData.filter(
-          (data: Actualite) => data.title.toLowerCase().includes(search)
+        filteredData.filter((data: Actualite) =>
+          data.title.toLowerCase().includes(search)
         )
       );
       setPagination(false);
@@ -116,23 +111,27 @@ const ListeActualite = () => {
   const handleDeleteActualite = async (id: string) => {
     try {
       const result = await Swal.fire({
-        title: 'Êtes-vous sûr ?',
+        title: "Êtes-vous sûr ?",
         text: "Vous ne pourrez pas revenir en arrière !",
-        icon: 'warning',
+        icon: "warning",
         showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Oui, supprimer !'
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Oui, supprimer !",
       });
 
       if (result.isConfirmed) {
         await deleteActualite({ _id: id }).unwrap();
-        Swal.fire('Supprimé !', 'L\'actualité a été supprimée.', 'success');
+        Swal.fire("Supprimé !", "L'actualité a été supprimée.", "success");
         refetch(); // Recharger les données ou mettre à jour l'UI
       }
     } catch (error) {
       console.error("Erreur lors de la suppression de l'actualité :", error);
-      Swal.fire('Erreur !', 'Un problème est survenu lors de la suppression de l\'actualité.', 'error');
+      Swal.fire(
+        "Erreur !",
+        "Un problème est survenu lors de la suppression de l'actualité.",
+        "error"
+      );
     }
   };
 
@@ -220,24 +219,28 @@ const ListeActualite = () => {
             {currentpages && currentpages.length > 0
               ? currentpages.map((item: Actualite, key: number) => (
                   <Col xxl={3} lg={6} key={key}>
-                    <Card style={{ height: '500px' }}>
+                    <Card style={{ height: "500px" }}>
                       <Card.Header>
                         <div className="d-flex align-items-center">
                           <div className="flex-grow-1">
                             <h4
                               className="card-title m-2"
                               style={{
-                                overflow: 'hidden',
-                                display: '-webkit-box',
-                                WebkitBoxOrient: 'vertical',
+                                overflow: "hidden",
+                                display: "-webkit-box",
+                                WebkitBoxOrient: "vertical",
                                 WebkitLineClamp: 1,
-                                textOverflow: 'ellipsis',
+                                textOverflow: "ellipsis",
                               }}
                             >
                               {item.title}
                             </h4>
                             <h6 className="card-subtitle font-14 text-muted">
-                              {item.date_actualite ? new Date(item.date_actualite).toLocaleDateString() : "Date non disponible"}
+                              {item.date_actualite
+                                ? new Date(
+                                    item.date_actualite
+                                  ).toLocaleDateString()
+                                : "Date non disponible"}
                             </h6>
                           </div>
                           <div className="flex-shrink-0">
@@ -246,26 +249,32 @@ const ListeActualite = () => {
                                 <Button
                                   type="button"
                                   className="btn btn-danger btn-icon"
-                                  onClick={() => handleDeleteActualite(item?._id!)}
+                                  onClick={() =>
+                                    handleDeleteActualite(item?._id!)
+                                  }
                                 >
                                   <i className="ri-delete-bin-6-line"></i>
                                 </Button>
                               </li>
-                               <li className="list-inline-item">
-                                 <Button
-                                   type="button"
-                                   className="btn btn-success btn-icon"
-                                   onClick={() =>
-                                     navigate(`/actualite/edit-actualite`,  { state: item })                                   }                                 >
-                                <i className="bi bi-pencil-square"></i>
-                              </Button>
-                             </li>
+                              <li className="list-inline-item">
+                                <Button
+                                  type="button"
+                                  className="btn btn-success btn-icon"
+                                  onClick={() =>
+                                    navigate(`/actualite/edit-actualite`, {
+                                      state: item,
+                                    })
+                                  }
+                                >
+                                  <i className="bi bi-pencil-square"></i>
+                                </Button>
+                              </li>
                             </ul>
                           </div>
                         </div>
                       </Card.Header>
                       <Card.Body>
-                      {item.gallery && item.gallery.length > 0 ? (
+                        {item.gallery && item.gallery.length > 0 ? (
                           <Carousel>
                             {item.gallery.map((photo, index) => (
                               <Carousel.Item key={index}>
@@ -273,35 +282,39 @@ const ListeActualite = () => {
                                   className="d-block w-100"
                                   src={`${process.env.REACT_APP_API_URL}/files/actualiteFiles/photo/${photo}`}
                                   alt={`Slide ${index}`}
-                                  style={{ height: '200px', objectFit: 'cover' }}
+                                  style={{
+                                    height: "200px",
+                                    objectFit: "cover",
+                                  }}
                                 />
                               </Carousel.Item>
                             ))}
                           </Carousel>
                         ) : (
                           <img
-                          className="d-block w-100"
-                          src={actualite}
-                          style={{ height: '200px', objectFit: 'cover' }}
-                          
-                        />
+                            className="d-block w-100"
+                            src={actualite}
+                            style={{ height: "200px", objectFit: "cover" }}
+                          />
                         )}
-                     <p
-                    className="card-text mt-auto "
-                    style={{
-                      overflow: 'hidden',
-                      display: '-webkit-box',
-                      WebkitBoxOrient: 'vertical',
-                      WebkitLineClamp: 3,
-                      textOverflow: 'ellipsis',
-                    }}
-                  >
-                    {DOMPurify.sanitize(item.description, { ALLOWED_TAGS: [] })}
-                  </p>
+                        <p
+                          className="card-text mt-auto "
+                          style={{
+                            overflow: "hidden",
+                            display: "-webkit-box",
+                            WebkitBoxOrient: "vertical",
+                            WebkitLineClamp: 3,
+                            textOverflow: "ellipsis",
+                          }}
+                        >
+                          {DOMPurify.sanitize(item.description, {
+                            ALLOWED_TAGS: [],
+                          })}
+                        </p>
                       </Card.Body>
-                      
+
                       <div className="card-footer mt-4 hstack gap-2">
-                         <Link
+                        <Link
                           to="/actualite/details-actualite"
                           state={item}
                           className="card-link link-secondary"
@@ -318,7 +331,6 @@ const ListeActualite = () => {
                           </Button>
                         </Link>
                       </div>
-                      
                     </Card>
                   </Col>
                 ))
@@ -332,7 +344,9 @@ const ListeActualite = () => {
                   <nav aria-label="Page navigation example">
                     <ul className="pagination justify-content-center">
                       <li
-                        className={`page-item ${currentPage === 1 ? "disabled" : ""}`}
+                        className={`page-item ${
+                          currentPage === 1 ? "disabled" : ""
+                        }`}
                       >
                         <Button
                           variant="link"
@@ -345,8 +359,9 @@ const ListeActualite = () => {
                       {pageNumbers.map((number: number) => (
                         <li
                           key={number}
-                          className={`page-item ${currentPage === number ? "active" : ""
-                            }`}
+                          className={`page-item ${
+                            currentPage === number ? "active" : ""
+                          }`}
                         >
                           <Button
                             variant="link"
@@ -359,7 +374,9 @@ const ListeActualite = () => {
                         </li>
                       ))}
                       <li
-                        className={`page-item ${currentPage === pageNumbers.length ? "disabled" : ""}`}
+                        className={`page-item ${
+                          currentPage === pageNumbers.length ? "disabled" : ""
+                        }`}
                       >
                         <Button
                           variant="link"

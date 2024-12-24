@@ -49,7 +49,6 @@ const ProfileDropdown = () => {
         navigate("/login");
       });
   };
-
   return (
     <React.Fragment>
       <Dropdown className="ms-sm-3 header-item topbar-user">
@@ -66,11 +65,11 @@ const ProfileDropdown = () => {
             />
             <span className="text-start ms-xl-2">
               <span className="d-none d-xl-inline-block ms-1 fw-medium user-name-text">
-                {userName}
+                {user?.login}
               </span>
-              <span className="d-none d-xl-block ms-1 fs-13 text-muted user-name-sub-text">
+              {/* <span className="d-none d-xl-block ms-1 fs-13 text-muted user-name-sub-text">
                 Founder
-              </span>
+              </span> */}
             </span>
           </span>
         </Dropdown.Toggle>

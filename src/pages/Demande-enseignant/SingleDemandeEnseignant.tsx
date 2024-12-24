@@ -12,7 +12,14 @@ import {
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Carousel, Image } from "react-bootstrap";
 import Breadcrumb from "Common/BreadCrumb";
-import { Page, View, Document, StyleSheet, Font, Text } from "@react-pdf/renderer";
+import {
+  Page,
+  View,
+  Document,
+  StyleSheet,
+  Font,
+  Text,
+} from "@react-pdf/renderer";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 
 // Import images
@@ -23,8 +30,8 @@ import img4 from "assets/images/small/img-4.jpg";
 import img5 from "assets/images/small/img-5.jpg";
 import img6 from "assets/images/small/img-6.jpg";
 import avatar1 from "assets/images/users/avatar-1.jpg";
-import student from "assets/images/etudiant.png"
-import file from "assets/images/demande.png"
+import student from "assets/images/etudiant.png";
+import file from "assets/images/demande.png";
 // import HeaderPDF from "Common/HeaderPDF";
 import FooterPDF from "Common/FooterPDF";
 import TitlePDF from "Common/TitlePDF";
@@ -58,19 +65,15 @@ const styles = StyleSheet.create({
     fontFamily: "Amiri",
   },
   logo: {
-    width: 100,  // Set the width to a small value
-    height: 50,  // Set the height to a small value
-    resizeMode: 'contain', // Maintain aspect ratio
-    alignSelf: 'center', // Center the image horizontally
+    width: 100, // Set the width to a small value
+    height: 50, // Set the height to a small value
+    resizeMode: "contain", // Maintain aspect ratio
+    alignSelf: "center", // Center the image horizontally
     marginTop: 10, // Add some space at the top
   },
 });
 
-
-
 const PDF_REPORT = (props: any) => {
-
-
   const {
     address_fr,
     phone,
@@ -93,10 +96,7 @@ const PDF_REPORT = (props: any) => {
     logo_etablissement,
     logo_universite,
     logo_republique,
-   
   } = props;
-
- 
 
   return (
     <Document>
@@ -108,19 +108,18 @@ const PDF_REPORT = (props: any) => {
           logo_universite={logo_universite}
         />
         </View> */}
-  
-        <TitlePDF piece_demande={piece_demande} /> 
+
+        <TitlePDF piece_demande={piece_demande} />
         <View style={{ flex: 2 }}>
           <BodyPDF
             piece_demande={piece_demande}
             studentId={studentId}
-            enseignantId= {enseignantId}
+            enseignantId={enseignantId}
             personnelId={personnelId}
             allVariables={allVariables}
             raison={raison}
             formattedDate={formattedDate}
-            departement= {departement}
-
+            departement={departement}
           />
         </View>
         <View>
@@ -163,24 +162,24 @@ const PDF_REPORT = (props: any) => {
 };
 
 const SingleDemandeEnseignant = () => {
-  document.title = "Demande Enseignant | Smart University";
- 
+  document.title = "Demande Enseignant | ENIGA";
+
   const location = useLocation();
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const currentStatus = location.state.status;
   const getBadgeClasses = (statusValue: string) => {
     switch (statusValue) {
-        case 'en attente':
-            return 'badge bg-warning-subtle text-warning';
-        case 'traité':
-            return 'badge bg-primary-subtle text-primary';
-        case 'rejeté':
-            return 'badge bg-danger-subtle text-danger';
-        default:
-            return 'badge';
+      case "en attente":
+        return "badge bg-warning-subtle text-warning";
+      case "traité":
+        return "badge bg-primary-subtle text-primary";
+      case "rejeté":
+        return "badge bg-danger-subtle text-danger";
+      default:
+        return "badge";
     }
-  }
+  };
   const { data: AllVariablesGlobales = [] } = useFetchVaribaleGlobaleQuery();
   const currentDate = new Date();
   const day = String(currentDate.getDate()).padStart(2, "0");
@@ -188,7 +187,7 @@ const SingleDemandeEnseignant = () => {
   const year = currentDate.getFullYear();
 
   const formattedDate = `${day}/${month}/${year}`;
-console.log(location.state?.enseignantId)
+  console.log(location.state?.enseignantId);
   return (
     <React.Fragment>
       <div className="page-content">
@@ -215,7 +214,7 @@ console.log(location.state?.enseignantId)
                     <Card.Body>
                       <div className="mt-n5">
                         <Image
-                           src={`${process.env.REACT_APP_API_URL}/files/enseignantFiles/PhotoProfil/${location.state?.enseignantId.photo_profil}`}
+                          src={`${process.env.REACT_APP_API_URL}/files/enseignantFiles/PhotoProfil/${location.state?.enseignantId.photo_profil}`}
                           alt=""
                           className="avatar-xxl rounded-circle p-1 bg-body mt-n5"
                         />
@@ -235,25 +234,24 @@ console.log(location.state?.enseignantId)
                     {/* <i className="bi bi-mortarboard-fill"></i> */}
                   </h5>
                   <div className="flex-shrink-0">
-                  <Button
-                    onClick={() =>
-                      navigate(`/gestion-enseignant/compte-enseignant`, {
-                        state: { _id: location.state?.enseignantId._id },
-                      })
-                    }
+                    <Button
+                      onClick={() =>
+                        navigate(`/gestion-enseignant/compte-enseignant`, {
+                          state: { _id: location.state?.enseignantId._id },
+                        })
+                      }
                       type="button"
                       className="btn btn-info btn-label m-1"
                     >
                       <i className="bi bi-eye label-icon align-middle fs-16 me-2"></i>
                       Voir enseignant{" "}
                     </Button>
-                    
                   </div>
                 </div>
                 <div className="card-body">
-                <div className="text-center">
+                  <div className="text-center">
                     <i className="bi bi-mortarboard fs-1 text-muted"></i>
-                    </div>
+                  </div>
                   <div className="table-responsive">
                     <table className="table table-sm table-borderless align-middle description-table mb-0">
                       <tbody>
@@ -261,7 +259,8 @@ console.log(location.state?.enseignantId)
                           <td className="fs-5">Nom et prénom:</td>
                           <td>
                             <span className="mb-1 fs-5">
-                            {location.state?.enseignantId?.nom_fr!} {location.state?.enseignantId?.prenom_fr!}
+                              {location.state?.enseignantId?.nom_fr!}{" "}
+                              {location.state?.enseignantId?.prenom_fr!}
                             </span>
                           </td>
                         </tr>
@@ -269,7 +268,7 @@ console.log(location.state?.enseignantId)
                           <td className="fs-5">CIN:</td>
                           <td>
                             <span className="mb-1 fs-5">
-                            {location.state?.enseignantId?.num_CIN!}
+                              {location.state?.enseignantId?.num_CIN!}
                             </span>
                           </td>
                         </tr>
@@ -277,21 +276,27 @@ console.log(location.state?.enseignantId)
                           <td className="">E-mail:</td>
                           <td>
                             <span className="mb-1 ">
-                            {location.state?.enseignantId?.email!}
+                              {location.state?.enseignantId?.email!}
                             </span>
                           </td>
                         </tr>
                         <tr>
                           <td className="">Téléphone:</td>
                           <td>
-                            <span className="mb-1 ">{location.state?.enseignantId?.num_phone!}</span>
+                            <span className="mb-1 ">
+                              {location.state?.enseignantId?.num_phone!}
+                            </span>
                           </td>
                         </tr>
                       </tbody>
                     </table>
                   </div>
                 </div>
-                <img src={student} alt="" className="img-fluid category-img object-fit-cover" />
+                <img
+                  src={student}
+                  alt=""
+                  className="img-fluid category-img object-fit-cover"
+                />
               </Card>
             </Col>
             <Col xxl={6} lg={6}>
@@ -305,7 +310,7 @@ console.log(location.state?.enseignantId)
                       <PDFDownloadLink
                         document={
                           <PDF_REPORT
-                              logo_etablissement={
+                            logo_etablissement={
                               AllVariablesGlobales[2]?.logo_etablissement!
                             }
                             logo_republique={
@@ -320,7 +325,6 @@ console.log(location.state?.enseignantId)
                             website={AllVariablesGlobales[2]?.website!}
                             formattedDate={formattedDate}
                             piece_demande={location?.state?.piece_demande!}
-                        
                             enseignantId={location?.state?.enseignantId!}
                             signature_directeur={
                               AllVariablesGlobales[2]?.signature_directeur!
@@ -338,7 +342,6 @@ console.log(location.state?.enseignantId)
                             raison={location?.state?.description!}
                             //departement={location?.state?.studentId?.groupe_classe?.departement!}
                           />
-                      
                         }
                         fileName={location?.state?.piece_demande?.title!}
                       >
@@ -353,13 +356,15 @@ console.log(location.state?.enseignantId)
                     ) : (
                       <div>No data available</div>
                     )}
-                  <Button type="button" className="btn btn-success btn-label"><i className="bi bi-postcard label-icon align-middle fs-16 me-2"></i> Notifier l'enseignant</Button>
+                    <Button type="button" className="btn btn-success btn-label">
+                      <i className="bi bi-postcard label-icon align-middle fs-16 me-2"></i>{" "}
+                      Notifier l'enseignant
+                    </Button>
                   </div>
                 </div>
                 <div className="card-body">
                   <div className="text-center">
                     <i className="bi bi-card-list fs-1 text-muted"></i>
-                   
                   </div>
                   <div className="table-responsive">
                     <table className="table table-sm table-borderless align-middle description-table mb-0">
@@ -368,7 +373,7 @@ console.log(location.state?.enseignantId)
                           <td className="fs-5">Pièce demandée:</td>
                           <td>
                             <span className="mb-1 fs-5">
-                            {location.state.piece_demande?.title!}
+                              {location.state.piece_demande?.title!}
                             </span>
                           </td>
                         </tr>
@@ -389,24 +394,28 @@ console.log(location.state?.enseignantId)
                         <tr>
                           <td className="fs-5">Nombre de copie:</td>
                           <td>
-                          <span className="badge bg-secondary-subtle text-secondary">
-                          {location.state?.nombre_copie!}
-                      </span>
+                            <span className="badge bg-secondary-subtle text-secondary">
+                              {location.state?.nombre_copie!}
+                            </span>
                           </td>
                         </tr>
                         <tr>
                           <td className="fs-5">Etat de la demande:</td>
                           <td>
-                          <span className="badge bg-danger-subtle text-danger">
-                     {location.state?.status!}
-                      </span> 
+                            <span className="badge bg-danger-subtle text-danger">
+                              {location.state?.status!}
+                            </span>
                           </td>
                         </tr>
                       </tbody>
                     </table>
                   </div>
                 </div>
-                <img src={file} alt="" className="img-fluid category-img object-fit-cover" />
+                <img
+                  src={file}
+                  alt=""
+                  className="img-fluid category-img object-fit-cover"
+                />
               </Card>
             </Col>
           </Row>

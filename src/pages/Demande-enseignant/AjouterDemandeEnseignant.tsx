@@ -33,7 +33,7 @@ import { RootState } from "app/store";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "features/account/authSlice";
 const AjouterDemandeEnseignant = () => {
-  document.title = "Ajouter Demande Enseignant | Smart University";
+  document.title = "Ajouter Demande Enseignant | ENIGA";
   const navigate = useNavigate();
   const user = useSelector((state: RootState) => selectCurrentUser(state));
   const [addDemandeEnseignant] = useAddDemandeEnseignantMutation();

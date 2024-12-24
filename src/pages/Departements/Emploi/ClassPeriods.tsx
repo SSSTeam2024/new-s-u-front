@@ -25,7 +25,7 @@ import { useFetchTimeTableParamsQuery } from "features/timeTableParams/timeTable
 import { options } from "@fullcalendar/core/preact";
 
 const ListClassPeriods = () => {
-  document.title = "Liste périodes des emplois classes | Smart University";
+  document.title = "Liste périodes des emplois classes | ENIGA";
   const navigate = useNavigate();
   const location = useLocation();
   const classeDetails = location.state;

@@ -19,7 +19,7 @@ export interface outputData {
 }
 
 const TableauChargesHoraires = () => {
-  document.title = "Tableau des charges horaires | Smart University";
+  document.title = "Tableau des charges horaires | ENIGA";
 
   const navigate = useNavigate();
 

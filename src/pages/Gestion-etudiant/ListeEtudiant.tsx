@@ -21,7 +21,7 @@ import * as XLSX from "xlsx";
 import CustomLoader from "Common/CustomLoader/CustomLoader";
 
 const ListEtudiants = () => {
-  document.title = "Liste des étudiants | Smart University";
+  document.title = "Liste des étudiants | ENIGA";
   const user = useSelector((state: RootState) => selectCurrentUser(state));
   const [addEtudiant] = useAddEtudiantMutation();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -830,7 +830,7 @@ const ListEtudiants = () => {
                               className="add-btn"
                               onClick={() => fileInputRef.current?.click()}
                             >
-                              <i className="ri-file-excel-2-line fs-13"></i>
+                              Ajouter Depuis Excel
                             </Button>
                             <input
                               type="file"

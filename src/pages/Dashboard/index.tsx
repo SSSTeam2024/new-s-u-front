@@ -12,7 +12,7 @@ import Widgets from "./Widgets";
 import RecentOrders from "./RecentOrders";
 
 const Dashboard = () => {
-  document.title = "Dashboard | Smart University";
+  document.title = "Dashboard | ENIGA";
 
   return (
     <React.Fragment>
@@ -20,7 +20,7 @@ const Dashboard = () => {
         <Container fluid>
           <Row>
             <Col xxl={12} lg={6} className="order-first">
-              <h2>Dashboard Smart University</h2>
+              <h2>Dashboard ENIGA</h2>
             </Col>
             {/* <Revenue />
             <TopSalesLocation /> */}

@@ -23,7 +23,7 @@ export interface outputData {
 }
 
 const TableauChargesHorairesClasses = () => {
-  document.title = "Equilibre horaires des classes | Smart University";
+  document.title = "Equilibre horaires des classes | ENIGA";
 
   const [searchQuery, setSearchQuery] = useState("");
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {

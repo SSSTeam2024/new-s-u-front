@@ -13,13 +13,12 @@ import {
 } from "features/personnel/personnelSlice";
 
 const ListePersonnels = () => {
-  document.title = "Liste des personnels | Smart University";
+  document.title = "Liste des personnels | ENIGA";
 
   const navigate = useNavigate();
 
   const [modal_AddEnseignantModals, setmodal_AddEnseignantModals] =
     useState<boolean>(false);
- 
 
   function tog_AddPersonnel() {
     navigate("/gestion-personnel/ajouter-personnel");
@@ -87,7 +86,7 @@ const ListePersonnels = () => {
             <div className="d-flex align-items-center gap-2">
               <div className="flex-shrink-0">
                 <img
-                style={{borderRadius:"50%"}}
+                  style={{ borderRadius: "50%" }}
                   src={`${process.env.REACT_APP_API_URL}/files/personnelFiles/PhotoProfil/${personnels.photo_profil}`}
                   alt="etudiant-img"
                   id="photo_profil"
@@ -773,18 +772,18 @@ const ListePersonnels = () => {
                     className="table align-middle table-nowrap"
                     id="customerTable"
                   > */}
-                    <TableContainer
-                      columns={columns || []}
-                      data={data || []}
-                      // isGlobalFilter={false}
-                      iscustomPageSize={false}
-                      isBordered={false}
-                      customPageSize={10}
-                      className="custom-header-css table align-middle table-nowrap"
-                      tableClass="table-centered align-middle table-nowrap mb-0"
-                      theadClass="text-muted table-light"
-                      SearchPlaceholder="Search Products..."
-                    />
+                  <TableContainer
+                    columns={columns || []}
+                    data={data || []}
+                    // isGlobalFilter={false}
+                    iscustomPageSize={false}
+                    isBordered={false}
+                    customPageSize={10}
+                    className="custom-header-css table align-middle table-nowrap"
+                    tableClass="table-centered align-middle table-nowrap mb-0"
+                    theadClass="text-muted table-light"
+                    SearchPlaceholder="Search Products..."
+                  />
                   {/* </table> */}
                   {/* </div> */}
                   <div className="noresult" style={{ display: "none" }}>

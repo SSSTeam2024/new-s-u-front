@@ -29,7 +29,7 @@ import {
 } from "features/reclamationEtudiant/recalamationEtudiantSlice";
 
 const ListeReclamationEtudiant = () => {
-  document.title = "Réclamation Etudiant | Smart University";
+  document.title = "Réclamation Etudiant | ENIGA";
 
   const user = useSelector((state: RootState) => selectCurrentUser(state));
   const MySwal = withReactContent(Swal);

@@ -6,7 +6,7 @@ import {
   Container,
   Form,
   InputGroup,
-  Row
+  Row,
 } from "react-bootstrap";
 import Flatpickr from "react-flatpickr";
 import Dropzone from "react-dropzone";
@@ -15,46 +15,50 @@ import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import Swal from "sweetalert2";
 import "flatpickr/dist/flatpickr.min.css";
 import Select from "react-select";
-import { useAddAvisEtudiantMutation, Avis } from "features/avisEtudiant/avisEtudiantSlice";
+import {
+  useAddAvisEtudiantMutation,
+  Avis,
+} from "features/avisEtudiant/avisEtudiantSlice";
 import { Classe, useFetchClassesQuery } from "features/classe/classe";
 import { useNavigate } from "react-router-dom";
-import { RootState } from 'app/store';
-import { useSelector } from 'react-redux';
-import { selectCurrentUser } from 'features/account/authSlice'; 
-import { useAddLeaveTypeMutation, LeaveType } from "features/congé/leaveTypeSlice";
+import { RootState } from "app/store";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "features/account/authSlice";
+import {
+  useAddLeaveTypeMutation,
+  LeaveType,
+} from "features/congé/leaveTypeSlice";
 
 const AjouterLeaveType = () => {
-  document.title = "Ajouter type de congé | Smart University";
+  document.title = "Ajouter type de congé | ENIGA";
   const navigate = useNavigate();
-
 
   const [addLeaveType] = useAddLeaveTypeMutation();
 
-
-  
   const [formData, setFormData] = useState<Partial<LeaveType>>({
-    _id:"",
-    name_fr:"",
-    maxDays:0,
-    Accumulable:false,
-    
-    description:""
+    _id: "",
+    name_fr: "",
+    maxDays: 0,
+    Accumulable: false,
+
+    description: "",
   });
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const onChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setFormData((prevState) => ({
       ...prevState,
       [e.target.id]: e.target.value,
     }));
   };
 
-//   const onSelectChange = (selectedOption: any) => {
-//     setFormData((prevState) => ({
-//       ...prevState,
-//       grades: { ...prevState, grade: selectedOption.value, maxDays: prevState.grades?.maxDays ?? 0 },
-//     }));
-//   };
-
+  //   const onSelectChange = (selectedOption: any) => {
+  //     setFormData((prevState) => ({
+  //       ...prevState,
+  //       grades: { ...prevState, grade: selectedOption.value, maxDays: prevState.grades?.maxDays ?? 0 },
+  //     }));
+  //   };
 
   const onDescriptionChange = (event: any, editor: any) => {
     const data = editor.getData();
@@ -71,7 +75,6 @@ const AjouterLeaveType = () => {
     }));
   };
 
-  
   const onSubmitTypeConge = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     addLeaveType(formData).then(() => setFormData(formData));
@@ -88,10 +91,6 @@ const AjouterLeaveType = () => {
       timer: 2000,
     });
   };
-
-
- 
-
 
   return (
     <React.Fragment>
@@ -117,7 +116,10 @@ const AjouterLeaveType = () => {
                   </Card.Header>
                   <Card.Body></Card.Body>
                   <div className="mb-3">
-                    <Form className="tablelist-form" onSubmit={onSubmitTypeConge}>
+                    <Form
+                      className="tablelist-form"
+                      onSubmit={onSubmitTypeConge}
+                    >
                       <input type="hidden" id="_id" value={formData._id} />
                       <Form.Group className="mb-3">
                         <Form.Label>Titre</Form.Label>
@@ -141,7 +143,6 @@ const AjouterLeaveType = () => {
                         />
                       </Form.Group>
 
-
                       <Form.Group className="mb-3">
                         <Form.Label>Grade</Form.Label>
                         <Select
@@ -150,7 +151,6 @@ const AjouterLeaveType = () => {
                             { value: "B", label: "Grade B" },
                             // Add more grades as needed
                           ]}
-                     
                           placeholder="Sélectionnez un grade"
                         />
                       </Form.Group>
@@ -161,7 +161,12 @@ const AjouterLeaveType = () => {
                           type="number"
                           id="maxDays"
                           value={formData.maxDays ?? 0}
-                          onChange={(e) => setFormData({ ...formData, maxDays: Number(e.target.value) })}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              maxDays: Number(e.target.value),
+                            })
+                          }
                           min={0}
                           required
                         />
@@ -179,7 +184,9 @@ const AjouterLeaveType = () => {
                       </Form.Group>
 
                       <div className="mb-3 text-end">
-                        <Button type="submit" color="primary">Enregistrer</Button>
+                        <Button type="submit" color="primary">
+                          Enregistrer
+                        </Button>
                       </div>
                     </Form>
                   </div>

@@ -27,7 +27,7 @@ import {
   useDeleteReclamationEnseignantMutation,
 } from "features/reclamationEnseignant/reclamationEnseignantSlice";
 const ListeReclamationEnseignant = () => {
-  document.title = "Reclamation Enseignant | Smart University";
+  document.title = "Reclamation Enseignant | ENIGA";
 
   const user = useSelector((state: RootState) => selectCurrentUser(state));
   const MySwal = withReactContent(Swal);

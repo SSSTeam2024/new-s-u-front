@@ -22,7 +22,7 @@ import { useSelector } from "react-redux";
 import { selectCurrentUser } from "features/account/authSlice";
 
 const AjouterReclamationEtudiant = () => {
-  document.title = "Ajouter Reclamation Etudiant | Smart University";
+  document.title = "Ajouter Reclamation Etudiant | ENIGA";
   const navigate = useNavigate();
   const user = useSelector((state: RootState) => selectCurrentUser(state));
   const [addReclamationEtudiant] = useAddReclamationMutation();
@@ -232,7 +232,7 @@ const AjouterReclamationEtudiant = () => {
                           id="description"
                         />
                       </Form.Group>
-                    
+
                       <Form.Group className="mb-3">
                         <Form.Label>Classe</Form.Label>
                         <Select

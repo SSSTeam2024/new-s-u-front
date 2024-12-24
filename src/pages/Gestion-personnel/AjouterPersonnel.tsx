@@ -388,7 +388,7 @@ const delegationOptions: DelegationOptions = {
 };
 
 const AjouterPersonnels = () => {
-  document.title = " Ajouter Personnel | Smart University";
+  document.title = " Ajouter Personnel | ENIGA";
   const navigate = useNavigate();
   const [selectedFiles, setselectedFiles] = useState([]);
   const [seletedCountry, setseletedCountry] = useState<any>({});
@@ -665,7 +665,7 @@ const AjouterPersonnels = () => {
     if (file) {
       const { base64Data, extension } = await convertToBase64(file);
       const newFile = base64Data + "." + extension;
- 
+
       setFormData({
         ...formData,
         photo_profil: newFile,

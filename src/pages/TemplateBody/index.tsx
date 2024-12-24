@@ -12,50 +12,48 @@ import Breadcrumb from "Common/BreadCrumb";
 import { Link, useNavigate } from "react-router-dom";
 import TableContainer from "Common/TableContainer";
 import { LienUtils } from "Common/data/lienUtils";
-import { useFetchTemplateBodyQuery, useDeleteTemplateBodyMutation } from "features/templateBody/templateBodySlice";
-import Swal from 'sweetalert2';
-import withReactContent from 'sweetalert2-react-content';
-type LanguageCode = 'french' | 'arabic';
+import {
+  useFetchTemplateBodyQuery,
+  useDeleteTemplateBodyMutation,
+} from "features/templateBody/templateBodySlice";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+type LanguageCode = "french" | "arabic";
 const TemplateBody = () => {
-  document.title = "Liste des template body | Smart University";
+  document.title = "Liste des template body | ENIGA";
   const MySwal = withReactContent(Swal);
   const navigate = useNavigate();
 
-  const {data: allTemplateBody = []} = useFetchTemplateBodyQuery()
-  const [deleteTemplateBody]= useDeleteTemplateBodyMutation()
+  const { data: allTemplateBody = [] } = useFetchTemplateBodyQuery();
+  const [deleteTemplateBody] = useDeleteTemplateBodyMutation();
   const handleDeleteTemplate = async (id: string) => {
     try {
-        await MySwal.fire({
-            title: 'Êtes-vous sûr ?',
-            text: "Vous ne pourrez pas annuler cela !",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!'
-        }).then(async (result) => {
-            if (result.isConfirmed) {
-                await deleteTemplateBody(id).unwrap();
-                MySwal.fire(
-                    'Deleted!',
-                    'Modele a été supprimée',
-                    'success'
-                );
-            }
-        });
+      await MySwal.fire({
+        title: "Êtes-vous sûr ?",
+        text: "Vous ne pourrez pas annuler cela !",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          await deleteTemplateBody(id).unwrap();
+          MySwal.fire("Deleted!", "Modele a été supprimée", "success");
+        }
+      });
     } catch (error) {
-        console.error('Failed to delete reclamation:', error);
-        MySwal.fire(
-            'Error!',
-            'There was an error deleting the reclamation.',
-            'error'
-        );
+      console.error("Failed to delete reclamation:", error);
+      MySwal.fire(
+        "Error!",
+        "There was an error deleting the reclamation.",
+        "error"
+      );
     }
-   };
+  };
   const languageMapping: Record<LanguageCode, string> = {
     french: "Français",
     arabic: "Arabe",
-  
   };
   const columns = useMemo(
     () => [
@@ -68,7 +66,8 @@ const TemplateBody = () => {
 
       {
         Header: "Langue",
-        accessor: (row: { langue: LanguageCode }) => languageMapping[row.langue] || row.langue,
+        accessor: (row: { langue: LanguageCode }) =>
+          languageMapping[row.langue] || row.langue,
         disableFilters: true,
         filterable: true,
       },
@@ -86,28 +85,28 @@ const TemplateBody = () => {
           return (
             <ul className="hstack gap-2 list-unstyled mb-0">
               <li>
-                  <Link
-                    to="/template/single-template-body"
-                    state={cellProps}
-                    className="badge bg-info-subtle text-info view-item-btn"
-                    data-bs-toggle="offcanvas"
-                  >
-                    <i
-                      className="ph ph-eye"
-                      style={{
-                        transition: "transform 0.3s ease-in-out",
-                        cursor: "pointer",
-                        fontSize: "1.5em",
-                      }}
-                      onMouseEnter={(e) =>
-                        (e.currentTarget.style.transform = "scale(1.4)")
-                      }
-                      onMouseLeave={(e) =>
-                        (e.currentTarget.style.transform = "scale(1)")
-                      }
-                    ></i>
-                  </Link>
-                </li>
+                <Link
+                  to="/template/single-template-body"
+                  state={cellProps}
+                  className="badge bg-info-subtle text-info view-item-btn"
+                  data-bs-toggle="offcanvas"
+                >
+                  <i
+                    className="ph ph-eye"
+                    style={{
+                      transition: "transform 0.3s ease-in-out",
+                      cursor: "pointer",
+                      fontSize: "1.5em",
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.transform = "scale(1.4)")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.transform = "scale(1)")
+                    }
+                  ></i>
+                </Link>
+              </li>
               <li>
                 <Link
                   to="#"
@@ -135,7 +134,6 @@ const TemplateBody = () => {
                   onClick={() => handleDeleteTemplate(cellProps._id)}
                   className="badge bg-danger-subtle text-danger remove-item-btn"
                 >
-
                   <i
                     className="ph ph-trash"
                     style={{
@@ -198,7 +196,9 @@ const TemplateBody = () => {
                         <Button
                           variant="primary"
                           className="add-btn"
-                          onClick={() =>navigate("/template/ajouter-template-body")}
+                          onClick={() =>
+                            navigate("/template/ajouter-template-body")
+                          }
                         >
                           Ajouter un corps du modèle
                         </Button>

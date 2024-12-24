@@ -21,7 +21,7 @@ import {
 } from "features/servicePersonnel/servicePersonnel";
 
 const ListServicesPersonnels = () => {
-  document.title = "Liste services des personnels | Smart University";
+  document.title = "Liste services des personnels | ENIGA";
 
   const navigate = useNavigate();
 

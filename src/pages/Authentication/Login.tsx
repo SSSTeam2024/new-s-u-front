@@ -15,7 +15,7 @@ import { setCredentials } from "features/account/authSlice";
 import Cookies from "js-cookie";
 
 const Login = (props: any) => {
-  document.title = "Login | Smart University";
+  document.title = "Login | ENIGA";
   const [login, { isLoading }] = useLoginMutation();
   const [formState, setFormState] = React.useState<LoginRequest>({
     login: "",
@@ -190,7 +190,7 @@ const Login = (props: any) => {
                 <Col lg={12}>
                   <div className="text-center">
                     <p className="mb-0 text-muted">
-                      ©{new Date().getFullYear()} Smart University. Crafted with{" "}
+                      ©{new Date().getFullYear()} ENIGA. Crafted with{" "}
                       <i className="mdi mdi-heart text-danger"></i> by Team 3S
                     </p>
                   </div>

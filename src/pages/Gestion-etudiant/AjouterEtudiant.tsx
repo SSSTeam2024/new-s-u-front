@@ -479,7 +479,7 @@ const delegationOptions: DelegationOptions = {
 };
 
 const AjouterEtudiant = () => {
-  document.title = " Ajouter Etudiant | Smart University";
+  document.title = " Ajouter Etudiant | ENIGA";
   const navigate = useNavigate();
   const [selectedFiles, setselectedFiles] = useState<any>([]);
   const [selectedWilaya, setSelectedWilaya] = useState<Wilaya | "">("");

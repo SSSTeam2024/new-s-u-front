@@ -22,13 +22,13 @@ import {
   useFetchEnseignantsQuery,
   useFetchTeachersPeriodsQuery,
 } from "features/enseignant/enseignantSlice";
-import { actionAuthorization } from 'utils/pathVerification';
-import { RootState } from 'app/store';
-import { useSelector } from 'react-redux';
-import { selectCurrentUser } from 'features/account/authSlice';
+import { actionAuthorization } from "utils/pathVerification";
+import { RootState } from "app/store";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "features/account/authSlice";
 
 const ListeEmploiEnseignants = () => {
-  document.title = "Liste emplois des enseigants | Smart University";
+  document.title = "Liste emplois des enseigants | ENIGA";
   const user = useSelector((state: RootState) => selectCurrentUser(state));
 
   const navigate = useNavigate();
@@ -126,10 +126,13 @@ const ListeEmploiEnseignants = () => {
         Header: "Emploi",
         disableFilters: true,
         filterable: true,
-        accessor:  (enseignant: Enseignant) => {
+        accessor: (enseignant: Enseignant) => {
           return (
             <ul className="hstack gap-2 list-unstyled mb-0">
-              {actionAuthorization("/gestion-emplois/emlpoi-enseignant/teacher-period", user?.permissions!) ? (
+              {actionAuthorization(
+                "/gestion-emplois/emlpoi-enseignant/teacher-period",
+                user?.permissions!
+              ) ? (
                 <>
                   <li>
                     <Link

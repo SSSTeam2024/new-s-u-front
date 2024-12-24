@@ -12,7 +12,7 @@ import {
 } from "features/seance/seance";
 
 const GestionSeances = () => {
-  document.title = "Liste emplois des classes | Smart University";
+  document.title = "Liste emplois des classes | ENIGA";
 
   const navigate = useNavigate();
 

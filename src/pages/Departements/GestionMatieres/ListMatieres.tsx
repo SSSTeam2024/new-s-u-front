@@ -31,7 +31,7 @@ interface Matiere {
 }
 
 const ListMatieres = () => {
-  document.title = "Liste des matiéres | Smart University";
+  document.title = "Liste des matiéres | ENIGA";
 
   const navigate = useNavigate();
   const [matiere, setMatiere] = useState<Matiere[]>([]);
@@ -148,14 +148,14 @@ const ListMatieres = () => {
         disableFilters: true,
         filterable: true,
       },
-  
+
       {
         Header: "Volume",
         accessor: (row: Matiere) => row.volume || "---",
         disableFilters: true,
         filterable: true,
       },
-  
+
       {
         Header: "Nbr élimination",
         accessor: (row: Matiere) => row.nbr_elimination || "---",

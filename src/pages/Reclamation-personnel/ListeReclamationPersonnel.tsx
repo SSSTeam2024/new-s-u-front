@@ -27,7 +27,7 @@ import {
   useDeleteReclamationPersonnelMutation,
 } from "features/reclamationPersonnel/reclamationPersonnelSlice";
 const ListeReclamationPersonnel = () => {
-  document.title = "Réclamation Personnel | Smart University";
+  document.title = "Réclamation Personnel | ENIGA";
   const user = useSelector((state: RootState) => selectCurrentUser(state));
   const MySwal = withReactContent(Swal);
   // Fetch reclamations query hook

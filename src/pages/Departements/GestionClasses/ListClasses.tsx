@@ -25,7 +25,7 @@ import {
 } from "features/etudiant/etudiantSlice";
 
 const ListClasses = () => {
-  document.title = "Liste des classes | Smart University";
+  document.title = "Liste des classes | ENIGA";
   const navigate = useNavigate();
   const [modal_AffecterEtudiant, setModal_AffecterEtudiant] =
     useState<boolean>(false);
@@ -231,7 +231,7 @@ const ListClasses = () => {
         filterable: true,
       },
       {
-        Header: "Affectater Matières",
+        Header: "Affecter Matières",
         disableFilters: true,
         filterable: true,
         accessor: (classe: Classe) => {
@@ -264,7 +264,7 @@ const ListClasses = () => {
         },
       },
       {
-        Header: "Affectater Etudiants",
+        Header: "Affecter Etudiants",
         disableFilters: true,
         filterable: true,
         accessor: (classe: Classe) => {

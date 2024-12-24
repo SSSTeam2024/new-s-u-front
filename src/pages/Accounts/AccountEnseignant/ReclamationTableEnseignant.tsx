@@ -19,7 +19,7 @@ import img1 from "assets/images/users/avatar-1.jpg";
 import { useFetchReclamationsEnseignantQuery } from "features/reclamationEnseignant/reclamationEnseignantSlice";
 
 const ReclamationEnseignantTable = () => {
-  document.title = "Table Reclamation Enseignant | Smart University";
+  document.title = "Table Reclamation Enseignant | ENIGA";
 
   const location = useLocation();
   const EnseignantDetails = location.state;

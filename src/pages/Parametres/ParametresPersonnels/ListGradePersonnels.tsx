@@ -21,7 +21,7 @@ import {
 } from "features/gradePersonnel/gradePersonnel";
 
 const ListGradePersonnels = () => {
-  document.title = "Liste grades des personnels | Smart University";
+  document.title = "Liste grades des personnels | ENIGA";
 
   const navigate = useNavigate();
 

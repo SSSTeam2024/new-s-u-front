@@ -10,7 +10,7 @@ import { actionAuthorization } from "utils/pathVerification";
 import { useFetchDemandeCongeQuery } from "features/congé/demandeCongeSlice";
 
 const ListeDemandeConge = () => {
-  document.title = "Liste demande conge | Smart University";
+  document.title = "Liste demande conge | ENIGA";
 
   const user = useSelector((state: RootState) => selectCurrentUser(state));
 

@@ -29,7 +29,7 @@ interface Voeux {
 }
 
 const ListFicheVoeux = () => {
-  document.title = "Liste fiches des voeux enseignants | Smart University";
+  document.title = "Liste fiches des voeux enseignants | ENIGA";
 
   const navigate = useNavigate();
   const [filePath, setFilePath] = useState<string | null>(null);

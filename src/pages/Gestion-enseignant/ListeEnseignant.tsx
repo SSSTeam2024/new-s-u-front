@@ -17,7 +17,7 @@ import { useSelector } from "react-redux";
 import { selectCurrentUser } from "features/account/authSlice";
 
 const ListEnseignants = () => {
-  document.title = "Liste des enseignants | Smart University";
+  document.title = "Liste des enseignants | ENIGA";
   const user = useSelector((state: RootState) => selectCurrentUser(state));
 
   const navigate = useNavigate();

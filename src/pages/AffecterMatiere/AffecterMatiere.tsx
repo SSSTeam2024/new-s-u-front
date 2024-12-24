@@ -21,7 +21,7 @@ interface MatiereOption {
 }
 
 const AffecterMatiere = () => {
-  document.title = "Affecter matiére aux groupes/classes | Smart University";
+  document.title = "Affecter matiére aux groupes/classes | ENIGA";
 
   const [selectedMatieres, setSelectedMatieres] = useState<Matiere[]>([]);
   const navigate = useNavigate();

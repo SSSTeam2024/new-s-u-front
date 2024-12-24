@@ -1,29 +1,32 @@
 import React, { useMemo, useState } from "react";
-import {
-  Card,
-  Col,
-  Container,
-  Row,
-} from "react-bootstrap";
+import { Card, Col, Container, Row } from "react-bootstrap";
 import Breadcrumb from "Common/BreadCrumb";
 import { Link, useNavigate } from "react-router-dom";
 import TableContainer from "Common/TableContainer";
-import { DossierAdministratif, useFetchDossierAdministratifQuery, useRemoveSpecificPaperMutation, useRestoreDossierAdministratifMutation } from "features/dossierAdministratif/dossierAdministratif";
+import {
+  DossierAdministratif,
+  useFetchDossierAdministratifQuery,
+  useRemoveSpecificPaperMutation,
+  useRestoreDossierAdministratifMutation,
+} from "features/dossierAdministratif/dossierAdministratif";
 
 const ListeDossierAdministratifEnseignantsArchives = () => {
-  document.title = "Liste Dossiers Administratifs Enseignants Archivés  | Smart University";
+  document.title =
+    "Liste Dossiers Administratifs Enseignants Archivés  | ENIGA";
 
   const { data = [] } = useFetchDossierAdministratifQuery();
-  const enseignantsDossiers = data.filter(dossier => dossier.enseignant && dossier.isArchived == true);
+  const enseignantsDossiers = data.filter(
+    (dossier) => dossier.enseignant && dossier.isArchived == true
+  );
 
-  const [restoreDossierAdministratif] = useRestoreDossierAdministratifMutation();
+  const [restoreDossierAdministratif] =
+    useRestoreDossierAdministratifMutation();
 
   const handleRestoreDossier = async (dossierId: any) => {
-
     try {
-      await restoreDossierAdministratif({ dossierId }).unwrap(); 
+      await restoreDossierAdministratif({ dossierId }).unwrap();
     } catch (error) {
-      console.error('Failed to archive the dossier: ', error);
+      console.error("Failed to archive the dossier: ", error);
     }
   };
   const columns = useMemo(
@@ -38,20 +41,19 @@ const ListeDossierAdministratifEnseignantsArchives = () => {
       {
         Header: "Papier Administratif",
         accessor: (row) => {
-         return row.papers ? row.papers.length : 0;
+          return row.papers ? row.papers.length : 0;
         },
         disableFilters: true,
         filterable: true,
       },
-      
+
       {
         Header: "Date de création",
         accessor: "createdAt",
         Cell: ({ value }: any) => new Date(value).toLocaleDateString("fr-FR"),
         disableFilters: true,
         filterable: true,
-      }
-,      
+      },
       {
         Header: "Action",
         disableFilters: true,
@@ -59,7 +61,7 @@ const ListeDossierAdministratifEnseignantsArchives = () => {
         accessor: (dossierAdministratif: DossierAdministratif) => {
           return (
             <ul className="hstack gap-2 list-unstyled mb-0">
-               <li>
+              <li>
                 <Link
                   to="/gestion-enseignant/details-dossier-administratif"
                   className="badge bg-info-subtle text-info view-item-btn"
@@ -78,9 +80,7 @@ const ListeDossierAdministratifEnseignantsArchives = () => {
                     onMouseLeave={(e) =>
                       (e.currentTarget.style.transform = "scale(1)")
                     }
-                    onClick={() => {
-                    
-                    }}
+                    onClick={() => {}}
                   ></i>
                 </Link>
               </li>
@@ -103,7 +103,6 @@ const ListeDossierAdministratifEnseignantsArchives = () => {
                     onMouseLeave={(e) =>
                       (e.currentTarget.style.transform = "scale(1)")
                     }
-                  
                   ></i>
                 </Link>
               </li>
@@ -125,7 +124,9 @@ const ListeDossierAdministratifEnseignantsArchives = () => {
                     onMouseLeave={(e) =>
                       (e.currentTarget.style.transform = "scale(1)")
                     }
-                    onClick={() => handleRestoreDossier(dossierAdministratif._id)}
+                    onClick={() =>
+                      handleRestoreDossier(dossierAdministratif._id)
+                    }
                   ></i>
                 </Link>
               </li>
@@ -204,8 +205,8 @@ const ListeDossierAdministratifEnseignantsArchives = () => {
                       </div>
                       <h5 className="mt-2">Désolé ! Aucun résultat trouvé</h5>
                       <p className="text-muted mb-0">
-                      Nous avons cherché dans plus de 150+ dossiers, mais
-                      aucun résultat ne correspond à votre recherche.
+                        Nous avons cherché dans plus de 150+ dossiers, mais
+                        aucun résultat ne correspond à votre recherche.
                       </p>
                     </div>
                   </div>

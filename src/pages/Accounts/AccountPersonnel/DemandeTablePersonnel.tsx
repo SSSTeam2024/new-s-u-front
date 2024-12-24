@@ -19,7 +19,7 @@ import img1 from "assets/images/users/avatar-1.jpg";
 import { useFetchDemandePersonnelQuery } from "features/demandePersonnel/demandePersonnelSlice";
 
 const DemandeTablePersonnel = () => {
-  document.title = " Table Demande Personnel | Smart University";
+  document.title = " Table Demande Personnel | ENIGA";
 
   const location = useLocation();
   const personnelDetails = location.state;

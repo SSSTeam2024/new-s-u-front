@@ -20,13 +20,13 @@ import {
   useFetchSpecialitesEnseignantQuery,
   useUpdateSpecialiteEnseignantMutation,
 } from "features/specialiteEnseignant/specialiteEnseignant";
-import { actionAuthorization } from 'utils/pathVerification';
-import { RootState } from 'app/store';
-import { useSelector } from 'react-redux';
-import { selectCurrentUser } from 'features/account/authSlice';
+import { actionAuthorization } from "utils/pathVerification";
+import { RootState } from "app/store";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "features/account/authSlice";
 
 const ListSpecialiteEnseignants = () => {
-  document.title = "Liste spécialités des enseignants | Smart University";
+  document.title = "Liste spécialités des enseignants | ENIGA";
   const user = useSelector((state: RootState) => selectCurrentUser(state));
 
   const navigate = useNavigate();
@@ -40,7 +40,6 @@ const ListSpecialiteEnseignants = () => {
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value.toLowerCase());
   };
-
 
   const { data = [] } = useFetchSpecialitesEnseignantQuery();
   const filteredSpecialiteEnseignants = useMemo(() => {
@@ -202,57 +201,68 @@ const ListSpecialiteEnseignants = () => {
         accessor: (specialiteEnseignant: SpecialiteEnseignant) => {
           return (
             <ul className="hstack gap-2 list-unstyled mb-0">
-            {actionAuthorization("/parametre-enseignant/specialite/edit-specialite-enseignant",user?.permissions!)? 
-
-              <li>
-                <Link
-                  to=""
-                  state={specialiteEnseignant}
-                  className="badge bg-primary-subtle text-primary edit-item-btn"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleEditModal(specialiteEnseignant);
-                  }}
-                >
-                  <i
-                    className="ph ph-pencil-line"
-                    style={{
-                      transition: "transform 0.3s ease-in-out",
-                      cursor: "pointer",
-                      fontSize: "1.5em",
+              {actionAuthorization(
+                "/parametre-enseignant/specialite/edit-specialite-enseignant",
+                user?.permissions!
+              ) ? (
+                <li>
+                  <Link
+                    to=""
+                    state={specialiteEnseignant}
+                    className="badge bg-primary-subtle text-primary edit-item-btn"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleEditModal(specialiteEnseignant);
                     }}
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.transform = "scale(1.2)")
-                    }
-                    onMouseLeave={(e) =>
-                      (e.currentTarget.style.transform = "scale(1)")
-                    }
-                  ></i>
-                </Link>
-              </li>  : <></> }
-              {actionAuthorization("/parametre-enseignant/specialite/supprimer-specialite-enseignant",user?.permissions!)? 
-              <li>
-                <Link
-                  to="#"
-                  className="badge bg-danger-subtle text-danger remove-item-btn"
-                >
-                  <i
-                    className="ph ph-trash"
-                    style={{
-                      transition: "transform 0.3s ease-in-out",
-                      cursor: "pointer",
-                      fontSize: "1.5em",
-                    }}
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.transform = "scale(1.2)")
-                    }
-                    onMouseLeave={(e) =>
-                      (e.currentTarget.style.transform = "scale(1)")
-                    }
-                    onClick={() => AlertDelete(specialiteEnseignant?._id!)}
-                  ></i>
-                </Link>
-              </li> : <></> }
+                  >
+                    <i
+                      className="ph ph-pencil-line"
+                      style={{
+                        transition: "transform 0.3s ease-in-out",
+                        cursor: "pointer",
+                        fontSize: "1.5em",
+                      }}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.transform = "scale(1.2)")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.transform = "scale(1)")
+                      }
+                    ></i>
+                  </Link>
+                </li>
+              ) : (
+                <></>
+              )}
+              {actionAuthorization(
+                "/parametre-enseignant/specialite/supprimer-specialite-enseignant",
+                user?.permissions!
+              ) ? (
+                <li>
+                  <Link
+                    to="#"
+                    className="badge bg-danger-subtle text-danger remove-item-btn"
+                  >
+                    <i
+                      className="ph ph-trash"
+                      style={{
+                        transition: "transform 0.3s ease-in-out",
+                        cursor: "pointer",
+                        fontSize: "1.5em",
+                      }}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.transform = "scale(1.2)")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.transform = "scale(1)")
+                      }
+                      onClick={() => AlertDelete(specialiteEnseignant?._id!)}
+                    ></i>
+                  </Link>
+                </li>
+              ) : (
+                <></>
+              )}
             </ul>
           );
         },
@@ -294,14 +304,20 @@ const ListSpecialiteEnseignants = () => {
 
                     <Col className="col-lg-auto ms-auto">
                       <div className="hstack gap-2">
-                      {actionAuthorization("/parametre-enseignant/specialite/ajouter-specialite-enseignant",user?.permissions!)? 
-                        <Button
-                          variant="primary"
-                          className="add-btn"
-                          onClick={handleAddClick}
-                        >
-                          Ajouter spécialité enseignant
-                        </Button> : <></> }
+                        {actionAuthorization(
+                          "/parametre-enseignant/specialite/ajouter-specialite-enseignant",
+                          user?.permissions!
+                        ) ? (
+                          <Button
+                            variant="primary"
+                            className="add-btn"
+                            onClick={handleAddClick}
+                          >
+                            Ajouter spécialité enseignant
+                          </Button>
+                        ) : (
+                          <></>
+                        )}
                       </div>
                     </Col>
                   </Row>

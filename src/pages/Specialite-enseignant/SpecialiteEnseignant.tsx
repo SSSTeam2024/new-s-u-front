@@ -21,7 +21,7 @@ import { useSelector } from "react-redux";
 import { selectCurrentUser } from "features/account/authSlice";
 
 const SpecialiteEnseignant = () => {
-  document.title = "Specialite Enseignant | Smart University";
+  document.title = "Specialite Enseignant | ENIGA";
 
   return (
     <React.Fragment>

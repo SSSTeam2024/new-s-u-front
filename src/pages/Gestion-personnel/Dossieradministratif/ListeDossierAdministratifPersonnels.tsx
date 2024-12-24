@@ -1,37 +1,35 @@
 import React, { useMemo } from "react";
-import {
-  Button,
-  Card,
-  Col,
-  Container,
-  Row,
-} from "react-bootstrap";
+import { Button, Card, Col, Container, Row } from "react-bootstrap";
 import Breadcrumb from "Common/BreadCrumb";
 import { Link, useNavigate } from "react-router-dom";
 import TableContainer from "Common/TableContainer";
-import { DossierAdministratif, useArchiveDossierAdministratifMutation, useFetchDossierAdministratifQuery } from "features/dossierAdministratif/dossierAdministratif";
+import {
+  DossierAdministratif,
+  useArchiveDossierAdministratifMutation,
+  useFetchDossierAdministratifQuery,
+} from "features/dossierAdministratif/dossierAdministratif";
 
 const ListeDossierAdministratifPersonnels = () => {
-  document.title = "Liste Dossiers Administratifs | Smart University";
+  document.title = "Liste Dossiers Administratifs | ENIGA";
 
   const navigate = useNavigate();
- 
+
   function tog_AddDossierAdministratif() {
     navigate("/gestion-personnel/ajouter-dossier-administartif");
   }
   const { data = [] } = useFetchDossierAdministratifQuery();
 
-const personnelsDossiers = data.filter(dossier => dossier.personnel && !dossier.isArchived);
-
+  const personnelsDossiers = data.filter(
+    (dossier) => dossier.personnel && !dossier.isArchived
+  );
 
   const [archiveDossier] = useArchiveDossierAdministratifMutation();
 
   const handleArchive = async (dossierId: any) => {
-
     try {
-      await archiveDossier({ dossierId }).unwrap(); 
+      await archiveDossier({ dossierId }).unwrap();
     } catch (error) {
-      console.error('Failed to archive the dossier: ', error);
+      console.error("Failed to archive the dossier: ", error);
     }
   };
   const columns = useMemo(
@@ -46,20 +44,19 @@ const personnelsDossiers = data.filter(dossier => dossier.personnel && !dossier.
       {
         Header: "Papier Administratif",
         accessor: (row: any) => {
-         return row.papers ? row.papers.length : 0;
+          return row.papers ? row.papers.length : 0;
         },
         disableFilters: true,
         filterable: true,
       },
-      
+
       {
         Header: "Date de création",
         accessor: "createdAt",
         Cell: ({ value }: any) => new Date(value).toLocaleDateString("fr-FR"),
         disableFilters: true,
         filterable: true,
-      }
-,      
+      },
       {
         Header: "Action",
         disableFilters: true,
@@ -67,7 +64,7 @@ const personnelsDossiers = data.filter(dossier => dossier.personnel && !dossier.
         accessor: (dossierAdministratif: DossierAdministratif) => {
           return (
             <ul className="hstack gap-2 list-unstyled mb-0">
-               <li>
+              <li>
                 <Link
                   to="/gestion-personnel/details-dossier-administratif"
                   className="badge bg-info-subtle text-info view-item-btn"
@@ -208,8 +205,8 @@ const personnelsDossiers = data.filter(dossier => dossier.personnel && !dossier.
                       </div>
                       <h5 className="mt-2">Désolé ! Aucun résultat trouvé</h5>
                       <p className="text-muted mb-0">
-                      Nous avons cherché dans plus de 150+ dossiers, mais
-                      aucun résultat ne correspond à votre recherche.
+                        Nous avons cherché dans plus de 150+ dossiers, mais
+                        aucun résultat ne correspond à votre recherche.
                       </p>
                     </div>
                   </div>

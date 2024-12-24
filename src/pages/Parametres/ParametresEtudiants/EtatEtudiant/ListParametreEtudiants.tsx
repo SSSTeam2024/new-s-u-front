@@ -18,12 +18,12 @@ import {
   useFetchEtatsEtudiantQuery,
 } from "features/etatEtudiants/etatEtudiants";
 import { useDeleteEtatEtudiantMutation } from "features/etatEtudiants/etatEtudiants";
-import { actionAuthorization } from 'utils/pathVerification';
-import { RootState } from 'app/store';
-import { useSelector } from 'react-redux';
-import { selectCurrentUser } from 'features/account/authSlice'; 
+import { actionAuthorization } from "utils/pathVerification";
+import { RootState } from "app/store";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "features/account/authSlice";
 const ListParametresEtudiants = () => {
-  document.title = "Liste états comptes des étudiants | Smart University";
+  document.title = "Liste états comptes des étudiants | ENIGA";
 
   const user = useSelector((state: RootState) => selectCurrentUser(state));
 
@@ -132,54 +132,64 @@ const ListParametresEtudiants = () => {
         accessor: (etatEtudiant: EtatEtudiant) => {
           return (
             <ul className="hstack gap-2 list-unstyled mb-0">
-           {actionAuthorization("/parametre-etudiant/etat/liste-etat-etudiant",user?.permissions!)?
-
-              <li>
-                <Link
-                  to="/parametre-etudiant/etat/liste-etat-etudiant"
-                  state={etatEtudiant}
-                  className="badge bg-primary-subtle text-primary edit-item-btn"
-                >
-                  <i
-                    className="ph ph-pencil-line"
-                    style={{
-                      transition: "transform 0.3s ease-in-out",
-                      cursor: "pointer",
-                      fontSize: "1.5em",
-                    }}
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.transform = "scale(1.2)")
-                    }
-                    onMouseLeave={(e) =>
-                      (e.currentTarget.style.transform = "scale(1)")
-                    }
-                  ></i>
-                </Link>
-              </li> :<></>}
-              {actionAuthorization("/parametre-etudiant/etat/supprimer-etat-etudiant",user?.permissions!)?
-
-              <li>
-                <Link
-                  to="#"
-                  className="badge bg-danger-subtle text-danger remove-item-btn"
-                >
-                  <i
-                    className="ph ph-trash"
-                    style={{
-                      transition: "transform 0.3s ease-in-out",
-                      cursor: "pointer",
-                      fontSize: "1.5em",
-                    }}
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.transform = "scale(1.2)")
-                    }
-                    onMouseLeave={(e) =>
-                      (e.currentTarget.style.transform = "scale(1)")
-                    }
-                    onClick={() => AlertDelete(etatEtudiant?._id!)}
-                  ></i>
-                </Link>
-              </li> : <></>}
+              {actionAuthorization(
+                "/parametre-etudiant/etat/liste-etat-etudiant",
+                user?.permissions!
+              ) ? (
+                <li>
+                  <Link
+                    to="/parametre-etudiant/etat/liste-etat-etudiant"
+                    state={etatEtudiant}
+                    className="badge bg-primary-subtle text-primary edit-item-btn"
+                  >
+                    <i
+                      className="ph ph-pencil-line"
+                      style={{
+                        transition: "transform 0.3s ease-in-out",
+                        cursor: "pointer",
+                        fontSize: "1.5em",
+                      }}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.transform = "scale(1.2)")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.transform = "scale(1)")
+                      }
+                    ></i>
+                  </Link>
+                </li>
+              ) : (
+                <></>
+              )}
+              {actionAuthorization(
+                "/parametre-etudiant/etat/supprimer-etat-etudiant",
+                user?.permissions!
+              ) ? (
+                <li>
+                  <Link
+                    to="#"
+                    className="badge bg-danger-subtle text-danger remove-item-btn"
+                  >
+                    <i
+                      className="ph ph-trash"
+                      style={{
+                        transition: "transform 0.3s ease-in-out",
+                        cursor: "pointer",
+                        fontSize: "1.5em",
+                      }}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.transform = "scale(1.2)")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.transform = "scale(1)")
+                      }
+                      onClick={() => AlertDelete(etatEtudiant?._id!)}
+                    ></i>
+                  </Link>
+                </li>
+              ) : (
+                <></>
+              )}
             </ul>
           );
         },
@@ -226,17 +236,20 @@ const ListParametresEtudiants = () => {
 
                     <Col className="col-lg-auto ms-auto">
                       <div className="hstack gap-2">
-                      {actionAuthorization("/parametre-etudiant/etat/ajouter-etat-etudiant",user?.permissions!)?
-
-                        <Button
-                          variant="primary"
-                          className="add-btn"
-                          onClick={() => tog_AddEtatEtudiant()}
-                        >
-                          Ajouter état compte étudiant
-                        </Button>  : <p>not allowed</p>
-                         }
-                        
+                        {actionAuthorization(
+                          "/parametre-etudiant/etat/ajouter-etat-etudiant",
+                          user?.permissions!
+                        ) ? (
+                          <Button
+                            variant="primary"
+                            className="add-btn"
+                            onClick={() => tog_AddEtatEtudiant()}
+                          >
+                            Ajouter état compte étudiant
+                          </Button>
+                        ) : (
+                          <p>not allowed</p>
+                        )}
                       </div>
                     </Col>
                   </Row>

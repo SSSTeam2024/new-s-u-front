@@ -2,7 +2,15 @@ import React, { useEffect, useState } from "react";
 import { Button, Card, Col, Container, Row } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
 import Breadcrumb from "Common/BreadCrumb";
-import { Page, View, Document, StyleSheet, Font, Image, Text } from "@react-pdf/renderer";
+import {
+  Page,
+  View,
+  Document,
+  StyleSheet,
+  Font,
+  Image,
+  Text,
+} from "@react-pdf/renderer";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 
 // Import images
@@ -45,19 +53,15 @@ const styles = StyleSheet.create({
     fontFamily: "Amiri",
   },
   logo: {
-    width: 100,  // Set the width to a small value
-    height: 50,  // Set the height to a small value
-    resizeMode: 'contain', // Maintain aspect ratio
-    alignSelf: 'center', // Center the image horizontally
+    width: 100, // Set the width to a small value
+    height: 50, // Set the height to a small value
+    resizeMode: "contain", // Maintain aspect ratio
+    alignSelf: "center", // Center the image horizontally
     marginTop: 10, // Add some space at the top
   },
 });
 
-
-
 const PDF_REPORT = (props: any) => {
-
-
   const {
     address_fr,
     phone,
@@ -80,10 +84,7 @@ const PDF_REPORT = (props: any) => {
     logo_etablissement,
     logo_universite,
     logo_republique,
-   
   } = props;
-
- 
 
   return (
     <Document>
@@ -95,19 +96,18 @@ const PDF_REPORT = (props: any) => {
           logo_universite={logo_universite}
         />
         </View> */}
-  
-        <TitlePDF piece_demande={piece_demande} /> 
+
+        <TitlePDF piece_demande={piece_demande} />
         <View style={{ flex: 2 }}>
           <BodyPDF
             piece_demande={piece_demande}
             studentId={studentId}
-            enseignantId= {enseignantId}
+            enseignantId={enseignantId}
             personnelId={personnelId}
             allVariables={allVariables}
             raison={raison}
             formattedDate={formattedDate}
-            departement= {departement}
-
+            departement={departement}
           />
         </View>
         <View>
@@ -150,17 +150,16 @@ const PDF_REPORT = (props: any) => {
 };
 
 const SingleDemandePersonnel = () => {
-
-  document.title = "Demande Personnel | Smart University";
+  document.title = "Demande Personnel | ENIGA";
 
   const state = useLocation();
-  console.log("state",state.state)
+  console.log("state", state.state);
   const navigate = useNavigate();
   const Navigate = () => {
     navigate("/accountEtudiant");
   };
   const { data: AllVariablesGlobales = [] } = useFetchVaribaleGlobaleQuery();
-  console.log("allvariables",AllVariablesGlobales)
+  console.log("allvariables", AllVariablesGlobales);
   const currentDate = new Date();
   const day = String(currentDate.getDate()).padStart(2, "0");
   const month = String(currentDate.getMonth() + 1).padStart(2, "0"); // Months are zero-based
@@ -212,11 +211,11 @@ const SingleDemandePersonnel = () => {
                   </h5>
                   <div className="flex-shrink-0">
                     <Button
-                    onClick={() =>
-                      navigate(`/gestion-etudiant/compte-etudiant`, {
-                        state: { _id: state.state?.personnelId?._id!},
-                      })
-                    }
+                      onClick={() =>
+                        navigate(`/gestion-etudiant/compte-etudiant`, {
+                          state: { _id: state.state?.personnelId?._id! },
+                        })
+                      }
                       type="button"
                       className="btn btn-info btn-label m-1"
                     >
@@ -236,7 +235,8 @@ const SingleDemandePersonnel = () => {
                           <td className="fs-5">Nom et Prénom:</td>
                           <td>
                             <span className="mb-1 fs-5">
-                            {state.state?.personnelId?.nom_fr!}  {state.state?.personnelId?.prenom_fr!}
+                              {state.state?.personnelId?.nom_fr!}{" "}
+                              {state.state?.personnelId?.prenom_fr!}
                             </span>
                           </td>
                         </tr>
@@ -244,7 +244,7 @@ const SingleDemandePersonnel = () => {
                           <td className="fs-5">CIN:</td>
                           <td>
                             <span className="mb-1 fs-5">
-                            {state.state?.personnelId?.num_CIN!}
+                              {state.state?.personnelId?.num_CIN!}
                             </span>
                           </td>
                         </tr>
@@ -260,7 +260,7 @@ const SingleDemandePersonnel = () => {
                           <td className="fs-5">Téléphone</td>
                           <td>
                             <span className="mb-1 fs-5">
-                            {state.state?.personnelId?.num_phone1!}
+                              {state.state?.personnelId?.num_phone1!}
                             </span>
                           </td>
                         </tr>
@@ -286,7 +286,7 @@ const SingleDemandePersonnel = () => {
                       <PDFDownloadLink
                         document={
                           <PDF_REPORT
-                              logo_etablissement={
+                            logo_etablissement={
                               AllVariablesGlobales[2]?.logo_etablissement!
                             }
                             logo_republique={
@@ -301,7 +301,6 @@ const SingleDemandePersonnel = () => {
                             website={AllVariablesGlobales[2]?.website!}
                             formattedDate={formattedDate}
                             piece_demande={state?.state?.piece_demande!}
-                            
                             personnelId={state?.state?.personnelId!}
                             signature_directeur={
                               AllVariablesGlobales[2]?.signature_directeur!
@@ -317,9 +316,11 @@ const SingleDemandePersonnel = () => {
                             code_postal={AllVariablesGlobales[2]?.code_postal!}
                             allVariables={AllVariablesGlobales[2]}
                             raison={state?.state?.description!}
-                           departement={state?.state?.studentId?.groupe_classe?.departement!}
+                            departement={
+                              state?.state?.studentId?.groupe_classe
+                                ?.departement!
+                            }
                           />
-                      
                         }
                         fileName={state?.state?.piece_demande?.title!}
                       >

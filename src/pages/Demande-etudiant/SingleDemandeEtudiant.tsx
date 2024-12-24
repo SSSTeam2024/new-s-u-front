@@ -40,7 +40,7 @@ const styles = {
 };
 
 const SingleDemandeEtudiant = (props: any) => {
-  document.title = "Demande Etudiant | Smart University";
+  document.title = "Demande Etudiant | ENIGA";
 
   const state = useLocation();
   const navigate = useNavigate();
@@ -87,7 +87,7 @@ const SingleDemandeEtudiant = (props: any) => {
       doc.save("document.pdf");
     } catch (error) {
       console.error("Error generating PDF: ", error);
-    }finally {
+    } finally {
       setIsGenerating(false);
     }
   };
@@ -97,7 +97,7 @@ const SingleDemandeEtudiant = (props: any) => {
       <div className="page-content">
         <Container fluid={true}>
           <div
-             style={{
+            style={{
               visibility: "hidden", // Hide it but keep it rendered on the page
               position: "absolute",
               pointerEvents: "none", // Prevent interactions
@@ -231,17 +231,16 @@ const SingleDemandeEtudiant = (props: any) => {
                     Détails de la demande
                   </h5>
                   <div className="flex-shrink-0">
-                  <Link
-                  to="/demandes-etudiant/generer-demande-etudiant"
-        // onClick={()=>navigate("")}
-        // type="button"
-        state={state.state}
-        className="btn btn-danger btn-label m-1"
-        
-      >
-        <i className="bi bi-file-earmark-pdf label-icon align-middle fs-16 me-2"></i>
-        Generer
-      </Link>
+                    <Link
+                      to="/demandes-etudiant/generer-demande-etudiant"
+                      // onClick={()=>navigate("")}
+                      // type="button"
+                      state={state.state}
+                      className="btn btn-danger btn-label m-1"
+                    >
+                      <i className="bi bi-file-earmark-pdf label-icon align-middle fs-16 me-2"></i>
+                      Generer
+                    </Link>
                     <Button type="button" className="btn btn-success btn-label">
                       <i className="bi bi-postcard label-icon align-middle fs-16 me-2"></i>
                       Notifier l'étudiant

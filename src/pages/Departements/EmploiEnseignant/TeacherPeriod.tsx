@@ -26,7 +26,7 @@ import { useGetTeacherPeriodsBySemesterAndIdTeacherQuery } from "features/teache
 // import { useGetTeacherPeriodsBySemesterAndIdTeacherMutation } from "features/teachersPeriods/teachersPeriods";
 
 const TeacherPeriod = () => {
-  document.title = "Liste périodes des emplois enseignants | Smart University";
+  document.title = "Liste périodes des emplois enseignants | ENIGA";
 
   const location = useLocation();
   const teacherDetails = location.state;

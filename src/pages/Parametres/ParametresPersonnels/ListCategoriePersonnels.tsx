@@ -22,7 +22,7 @@ import {
 } from "features/categoriePersonnel/categoriePersonnel";
 
 const ListCategoriePersonnels = () => {
-  document.title = "Liste catégories des personnels | Smart University";
+  document.title = "Liste catégories des personnels | ENIGA";
 
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
@@ -36,7 +36,6 @@ const ListCategoriePersonnels = () => {
     setmodal_AddParametreModals(!modal_AddParametreModals);
   }
 
- 
   const { data = [] } = useFetchCategoriesPersonnelQuery();
   const [deleteCategoriePersonnel] = useDeleteCategoriePersonnelMutation();
 

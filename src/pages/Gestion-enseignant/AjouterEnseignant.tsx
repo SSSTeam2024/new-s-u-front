@@ -393,7 +393,7 @@ interface GradeOptions {
 }
 
 const AjouterEnseignant = () => {
-  document.title = " Ajouter Enseignant | Smart University";
+  document.title = " Ajouter Enseignant | ENIGA";
   const navigate = useNavigate();
 
   const [selectedWilaya, setSelectedWilaya] = useState<Wilaya | "">("");
