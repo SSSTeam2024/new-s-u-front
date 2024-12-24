@@ -140,8 +140,6 @@ const ListClasses = () => {
   };
 
   const [deleteClasse] = useDeleteClasseMutation();
-  console.log(data);
-
   const swalWithBootstrapButtons = Swal.mixin({
     customClass: {
       confirmButton: "btn btn-success",
@@ -149,7 +147,6 @@ const ListClasses = () => {
     },
     buttonsStyling: false,
   });
-
   const AlertDelete = async (_id: string) => {
     swalWithBootstrapButtons
       .fire({
@@ -208,19 +205,12 @@ const ListClasses = () => {
         },
         id: "#",
       },
-
       {
         Header: "Nom Classe (FR)",
         accessor: "nom_classe_fr",
         disableFilters: true,
         filterable: true,
       },
-      //   {
-      //     Header: "Nom Classe (FR)",
-      //     accessor: "nom_classe_ar",
-      //     disableFilters: true,
-      //     filterable: true,
-      // },
       {
         Header: "Departement",
         accessor: (row: any) => row.departement?.name_fr || "",
@@ -273,7 +263,41 @@ const ListClasses = () => {
           );
         },
       },
-
+      {
+        Header: "Affectater Etudiants",
+        disableFilters: true,
+        filterable: true,
+        accessor: (classe: Classe) => {
+          return (
+            <ul className="hstack gap-2 list-unstyled mb-0">
+              <li>
+                <Link
+                  //to="/gestion-departement/classes/affecter-etudiants"
+                  to="#"
+                  className="badge bg-info-subtle text-primary remove-item-btn"
+                  state={classe}
+                  onClick={tog_AffecterEtudiant}
+                >
+                  <i
+                    className="ri-reply-all-line"
+                    style={{
+                      transition: "transform 0.3s ease-in-out",
+                      cursor: "pointer",
+                      fontSize: "1.5em",
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.transform = "scale(1.2)")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.transform = "scale(1)")
+                    }
+                  ></i>
+                </Link>
+              </li>
+            </ul>
+          );
+        },
+      },
       {
         Header: "Action",
         disableFilters: true,
@@ -476,7 +500,6 @@ const ListClasses = () => {
                       <TableContainer
                         columns={columns || []}
                         data={data || []}
-                        // isGlobalFilter={false}
                         iscustomPageSize={false}
                         isBordered={false}
                         customPageSize={10}
