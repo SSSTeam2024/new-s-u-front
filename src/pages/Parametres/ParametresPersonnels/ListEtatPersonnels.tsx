@@ -219,7 +219,7 @@ const ListEtatPersonnels = () => {
       await createEtatPersonnel(formData).unwrap();
       notify();
       setAddModalOpen(false);
-      navigate("/parametre/etat-personnels");
+      navigate("/parametre-personnel/etat/liste-etat-personnel");
     } catch (error: any) {
       console.log(error);
     }

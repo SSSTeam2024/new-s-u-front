@@ -35,7 +35,7 @@ const ListClasses = () => {
     setmodal_AddParametreModals(!modal_AddParametreModals);
   }
   function tog_AddClasse() {
-    navigate("/departement/gestion-classes/add-classe");
+    navigate("/departement/gestion-classes/ajouter-classe");
   }
   const tog_AffecterEtudiant = () => {
     setModal_AffecterEtudiant(!modal_AffecterEtudiant);
@@ -239,7 +239,7 @@ const ListClasses = () => {
             <ul className="hstack gap-2 list-unstyled mb-0">
               <li>
                 <Link
-                  to="/gestion-departement/classes/affecter-matiere"
+                  to="/departement/gestion-classes/affecter-matiere"
                   className="badge bg-success-subtle text-success remove-item-btn"
                   state={classe}
                 >

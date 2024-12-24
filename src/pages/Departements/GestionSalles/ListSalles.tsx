@@ -40,7 +40,7 @@ const ListSalles = () => {
   };
 
   function tog_AddSalle() {
-    navigate("/departement/gestion-salles/add-salle");
+    navigate("/departement/gestion-salles/ajouter-salle");
   }
   const { data = [] } = useFetchSallesQuery();
   const [getSessionsByRoomId] = useFetchAllSessionsByRoomIdMutation();
@@ -62,9 +62,9 @@ const ListSalles = () => {
     }else{
       let classNames = "";
       for(let session of res){
-        classNames += "\n- " + session.classe.nom_classe_fr + " | Semestre " + session.semestre;
+        classNames += "\n- " + session.classe.nom_classe_fr + " | Semestre " + session.semestre + " | " + session.jour + " | " + session.heure_debut + " - " + session.heure_fin;
       }
-      alert("Cette salle est présente dans les emplois de temps des classes suivantes: " + classNames);
+      alert("Cette salle est présente dans les séances suivantes: " + classNames);
     }
   }
 

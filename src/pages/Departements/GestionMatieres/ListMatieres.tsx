@@ -53,7 +53,7 @@ const ListMatieres = () => {
   };
 
   function tog_AddMatiere() {
-    navigate("/departement/gestion-matieres/add-matiere");
+    navigate("/departement/gestion-matieres/ajouter-matiere");
   }
   const { data = [] } = useFetchMatiereQuery();
   const [deleteMatiere] = useDeleteMatiereMutation();

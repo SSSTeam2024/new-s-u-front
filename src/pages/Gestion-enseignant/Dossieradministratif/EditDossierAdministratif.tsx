@@ -48,7 +48,7 @@ const EditDossierAdministratifEnseignants = () => {
   const { state: dossierAdministratif } = useLocation();
   const [editDossierAdministratif] = useUpdateDossierAdministratifMutation();
   function tog_retourParametres() {
-    navigate("/listeDossierAdministartif");
+    navigate("/gestion-enseignant/liste-dossier-administartif");
   }
 
   const { data: allEnseignants = [] } = useFetchEnseignantsQuery();
@@ -298,7 +298,7 @@ const EditDossierAdministratifEnseignants = () => {
     try {
       await editDossierAdministratif(preparedData).unwrap();
       notify();
-      navigate("/listeDossierAdministartif");
+      navigate("/gestion-enseignant/liste-dossier-administartif");
     } catch (error: any) {
       console.log("Error submitting form:", error);
     }

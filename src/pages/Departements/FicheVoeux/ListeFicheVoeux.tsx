@@ -44,7 +44,7 @@ const ListFicheVoeux = () => {
   }
 
   function tog_AddMatiere() {
-    navigate("/gestion-fiche-voeux/add-fiche-voeux");
+    navigate("/gestion-emplois/gestion-fiche-voeux/add-fiche-voeux");
   }
   const { data = [], isSuccess } = useFetchFicheVoeuxsQuery();
 
@@ -179,7 +179,7 @@ const ListFicheVoeux = () => {
               </li>
               <li>
                 <Link
-                  to="/gestion-fiche-voeux/edit-fiche-voeux"
+                  to="/gestion-emplois/gestion-fiche-voeux/edit-fiche-voeux"
                   state={cellProps?.voeux_s1!}
                   className="badge bg-primary-subtle text-primary edit-item-btn"
                 >

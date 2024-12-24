@@ -131,7 +131,7 @@ const EditGradeEnseignant = () => {
     try {
       await editGradeEnseignant(formData).unwrap();
       notify();
-      navigate("/parametre/grade-enseignants");
+      navigate("/parametre-enseignant/grade/liste-grade-enseignant");
     } catch (error: any) {
       if (error.status === 400) {
         errorAlert("La valeur doit être unique.");

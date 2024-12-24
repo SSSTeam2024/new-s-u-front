@@ -96,7 +96,7 @@ const EditDepartement = () => {
     try {
       await editDepartement(formData).unwrap();
       notify();
-      navigate("/gestion-departements/liste-departements");
+      navigate("/departement/gestion-departements/liste-departements");
     } catch (error: any) {
       console.log(error);
     }

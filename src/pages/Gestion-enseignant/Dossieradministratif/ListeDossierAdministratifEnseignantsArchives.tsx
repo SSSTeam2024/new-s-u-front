@@ -61,7 +61,7 @@ const ListeDossierAdministratifEnseignantsArchives = () => {
             <ul className="hstack gap-2 list-unstyled mb-0">
                <li>
                 <Link
-                  to="/detailsDossierAdministratifEnseignant"
+                  to="/gestion-enseignant/details-dossier-administratif"
                   className="badge bg-info-subtle text-info view-item-btn"
                   state={dossierAdministratif}
                 >
@@ -86,7 +86,7 @@ const ListeDossierAdministratifEnseignantsArchives = () => {
               </li>
               <li>
                 <Link
-                  to="/editDossierAdministratifEnseignant"
+                  to="/gestion-enseignant/edit-dossier-administratif"
                   state={dossierAdministratif}
                   className="badge bg-primary-subtle text-primary edit-item-btn"
                 >

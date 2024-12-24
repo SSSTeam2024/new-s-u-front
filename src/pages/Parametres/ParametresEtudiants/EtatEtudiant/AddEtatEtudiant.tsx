@@ -48,7 +48,7 @@ const AddEtatEtudiant = () => {
     try {
       await createEtatEtudiant(formData).unwrap();
       notify();
-      navigate("/parametre/etat-etudiants");
+      navigate("/parametre-etudiant/etat/liste-etat-etudiant");
     } catch (error: any) {
       if (error.status === 400) {
         errorAlert("La valeur doit être unique.");

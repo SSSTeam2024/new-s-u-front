@@ -11,7 +11,7 @@ const AddGradeEnseignant = () => {
   const navigate = useNavigate();
 
   function tog_retourParametres() {
-    navigate("/parametre/grade-enseignants");
+    navigate("/parametre-enseignant/grade/liste-grade-enseignant");
   }
 
   const [createGradeEnseignant] = useAddGradeEnseignantMutation();
@@ -185,7 +185,7 @@ const AddGradeEnseignant = () => {
     try {
       await createGradeEnseignant(formData).unwrap();
       notify();
-      navigate("/parametre/grade-enseignants");
+      navigate("/parametre-enseignant/grade/liste-grade-enseignant");
     } catch (error: any) {
       console.log(error);
     }

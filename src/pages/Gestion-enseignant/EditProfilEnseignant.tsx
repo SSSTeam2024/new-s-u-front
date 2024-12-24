@@ -691,7 +691,7 @@ const EditProfilEnseignant = () => {
       console.log("Submitting form with data:", formData);
       await editEnseignant(formData).unwrap();
       notify();
-      navigate("/ListeEnseignants");
+      navigate("/gestion-enseignant/liste-enseignants");
     } catch (error: any) {
     console.log(error)
     }

@@ -17,7 +17,7 @@ import {
   EtatEtudiant,
   useFetchEtatsEtudiantQuery,
 } from "features/etatEtudiants/etatEtudiants";
-import { useDeleteEtatEnseignantMutation } from "features/etatEnseignant/etatEnseignant";
+import { useDeleteEtatEtudiantMutation } from "features/etatEtudiants/etatEtudiants";
 import { actionAuthorization } from 'utils/pathVerification';
 import { RootState } from 'app/store';
 import { useSelector } from 'react-redux';
@@ -39,7 +39,7 @@ const ListParametresEtudiants = () => {
     navigate("/parametre-etudiant/etat/ajouter-etat-etudiant");
   }
   const { data = [] } = useFetchEtatsEtudiantQuery();
-  const [deleteEtatEtudiant] = useDeleteEtatEnseignantMutation();
+  const [deleteEtatEtudiant] = useDeleteEtatEtudiantMutation();
 
   const swalWithBootstrapButtons = Swal.mixin({
     customClass: {

@@ -43,7 +43,7 @@ const AddDossieradministratif = () => {
   const navigate = useNavigate();
 
   function tog_retourParametres() {
-    navigate("/listeDossierAdministartif");
+    navigate("/gestion-enseignant/liste-dossier-administartif");
   }
 
   const [createDossierAdministratif] = useAddDossierAdministratifMutation();

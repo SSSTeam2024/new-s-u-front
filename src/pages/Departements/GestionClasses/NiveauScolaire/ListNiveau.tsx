@@ -25,7 +25,7 @@ const ListNiveau = () => {
   }
 
   function tog_AddNiveau() {
-    navigate("/departement/gestion-classes/add-niveau");
+    navigate("/departement/gestion-classes/ajouter-niveau");
   }
   const { data = [] } = useFetchNiveauxQuery();
   const [deleteNiveau] = useDeleteNiveauMutation();

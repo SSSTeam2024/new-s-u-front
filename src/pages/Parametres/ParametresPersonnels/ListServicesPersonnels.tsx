@@ -146,7 +146,7 @@ const ListServicesPersonnels = () => {
       await createServicePersonnel(formData).unwrap();
       notify();
       setAddModalOpen(false);
-      navigate("/parametre/create-personnels");
+      navigate("/parametre-personnel/service/liste-service-personnel");
     } catch (error: any) {
       console.log(error);
     }

@@ -148,7 +148,7 @@ const ListCategoriePersonnels = () => {
       await createCategoriePersonnel(formData).unwrap();
       notify();
       setAddModalOpen(false);
-      navigate("/parametre/categorie-personnels");
+      navigate("/parametre-personnel/categorie/liste-categorie-personnel");
     } catch (error: any) {
       console.log(error);
     }

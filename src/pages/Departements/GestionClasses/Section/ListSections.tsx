@@ -32,7 +32,7 @@ const ListSections = () => {
   }
 
   function tog_AddSection() {
-    navigate("/departement/gestion-classes/add-section");
+    navigate("/departement/gestion-classes/ajouter-section");
   }
   const { data = [] } = useFetchSectionsQuery();
   const [deleteSection] = useDeleteSectionMutation();
@@ -131,7 +131,7 @@ const ListSections = () => {
             <ul className="hstack gap-2 list-unstyled mb-0">
               <li>
                 <Link
-                  to="/departement/gestion-salles/edit-section"
+                  to="/departement/gestion-classes/edit-section"
                   state={section}
                   className="badge bg-primary-subtle text-primary edit-item-btn"
                 >
