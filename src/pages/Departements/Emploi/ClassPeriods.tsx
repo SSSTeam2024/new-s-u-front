@@ -29,14 +29,12 @@ const ListClassPeriods = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const classeDetails = location.state;
-  console.log("classeDetails", classeDetails);
+
   const [modal_AddParametreModals, setmodal_AddParametreModals] =
     useState<boolean>(false);
   const { data: timeTableParams = [], isLoading: isParamsLoading } =
     useFetchTimeTableParamsQuery();
-  console.log("timeTableParams", timeTableParams);
 
-  console.log("isParamsLoading", isParamsLoading);
   function tog_AddParametreModals() {
     setmodal_AddParametreModals(!modal_AddParametreModals);
   }
@@ -49,7 +47,6 @@ const ListClassPeriods = () => {
   const { data: classTimeTables = [] } = useFetchClassePeriodsByClassIdQuery(
     classeDetails?.classe?._id!
   );
-  console.log("data", classTimeTables);
 
   const schedules = classTimeTables.filter(
     (tt: any) => tt.semestre === classeDetails.semestre
@@ -77,8 +74,6 @@ const ListClassPeriods = () => {
           /* "10-11-2024"  currentDate*/ dateStr
         ) /* currentDate */
       );
-      console.log("Next Saturday:", nextSunday);
-      console.log("Next Monday:", nextMonday);
 
       const date_debut_next_period = nextMonday;
       const date_fin_next_period =
@@ -185,7 +180,6 @@ const ListClassPeriods = () => {
       })
       .then(async (result) => {
         if (result.isConfirmed) {
-          console.log("formData", formData);
           await createPeriodicSchedule({
             date_debut: date_debut_next_period,
             date_fin: date_fin_next_period,

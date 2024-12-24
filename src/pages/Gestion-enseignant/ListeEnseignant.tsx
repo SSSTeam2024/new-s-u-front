@@ -5,7 +5,7 @@ import CountUp from "react-countup";
 import { Link, useNavigate } from "react-router-dom";
 import TableContainer from "Common/TableContainer";
 import Swal from "sweetalert2";
-import userImage from "../../assets/images/profile-bg.jpg";
+import userImage from "../../assets/images/users/user-dummy-img.jpg";
 import {
   Enseignant,
   useDeleteEnseignantMutation,
@@ -190,34 +190,34 @@ const ListEnseignants = () => {
         disableFilters: true,
         filterable: true,
         accessor: (row: any) => row?.etat_compte?.etat_fr || "",
-        Cell: ({ value }: { value: string }) => {
-          switch (value) {
-            case "Activé":
-              return (
-                <span className="badge bg-success-subtle text-success">
-                  {value}
-                </span>
-              );
-            case "Désactivé":
-              return (
-                <span className="badge bg-danger-subtle text-danger">
-                  {value}
-                </span>
-              );
-            case "Nouveau":
-              return (
-                <span className="badge bg-secondary-subtle text-secondary">
-                  {value}
-                </span>
-              );
-            default:
-              return (
-                <span className="badge bg-success-subtle text-info">
-                  {value}
-                </span>
-              );
-          }
-        },
+        // Cell: ({ value }: { value: string }) => {
+        //   switch (value) {
+        //     case "Activé":
+        //       return (
+        //         <span className="badge bg-success-subtle text-success">
+        //           {value}
+        //         </span>
+        //       );
+        //     case "Désactivé":
+        //       return (
+        //         <span className="badge bg-danger-subtle text-danger">
+        //           {value}
+        //         </span>
+        //       );
+        //     case "Nouveau":
+        //       return (
+        //         <span className="badge bg-secondary-subtle text-secondary">
+        //           {value}
+        //         </span>
+        //       );
+        //     default:
+        //       return (
+        //         <span className="badge bg-success-subtle text-info">
+        //           {value}
+        //         </span>
+        //       );
+        //   }
+        // },
       },
 
       {

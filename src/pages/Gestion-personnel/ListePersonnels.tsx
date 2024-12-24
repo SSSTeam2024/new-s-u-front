@@ -5,7 +5,7 @@ import CountUp from "react-countup";
 import { Link, useNavigate } from "react-router-dom";
 import TableContainer from "Common/TableContainer";
 import Swal from "sweetalert2";
-import userImage from "assets/images/profile-bg.jpg";
+import userImage from "../../assets/images/users/user-dummy-img.jpg";
 import {
   Personnel,
   useDeletePersonnelMutation,
@@ -19,7 +19,6 @@ const ListePersonnels = () => {
 
   const [modal_AddEnseignantModals, setmodal_AddEnseignantModals] =
     useState<boolean>(false);
- 
 
   function tog_AddPersonnel() {
     navigate("/gestion-personnel/ajouter-personnel");
@@ -87,7 +86,7 @@ const ListePersonnels = () => {
             <div className="d-flex align-items-center gap-2">
               <div className="flex-shrink-0">
                 <img
-                style={{borderRadius:"50%"}}
+                  style={{ borderRadius: "50%" }}
                   src={`${process.env.REACT_APP_API_URL}/files/personnelFiles/PhotoProfil/${personnels.photo_profil}`}
                   alt="etudiant-img"
                   id="photo_profil"
@@ -153,28 +152,29 @@ const ListePersonnels = () => {
         disableFilters: true,
         filterable: true,
         accessor: (row: any) => row?.etat_compte?.etat_fr || "",
-        Cell: ({ value }: { value: string }) => {
-          switch (value) {
-            case "Inscrit / Activé":
-              return (
-                <span className="badge bg-success-subtle text-success">
-                  {value}
-                </span>
-              );
-            case "Non inscrit":
-              return (
-                <span className="badge bg-danger-subtle text-danger">
-                  {value}
-                </span>
-              );
-            default:
-              return (
-                <span className="badge bg-success-subtle text-info">
-                  {value}
-                </span>
-              );
-          }
-        },
+        // Cell: ({ value }: { value: string }) => {
+        //   console.log(value);
+        //   switch (value) {
+        //     case "Inscrit / Activé":
+        //       return (
+        //         <span className="badge bg-success-subtle text-success">
+        //           {value}
+        //         </span>
+        //       );
+        //     case "Non inscrit":
+        //       return (
+        //         <span className="badge bg-danger-subtle text-danger">
+        //           {value}
+        //         </span>
+        //       );
+        //     default:
+        //       return (
+        //         <span className="badge bg-success-subtle text-info">
+        //           {value}
+        //         </span>
+        //       );
+        //   }
+        // },
       },
       {
         Header: "Action",
@@ -773,18 +773,18 @@ const ListePersonnels = () => {
                     className="table align-middle table-nowrap"
                     id="customerTable"
                   > */}
-                    <TableContainer
-                      columns={columns || []}
-                      data={data || []}
-                      // isGlobalFilter={false}
-                      iscustomPageSize={false}
-                      isBordered={false}
-                      customPageSize={10}
-                      className="custom-header-css table align-middle table-nowrap"
-                      tableClass="table-centered align-middle table-nowrap mb-0"
-                      theadClass="text-muted table-light"
-                      SearchPlaceholder="Search Products..."
-                    />
+                  <TableContainer
+                    columns={columns || []}
+                    data={data || []}
+                    // isGlobalFilter={false}
+                    iscustomPageSize={false}
+                    isBordered={false}
+                    customPageSize={10}
+                    className="custom-header-css table align-middle table-nowrap"
+                    tableClass="table-centered align-middle table-nowrap mb-0"
+                    theadClass="text-muted table-light"
+                    SearchPlaceholder="Search Products..."
+                  />
                   {/* </table> */}
                   {/* </div> */}
                   <div className="noresult" style={{ display: "none" }}>

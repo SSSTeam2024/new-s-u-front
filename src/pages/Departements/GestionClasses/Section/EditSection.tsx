@@ -9,7 +9,7 @@ const EditSection = () => {
   document.title = "Modifier Section | Application Smart Institute";
   const navigate = useNavigate();
   const { state: section } = useLocation();
-  console.log("section location",section)
+
   const [editSection] = useUpdateSectionMutation();
   const { data: departements = [] } = useFetchDepartementsQuery();
 
@@ -28,7 +28,7 @@ const EditSection = () => {
         name_section_ar: section.name_section_ar,
         name_section_fr: section.name_section_fr,
         abreviation: section.abreviation,
-        departements: section.departements.map((dep:any) => dep._id) || [],
+        departements: section.departements.map((dep: any) => dep._id) || [],
       });
     }
   }, [section]);
@@ -89,12 +89,8 @@ const EditSection = () => {
     });
   };
 
-  // Log data to debug
-  console.log("Fetched Departements:", departements);
-  console.log("Form Data Departements:", formData.departements);
-
   // Filter departments to show only those that are assigned to the section
-  const existingDepartements = departements.filter(departement =>
+  const existingDepartements = departements.filter((departement) =>
     formData.departements.includes(departement._id)
   );
 
@@ -108,7 +104,9 @@ const EditSection = () => {
                 <Row>
                   <Col lg={4}>
                     <div className="mb-3">
-                      <Form.Label htmlFor="name_section_fr">Nom Section (FR)</Form.Label>
+                      <Form.Label htmlFor="name_section_fr">
+                        Nom Section (FR)
+                      </Form.Label>
                       <Form.Control
                         type="text"
                         id="name_section_fr"
@@ -122,7 +120,9 @@ const EditSection = () => {
 
                   <Col lg={4}>
                     <div className="mb-3">
-                      <Form.Label htmlFor="name_section_ar">Nom Section (AR)</Form.Label>
+                      <Form.Label htmlFor="name_section_ar">
+                        Nom Section (AR)
+                      </Form.Label>
                       <Form.Control
                         type="text"
                         id="name_section_ar"
@@ -150,7 +150,9 @@ const EditSection = () => {
 
                   <Col lg={5}>
                     <div className="mb-3">
-                      <Form.Label htmlFor="departements">Départements</Form.Label>
+                      <Form.Label htmlFor="departements">
+                        Départements
+                      </Form.Label>
                       <select
                         className="form-select text-muted"
                         name="departements"
@@ -159,7 +161,9 @@ const EditSection = () => {
                         value={formData.departements}
                         onChange={handleChange}
                       >
-                        <option value="" disabled>Sélectionner Départements</option>
+                        <option value="" disabled>
+                          Sélectionner Départements
+                        </option>
                         {departements.map((departement) => (
                           <option key={departement._id} value={departement._id}>
                             {departement.name_fr}
@@ -170,8 +174,12 @@ const EditSection = () => {
                       <div className="mt-3">
                         <h5>Départements Assignés</h5>
                         {existingDepartements.length > 0 ? (
-                          existingDepartements.map(departement => (
-                            <Badge key={departement._id} bg="primary" className="me-2">
+                          existingDepartements.map((departement) => (
+                            <Badge
+                              key={departement._id}
+                              bg="primary"
+                              className="me-2"
+                            >
                               {departement.name_fr}
                             </Badge>
                           ))

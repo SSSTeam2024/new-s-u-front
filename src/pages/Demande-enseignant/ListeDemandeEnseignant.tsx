@@ -42,7 +42,6 @@ const ListeDemandeEnseignant = () => {
     error,
     isLoading,
   } = useFetchDemandeEnseignantQuery();
-  console.log("data", demandesEnseignant);
 
   // Mutation hooks
   const [addReclamation] = useAddDemandeEnseignantMutation();

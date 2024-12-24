@@ -1071,7 +1071,7 @@ const EditProfilEtudiant = () => {
     Swal.fire({
       position: "center",
       icon: "success",
-      title: "Profil a été modifié avec succès",
+      title: "Profil étudiant a été modifié avec succès",
       showConfirmButton: false,
       timer: 2000,
     });

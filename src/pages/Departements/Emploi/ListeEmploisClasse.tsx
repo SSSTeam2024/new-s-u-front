@@ -17,10 +17,10 @@ import {
   useDeleteClasseMutation,
   useFetchClassesQuery,
 } from "features/classe/classe";
-import { RootState } from 'app/store';
-import { useSelector } from 'react-redux';
-import { selectCurrentUser } from 'features/account/authSlice'; 
-import { actionAuthorization } from 'utils/pathVerification';
+import { RootState } from "app/store";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "features/account/authSlice";
+import { actionAuthorization } from "utils/pathVerification";
 
 const ListeEmploisClasse = () => {
   document.title = "Liste emplois des classes | Smart University";
@@ -37,9 +37,8 @@ const ListeEmploisClasse = () => {
     navigate("/departement/gestion-classes/ajouter-classe");
   }
   const { data = [] } = useFetchClassesQuery();
-  // console.log("classe data ", data)
+
   const [deleteClasse] = useDeleteClasseMutation();
-  //console.log(data)
 
   const swalWithBootstrapButtons = Swal.mixin({
     customClass: {
@@ -146,29 +145,30 @@ const ListeEmploisClasse = () => {
         accessor: (classe: Classe) => {
           return (
             <ul className="hstack gap-2 list-unstyled mb-0">
-               {actionAuthorization("/gestion-emplois/emploi-classe/periodes-classes", user?.permissions!) ? (
+              {actionAuthorization(
+                "/gestion-emplois/emploi-classe/periodes-classes",
+                user?.permissions!
+              ) ? (
                 <>
-              <li>
-                <Link
-                  to="/gestion-emplois/emploi-classe/periodes-classes"
-                  className="badge bg-primary-subtle text-primary edit-item-btn"
-                  state={{ classe, semestre: "1" }}
-                >
-                  S1
-                </Link>
-              </li>
-            <span>|</span>
-              <li>
-                <Link
-                
-                  to="/gestion-emplois/emploi-classe/periodes-classes"
-                  className="badge bg-info-subtle text-info remove-item-btn"
-                  state={{ classe, semestre: "2" }}
-                >
-                 
-                  S2
-                </Link>
-              </li>
+                  <li>
+                    <Link
+                      to="/gestion-emplois/emploi-classe/periodes-classes"
+                      className="badge bg-primary-subtle text-primary edit-item-btn"
+                      state={{ classe, semestre: "1" }}
+                    >
+                      S1
+                    </Link>
+                  </li>
+                  <span>|</span>
+                  <li>
+                    <Link
+                      to="/gestion-emplois/emploi-classe/periodes-classes"
+                      className="badge bg-info-subtle text-info remove-item-btn"
+                      state={{ classe, semestre: "2" }}
+                    >
+                      S2
+                    </Link>
+                  </li>
                 </>
               ) : null}
             </ul>

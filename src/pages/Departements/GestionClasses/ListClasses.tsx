@@ -4,7 +4,7 @@ import {
   Card,
   Col,
   Container,
- Form,
+  Form,
   Modal,
   Row,
 } from "react-bootstrap";
@@ -12,7 +12,11 @@ import Breadcrumb from "Common/BreadCrumb";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import TableContainer from "Common/TableContainer";
-import { Classe, useDeleteClasseMutation, useFetchClassesQuery } from "features/classe/classe";
+import {
+  Classe,
+  useDeleteClasseMutation,
+  useFetchClassesQuery,
+} from "features/classe/classe";
 
 const ListClasses = () => {
   document.title = "Liste des classes | Smart University";
@@ -29,9 +33,8 @@ const ListClasses = () => {
     navigate("/departement/gestion-classes/ajouter-classe");
   }
   const { data = [] } = useFetchClassesQuery();
-  console.log(data);
+
   const [deleteClasse] = useDeleteClasseMutation();
-  console.log(data)
 
   const swalWithBootstrapButtons = Swal.mixin({
     customClass: {
@@ -40,7 +43,7 @@ const ListClasses = () => {
     },
     buttonsStyling: false,
   });
-  
+
   const AlertDelete = async (_id: string) => {
     swalWithBootstrapButtons
       .fire({
@@ -70,26 +73,42 @@ const ListClasses = () => {
       });
   };
 
-
-
-
-
   const columns = useMemo(
     () => [
-        {
-            Header: (<div className="form-check"> <input className="form-check-input" type="checkbox" id="checkAll" value="option" /> </div>),
-            Cell: (cellProps: any) => {
-                return (<div className="form-check"> <input className="form-check-input" type="checkbox" name="chk_child" defaultValue="option1" /> </div>);
-            },
-            id: '#',
+      {
+        Header: (
+          <div className="form-check">
+            {" "}
+            <input
+              className="form-check-input"
+              type="checkbox"
+              id="checkAll"
+              value="option"
+            />{" "}
+          </div>
+        ),
+        Cell: (cellProps: any) => {
+          return (
+            <div className="form-check">
+              {" "}
+              <input
+                className="form-check-input"
+                type="checkbox"
+                name="chk_child"
+                defaultValue="option1"
+              />{" "}
+            </div>
+          );
         },
-       
-        {
-            Header: "Nom Classe (FR)",
-            accessor: "nom_classe_fr",
-            disableFilters: true,
-            filterable: true,
-        },
+        id: "#",
+      },
+
+      {
+        Header: "Nom Classe (FR)",
+        accessor: "nom_classe_fr",
+        disableFilters: true,
+        filterable: true,
+      },
       //   {
       //     Header: "Nom Classe (FR)",
       //     accessor: "nom_classe_ar",
@@ -102,90 +121,89 @@ const ListClasses = () => {
         disableFilters: true,
         filterable: true,
       },
-        {
-            Header: "Niveau",
-            accessor: (row: any) => row.niveau_classe?.abreviation || "",
-            disableFilters: true,
-            filterable: true,
-        },
-        {
-          Header: "Section",
-          accessor: (row: any) => row.niveau_classe?.sections[0]?.abreviation! || "",
-          disableFilters: true,
-          filterable: true,
+      {
+        Header: "Niveau",
+        accessor: (row: any) => row.niveau_classe?.abreviation || "",
+        disableFilters: true,
+        filterable: true,
       },
-        {
-            Header: "Affectater Matières",
-            disableFilters: true,
-            filterable: true,
-            accessor: (classe: Classe) => {
-              return (
-                  <ul className="hstack gap-2 list-unstyled mb-0">
-                    <li>
-                      <Link
-                        to="/departement/gestion-classes/affecter-matiere"
-                        className="badge bg-success-subtle text-success remove-item-btn"
-                        state={classe}
-                      >
-                        <i
-                          className="ph ph-file-plus"
-                          style={{
-                            transition: "transform 0.3s ease-in-out",
-                            cursor: "pointer",
-                            fontSize: "1.5em",
-                          }}
-                          onMouseEnter={(e) =>
-                            (e.currentTarget.style.transform = "scale(1.2)")
-                          }
-                          onMouseLeave={(e) =>
-                            (e.currentTarget.style.transform = "scale(1)")
-                          }
-                          
-                        ></i>
-                      </Link>
-                    </li>
-                  </ul>
-                );
-          },
+      {
+        Header: "Section",
+        accessor: (row: any) =>
+          row.niveau_classe?.sections[0]?.abreviation! || "",
+        disableFilters: true,
+        filterable: true,
+      },
+      {
+        Header: "Affectater Matières",
+        disableFilters: true,
+        filterable: true,
+        accessor: (classe: Classe) => {
+          return (
+            <ul className="hstack gap-2 list-unstyled mb-0">
+              <li>
+                <Link
+                  to="/departement/gestion-classes/affecter-matiere"
+                  className="badge bg-success-subtle text-success remove-item-btn"
+                  state={classe}
+                >
+                  <i
+                    className="ph ph-file-plus"
+                    style={{
+                      transition: "transform 0.3s ease-in-out",
+                      cursor: "pointer",
+                      fontSize: "1.5em",
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.transform = "scale(1.2)")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.transform = "scale(1)")
+                    }
+                  ></i>
+                </Link>
+              </li>
+            </ul>
+          );
         },
+      },
 
-        {
-            Header: "Action",
-            disableFilters: true,
-            filterable: true,
-            accessor: (classe: Classe) => {
-                return (
-                    <ul className="hstack gap-2 list-unstyled mb-0">
-                      
-                      <li>
-                        <Link
-                          to="#"
-                          className="badge bg-danger-subtle text-danger remove-item-btn"
-                        >
-                          <i
-                            className="ph ph-trash"
-                            style={{
-                              transition: "transform 0.3s ease-in-out",
-                              cursor: "pointer",
-                              fontSize: "1.5em",
-                            }}
-                            onMouseEnter={(e) =>
-                              (e.currentTarget.style.transform = "scale(1.2)")
-                            }
-                            onMouseLeave={(e) =>
-                              (e.currentTarget.style.transform = "scale(1)")
-                            }
-                            onClick={() => AlertDelete(classe?._id!)}
-                          ></i>
-                        </Link>
-                      </li>
-                    </ul>
-                  );
-            },
+      {
+        Header: "Action",
+        disableFilters: true,
+        filterable: true,
+        accessor: (classe: Classe) => {
+          return (
+            <ul className="hstack gap-2 list-unstyled mb-0">
+              <li>
+                <Link
+                  to="#"
+                  className="badge bg-danger-subtle text-danger remove-item-btn"
+                >
+                  <i
+                    className="ph ph-trash"
+                    style={{
+                      transition: "transform 0.3s ease-in-out",
+                      cursor: "pointer",
+                      fontSize: "1.5em",
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.transform = "scale(1.2)")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.transform = "scale(1)")
+                    }
+                    onClick={() => AlertDelete(classe?._id!)}
+                  ></i>
+                </Link>
+              </li>
+            </ul>
+          );
         },
+      },
     ],
     []
-);
+  );
 
   return (
     <React.Fragment>
@@ -405,20 +423,20 @@ const ListClasses = () => {
                     className="table align-middle table-nowrap"
                     id="customerTable"
                   >
-                 <React.Fragment>
-            <TableContainer
-                columns={(columns || [])}
-                data={(data || [])}
-                // isGlobalFilter={false}
-                iscustomPageSize={false}
-                isBordered={false}
-                customPageSize={10}
-                className="custom-header-css table align-middle table-nowrap"
-                tableClass="table-centered align-middle table-nowrap mb-0"
-                theadClass="text-muted table-light"
-                SearchPlaceholder='Search Products...'
-            />
-        </React.Fragment>
+                    <React.Fragment>
+                      <TableContainer
+                        columns={columns || []}
+                        data={data || []}
+                        // isGlobalFilter={false}
+                        iscustomPageSize={false}
+                        isBordered={false}
+                        customPageSize={10}
+                        className="custom-header-css table align-middle table-nowrap"
+                        tableClass="table-centered align-middle table-nowrap mb-0"
+                        theadClass="text-muted table-light"
+                        SearchPlaceholder="Search Products..."
+                      />
+                    </React.Fragment>
                   </table>
                   <div className="noresult" style={{ display: "none" }}>
                     <div className="text-center py-4">

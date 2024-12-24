@@ -23,18 +23,14 @@ const DemandeTable = () => {
 
   const location = useLocation();
   const studentDetails = location.state;
-  console.log("student details", studentDetails);
 
   const idStudent = studentDetails?._id;
-  console.log("id student", idStudent);
 
   const { data: demandes, error, isLoading } = useFetchDemandeEtudiantQuery();
   const filteredDemandes = demandes?.filter(
     (demande) =>
       (demande?.studentId! as unknown as { _id: string })?._id! === idStudent
   );
-
-  console.log("filtered demandes", filteredDemandes);
 
   const [modal_AddUserModals, setmodal_AddUserModals] =
     useState<boolean>(false);

@@ -6,7 +6,8 @@ import Swal from "sweetalert2";
 import { useUpdatePapierAdministratifMutation } from "features/papierAdministratif/papierAdministratif";
 
 const EditPapierAdministratif = () => {
-  document.title = " Modifier Papier Administratif | Application Smart Institute";
+  document.title =
+    " Modifier Papier Administratif | Application Smart Institute";
   const navigate = useNavigate();
   const { state: papierAdministratif } = useLocation();
   const [editPapierAdministratif] = useUpdatePapierAdministratifMutation();
@@ -34,18 +35,17 @@ const EditPapierAdministratif = () => {
     }
   }, [papierAdministratif]);
 
-const onCategoryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  const { value, checked } = e.target;
-  
-  setFormData((prevFormData) => {
-    const updatedCategories = checked
-      ? [...prevFormData.category, value]
-      : prevFormData.category.filter((category) => category !== value);
+  const onCategoryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value, checked } = e.target;
 
-    return { ...prevFormData, category: updatedCategories };
-  });
-};
+    setFormData((prevFormData) => {
+      const updatedCategories = checked
+        ? [...prevFormData.category, value]
+        : prevFormData.category.filter((category) => category !== value);
 
+      return { ...prevFormData, category: updatedCategories };
+    });
+  };
 
   // Handle other form input changes
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -55,7 +55,7 @@ const onCategoryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       [name]: value,
     }));
   };
-  
+
   const errorAlert = (message: string) => {
     Swal.fire({
       position: "center",
@@ -68,17 +68,19 @@ const onCategoryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 
   const onSubmitPapier = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-  
+
     try {
       const formDataToSubmit = {
         ...formData,
-        files_papier_administratif: [{
-          nom_ar: formData.nom_ar,
-          nom_fr: formData.nom_fr,
-          category: formData.category,
-        }]
+        files_papier_administratif: [
+          {
+            nom_ar: formData.nom_ar,
+            nom_fr: formData.nom_fr,
+            category: formData.category,
+          },
+        ],
       };
-  
+
       await editPapierAdministratif(formDataToSubmit).unwrap();
       notify();
       navigate("/listePapierAdministratif");
@@ -87,13 +89,12 @@ const onCategoryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       errorAlert(error.message || "An error occurred.");
     }
   };
-  
 
   const notify = () => {
     Swal.fire({
       position: "center",
       icon: "success",
-      title: "Type inscription étudiant a été crée avec succés",
+      title: "Papier administratif a été crée avec succés",
       showConfirmButton: false,
       timer: 2000,
     });
@@ -103,7 +104,7 @@ const onCategoryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     Swal.fire({
       position: "center",
       icon: "error",
-      title: `Creation type inscription étudiant échoué ${error}`,
+      title: `Creation papier administratif échoué ${error}`,
       showConfirmButton: false,
       timer: 2000,
     });
@@ -133,8 +134,8 @@ const onCategoryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
                             placeholder="Nom Fichier (Arabe)"
                             name="nom_ar"
                             required
-                           value={formData.nom_ar}
-                            onChange={onChange} 
+                            value={formData.nom_ar}
+                            onChange={onChange}
                             className="me-2"
                           />
                           <Form.Control
@@ -142,11 +143,10 @@ const onCategoryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
                             placeholder="Nom Fichier (Français)"
                             name="nom_fr"
                             required
-                           value={formData.nom_fr}
-                            onChange={onChange} 
+                            value={formData.nom_fr}
+                            onChange={onChange}
                             className="me-2"
                           />
-                       
                         </div>
                         {/* Category Selection for each file */}
                         <Row className="mb-3">
@@ -182,7 +182,7 @@ const onCategoryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
                   <div className="hstack gap-2 justify-content-end">
                     <Button
                       className="btn-ghost-danger"
-                     // onClick={() => tog_retourParametres()}
+                      // onClick={() => tog_retourParametres()}
                     >
                       Retour
                     </Button>

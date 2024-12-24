@@ -23,10 +23,8 @@ const DemandeTableEnseignant = () => {
 
   const location = useLocation();
   const EnseignantDetails = location.state;
-  console.log("EnseignantDetails", EnseignantDetails);
 
   const idEnseignant = EnseignantDetails?._id;
-  console.log("id enseignant", idEnseignant);
 
   const { data: demandes, error, isLoading } = useFetchDemandeEnseignantQuery();
   // Filter demandes only if idEnseignant is defined
@@ -38,7 +36,6 @@ const DemandeTableEnseignant = () => {
         idEnseignant
     );
   }, [demandes, idEnseignant]);
-  console.log("filtered demandes", filteredDemandes);
 
   const [modal_AddUserModals, setmodal_AddUserModals] =
     useState<boolean>(false);

@@ -6,7 +6,7 @@ import {
   Container,
   Form,
   InputGroup,
-  Row
+  Row,
 } from "react-bootstrap";
 import Flatpickr from "react-flatpickr";
 import Dropzone from "react-dropzone";
@@ -15,13 +15,15 @@ import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import Swal from "sweetalert2";
 import "flatpickr/dist/flatpickr.min.css";
 import Select from "react-select";
-import { useAddAvisEtudiantMutation, Avis } from "features/avisEtudiant/avisEtudiantSlice";
+import {
+  useAddAvisEtudiantMutation,
+  Avis,
+} from "features/avisEtudiant/avisEtudiantSlice";
 import { Classe, useFetchClassesQuery } from "features/classe/classe";
 import { useNavigate } from "react-router-dom";
-import { RootState } from 'app/store';
-import { useSelector } from 'react-redux';
-import { selectCurrentUser } from 'features/account/authSlice'; 
-
+import { RootState } from "app/store";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "features/account/authSlice";
 
 const AjouterAvisEtudiant = () => {
   document.title = "Ajouter Avis Etudiant | Smart University";
@@ -32,12 +34,11 @@ const AjouterAvisEtudiant = () => {
   const { data: classes } = useFetchClassesQuery();
   const classe: Classe[] = Array.isArray(classes) ? classes : [];
 
-  
   const [formData, setFormData] = useState<Partial<Avis>>({
     _id: "",
     title: "",
     description: "",
-    auteurId:user?._id,
+    auteurId: user?._id,
     groupe_classe: [],
     date_avis: "",
     lien: "",
@@ -47,10 +48,12 @@ const AjouterAvisEtudiant = () => {
     gallery: [],
     galleryBase64Strings: [],
     galleryExtensions: [],
-    createdAt:""
+    createdAt: "",
   });
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const onChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setFormData((prevState) => ({
       ...prevState,
       [e.target.id]: e.target.value,
@@ -99,7 +102,9 @@ const AjouterAvisEtudiant = () => {
     });
   };
 
-  function convertToBase64(file: File): Promise<{ base64Data: string; extension: string }> {
+  function convertToBase64(
+    file: File
+  ): Promise<{ base64Data: string; extension: string }> {
     return new Promise((resolve, reject) => {
       const fileReader = new FileReader();
       fileReader.onload = () => {
@@ -119,39 +124,43 @@ const AjouterAvisEtudiant = () => {
     const base64Images = await Promise.all(
       files.map(async (file: File) => {
         const { base64Data, extension } = await convertToBase64(file);
-       
+
         return {
           base64Data,
           extension,
-          fileName: file.name
+          fileName: file.name,
         };
       })
     );
-    
+
     setFormData((prevState) => ({
       ...prevState,
-      gallery: base64Images.map(img => img.base64Data + "." + img.extension),
-      galleryBase64Strings: base64Images.map(img => img.base64Data),
-      galleryExtensions: base64Images.map(img => img.extension)
+      gallery: base64Images.map((img) => img.base64Data + "." + img.extension),
+      galleryBase64Strings: base64Images.map((img) => img.base64Data),
+      galleryExtensions: base64Images.map((img) => img.extension),
     }));
   };
-  console.log("galleryExtension", formData)
+
   const handleDeleteFile = (indexToRemove: number) => {
     setFormData((prevData) => {
-      const newGallery = prevData.gallery?.filter((_, index) => index !== indexToRemove);
-      const newGalleryBase64Strings = prevData.galleryBase64Strings?.filter((_, index) => index !== indexToRemove);
-      const newGalleryExtension = prevData.galleryExtensions?.filter((_, index) => index !== indexToRemove);
+      const newGallery = prevData.gallery?.filter(
+        (_, index) => index !== indexToRemove
+      );
+      const newGalleryBase64Strings = prevData.galleryBase64Strings?.filter(
+        (_, index) => index !== indexToRemove
+      );
+      const newGalleryExtension = prevData.galleryExtensions?.filter(
+        (_, index) => index !== indexToRemove
+      );
 
       return {
         ...prevData,
         gallery: newGallery,
         galleryBase64Strings: newGalleryBase64Strings,
-        galleryExtensions: newGalleryExtension
+        galleryExtensions: newGalleryExtension,
       };
     });
   };
-
-
 
   return (
     <React.Fragment>
@@ -177,7 +186,10 @@ const AjouterAvisEtudiant = () => {
                   </Card.Header>
                   <Card.Body></Card.Body>
                   <div className="mb-3">
-                    <Form className="tablelist-form" onSubmit={onSubmitAvisEtudiant}>
+                    <Form
+                      className="tablelist-form"
+                      onSubmit={onSubmitAvisEtudiant}
+                    >
                       <input type="hidden" id="_id" value={formData._id} />
                       <Form.Group className="mb-3">
                         <Form.Label>Titre</Form.Label>
@@ -203,7 +215,10 @@ const AjouterAvisEtudiant = () => {
                       <Form.Group className="mb-3">
                         <Form.Label>Classe</Form.Label>
                         <Select
-                          options={classe.map(c => ({ value: c._id, label: c.nom_classe_fr }))}
+                          options={classe.map((c) => ({
+                            value: c._id,
+                            label: c.nom_classe_fr,
+                          }))}
                           onChange={onSelectChange}
                           isMulti
                         />
@@ -241,8 +256,9 @@ const AjouterAvisEtudiant = () => {
                             const input = e.target as HTMLInputElement;
                             const file = input.files?.[0];
                             if (file) {
-                              const { base64Data, extension } = await convertToBase64(file);
-                              setFormData(prev => ({
+                              const { base64Data, extension } =
+                                await convertToBase64(file);
+                              setFormData((prev) => ({
                                 ...prev,
                                 pdfBase64String: base64Data,
                                 pdfExtension: extension,
@@ -254,15 +270,23 @@ const AjouterAvisEtudiant = () => {
 
                       <Form.Group className="mb-3">
                         <Form.Label>Galerie</Form.Label>
-                        <Dropzone onDrop={(acceptedFiles) => handleAcceptedFiles(acceptedFiles)}>
+                        <Dropzone
+                          onDrop={(acceptedFiles) =>
+                            handleAcceptedFiles(acceptedFiles)
+                          }
+                        >
                           {({ getRootProps, getInputProps }) => (
-                            <div className="dropzone dz-clickable text-center" {...getRootProps()}>
+                            <div
+                              className="dropzone dz-clickable text-center"
+                              {...getRootProps()}
+                            >
                               <div className="dz-message needsclick">
                                 <div className="mb-3">
                                   <i className="display-4 text-muted ri-upload-cloud-2-fill" />
                                 </div>
                                 <h5>
-                                  Déposez des photos ici ou cliquez pour télécharger.
+                                  Déposez des photos ici ou cliquez pour
+                                  télécharger.
                                 </h5>
                               </div>
                               <input {...getInputProps()} />
@@ -272,7 +296,11 @@ const AjouterAvisEtudiant = () => {
                         <div className="mt-3">
                           {formData.gallery?.map((image, index) => (
                             <div key={index} className="image-preview">
-                              <img src={image} alt={`Image ${index + 1}`} className="img-thumbnail" />
+                              <img
+                                src={image}
+                                alt={`Image ${index + 1}`}
+                                className="img-thumbnail"
+                              />
                               <Button
                                 variant="danger"
                                 size="sm"
@@ -286,7 +314,9 @@ const AjouterAvisEtudiant = () => {
                       </Form.Group>
 
                       <div className="mb-3 text-end">
-                        <Button type="submit" color="primary">Enregistrer</Button>
+                        <Button type="submit" color="primary">
+                          Enregistrer
+                        </Button>
                       </div>
                     </Form>
                   </div>
