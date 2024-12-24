@@ -1,0 +1,17 @@
+.loader-style-list-etudiant {
+    margin-top: 280px;
+    font-size:xx-large
+}
+
+@media (max-width: 1280px) {
+    .loader-style-list-etudiant {
+      margin-top: 160px !important;
+      font-size: x-large !important;
+    }
+  }
+  @media (max-width: 620px) {
+    .loader-style-list-etudiant {
+      margin-top: 280px !important;
+      font-size:larger !important;
+    }
+  }

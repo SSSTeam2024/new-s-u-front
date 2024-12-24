@@ -56,7 +56,7 @@ const Login = (props: any) => {
   return (
     <React.Fragment>
       <section className="auth-page-wrapper position-relative bg-light min-vh-100 d-flex align-items-center justify-content-between">
-        <div className="auth-header position-fixed top-0 start-0 end-0 bg-body">
+        {/* <div className="auth-header position-fixed top-0 start-0 end-0 bg-body">
           <Container fluid={true}>
             <Row className="justify-content-between align-items-center">
               <Col className="col-2">
@@ -77,7 +77,7 @@ const Login = (props: any) => {
               </Col>
             </Row>
           </Container>
-        </div>
+        </div> */}
         <div className="w-100">
           <Container>
             <Row className="justify-content-center">
@@ -105,11 +105,11 @@ const Login = (props: any) => {
                           />
                         </div>
                         <div className="mb-3">
-                          <div className="float-end">
+                          {/* <div className="float-end">
                             <Link to="/forgot-password" className="text-muted">
                               Mot de passe oublié?
                             </Link>
-                          </div>
+                          </div> */}
                           <Form.Label htmlFor="password-input">
                             Mot de passe
                           </Form.Label>
@@ -133,7 +133,7 @@ const Login = (props: any) => {
                             </Button>
                           </div>
                         </div>
-                        <div className="form-check">
+                        {/* <div className="form-check">
                           <Form.Check
                             type="checkbox"
                             value=""
@@ -142,39 +142,57 @@ const Login = (props: any) => {
                           <Form.Label htmlFor="auth-remember-check">
                             Rappelez-vous de moi
                           </Form.Label>
-                        </div>
+                        </div> */}
                         <div>
-                          <Button
-                            variant="soft-warning"
-                            className="w-100"
-                            type="submit"
-                            onClick={async () => {
-                              try {
-                                const user: any = await login(
-                                  formState
-                                ).unwrap();
-                                if (user) {
-                                  if (user.user.status === "Active") {
-                                    dispatch(setCredentials(user));
+                          {isLoading ? (
+                            <button className="btn btn-outline-warning btn-load w-100">
+                              <span className="d-flex align-items-center">
+                                <span
+                                  className="spinner-border flex-shrink-0"
+                                  role="status"
+                                >
+                                  <span className="visually-hidden">
+                                    Loading...
+                                  </span>
+                                </span>
+                                <span className="flex-grow-1 ms-2">
+                                  Loading...
+                                </span>
+                              </span>
+                            </button>
+                          ) : (
+                            <Button
+                              variant="soft-warning"
+                              className="w-100"
+                              type="submit"
+                              onClick={async () => {
+                                try {
+                                  const user: any = await login(
+                                    formState
+                                  ).unwrap();
+                                  if (user) {
+                                    if (user.user.status === "Active") {
+                                      dispatch(setCredentials(user));
 
-                                    Cookies.set("astk", user.user.api_token, {
-                                      expires: 1 / 4,
-                                    });
-                                    notify();
+                                      Cookies.set("astk", user.user.api_token, {
+                                        expires: 1 / 4,
+                                      });
+                                      notify();
+                                    }
+                                    if (user.user.status !== "Active") {
+                                      Errornotify("Your Account is Inactive!");
+                                    }
+                                  } else {
+                                    Errornotify(msgError);
                                   }
-                                  if (user.user.status !== "Active") {
-                                    Errornotify("Your Account is Inactive!");
-                                  }
-                                } else {
-                                  Errornotify(msgError);
+                                } catch (err: any) {
+                                  console.log(err);
                                 }
-                              } catch (err: any) {
-                                console.log(err);
-                              }
-                            }}
-                          >
-                            Se connecter
-                          </Button>
+                              }}
+                            >
+                              Se connecter
+                            </Button>
+                          )}
                         </div>
                       </div>
                     </Card.Body>

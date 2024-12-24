@@ -19,7 +19,7 @@ import { useSelector } from "react-redux";
 import { selectCurrentUser } from "features/account/authSlice";
 import * as XLSX from "xlsx";
 import CustomLoader from "Common/CustomLoader/CustomLoader";
-
+import "./listEtudiantStyle.css";
 const ListEtudiants = () => {
   document.title = "Liste des étudiants | ENIGA";
   const user = useSelector((state: RootState) => selectCurrentUser(state));
@@ -323,7 +323,9 @@ const ListEtudiants = () => {
             pageTitle="Liste des étudiants"
           />
           {isLoading ? (
-            <CustomLoader />
+            <div className="text-center loader-style-list-etudiant">
+              <CustomLoader text="Chargement" />
+            </div>
           ) : (
             <>
               <Row>
