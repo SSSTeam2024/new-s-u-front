@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Button, Card, Col, Container, Form, Row } from "react-bootstrap";
 
-import logo from "assets/images/logo-sm.png";
+import logo from "assets/images/logo.png";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
@@ -84,7 +84,7 @@ const Login = (props: any) => {
               <Col lg={6}>
                 <div className="auth-card mx-lg-3">
                   <Card className="border-0 mb-0">
-                    <Card.Header className="bg-primary border-0">
+                    <Card.Header className="bg-dark bg-opacity-10 border-0 ">
                       <Row>
                         <Col lg={4} className="col-3">
                           <img src={logo} alt="" className="img-fluid" />
@@ -92,14 +92,14 @@ const Login = (props: any) => {
                       </Row>
                     </Card.Header>
                     <Card.Body>
-                      <p className="text-muted fs-15">se connecter</p>
+                      <p className="text-muted fs-15">Se connecter</p>
                       <div className="p-2">
                         <div className="mb-3">
                           <Form.Label htmlFor="username">Login</Form.Label>
                           <Form.Control
                             type="email"
                             className="form-control"
-                            placeholder="Enter username"
+                            placeholder="Entrez nom d'utilisateur"
                             onChange={handleChange}
                             name="login"
                           />
@@ -107,16 +107,16 @@ const Login = (props: any) => {
                         <div className="mb-3">
                           <div className="float-end">
                             <Link to="/forgot-password" className="text-muted">
-                              Forgot password?
+                              Mot de passe oublié?
                             </Link>
                           </div>
                           <Form.Label htmlFor="password-input">
-                            Password
+                            Mot de passe
                           </Form.Label>
                           <div className="position-relative auth-pass-inputgroup mb-3">
                             <Form.Control
                               className="form-control pe-5 password-input"
-                              placeholder="Enter password"
+                              placeholder="Entrez mot de passe"
                               id="password-input"
                               name="password"
                               onChange={handleChange}
@@ -140,12 +140,12 @@ const Login = (props: any) => {
                             id="auth-remember-check"
                           />
                           <Form.Label htmlFor="auth-remember-check">
-                            Remember me
+                            Rappelez-vous de moi
                           </Form.Label>
                         </div>
                         <div>
                           <Button
-                            variant="primary"
+                            variant="soft-warning"
                             className="w-100"
                             type="submit"
                             onClick={async () => {
@@ -173,7 +173,7 @@ const Login = (props: any) => {
                               }
                             }}
                           >
-                            Sign In
+                            Se connecter
                           </Button>
                         </div>
                       </div>
@@ -190,8 +190,8 @@ const Login = (props: any) => {
                 <Col lg={12}>
                   <div className="text-center">
                     <p className="mb-0 text-muted">
-                      ©{new Date().getFullYear()} ENIGA. Crafted with{" "}
-                      <i className="mdi mdi-heart text-danger"></i> by Team 3S
+                      ©{new Date().getFullYear()} ENIGA. Réalisé avec{" "}
+                      <i className="mdi mdi-heart text-danger"></i> l'équipe 3S
                     </p>
                   </div>
                 </Col>

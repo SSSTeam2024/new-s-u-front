@@ -40,7 +40,7 @@ const ProfileDropdown = () => {
   const logout = () => {
     axios
       .post(
-        `${process.env.REACT_APP_API_URL}/user/logout-user/${user?._id!}`,
+        `${process.env.REACT_APP_API_URL}/api/user/logout-user/${user?._id!}`,
         {}
       )
       .then((res: any) => {
@@ -75,7 +75,7 @@ const ProfileDropdown = () => {
         </Dropdown.Toggle>
         <Dropdown.Menu className="dropdown-menu-end">
           {/* <h6 className="dropdown-header">Welcome {user?.personnelId?.prenom_fr!} {user?.personnelId?.nom_fr!}!</h6> */}
-          <Dropdown.Item href="/user-profile">
+          {/* <Dropdown.Item href="/user-profile">
             <i className="mdi mdi-account-circle text-muted fs-16 align-middle me-1"></i>{" "}
             <span className="align-middle">Profile</span>
           </Dropdown.Item>
@@ -97,8 +97,8 @@ const ProfileDropdown = () => {
             <span className="align-middle">
               Balance : <b>$8451.36</b>
             </span>
-          </Dropdown.Item>
-          <Dropdown.Item href="/pages-profile-settings">
+          </Dropdown.Item> */}
+          {/* <Dropdown.Item href="/pages-profile-settings">
             <span className="badge bg-success-subtle text-success mt-1 float-end">
               New
             </span>
@@ -108,11 +108,11 @@ const ProfileDropdown = () => {
           <Dropdown.Item href="/auth-lockscreen-basic">
             <i className="mdi mdi-lock text-muted fs-16 align-middle me-1"></i>{" "}
             <span className="align-middle">Lock screen</span>
-          </Dropdown.Item>
+          </Dropdown.Item> */}
           <Dropdown.Item onClick={logout}>
             <i className="mdi mdi-logout text-muted fs-16 align-middle me-1"></i>{" "}
             <span className="align-middle" data-key="t-logout">
-              Logout
+              Se déconnecter
             </span>
           </Dropdown.Item>
         </Dropdown.Menu>
