@@ -116,7 +116,6 @@ export const etudiantSlice = createApi({
         },
         providesTags: ['Etudiant'],
       }),
-
       addEtudiant: builder.mutation<void, Etudiant>({
         query(payload) {
           return {
@@ -129,12 +128,10 @@ export const etudiantSlice = createApi({
       }),
       updateEtudiant: builder.mutation<void, Etudiant>({
         query: ({ _id, ...rest }) => {
-          console.log("Payload being sent to the backend:", { id: _id, ...rest });
-      
+          // console.log("Payload being sent to the backend:", { id: _id, ...rest });
           if (!_id) {
             throw new Error("No student ID provided");
           }
-      
           return {
             url: `/update-etudiant`,
             method: "PUT",
@@ -159,8 +156,19 @@ export const etudiantSlice = createApi({
           }),
           invalidatesTags: ["Etudiant"],
         }),
+        updateGroupeClasse: builder.mutation<
+        { message: string; result: any },
+        { studentIds: string[]; groupeClasseId: string }
+      >({
+        query: ({ studentIds, groupeClasseId }) => ({
+          url: `update-groupe-classe`,
+          method: "PUT",
+          body: { studentIds, groupeClasseId },
+        }),
+        invalidatesTags: ["Etudiant"],
+      }),
     };
   },
 });
 
-export const { useAddEtudiantMutation, useFetchEtudiantsQuery, useFetchEtudiantByIdQuery, useDeleteEtudiantMutation, useUpdateEtudiantMutation, useGetTypeInscriptionByIdStudentMutation } = etudiantSlice;
+export const { useAddEtudiantMutation, useFetchEtudiantsQuery, useFetchEtudiantByIdQuery, useDeleteEtudiantMutation, useUpdateEtudiantMutation, useGetTypeInscriptionByIdStudentMutation, useUpdateGroupeClasseMutation } = etudiantSlice;
