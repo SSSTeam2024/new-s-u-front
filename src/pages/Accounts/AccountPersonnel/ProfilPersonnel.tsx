@@ -1,5 +1,15 @@
 import React, { useState } from "react";
-import { Card, Nav, Tab, Row, Col, Table, Image, Modal, Form } from "react-bootstrap";
+import {
+  Card,
+  Nav,
+  Tab,
+  Row,
+  Col,
+  Table,
+  Image,
+  Modal,
+  Form,
+} from "react-bootstrap";
 import { Link, useLocation } from "react-router-dom";
 import DemandeTablePersonnel from "./DemandeTablePersonnel";
 import ReclamationTable from "./ReclamationTablePersonnel";
@@ -17,7 +27,6 @@ const ProfilPersonnel = () => {
   const [clickedImage, setClickedImage] = useState(null);
   const location = useLocation();
   const personnelDetails = location.state;
-  console.log(personnelDetails);
   const handleImageClick = (imageSrc: any) => {
     setClickedImage(imageSrc);
     setShowModal(true);
@@ -79,7 +88,7 @@ const ProfilPersonnel = () => {
   return (
     <React.Fragment>
       <Tab.Container defaultActiveKey="Profil">
-      <div className="d-flex align-items-center gap-3 mb-4">
+        <div className="d-flex align-items-center gap-3 mb-4">
           <Nav as="ul" className="nav nav-pills flex-grow-1 mb-0">
             <Nav.Item as="li">
               <Nav.Link eventKey="Profil">Profil</Nav.Link>
@@ -190,9 +199,7 @@ const ProfilPersonnel = () => {
                       <tbody>
                         <tr>
                           <td>Genre:</td>
-                          <td className="fw-medium">
-                            {personnelDetails.sexe}
-                          </td>
+                          <td className="fw-medium">{personnelDetails.sexe}</td>
                         </tr>
 
                         <tr>
@@ -220,7 +227,6 @@ const ProfilPersonnel = () => {
                             {personnelDetails.lieu_naissance_fr}
                           </td>
                         </tr>
-
 
                         <tr>
                           <td> Adresse:</td>
@@ -390,26 +396,29 @@ const ProfilPersonnel = () => {
                       <tbody>
                         <tr>
                           <td>Nom du conjoint:</td>
-                          <td className="fw-medium">{personnelDetails.nom_conjoint}</td>
+                          <td className="fw-medium">
+                            {personnelDetails.nom_conjoint}
+                          </td>
                         </tr>
 
                         <tr>
                           <td>Profession du conjoint:</td>
-                          <td className="fw-medium">{personnelDetails.job_conjoint
-                          }</td>
+                          <td className="fw-medium">
+                            {personnelDetails.job_conjoint}
+                          </td>
                         </tr>
                         <tr>
                           <td>Nombre des enfants:</td>
-                          <td className="fw-medium">{personnelDetails.nombre_fils}</td>
+                          <td className="fw-medium">
+                            {personnelDetails.nombre_fils}
+                          </td>
                         </tr>
-                     
                       </tbody>
                     </Table>
                   </div>
                 </Col>
               </Row>
               <Row className="p-2">
-             
                 {/* <Col lg={6}>
                   <h5 className="text-muted pb-1 pt-2"> Baccalauréat</h5>
                   <div className="table-responsive">

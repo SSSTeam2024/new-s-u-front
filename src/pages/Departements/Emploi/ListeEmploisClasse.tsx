@@ -37,9 +37,8 @@ const ListeEmploisClasse = () => {
     navigate("/departement/gestion-classes/ajouter-classe");
   }
   const { data = [] } = useFetchClassesQuery();
-  // console.log("classe data ", data)
+
   const [deleteClasse] = useDeleteClasseMutation();
-  //console.log(data)
 
   const swalWithBootstrapButtons = Swal.mixin({
     customClass: {

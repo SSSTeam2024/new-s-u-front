@@ -22,7 +22,10 @@ import { useFetchPostesEnseignantQuery } from "features/posteEnseignant/posteEns
 import { useFetchGradesEnseignantQuery } from "features/gradeEnseignant/gradeEnseignant";
 import { useFetchSpecialitesEnseignantQuery } from "features/specialiteEnseignant/specialiteEnseignant";
 import { useFetchDepartementsQuery } from "features/departement/departement";
-import { enseignantSlice, useUpdateEnseignantMutation } from "features/enseignant/enseignantSlice";
+import {
+  enseignantSlice,
+  useUpdateEnseignantMutation,
+} from "features/enseignant/enseignantSlice";
 type Wilaya =
   | "اريانة"
   | "بن عروس"
@@ -399,8 +402,8 @@ const EditProfilEnseignant = () => {
     _id: "",
     nom_fr: "",
     nom_ar: "",
-    matricule:"",
-    mat_cnrps:"",
+    matricule: "",
+    mat_cnrps: "",
     prenom_fr: "",
     prenom_ar: "",
     lieu_naissance_fr: "",
@@ -488,24 +491,23 @@ const EditProfilEnseignant = () => {
     useState<Date | null>(null);
   const [selectedDateAffectation, setSelectedDateAffectation] =
     useState<Date | null>(null);
-    const [selectedDateCertif1, setSelectedDateCertif1] = useState<Date | null>(
-        null
-      );
-      const [selectedDateCertif2, setSelectedDateCertif2] = useState<Date | null>(
-        null
-      );
-      const [selectedDateCertif3, setSelectedDateCertif3] = useState<Date | null>(
-        null
-      );
+  const [selectedDateCertif1, setSelectedDateCertif1] = useState<Date | null>(
+    null
+  );
+  const [selectedDateCertif2, setSelectedDateCertif2] = useState<Date | null>(
+    null
+  );
+  const [selectedDateCertif3, setSelectedDateCertif3] = useState<Date | null>(
+    null
+  );
 
   useEffect(() => {
-    console.log(enseignant);
     if (enseignant) {
       setFormData({
         _id: enseignant._id || "",
         nom_fr: enseignant.nom_fr || "",
-        matricule:enseignant.matricule || "" ,
-        mat_cnrps:enseignant.mat_cnrps || "" ,
+        matricule: enseignant.matricule || "",
+        mat_cnrps: enseignant.mat_cnrps || "",
         nom_ar: enseignant.nom_ar || "",
         prenom_fr: enseignant.prenom_fr || "",
         prenom_ar: enseignant.prenom_ar || "",
@@ -556,19 +558,22 @@ const EditProfilEnseignant = () => {
         },
         poste: {
           _id: enseignant.poste?._id || "",
-          value_poste_enseignant: enseignant.poste?.value_poste_enseignant || "",
+          value_poste_enseignant:
+            enseignant.poste?.value_poste_enseignant || "",
           poste_fr: enseignant.poste?.poste_fr || "",
           poste_ar: enseignant.poste?.poste_ar || "",
         },
         grade: {
           _id: enseignant.grade?._id || "",
-          value_grade_enseignant: enseignant.grade?.value_grade_enseignant || "",
+          value_grade_enseignant:
+            enseignant.grade?.value_grade_enseignant || "",
           grade_fr: enseignant.grade?.grade_fr || "",
           grade_ar: enseignant.grade?.grade_ar || "",
         },
         specilaite: {
           _id: enseignant.specilaite?._id || "",
-          value_specialite_enseignant: enseignant.specilaite?.value_specialite_enseignant || "",
+          value_specialite_enseignant:
+            enseignant.specilaite?.value_specialite_enseignant || "",
           specialite_fr: enseignant.specilaite?.specialite_fr || "",
           specialite_ar: enseignant.specilaite?.specialite_ar || "",
         },
@@ -624,7 +629,7 @@ const EditProfilEnseignant = () => {
       }
       if (enseignant.state) {
         setSelectedWilaya(enseignant.state as Wilaya);
-      } 
+      }
 
       if (enseignant.date_delivrance) {
         setSelectedDateDelivrance(new Date(enseignant.date_delivrance));
@@ -659,7 +664,6 @@ const EditProfilEnseignant = () => {
       } else {
         setSelectedDateCertif3(null);
       }
-
     }
   }, [enseignant]);
 
@@ -688,12 +692,11 @@ const EditProfilEnseignant = () => {
   const onSubmitEnseignant = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      console.log("Submitting form with data:", formData);
       await editEnseignant(formData).unwrap();
       notify();
       navigate("/gestion-enseignant/liste-enseignants");
     } catch (error: any) {
-    console.log(error)
+      console.log(error);
     }
   };
   // change date delivrance
@@ -717,63 +720,63 @@ const EditProfilEnseignant = () => {
     Swal.fire({
       position: "center",
       icon: "success",
-      title: "Matière a été modifié avec succès",
+      title: "Enseignant a été modifié avec succès",
       showConfirmButton: false,
       timer: 2000,
     });
   };
 
-    // change date certif 1
-    const handleDateChangeCertif1 = (selectedDates: Date[]) => {
-        const selectedDate = selectedDates[0];
-        setSelectedDate(selectedDate);
-        if (selectedDate) {
-          const formattedDate = format(selectedDate, "yyyy-MM-dd");
-          setFormData((prevState) => ({
-            ...prevState,
-            annee_certif1: formattedDate,
-          }));
-        } else {
-          setFormData((prevState) => ({
-            ...prevState,
-            annee_certif1: "",
-          }));
-        }
-      };
-      // change date certif 3
-      const handleDateChangeCertif3 = (selectedDates: Date[]) => {
-        const selectedDate = selectedDates[0];
-        setSelectedDate(selectedDate);
-        if (selectedDate) {
-          const formattedDate = format(selectedDate, "yyyy-MM-dd");
-          setFormData((prevState) => ({
-            ...prevState,
-            annee_certif3: formattedDate,
-          }));
-        } else {
-          setFormData((prevState) => ({
-            ...prevState,
-            annee_certif3: "",
-          }));
-        }
-      };
-      // change date certif 2
-      const handleDateChangeCertif2 = (selectedDates: Date[]) => {
-        const selectedDate = selectedDates[0];
-        setSelectedDate(selectedDate);
-        if (selectedDate) {
-          const formattedDate = format(selectedDate, "yyyy-MM-dd");
-          setFormData((prevState) => ({
-            ...prevState,
-            annee_certif2: formattedDate,
-          }));
-        } else {
-          setFormData((prevState) => ({
-            ...prevState,
-            annee_certif2: "",
-          }));
-        }
-      };
+  // change date certif 1
+  const handleDateChangeCertif1 = (selectedDates: Date[]) => {
+    const selectedDate = selectedDates[0];
+    setSelectedDate(selectedDate);
+    if (selectedDate) {
+      const formattedDate = format(selectedDate, "yyyy-MM-dd");
+      setFormData((prevState) => ({
+        ...prevState,
+        annee_certif1: formattedDate,
+      }));
+    } else {
+      setFormData((prevState) => ({
+        ...prevState,
+        annee_certif1: "",
+      }));
+    }
+  };
+  // change date certif 3
+  const handleDateChangeCertif3 = (selectedDates: Date[]) => {
+    const selectedDate = selectedDates[0];
+    setSelectedDate(selectedDate);
+    if (selectedDate) {
+      const formattedDate = format(selectedDate, "yyyy-MM-dd");
+      setFormData((prevState) => ({
+        ...prevState,
+        annee_certif3: formattedDate,
+      }));
+    } else {
+      setFormData((prevState) => ({
+        ...prevState,
+        annee_certif3: "",
+      }));
+    }
+  };
+  // change date certif 2
+  const handleDateChangeCertif2 = (selectedDates: Date[]) => {
+    const selectedDate = selectedDates[0];
+    setSelectedDate(selectedDate);
+    if (selectedDate) {
+      const formattedDate = format(selectedDate, "yyyy-MM-dd");
+      setFormData((prevState) => ({
+        ...prevState,
+        annee_certif2: formattedDate,
+      }));
+    } else {
+      setFormData((prevState) => ({
+        ...prevState,
+        annee_certif2: "",
+      }));
+    }
+  };
   // change date affectation
   const handleDateChangeAffectation = (selectedDates: Date[]) => {
     const selectedDate = selectedDates[0];
@@ -809,7 +812,6 @@ const EditProfilEnseignant = () => {
       }));
     }
   };
-
 
   const handleChange = (e: any) => {
     const { name, value } = e.target;
@@ -864,7 +866,6 @@ const EditProfilEnseignant = () => {
       setFormData((prevFormData) => ({
         ...prevFormData,
         dependence: "",
-        
       }));
     }
   };
@@ -965,7 +966,7 @@ const EditProfilEnseignant = () => {
                       <div className="mb-3">
                         <Form
                           className="tablelist-form"
-                          onSubmit={onSubmitEnseignant }
+                          onSubmit={onSubmitEnseignant}
                         >
                           <input type="hidden" id="id-field" />
                           <Row>
@@ -1267,7 +1268,7 @@ const EditProfilEnseignant = () => {
                                     className="form-select text-muted"
                                     name="etat_civil"
                                     id="etat_civil"
-                                    value={formData?.etat_civil || "" }// Reflect the selected value from formData
+                                    value={formData?.etat_civil || ""} // Reflect the selected value from formData
                                     onChange={handleSelectChange}
                                   >
                                     <option value="">الحالة</option>
@@ -1300,168 +1301,177 @@ const EditProfilEnseignant = () => {
                             </Row>
 
                             <Col lg={12}>
-                          <Card.Header>
-                            <div className="d-flex">
-                              <div className="flex-shrink-0 me-3">
-                                <div className="avatar-sm">
-                                  <div className="avatar-title rounded-circle bg-light text-primary fs-20">
-                                    <i className="bi bi-info-circle-fill"></i>
+                              <Card.Header>
+                                <div className="d-flex">
+                                  <div className="flex-shrink-0 me-3">
+                                    <div className="avatar-sm">
+                                      <div className="avatar-title rounded-circle bg-light text-primary fs-20">
+                                        <i className="bi bi-info-circle-fill"></i>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div className="flex-grow-1">
+                                    <h5 className="card-title">
+                                      معلومات مهنية / Informations
+                                      Professionnels
+                                    </h5>
                                   </div>
                                 </div>
-                              </div>
-                              <div className="flex-grow-1">
-                                <h5 className="card-title">
-                                  معلومات مهنية / Informations Professionnels
-                                </h5>
-                              </div>
-                            </div>
-                          </Card.Header>
-                          <Card.Body>
-                            <Row>
-                            <Col lg={3}>
-                                <div className="mb-3">
-                                  <Form.Label htmlFor="matricule">
-                                    Matricule
-                                  </Form.Label>
-                                  <Form.Control
-                                    type="text"
-                                    id="matricule"
-                                    placeholder=""
-                                    onChange={onChange}
-                                    value={formData.matricule}
-                                  />
-                                </div>
-                              </Col>
-                              <Col lg={3}>
-                                <div className="mb-3">
-                                  <Form.Label htmlFor="mat_cnrps">
-                                    Matricule CNRPS
-                                  </Form.Label>
-                                  <Form.Control
-                                    type="text"
-                                    id="mat_cnrps"
-                                    placeholder=""
-                                    onChange={onChange}
-                                    value={formData.mat_cnrps}
-                                  />
-                                </div>
-                              </Col>
-                              <Col lg={3}>
-                                <div
-                                  className="mb-3"
-                                  style={{
-                                    direction: "rtl",
-                                    textAlign: "right",
-                                  }}
-                                >
-                                  <Form.Label htmlFor="date_affectation">
-                                    تاريخ الإنتداب
-                                  </Form.Label>
-                                  <Flatpickr
-                                    value={selectedDateAffectation!}
-                                    onChange={handleDateChangeAffectation}
-                                    className="form-control flatpickr-input"
-                                    placeholder="اختر التاريخ"
-                                    options={{
-                                      dateFormat: "d M, Y",
-                                    }}
-                                    id="date_affectation"
-                                  />
-                                </div>
-                              </Col>
+                              </Card.Header>
+                              <Card.Body>
+                                <Row>
+                                  <Col lg={3}>
+                                    <div className="mb-3">
+                                      <Form.Label htmlFor="matricule">
+                                        Matricule
+                                      </Form.Label>
+                                      <Form.Control
+                                        type="text"
+                                        id="matricule"
+                                        placeholder=""
+                                        onChange={onChange}
+                                        value={formData.matricule}
+                                      />
+                                    </div>
+                                  </Col>
+                                  <Col lg={3}>
+                                    <div className="mb-3">
+                                      <Form.Label htmlFor="mat_cnrps">
+                                        Matricule CNRPS
+                                      </Form.Label>
+                                      <Form.Control
+                                        type="text"
+                                        id="mat_cnrps"
+                                        placeholder=""
+                                        onChange={onChange}
+                                        value={formData.mat_cnrps}
+                                      />
+                                    </div>
+                                  </Col>
+                                  <Col lg={3}>
+                                    <div
+                                      className="mb-3"
+                                      style={{
+                                        direction: "rtl",
+                                        textAlign: "right",
+                                      }}
+                                    >
+                                      <Form.Label htmlFor="date_affectation">
+                                        تاريخ الإنتداب
+                                      </Form.Label>
+                                      <Flatpickr
+                                        value={selectedDateAffectation!}
+                                        onChange={handleDateChangeAffectation}
+                                        className="form-control flatpickr-input"
+                                        placeholder="اختر التاريخ"
+                                        options={{
+                                          dateFormat: "d M, Y",
+                                        }}
+                                        id="date_affectation"
+                                      />
+                                    </div>
+                                  </Col>
 
-                              <Col lg={3}>
-                                <div
-                                  className="mb-3"
-                                  style={{
-                                    direction: "rtl",
-                                    textAlign: "right",
-                                  }}
-                                >
-                                  <Form.Label htmlFor="grade">
-                                    الرتبة أو الصنف للأستاذ
-                                  </Form.Label>
-                                  <select
-                                    className="form-select text-muted"
-                                    name="grade"
-                                    id="grade"
-                                    // required
-                                    value={formData?.grade?._id || ""}
-                                    onChange={handleChange}
-                                  >
-                                    <option value="">
-                                      Sélectionner Classe
-                                    </option>
-                                    {grade.map((grade) => (
-                                      <option key={grade._id} value={grade._id}>
-                                        {grade.grade_ar}
-                                      </option>
-                                    ))}
-                                  </select>
-                                </div>
-                              </Col>
-                              <Col lg={3}>
-                                <div
-                                  className="mb-3"
-                                  style={{
-                                    direction: "rtl",
-                                    textAlign: "right",
-                                  }}
-                                >
-                                  <Form.Label htmlFor="etat_compte">
-                                     حالة الحساب / Etat Compte
-                                  </Form.Label>
-                                  <select
-                                    className="form-select text-muted"
-                                    name="etat_compte"
-                                    id="etat_compte"
-                                    // required
-                                    value={formData?.etat_compte?._id || ""}
-                                    onChange={handleChange}
-                                  >
-                                    <option value="">Sélectionner Etat</option>
-                                    {etat_compte.map((etat_compte) => (
-                                      <option
-                                        key={etat_compte._id}
-                                        value={etat_compte._id}
+                                  <Col lg={3}>
+                                    <div
+                                      className="mb-3"
+                                      style={{
+                                        direction: "rtl",
+                                        textAlign: "right",
+                                      }}
+                                    >
+                                      <Form.Label htmlFor="grade">
+                                        الرتبة أو الصنف للأستاذ
+                                      </Form.Label>
+                                      <select
+                                        className="form-select text-muted"
+                                        name="grade"
+                                        id="grade"
+                                        // required
+                                        value={formData?.grade?._id || ""}
+                                        onChange={handleChange}
                                       >
-                                        {etat_compte.etat_fr}
-                                      </option>
-                                    ))}
-                                  </select>
-                                </div>
-                              </Col>
-                              <Col lg={3}>
-                                <div
-                                  className="mb-3"
-                                  style={{
-                                    direction: "rtl",
-                                    textAlign: "right",
-                                  }}
-                                >
-                                  <Form.Label htmlFor="poste">
-                                     
-                                  </Form.Label>
-                                  <select
-                                    className="form-select text-muted"
-                                    name="poste"
-                                    id="poste"
-                                    // required
-                                    value={formData?.poste?._id || ""}
-                                    onChange={handleChange}
-                                  >
-                                    <option value="">Sélectionner Poste</option>
-                                    {poste.map((poste) => (
-                                      <option key={poste._id} value={poste._id}>
-                                        {poste.poste_fr}
-                                      </option>
-                                    ))}
-                                  </select>
-                                </div>
-                              </Col>
-                            </Row>
-                          </Card.Body>
-                        </Col>
+                                        <option value="">
+                                          Sélectionner Classe
+                                        </option>
+                                        {grade.map((grade) => (
+                                          <option
+                                            key={grade._id}
+                                            value={grade._id}
+                                          >
+                                            {grade.grade_ar}
+                                          </option>
+                                        ))}
+                                      </select>
+                                    </div>
+                                  </Col>
+                                  <Col lg={3}>
+                                    <div
+                                      className="mb-3"
+                                      style={{
+                                        direction: "rtl",
+                                        textAlign: "right",
+                                      }}
+                                    >
+                                      <Form.Label htmlFor="etat_compte">
+                                        حالة الحساب / Etat Compte
+                                      </Form.Label>
+                                      <select
+                                        className="form-select text-muted"
+                                        name="etat_compte"
+                                        id="etat_compte"
+                                        // required
+                                        value={formData?.etat_compte?._id || ""}
+                                        onChange={handleChange}
+                                      >
+                                        <option value="">
+                                          Sélectionner Etat
+                                        </option>
+                                        {etat_compte.map((etat_compte) => (
+                                          <option
+                                            key={etat_compte._id}
+                                            value={etat_compte._id}
+                                          >
+                                            {etat_compte.etat_fr}
+                                          </option>
+                                        ))}
+                                      </select>
+                                    </div>
+                                  </Col>
+                                  <Col lg={3}>
+                                    <div
+                                      className="mb-3"
+                                      style={{
+                                        direction: "rtl",
+                                        textAlign: "right",
+                                      }}
+                                    >
+                                      <Form.Label htmlFor="poste"></Form.Label>
+                                      <select
+                                        className="form-select text-muted"
+                                        name="poste"
+                                        id="poste"
+                                        // required
+                                        value={formData?.poste?._id || ""}
+                                        onChange={handleChange}
+                                      >
+                                        <option value="">
+                                          Sélectionner Poste
+                                        </option>
+                                        {poste.map((poste) => (
+                                          <option
+                                            key={poste._id}
+                                            value={poste._id}
+                                          >
+                                            {poste.poste_fr}
+                                          </option>
+                                        ))}
+                                      </select>
+                                    </div>
+                                  </Col>
+                                </Row>
+                              </Card.Body>
+                            </Col>
                             <Col lg={12}>
                               <Card.Header>
                                 <div className="d-flex">
@@ -1481,30 +1491,30 @@ const EditProfilEnseignant = () => {
                               </Card.Header>
                               <Card.Body>
                                 <Row>
-                                <Col lg={3}>
-                                <div
-                                  style={{
-                                    direction: "rtl",
-                                    textAlign: "right",
-                                  }}
-                                >
-                                  <label
-                                    htmlFor="matricule"
-                                    className="form-label"
-                                  >
-                                   رقم التسجيل
-                                  </label>
-                                  <Form.Control
-                                    type="text"
-                                    id="matricule"
-                                    placeholder=""
-                                    onChange={onChange}
-                                    value={formData.matricule}
+                                  <Col lg={3}>
+                                    <div
+                                      style={{
+                                        direction: "rtl",
+                                        textAlign: "right",
+                                      }}
+                                    >
+                                      <label
+                                        htmlFor="matricule"
+                                        className="form-label"
+                                      >
+                                        رقم التسجيل
+                                      </label>
+                                      <Form.Control
+                                        type="text"
+                                        id="matricule"
+                                        placeholder=""
+                                        onChange={onChange}
+                                        value={formData.matricule}
 
-                                    // required
-                                  />
-                                </div>
-                              </Col>
+                                        // required
+                                      />
+                                    </div>
+                                  </Col>
                                   <Col lg={3}>
                                     <div
                                       className="mb-3"
@@ -1714,7 +1724,7 @@ const EditProfilEnseignant = () => {
                                         name="dependence"
                                         id="dependence"
                                         value={formData?.dependence}
-                                    onChange={handleSelectChange}
+                                        onChange={handleSelectChange}
                                         disabled={!selectedWilaya} // Disable if no Wilaya is selected
                                       >
                                         <option value="">إخترالمعتمدية</option>
@@ -1867,8 +1877,8 @@ const EditProfilEnseignant = () => {
                                   </div>
                                   <div className="flex-grow-1">
                                     <h5 className="card-title">
-                                    معلومات قرين الأستاذ / Informations du
-                                    conjoint de l'enseignant
+                                      معلومات قرين الأستاذ / Informations du
+                                      conjoint de l'enseignant
                                     </h5>
                                   </div>
                                 </div>
@@ -1962,383 +1972,385 @@ const EditProfilEnseignant = () => {
                               </Card.Body>
                             </Col>
                             <Col lg={12}>
-                          <Card.Header>
-                            <div className="d-flex">
-                              <div className="flex-shrink-0 me-3">
-                                <div className="avatar-sm">
-                                  <div className="avatar-title rounded-circle bg-light text-primary fs-20">
-                                    <i className="bi bi-file-earmark-plus"></i>
+                              <Card.Header>
+                                <div className="d-flex">
+                                  <div className="flex-shrink-0 me-3">
+                                    <div className="avatar-sm">
+                                      <div className="avatar-title rounded-circle bg-light text-primary fs-20">
+                                        <i className="bi bi-file-earmark-plus"></i>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div className="flex-grow-1">
+                                    <h5 className="card-title">
+                                      الشهادات العلمية /Diplômes Académiques
+                                    </h5>
                                   </div>
                                 </div>
-                              </div>
-                              <div className="flex-grow-1">
-                                <h5 className="card-title">
-                                  الشهادات العلمية /Diplômes Académiques
-                                </h5>
-                              </div>
-                            </div>
-                          </Card.Header>
-                          <Card.Body>
-                            <Row>
-                              <Col lg={6}>
-                                <div
-                                  className="mb-3"
-                                  style={{
-                                    direction: "rtl",
-                                    textAlign: "right",
-                                  }}
-                                >
-                                  <label
-                                    htmlFor="departements"
-                                    className="form-label"
-                                  >
-                                    (Département) القسم
-                                  </label>
-                                  <select
-                                    className="form-select text-muted"
-                                    name="departements"
-                                    id="departements"
-                                    // required
-                                    value={formData?.departements?._id || ""}
-                                    onChange={handleChange}
-                                  >
-                                    <option value="">
-                                      Sélectionner Département
-                                    </option>
-                                    {departements.map((departements) => (
-                                      <option
-                                        key={departements._id}
-                                        value={departements._id}
+                              </Card.Header>
+                              <Card.Body>
+                                <Row>
+                                  <Col lg={6}>
+                                    <div
+                                      className="mb-3"
+                                      style={{
+                                        direction: "rtl",
+                                        textAlign: "right",
+                                      }}
+                                    >
+                                      <label
+                                        htmlFor="departements"
+                                        className="form-label"
                                       >
-                                        {departements.name_fr}
-                                      </option>
-                                    ))}
-                                  </select>
-                                </div>
-                              </Col>
-                              <Col lg={6}>
-                                <div
-                                  className="mb-3"
-                                  style={{
-                                    direction: "rtl",
-                                    textAlign: "right",
-                                  }}
-                                >
-                                  <label
-                                    htmlFor="specilaite"
-                                    className="form-label"
-                                  >
-                                    إختصاص الأستاذ
-                                  </label>
-                                  <select
-                                    className="form-select text-muted"
-                                    name="specilaite"
-                                    id="specilaite"
-                                    // required
-                                    value={formData?.specilaite?._id || ""}
-                                    onChange={handleChange}
-                                  >
-                                    <option value="">
-                                      Choisir Spécialité / إختر الإختصاص
-                                    </option>
-                                    {specilaite.map((specilaite) => (
-                                      <option
-                                        key={specilaite._id}
-                                        value={specilaite._id}
+                                        (Département) القسم
+                                      </label>
+                                      <select
+                                        className="form-select text-muted"
+                                        name="departements"
+                                        id="departements"
+                                        // required
+                                        value={
+                                          formData?.departements?._id || ""
+                                        }
+                                        onChange={handleChange}
                                       >
-                                        {specilaite.specialite_fr}
-                                      </option>
-                                    ))}
-                                  </select>
-                                </div>
-                              </Col>
-                            </Row>
-                          </Card.Body>
-                        </Col>
+                                        <option value="">
+                                          Sélectionner Département
+                                        </option>
+                                        {departements.map((departements) => (
+                                          <option
+                                            key={departements._id}
+                                            value={departements._id}
+                                          >
+                                            {departements.name_fr}
+                                          </option>
+                                        ))}
+                                      </select>
+                                    </div>
+                                  </Col>
+                                  <Col lg={6}>
+                                    <div
+                                      className="mb-3"
+                                      style={{
+                                        direction: "rtl",
+                                        textAlign: "right",
+                                      }}
+                                    >
+                                      <label
+                                        htmlFor="specilaite"
+                                        className="form-label"
+                                      >
+                                        إختصاص الأستاذ
+                                      </label>
+                                      <select
+                                        className="form-select text-muted"
+                                        name="specilaite"
+                                        id="specilaite"
+                                        // required
+                                        value={formData?.specilaite?._id || ""}
+                                        onChange={handleChange}
+                                      >
+                                        <option value="">
+                                          Choisir Spécialité / إختر الإختصاص
+                                        </option>
+                                        {specilaite.map((specilaite) => (
+                                          <option
+                                            key={specilaite._id}
+                                            value={specilaite._id}
+                                          >
+                                            {specilaite.specialite_fr}
+                                          </option>
+                                        ))}
+                                      </select>
+                                    </div>
+                                  </Col>
+                                </Row>
+                              </Card.Body>
+                            </Col>
 
-                        <Col lg={12}>
-                          <Card>
-                            <Card.Header>
-                              <div className="d-flex">
-                                <div className="flex-grow-1">
-                                  <h5 className="card-title">
-                                    (1) الشهادات العلمية
-                                  </h5>
-                                </div>
-                              </div>
-                            </Card.Header>
-                            <Card.Body>
-                              <Row>
-                                <Col lg={4}>
-                                  <div
-                                    className="mb-3"
-                                    style={{
-                                      direction: "rtl",
-                                      textAlign: "right",
-                                    }}
-                                  >
-                                    <Form.Label
-                                      htmlFor="certif1"
-                                      style={{
-                                        direction: "rtl",
-                                        textAlign: "right",
-                                      }}
-                                    >
-                                      الشهادة
-                                    </Form.Label>
-                                    <Form.Control
-                                      type="text"
-                                      id="certif1"
-                                      placeholder=""
-                                      dir="rtl"
-                                      onChange={onChange}
-                                      value={formData.certif1}
-                                    />
+                            <Col lg={12}>
+                              <Card>
+                                <Card.Header>
+                                  <div className="d-flex">
+                                    <div className="flex-grow-1">
+                                      <h5 className="card-title">
+                                        (1) الشهادات العلمية
+                                      </h5>
+                                    </div>
                                   </div>
-                                </Col>
-                                <Col lg={4}>
-                                  <div
-                                    className="mb-3"
-                                    style={{
-                                      direction: "rtl",
-                                      textAlign: "right",
-                                    }}
-                                  >
-                                    <Form.Label htmlFor="annee_certif1">
-                                      سنة الشهادة
-                                    </Form.Label>
-                                    <Flatpickr
-                                      value={selectedDateCertif1!}
-                                      onChange={handleDateChangeCertif1}
-                                      className="form-control flatpickr-input"
-                                      placeholder="اختر التاريخ"
-                                      options={{
-                                        dateFormat: "d M, Y",
-                                      }}
-                                      id="annee_certif1"
-                                    />
+                                </Card.Header>
+                                <Card.Body>
+                                  <Row>
+                                    <Col lg={4}>
+                                      <div
+                                        className="mb-3"
+                                        style={{
+                                          direction: "rtl",
+                                          textAlign: "right",
+                                        }}
+                                      >
+                                        <Form.Label
+                                          htmlFor="certif1"
+                                          style={{
+                                            direction: "rtl",
+                                            textAlign: "right",
+                                          }}
+                                        >
+                                          الشهادة
+                                        </Form.Label>
+                                        <Form.Control
+                                          type="text"
+                                          id="certif1"
+                                          placeholder=""
+                                          dir="rtl"
+                                          onChange={onChange}
+                                          value={formData.certif1}
+                                        />
+                                      </div>
+                                    </Col>
+                                    <Col lg={4}>
+                                      <div
+                                        className="mb-3"
+                                        style={{
+                                          direction: "rtl",
+                                          textAlign: "right",
+                                        }}
+                                      >
+                                        <Form.Label htmlFor="annee_certif1">
+                                          سنة الشهادة
+                                        </Form.Label>
+                                        <Flatpickr
+                                          value={selectedDateCertif1!}
+                                          onChange={handleDateChangeCertif1}
+                                          className="form-control flatpickr-input"
+                                          placeholder="اختر التاريخ"
+                                          options={{
+                                            dateFormat: "d M, Y",
+                                          }}
+                                          id="annee_certif1"
+                                        />
+                                      </div>
+                                    </Col>
+                                    <Col lg={4}>
+                                      <div
+                                        className="mb-3"
+                                        style={{
+                                          direction: "rtl",
+                                          textAlign: "right",
+                                        }}
+                                      >
+                                        <Form.Label
+                                          htmlFor="entreprise1"
+                                          style={{
+                                            direction: "rtl",
+                                            textAlign: "right",
+                                          }}
+                                        >
+                                          المؤسسة
+                                        </Form.Label>
+                                        <Form.Control
+                                          type="text"
+                                          id="entreprise1"
+                                          placeholder=""
+                                          dir="rtl"
+                                          onChange={onChange}
+                                          value={formData.entreprise1}
+                                        />
+                                      </div>
+                                    </Col>
+                                  </Row>
+                                </Card.Body>
+                              </Card>
+                            </Col>
+                            <Col lg={12}>
+                              <Card>
+                                <Card.Header>
+                                  <div className="d-flex">
+                                    <div className="flex-grow-1">
+                                      <h5 className="card-title">
+                                        (2) الشهادات العلمية
+                                      </h5>
+                                    </div>
                                   </div>
-                                </Col>
-                                <Col lg={4}>
-                                  <div
-                                    className="mb-3"
-                                    style={{
-                                      direction: "rtl",
-                                      textAlign: "right",
-                                    }}
-                                  >
-                                    <Form.Label
-                                      htmlFor="entreprise1"
-                                      style={{
-                                        direction: "rtl",
-                                        textAlign: "right",
-                                      }}
-                                    >
-                                      المؤسسة
-                                    </Form.Label>
-                                    <Form.Control
-                                      type="text"
-                                      id="entreprise1"
-                                      placeholder=""
-                                      dir="rtl"
-                                      onChange={onChange}
-                                      value={formData.entreprise1}
-                                    />
-                                  </div>
-                                </Col>
-                              </Row>
-                            </Card.Body>
-                          </Card>
-                        </Col>
-                        <Col lg={12}>
-                          <Card>
-                            <Card.Header>
-                              <div className="d-flex">
-                                <div className="flex-grow-1">
-                                  <h5 className="card-title">
-                                    (2) الشهادات العلمية
-                                  </h5>
-                                </div>
-                              </div>
-                            </Card.Header>
-                            <Card.Body>
-                              <Row>
-                                <Col lg={4}>
-                                  <div
-                                    className="mb-3"
-                                    style={{
-                                      direction: "rtl",
-                                      textAlign: "right",
-                                    }}
-                                  >
-                                    <Form.Label
-                                      htmlFor="certif2"
-                                      style={{
-                                        direction: "rtl",
-                                        textAlign: "right",
-                                      }}
-                                    >
-                                      الشهادة (2)
-                                    </Form.Label>
-                                    <Form.Control
-                                      type="text"
-                                      id="certif2"
-                                      placeholder=""
-                                      dir="rtl"
-                                      onChange={onChange}
-                                      value={formData.certif2}
-                                    />
-                                  </div>
-                                </Col>
-                                <Col lg={4}>
-                                  <div
-                                    className="mb-3"
-                                    style={{
-                                      direction: "rtl",
-                                      textAlign: "right",
-                                    }}
-                                  >
-                                    <Form.Label htmlFor="annee_certif2">
-                                      سنة الشهادة (2)
-                                    </Form.Label>
-                                    <Flatpickr
-                                      value={selectedDateCertif2!}
-                                      onChange={handleDateChangeCertif2}
-                                      className="form-control flatpickr-input"
-                                      placeholder="اختر التاريخ"
-                                      options={{
-                                        dateFormat: "d M, Y",
-                                      }}
-                                      id="annee_certif2"
-                                    />
-                                  </div>
-                                </Col>
-                                <Col lg={4}>
-                                  <div
-                                    className="mb-3"
-                                    style={{
-                                      direction: "rtl",
-                                      textAlign: "right",
-                                    }}
-                                  >
-                                    <Form.Label
-                                      htmlFor="entreprise2"
-                                      style={{
-                                        direction: "rtl",
-                                        textAlign: "right",
-                                      }}
-                                    >
-                                      المؤسسة (2)
-                                    </Form.Label>
-                                    <Form.Control
-                                      type="text"
-                                      id="entreprise2"
-                                      placeholder=""
-                                      dir="rtl"
-                                      onChange={onChange}
-                                      value={formData.entreprise2}
-                                    />
-                                  </div>
-                                </Col>
-                              </Row>
-                            </Card.Body>
-                          </Card>
-                        </Col>
+                                </Card.Header>
+                                <Card.Body>
+                                  <Row>
+                                    <Col lg={4}>
+                                      <div
+                                        className="mb-3"
+                                        style={{
+                                          direction: "rtl",
+                                          textAlign: "right",
+                                        }}
+                                      >
+                                        <Form.Label
+                                          htmlFor="certif2"
+                                          style={{
+                                            direction: "rtl",
+                                            textAlign: "right",
+                                          }}
+                                        >
+                                          الشهادة (2)
+                                        </Form.Label>
+                                        <Form.Control
+                                          type="text"
+                                          id="certif2"
+                                          placeholder=""
+                                          dir="rtl"
+                                          onChange={onChange}
+                                          value={formData.certif2}
+                                        />
+                                      </div>
+                                    </Col>
+                                    <Col lg={4}>
+                                      <div
+                                        className="mb-3"
+                                        style={{
+                                          direction: "rtl",
+                                          textAlign: "right",
+                                        }}
+                                      >
+                                        <Form.Label htmlFor="annee_certif2">
+                                          سنة الشهادة (2)
+                                        </Form.Label>
+                                        <Flatpickr
+                                          value={selectedDateCertif2!}
+                                          onChange={handleDateChangeCertif2}
+                                          className="form-control flatpickr-input"
+                                          placeholder="اختر التاريخ"
+                                          options={{
+                                            dateFormat: "d M, Y",
+                                          }}
+                                          id="annee_certif2"
+                                        />
+                                      </div>
+                                    </Col>
+                                    <Col lg={4}>
+                                      <div
+                                        className="mb-3"
+                                        style={{
+                                          direction: "rtl",
+                                          textAlign: "right",
+                                        }}
+                                      >
+                                        <Form.Label
+                                          htmlFor="entreprise2"
+                                          style={{
+                                            direction: "rtl",
+                                            textAlign: "right",
+                                          }}
+                                        >
+                                          المؤسسة (2)
+                                        </Form.Label>
+                                        <Form.Control
+                                          type="text"
+                                          id="entreprise2"
+                                          placeholder=""
+                                          dir="rtl"
+                                          onChange={onChange}
+                                          value={formData.entreprise2}
+                                        />
+                                      </div>
+                                    </Col>
+                                  </Row>
+                                </Card.Body>
+                              </Card>
+                            </Col>
 
-                        <Col lg={12}>
-                          <Card>
-                            <Card.Header>
-                              <div className="d-flex">
-                                <div className="flex-grow-1">
-                                  <h5 className="card-title">
-                                    (3) الشهادات العلمية
-                                  </h5>
-                                </div>
-                              </div>
-                            </Card.Header>
-                            <Card.Body>
-                              <Row>
-                                <Col lg={4}>
-                                  <div
-                                    className="mb-3"
-                                    style={{
-                                      direction: "rtl",
-                                      textAlign: "right",
-                                    }}
-                                  >
-                                    <Form.Label
-                                      htmlFor="certif3"
-                                      style={{
-                                        direction: "rtl",
-                                        textAlign: "right",
-                                      }}
-                                    >
-                                      الشهادة (3)
-                                    </Form.Label>
-                                    <Form.Control
-                                      type="text"
-                                      id="certif3"
-                                      placeholder=""
-                                      dir="rtl"
-                                      onChange={onChange}
-                                      value={formData.certif3}
-                                    />
+                            <Col lg={12}>
+                              <Card>
+                                <Card.Header>
+                                  <div className="d-flex">
+                                    <div className="flex-grow-1">
+                                      <h5 className="card-title">
+                                        (3) الشهادات العلمية
+                                      </h5>
+                                    </div>
                                   </div>
-                                </Col>
-                                <Col lg={4}>
-                                  <div
-                                    className="mb-3"
-                                    style={{
-                                      direction: "rtl",
-                                      textAlign: "right",
-                                    }}
-                                  >
-                                    <Form.Label htmlFor="annee_certif3">
-                                      سنة الشهادة (3)
-                                    </Form.Label>
-                                    <Flatpickr
-                                      value={selectedDateCertif3!}
-                                      onChange={handleDateChangeCertif3}
-                                      className="form-control flatpickr-input"
-                                      placeholder="اختر التاريخ"
-                                      options={{
-                                        dateFormat: "d M, Y",
-                                      }}
-                                      id="annee_certif3"
-                                    />
-                                  </div>
-                                </Col>
-                                <Col lg={4}>
-                                  <div
-                                    className="mb-3"
-                                    style={{
-                                      direction: "rtl",
-                                      textAlign: "right",
-                                    }}
-                                  >
-                                    <Form.Label
-                                      htmlFor="entreprise3"
-                                      style={{
-                                        direction: "rtl",
-                                        textAlign: "right",
-                                      }}
-                                    >
-                                      المؤسسة (3)
-                                    </Form.Label>
-                                    <Form.Control
-                                      type="text"
-                                      id="entreprise3"
-                                      placeholder=""
-                                      dir="rtl"
-                                      onChange={onChange}
-                                      value={formData.entreprise3}
-                                    />
-                                  </div>
-                                </Col>
-                              </Row>
-                            </Card.Body>
-                          </Card>
-                        </Col>
+                                </Card.Header>
+                                <Card.Body>
+                                  <Row>
+                                    <Col lg={4}>
+                                      <div
+                                        className="mb-3"
+                                        style={{
+                                          direction: "rtl",
+                                          textAlign: "right",
+                                        }}
+                                      >
+                                        <Form.Label
+                                          htmlFor="certif3"
+                                          style={{
+                                            direction: "rtl",
+                                            textAlign: "right",
+                                          }}
+                                        >
+                                          الشهادة (3)
+                                        </Form.Label>
+                                        <Form.Control
+                                          type="text"
+                                          id="certif3"
+                                          placeholder=""
+                                          dir="rtl"
+                                          onChange={onChange}
+                                          value={formData.certif3}
+                                        />
+                                      </div>
+                                    </Col>
+                                    <Col lg={4}>
+                                      <div
+                                        className="mb-3"
+                                        style={{
+                                          direction: "rtl",
+                                          textAlign: "right",
+                                        }}
+                                      >
+                                        <Form.Label htmlFor="annee_certif3">
+                                          سنة الشهادة (3)
+                                        </Form.Label>
+                                        <Flatpickr
+                                          value={selectedDateCertif3!}
+                                          onChange={handleDateChangeCertif3}
+                                          className="form-control flatpickr-input"
+                                          placeholder="اختر التاريخ"
+                                          options={{
+                                            dateFormat: "d M, Y",
+                                          }}
+                                          id="annee_certif3"
+                                        />
+                                      </div>
+                                    </Col>
+                                    <Col lg={4}>
+                                      <div
+                                        className="mb-3"
+                                        style={{
+                                          direction: "rtl",
+                                          textAlign: "right",
+                                        }}
+                                      >
+                                        <Form.Label
+                                          htmlFor="entreprise3"
+                                          style={{
+                                            direction: "rtl",
+                                            textAlign: "right",
+                                          }}
+                                        >
+                                          المؤسسة (3)
+                                        </Form.Label>
+                                        <Form.Control
+                                          type="text"
+                                          id="entreprise3"
+                                          placeholder=""
+                                          dir="rtl"
+                                          onChange={onChange}
+                                          value={formData.entreprise3}
+                                        />
+                                      </div>
+                                    </Col>
+                                  </Row>
+                                </Card.Body>
+                              </Card>
+                            </Col>
                             <Col lg={12}>
                               <div className="hstack gap-2 justify-content-end">
                                 <Button

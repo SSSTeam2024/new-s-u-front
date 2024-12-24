@@ -48,8 +48,6 @@ const ListFicheVoeux = () => {
   }
   const { data = [], isSuccess } = useFetchFicheVoeuxsQuery();
 
-  console.log(data);
-
   const [deleteFicheVoeux] = useDeleteFicheVoeuxMutation();
 
   const swalWithBootstrapButtons = Swal.mixin({
@@ -133,8 +131,6 @@ const ListFicheVoeux = () => {
       setListeVoeux(voeux);
     }
   }, [isSuccess, data]);
-
-  console.log(listeVoeux);
 
   const columns = useMemo(
     () => [
@@ -232,7 +228,6 @@ const ListFicheVoeux = () => {
       {
         Header: "Semestre2",
         accessor: (cell: any) => {
-          console.log("cellProps?.voeux_s2", cell?.voeux_s2);
           return cell?.voeux_s2! !== "" ? (
             <ul className="hstack gap-2 list-unstyled mb-0">
               <li>
@@ -416,7 +411,6 @@ const ListFicheVoeux = () => {
           <Offcanvas.Title>Fiche Voeux</Offcanvas.Title>
         </Offcanvas.Header>
         <Offcanvas.Body>
-          {console.log(showFicheClasseDetails)}
           <div>{showFicheClasseDetails?.semestre!}</div>
           {showFicheClasseDetails?.fiche_voeux_classes?.map((voeux: any) => (
             <div className="mt-3">

@@ -27,17 +27,13 @@ const AddNiveau = () => {
   const [createNiveau] = useAddNiveauMutation();
   const { data: sections = [] } = useFetchSectionsQuery();
 
-  console.log("data sections", sections);
-
   useEffect(() => {
-    console.log("data sections", sections);
     if (sections.length > 0) {
       const options = sections.map((sections) => ({
         _id: sections._id,
         name_section_fr: sections.name_section_fr,
         name_section_ar: sections.name_section_ar,
         abreviation: sections.abreviation,
-        
       }));
       setOptions(options);
     }
@@ -46,15 +42,17 @@ const AddNiveau = () => {
   const [selectedSections, setSelectedSections] = useState<string[]>([]); // Ensure selectedSections is of type string[]
 
   // Ensure that setSelectedSections is correctly populated with string array
-  
+
   const handleSelectChange = (selectedOptions: MultiValue<SectionsOption>) => {
-    const selectedSectionIds: string[] = selectedOptions.map((option) => option._id);
+    const selectedSectionIds: string[] = selectedOptions.map(
+      (option) => option._id
+    );
     setSelectedSections(selectedSectionIds); // Update selectedSections with string array of IDs
   };
-  
-  
-  const getOptionLabel = (option: SectionsOption) => `${option.name_section_fr} (${option.abreviation})`;
-  
+
+  const getOptionLabel = (option: SectionsOption) =>
+    `${option.name_section_fr} (${option.abreviation})`;
+
   const customStyles = {
     multiValue: (styles: any, { data }: any) => ({
       ...styles,
@@ -112,26 +110,28 @@ const AddNiveau = () => {
     e.preventDefault();
     try {
       // Transform selectedSections into an array of Section objects
-      const selectedSectionsData: Section[] = selectedSections.map(sectionId => ({
-        _id: sectionId,
-        name_section_fr: "", // Fill in appropriate values if needed
-        name_section_ar: "",
-        abreviation: "",
-        departements: [""] 
-      }));
-  
+      const selectedSectionsData: Section[] = selectedSections.map(
+        (sectionId) => ({
+          _id: sectionId,
+          name_section_fr: "", // Fill in appropriate values if needed
+          name_section_ar: "",
+          abreviation: "",
+          departements: [""],
+        })
+      );
+
       // Update formData to include transformed sections
       const formDataWithSections = {
         ...formData,
-        sections: selectedSectionsData
+        sections: selectedSectionsData,
       };
-  
+
       // Call createNiveau with updated formData
       await createNiveau(formDataWithSections).unwrap();
-      
+
       // Notify success
       notify();
-      
+
       // Navigate to the list of niveaux
       navigate("/departement/gestion-classes/liste-niveau");
     } catch (error: any) {
@@ -143,7 +143,6 @@ const AddNiveau = () => {
       }
     }
   };
-  
 
   const notify = () => {
     Swal.fire({

@@ -23,22 +23,18 @@ import { format } from "date-fns";
 import Flatpickr from "react-flatpickr";
 import { useFetchTimeTableParamsQuery } from "features/timeTableParams/timeTableParams";
 import { useGetTeacherPeriodsBySemesterAndIdTeacherQuery } from "features/teachersPeriods/teachersPeriods";
-// import { useGetTeacherPeriodsBySemesterAndIdTeacherMutation } from "features/teachersPeriods/teachersPeriods";
 
 const TeacherPeriod = () => {
   document.title = "Liste périodes des emplois enseignants | ENIGA";
 
   const location = useLocation();
   const teacherDetails = location.state;
-  console.log("teacherDetails", teacherDetails);
 
   const { data: teacherPeriods = [], isSuccess: arePeriodsFetched } =
     useGetTeacherPeriodsBySemesterAndIdTeacherQuery({
       teacherId: teacherDetails.enseignant._id,
       semester: teacherDetails.semestre,
     });
-
-  console.log("teacherPeriods", teacherPeriods);
 
   const [searchQuery, setSearchQuery] = useState("");
 

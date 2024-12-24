@@ -145,7 +145,6 @@ const AjouterAvisEnseignant = () => {
       galleryExtensions: base64Images.map((img) => img.extension),
     }));
   };
-  console.log("galleryExtension", formData);
   const handleDeleteFile = (indexToRemove: number) => {
     setFormData((prevData) => {
       const newGallery = prevData.gallery?.filter(

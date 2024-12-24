@@ -187,7 +187,6 @@ const SingleDemandeEnseignant = () => {
   const year = currentDate.getFullYear();
 
   const formattedDate = `${day}/${month}/${year}`;
-  console.log(location.state?.enseignantId);
   return (
     <React.Fragment>
       <div className="page-content">

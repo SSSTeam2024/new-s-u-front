@@ -72,7 +72,6 @@ const EditDepartement = () => {
     if (file) {
       const { base64Data, extension } = await convertToBase64(file);
       const newPDF = base64Data + "." + extension;
-      console.log(extension);
       setFormData({
         ...formData,
         signature: newPDF,
@@ -126,7 +125,9 @@ const EditDepartement = () => {
                 <Row>
                   <Col lg={4}>
                     <div className="mb-3">
-                      <Form.Label htmlFor="name_fr">Nom département (FR)</Form.Label>
+                      <Form.Label htmlFor="name_fr">
+                        Nom département (FR)
+                      </Form.Label>
                       <Form.Control
                         type="text"
                         id="name_fr"
@@ -139,7 +140,9 @@ const EditDepartement = () => {
                   </Col>
                   <Col lg={4}>
                     <div className="mb-3">
-                      <Form.Label htmlFor="name_ar">Nom département (AR)</Form.Label>
+                      <Form.Label htmlFor="name_ar">
+                        Nom département (AR)
+                      </Form.Label>
                       <Form.Control
                         type="text"
                         id="name_ar"

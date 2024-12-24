@@ -49,9 +49,6 @@ const TableauChargesHorairesClasses = () => {
 
   useEffect(() => {
     if (areClassesFetched && areAllSeancesFetched && !hasProcessed) {
-      console.log("classes fetched", classes);
-      console.log("seances", seances);
-
       // Perform your logic here
       processBothData(classes, seances);
 
@@ -61,7 +58,6 @@ const TableauChargesHorairesClasses = () => {
   }, [areClassesFetched, areAllSeancesFetched, classes, seances, hasProcessed]);
 
   const processBothData = (classes: any, seances: any) => {
-    console.log("Processing combined data:", classes, seances);
     let tch1 = 0;
     let tch2 = 0;
 
@@ -86,13 +82,11 @@ const TableauChargesHorairesClasses = () => {
         (seance: any) =>
           seance.classe._id === classe._id && seance.semestre === "1"
       );
-      console.log("semester1Sessions", semester1Sessions);
 
       let semester2Sessions = seances.filter(
         (seance: any) =>
           seance.classe._id === classe._id && seance.semestre === "2"
       );
-      console.log("semester2Sessions", semester2Sessions);
 
       outputElement.charge_s1 = calculerChargeSemestriel(classe.matieres, "1");
       tch1 += Number(outputElement.charge_s1);
@@ -128,7 +122,6 @@ const TableauChargesHorairesClasses = () => {
     setTotalDefautS1(td1);
     setTotalDefautS2(td2);
 
-    console.log("output", output);
     setTableData(output);
   };
 
@@ -150,7 +143,6 @@ const TableauChargesHorairesClasses = () => {
 
   //* Heures d'enseignement *//
   const calculerHESemestriel = (seances: any[]) => {
-    console.log("seances", seances);
     let volumeTotal = 0;
 
     for (const seance of seances) {
@@ -162,12 +154,10 @@ const TableauChargesHorairesClasses = () => {
   };
 
   const calculerChargeSemestriel = (matieres: any[], semestre: string) => {
-    console.log("matieres", matieres);
     let volumeTotal = 0;
     if (semestre === "1") {
       let arrS1 = matieres.filter((matiere) => matiere.semestre === "S1");
       volumeTotal = accumulateVolumes(arrS1);
-      console.log("volumeTotal", volumeTotal);
     }
 
     if (semestre === "2") {
@@ -182,7 +172,6 @@ const TableauChargesHorairesClasses = () => {
     let sum = 0;
     matieres.forEach((matiere) => {
       sum += Number(matiere.volume);
-      console.log("sum", sum);
     });
 
     return sum;

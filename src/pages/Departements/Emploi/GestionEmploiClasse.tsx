@@ -244,8 +244,7 @@ const GestionEmploiClasse = () => {
   const onChangeCallback = useCallback(
     (interval: Date[]) => {
       setDisponibiliteSalles([]);
-      console.log("Debut pause", paramsData[0]?.daily_pause_start);
-      console.log("Fin pause", paramsData[0]?.daily_pause_end);
+
       let formattedTime = formatStartEndTimes(interval[0], interval[1]);
       let pauseInterctionResult = doIntervalsIntersect(
         { start: formattedTime[0], end: formattedTime[1] },
@@ -254,11 +253,10 @@ const GestionEmploiClasse = () => {
           end: paramsData[0]?.daily_pause_end,
         }
       );
-      console.log(pauseInterctionResult);
+
       if (pauseInterctionResult === true && error === false) {
         addSessionOnPauseTimeAlert(formattedTime);
       } else {
-        console.log("inside else");
         setFormData((prevState) => ({
           ...prevState,
           heure_debut: formattedTime[0],
@@ -268,7 +266,6 @@ const GestionEmploiClasse = () => {
 
       console.log("error", error);
       if (error == true) {
-        console.log(formattedTime[1] + " " + formattedTime[0]);
         setFormData((prevState) => ({
           ...prevState,
           heure_debut: "",
@@ -367,12 +364,11 @@ const GestionEmploiClasse = () => {
       String(start.getHours()).padStart(2, "0") +
       ":" +
       String(start.getMinutes()).padStart(2, "0");
-    console.log("ds", ds);
+
     const fs =
       String(end.getHours()).padStart(2, "0") +
       ":" +
       String(end.getMinutes()).padStart(2, "0");
-    console.log("fs", fs);
 
     return [ds, fs];
   };
@@ -401,10 +397,10 @@ const GestionEmploiClasse = () => {
   const { data: classe } = useFetchClasseByIdQuery(
     classeDetails?.id_classe?._id
   );
-  console.log("classe gestion emploi classe", classe);
+
   const { data: allSessions = [], isSuccess: sessionClassFetched } =
     useFetchAllSeancesByTimeTableIdQuery(classeDetails?._id!);
-  console.log(allSessions);
+
   const [deleteSessionById] = useDeleteSeanceMutation();
   const [formData, setFormData] = useState({
     _id: "",
@@ -631,11 +627,7 @@ const GestionEmploiClasse = () => {
       emplois_periodiques_ids: periodicSchedulesIds,
     };
 
-    console.log("periodicSchedulesIds", periodicSchedulesIds);
-
     let res = await getSessionsByTeacherId(requestData).unwrap();
-
-    console.log("Teacher's sessions", res);
 
     const sessions = [];
 
@@ -644,8 +636,6 @@ const GestionEmploiClasse = () => {
         sessions.push(session);
       }
     }
-
-    console.log("Final sessions", sessions);
 
     setTeacherSessionsForSingleDay(sessions);
 
@@ -667,7 +657,7 @@ const GestionEmploiClasse = () => {
         "teacher"
       );
       let common = await findCommonIntervals(classIntervals, teacherIntervals);
-      console.log(common);
+
       await extractUnavailability(
         common,
         paramsData[0].day_start_time,
@@ -698,7 +688,7 @@ const GestionEmploiClasse = () => {
       );
 
       let common = await findCommonIntervals(classIntervals, teacherIntervals);
-      console.log(common);
+
       await extractUnavailability(
         common,
         paramsData[0].day_start_time,
@@ -728,9 +718,8 @@ const GestionEmploiClasse = () => {
         date_debut_emploi_period: classeDetails.date_debut,
         date_fin_emploi_period: classeDetails.date_fin,
       };
-      console.log("payload", payload);
+
       let result: any[] = await fetchDisponibiliteSalles(payload).unwrap();
-      console.log("disponibilites", result);
 
       setDisponibiliteSalles(result);
     } catch (err) {
@@ -740,7 +729,6 @@ const GestionEmploiClasse = () => {
 
   const onSubmitSeance = async () => {
     try {
-      console.log(formData);
       await createSeance(formData).unwrap();
       notify();
       setCanAddSession(false);
@@ -846,7 +834,6 @@ const GestionEmploiClasse = () => {
 
     let result: any = await getTeachersPeriods(payload).unwrap();
 
-    console.log("result", result);
     setTeachersPeriods(result);
 
     let averages = [];
@@ -862,16 +849,16 @@ const GestionEmploiClasse = () => {
         averages.push(average);
       } else {
         let merged = mergeIntervals(element?.periods!);
-        console.log("MERGED", merged);
+
         let wish_teacher = wishList.filter(
           (wish) => wish.teacher._id === element.id_teacher
         );
-        console.log(wish_teacher);
+
         const average = getTeacherAverageHoursPerWeek(
           wish_teacher[0].teacher,
           merged
         );
-        console.log("AVERAGE", average);
+
         averages.push(average);
       }
     }
@@ -1067,7 +1054,6 @@ const GestionEmploiClasse = () => {
   };
 
   const prepareWhishListDays = (currentWhishDays: any) => {
-    console.log(currentWhishDays);
     let preAvailableDays: any[] = [
       {
         day: "Lundi",
@@ -1103,7 +1089,6 @@ const GestionEmploiClasse = () => {
       }
     }
 
-    console.log(preAvailableDays);
     setAvailableDays(preAvailableDays);
   };
   const handleChangeSelectedVoeuxEnseignant = (e: any) => {
@@ -1116,9 +1101,6 @@ const GestionEmploiClasse = () => {
       let currentPeriods = allPeriods.filter(
         (p) => p.id_teacher === e.target.value
       );
-
-      console.log("currentPeriods", currentPeriods);
-      console.log("classeDetails", classeDetails);
 
       const givenStart = parseDate(classeDetails?.date_debut!);
       const givenEnd = parseDate(classeDetails?.date_fin!);
@@ -1133,13 +1115,9 @@ const GestionEmploiClasse = () => {
         }
       );
 
-      console.log("intersectingIntervals", intersectingIntervals);
-
       let periodicIds = intersectingIntervals.map(
         (interval: any) => interval.id_classe_period._id
       );
-
-      console.log("periodicIds", periodicIds);
 
       setPeriodicSchedulesIds(periodicIds);
 
@@ -1147,7 +1125,6 @@ const GestionEmploiClasse = () => {
         (v) => v.enseignant._id === e.target.value
       );
 
-      console.log("consernedVoeux", consernedVoeux0);
       let consernedVoeux: any[] = [];
       for (const element of consernedVoeux0) {
         if (classeDetails.semestre === "1") {
@@ -1294,7 +1271,6 @@ const GestionEmploiClasse = () => {
       });
     }
 
-    console.log("available_intervals", available_intervals);
     return available_intervals;
   };
 
@@ -1345,7 +1321,7 @@ const GestionEmploiClasse = () => {
         end: endOfDay,
       });
     }
-    console.log("available_intervals", available_intervals);
+
     return available_intervals;
   };
 
@@ -1376,7 +1352,7 @@ const GestionEmploiClasse = () => {
         j++;
       }
     }
-    console.log("common_itervals", common_itervals);
+
     return common_itervals;
   };
 
@@ -1405,8 +1381,6 @@ const GestionEmploiClasse = () => {
         end: minutesToTime(dayEndTime),
       });
     }
-
-    console.log("unavailableIntervals", unavailable_intervals);
 
     setDisabledIntervals(
       unavailable_intervals.map((interval: { start: string; end: string }) => ({
@@ -1510,10 +1484,8 @@ const GestionEmploiClasse = () => {
     charge_horaire: any,
     semestre: string
   ) => {
-    console.log("teachingHours", teaching_Hours);
     const teachingHours = Number(teaching_Hours);
-    console.log("charge_horaire", charge_horaire);
-    console.log("semestre", semestre);
+
     const annualVolume = Number(charge_horaire?.annualMaxHE!);
     const HS_Max_S1 =
       Number(charge_horaire?.s1MaxHE!) + Number(charge_horaire?.s1MaxHS!);

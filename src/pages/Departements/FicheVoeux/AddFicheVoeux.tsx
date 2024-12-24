@@ -69,7 +69,7 @@ const AddFicheVoeux = () => {
   });
 
   const teachersWithoutWishCard = allTeachers.filter(
-    (teacher:any) =>
+    (teacher: any) =>
       !allVoeux.some(
         (voeux) =>
           voeux.enseignant._id === teacher._id &&
@@ -149,7 +149,7 @@ const AddFicheVoeux = () => {
 
         /*---------------- Subjects selection ---------------- */
         let selectedTeacher = teachersWithoutWishCard.filter(
-          (teacher:any) => teacher._id === e.target.value
+          (teacher: any) => teacher._id === e.target.value
         );
 
         let classes: any;
@@ -228,12 +228,6 @@ const AddFicheVoeux = () => {
   const onSubmitFicheVoeux = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      console.log(selectedMatieres);
-      //TODO
-      // formData.matieres = [];
-      // for (let matiere of selectedMatieres) {
-      //   formData.matieres.push(matiere._id);
-      // }
       setFormData((prevState) => {
         const updatedFicheVoeux = [...prevState.fiche_voeux_classes];
         for (let element of updatedFicheVoeux) {
@@ -246,7 +240,6 @@ const AddFicheVoeux = () => {
         };
       });
 
-      console.log("formData submit fiche voeux", formData);
       await createFicheVoeux(formData).unwrap();
       notify();
       navigate("/gestion-emplois/gestion-fiche-voeux/liste-fiche-voeux");
@@ -313,7 +306,6 @@ const AddFicheVoeux = () => {
   };
 
   const { data: allClasses = [] } = useFetchClassesQuery();
-  // console.log("allClasses", allClasses);
 
   const { data: allMatieres = [] } = useFetchMatiereQuery();
 
@@ -326,7 +318,7 @@ const AddFicheVoeux = () => {
     setFormData((prevState) => {
       const updatedFicheVoeux = [...prevState.fiche_voeux_classes];
       updatedFicheVoeux[index].selectedSubjectOptions = selectedOptions;
-      console.log("selectedOptions add fiche voeux", selectedOptions);
+
       const matieres = selectedOptions.map((option: any) => ({
         _id: option.value,
         code_matiere: option.code_matiere,
@@ -428,8 +420,6 @@ const AddFicheVoeux = () => {
           )
         );
 
-        console.log("filtredMatieres", filtredMatieres);
-
         let options = filtredMatieres.map((matiere) => ({
           value: matiere._id,
           label: matiere.matiere + " " + matiere.type,
@@ -439,7 +429,6 @@ const AddFicheVoeux = () => {
           volume: matiere.volume,
           nbr_elimination: matiere.nbr_elimination,
         }));
-        console.log("options", options);
 
         setFormData((prevState) => {
           const updatedFicheVoeux = [...prevState.fiche_voeux_classes];
@@ -508,7 +497,7 @@ const AddFicheVoeux = () => {
 
     /*---------------- Subjects selection ---------------- */
     let selectedTeacher = teachersWithoutWishCard.filter(
-      (teacher:any) => teacher._id === selectedTeacherId
+      (teacher: any) => teacher._id === selectedTeacherId
     );
 
     let classes: any;
@@ -646,7 +635,7 @@ const AddFicheVoeux = () => {
                         onChange={handleTeacherChange}
                       >
                         <option value="">Sélectionner Enseignant</option>
-                        {teachersWithoutWishCard.map((enseignant:any) => (
+                        {teachersWithoutWishCard.map((enseignant: any) => (
                           <option key={enseignant._id} value={enseignant._id}>
                             {`${enseignant.prenom_fr} ${enseignant.nom_fr}`}
                           </option>

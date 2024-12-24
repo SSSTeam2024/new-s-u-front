@@ -216,13 +216,6 @@ const GestionEmploiEnseignant = () => {
   const [showAlertMessage, setAlertMessage] = useState("");
   const location = useLocation();
   const { teacher, ids, semestre, interval } = location?.state! || {};
-  console.log("teacher", teacher);
-  //console.log("enseignant", enseignant);
-  // const { data: seances = [], isSuccess: sessionClassFetched } =
-  //   useGetSeancesByIdTeacherAndSemestreQuery({
-  //     enseignantId: enseignant?._id!,
-  //     semestre: semestre,
-  //   });
 
   const { data: seances = [], isSuccess: sessionClassFetched } =
     useGetPeriodicSessionsByTeacherQuery({
@@ -230,12 +223,9 @@ const GestionEmploiEnseignant = () => {
       emplois_periodiques_ids: ids,
     });
 
-  console.log("seances", seances);
-
   const { data: variableGlobales = [] } = useFetchVaribaleGlobaleQuery();
 
   const { data: typeSeances = [] } = useFetchTypeSeancesQuery();
-  console.log("typeSeances", typeSeances);
 
   const typesFromSeances = useMemo(() => {
     if (
@@ -266,37 +256,6 @@ const GestionEmploiEnseignant = () => {
   const [td, setTd] = useState("");
   const [ci, setCi] = useState("");
 
-  //* Dynamic CoefficientSums **//
-  // const [coefficientSums, setCoefficentSums] = useState<any>(null);
-
-  // useEffect(() => {
-  //   let sums: any = {};
-
-  //   console.log("typeSeances", typeSeances);
-
-  //   for (const type of typeSeances) {
-  //     sums[type.abreviation] = 0;
-  //   }
-
-  //   console.log("sums", sums);
-
-  //   typeSeances.forEach((types: any) => {
-  //     seances.forEach((seance: any) => {
-  //       const heureDebut = new Date(`1970-01-01T${seance?.heure_debut}`);
-  //       const heureFin = new Date(`1970-01-01T${seance?.heure_fin}`);
-  //       const duration =
-  //         (heureFin.getTime() - heureDebut.getTime()) / (60 * 1000); // minutes
-  //       sums[types?.abreviation] = Number(types.charge) * (duration / 60);
-  //     });
-  //   });
-
-  //   setCoefficentSums(sums);
-
-  //   console.log("sums", sums);
-  // }, [typeSeances, seances]);
-
-  //* **//
-
   useEffect(() => {
     let tempCours = 0;
     let tempTp = 0;
@@ -305,7 +264,6 @@ const GestionEmploiEnseignant = () => {
 
     typesFromSeances.forEach((types: any) => {
       seances.forEach((seance: any) => {
-        console.log("seance", seance);
         const heureDebut = new Date(`1970-01-01T${seance?.heure_debut}`);
         const heureFin = new Date(`1970-01-01T${seance?.heure_fin}`);
         const duration =
@@ -359,7 +317,7 @@ const GestionEmploiEnseignant = () => {
 
   const groupSessionsByDay = (sessions: any) => {
     const grouped: any = {};
-    console.log("sessions grouped sessions", sessions);
+
     // Group sessions by day
     sessions.forEach((session: any) => {
       const { jour, heure_debut, heure_fin, matiere, salle, classe } = session;
@@ -387,7 +345,7 @@ const GestionEmploiEnseignant = () => {
   };
 
   const groupedSessions = groupSessionsByDay(seances) || {};
-  console.log("groupedSessions", groupedSessions);
+
   const days = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
   const maxSessions = Math.max(
     ...days.map((day) =>
@@ -606,14 +564,6 @@ const GestionEmploiEnseignant = () => {
       setAlertMessage("Failed to generate PDF. Please try again.");
     }
   };
-
-  // console.log(
-  //   <TimetablePDF
-  //     days={days}
-  //     groupedSessions={groupedSessions}
-  //     maxSessions={maxSessions}
-  //   />
-  // );
 
   return (
     <React.Fragment>

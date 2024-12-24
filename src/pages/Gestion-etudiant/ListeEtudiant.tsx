@@ -189,28 +189,28 @@ const ListEtudiants = () => {
         disableFilters: true,
         filterable: true,
         accessor: (row: any) => row?.etat_compte?.etat_fr || "",
-        Cell: ({ value }: { value: string }) => {
-          switch (value) {
-            case "Inscrit / Activé":
-              return (
-                <span className="badge bg-success-subtle text-success">
-                  {value}
-                </span>
-              );
-            case "Non inscrit":
-              return (
-                <span className="badge bg-danger-subtle text-danger">
-                  {value}
-                </span>
-              );
-            default:
-              return (
-                <span className="badge bg-success-subtle text-info">
-                  {value}
-                </span>
-              );
-          }
-        },
+        // Cell: ({ value }: { value: string }) => {
+        //   switch (value) {
+        //     case "Inscrit / Activé":
+        //       return (
+        //         <span className="badge bg-success-subtle text-success">
+        //           {value}
+        //         </span>
+        //       );
+        //     case "Non inscrit":
+        //       return (
+        //         <span className="badge bg-danger-subtle text-danger">
+        //           {value}
+        //         </span>
+        //       );
+        //     default:
+        //       return (
+        //         <span className="badge bg-success-subtle text-info">
+        //           {value}
+        //         </span>
+        //       );
+        //   }
+        // },
       },
       {
         Header: "Action",

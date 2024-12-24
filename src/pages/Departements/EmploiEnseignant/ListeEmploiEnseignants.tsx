@@ -43,15 +43,12 @@ const ListeEmploiEnseignants = () => {
     navigate("/departement/gestion-classes/add-classe");
   }
   const { data: allClasses = [] } = useFetchClassesQuery();
-  console.log("allClasses", allClasses);
+
   const { data: allTeachers = [] } = useFetchEnseignantsQuery();
-  console.log("allTeachers", allTeachers);
-  // console.log("classe data ", data)
 
   const { data: tachersPeriods = [] } = useFetchTeachersPeriodsQuery();
-  console.log("tachersPeriods", tachersPeriods);
+
   const [deleteClasse] = useDeleteClasseMutation();
-  //console.log(data)
 
   const swalWithBootstrapButtons = Swal.mixin({
     customClass: {

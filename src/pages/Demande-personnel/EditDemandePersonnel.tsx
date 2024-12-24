@@ -25,7 +25,6 @@ import avatar1 from "assets/images/users/avatar-1.jpg";
 const EditDemandePersonnel = () => {
   document.title = "Modifier demande Etudiant | Smart Institute";
   const state = useLocation();
-  console.log("state", state);
 
   return (
     <React.Fragment>
@@ -68,10 +67,16 @@ const EditDemandePersonnel = () => {
                             {state.state?.classe!}
                           </div>
                           <h6 className="fs-16">
-                            CIN: <span className="text-muted">{state.state?.CIN!}</span>
+                            CIN:{" "}
+                            <span className="text-muted">
+                              {state.state?.CIN!}
+                            </span>
                           </h6>
                           <h6 className="fs-16">
-                            Tél: <span className="text-muted">{state.state?.CIN!}</span>
+                            Tél:{" "}
+                            <span className="text-muted">
+                              {state.state?.CIN!}
+                            </span>
                           </h6>
 
                           {/* <div className="hstack gap-2">
@@ -102,7 +107,7 @@ const EditDemandePersonnel = () => {
                                     {state.state?.soustype!}
                                   </span>
                                 </h6>
-                                <h6 className="fs-16" >
+                                <h6 className="fs-16">
                                   Langue:{" "}
                                   <span className="badge bg-info-subtle text-info">
                                     Francais
@@ -121,18 +126,17 @@ const EditDemandePersonnel = () => {
                                   </span>
                                 </h6>
                                 <div className="d-flex align-items-center">
-                                <h6 className="fs-16 mr-2">
-                                    Statut: </h6><select
-                                  className="form-select mb-3 fs-16"
-                                  aria-label="Default select example"
-                                >
-                                  <option selected>
-                                   {state.state?.status!}
-                                  </option>
-                                  <option value="1">En cours</option>
-                                  <option value="2">Traité</option>
-                                </select>
-                                
+                                  <h6 className="fs-16 mr-2">Statut: </h6>
+                                  <select
+                                    className="form-select mb-3 fs-16"
+                                    aria-label="Default select example"
+                                  >
+                                    <option selected>
+                                      {state.state?.status!}
+                                    </option>
+                                    <option value="1">En cours</option>
+                                    <option value="2">Traité</option>
+                                  </select>
                                 </div>
                               </li>
                             </ul>
@@ -144,20 +148,15 @@ const EditDemandePersonnel = () => {
                 </Card.Body>
               </Card>
             </Col>
-            
           </Row>
           <Row>
-          <Col lg={12}>
-                          <div className="hstack gap-2 justify-content-end">
-                            <Button
-                              variant="primary"
-                              id="add-btn"
-                              type="submit"
-                            >
-                              Modifier la Demande
-                            </Button>
-                          </div>
-                        </Col>
+            <Col lg={12}>
+              <div className="hstack gap-2 justify-content-end">
+                <Button variant="primary" id="add-btn" type="submit">
+                  Modifier la Demande
+                </Button>
+              </div>
+            </Col>
           </Row>
         </Container>
       </div>

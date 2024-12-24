@@ -56,7 +56,9 @@ const AjouterActualite = () => {
     createdAt: "",
   });
   const onChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
   ) => {
     setFormData((prevState: any) => ({
       ...prevState,
@@ -133,7 +135,7 @@ const AjouterActualite = () => {
       galleryExtensions: base64Images.map((img) => img.extension),
     }));
   };
-  console.log("galleryExtension", formData);
+
   const handleDeleteFile = (indexToRemove: number) => {
     setFormData((prevData) => {
       const newGallery = prevData.gallery?.filter(
@@ -185,7 +187,7 @@ const AjouterActualite = () => {
                       <input type="hidden" id="_id" />
                       <Row>
                         <Row>
-                        <Col lg={10}>
+                          <Col lg={10}>
                             <div className="mb-3">
                               <Form.Label htmlFor="title">
                                 <h4 className="card-title mb-0">Titre</h4>
@@ -202,7 +204,7 @@ const AjouterActualite = () => {
                         </Row>
                         <Row>
                           {/* First Name  == Done */}
-                          
+
                           <Col lg={4}>
                             <div className="mb-3">
                               <Form.Label htmlFor="titre">
