@@ -25,7 +25,7 @@ export interface outputData {
 }
 
 const EquilibreHorairesGrade = () => {
-  document.title = "Equilibre horaires des classes | Smart University";
+  document.title = "Equilibre horaires des classes | ENIGA";
 
   const [searchQuery, setSearchQuery] = useState("");
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -60,8 +60,6 @@ const EquilibreHorairesGrade = () => {
       areClassesFetched &&
       !hasProcessed
     ) {
-      console.log("groupedTeachers fetched", groupedTeachers);
-
       // Perform your logic here
       processBothData(groupedTeachers, classes);
 
@@ -79,7 +77,6 @@ const EquilibreHorairesGrade = () => {
   ]);
 
   const processBothData = (groupedTeachers: any, classes: any) => {
-    console.log("Processing combined data:", groupedTeachers);
     let output = [];
 
     let tS1 = 0;
@@ -109,14 +106,11 @@ const EquilibreHorairesGrade = () => {
         params[0].semestre1_start,
         params[0].semestre1_end
       );
-      console.log("weeksS1", weeksS1);
+
       const weeksS2 = calculateWeeksAdjusted(
         params[0].semestre2_start,
         params[0].semestre2_end
       );
-      console.log("weeksS2", weeksS2);
-
-      console.log("outputElement", outputElement);
 
       outputElement.total_s1 = String(
         weeksS1 * Number(outputElement.total_semaine)
@@ -135,7 +129,6 @@ const EquilibreHorairesGrade = () => {
       tcS2 += Number(calculerChargeSemestriel(classe.matieres, "2"));
     }
 
-    console.log("output", output);
     setTableData(output);
 
     setTotalS1(tS1);
@@ -146,12 +139,10 @@ const EquilibreHorairesGrade = () => {
   };
 
   const calculerChargeSemestriel = (matieres: any[], semestre: string) => {
-    console.log("matieres", matieres);
     let volumeTotal = 0;
     if (semestre === "1") {
       let arrS1 = matieres.filter((matiere) => matiere.semestre === "S1");
       volumeTotal = accumulateVolumes(arrS1);
-      console.log("volumeTotal", volumeTotal);
     }
 
     if (semestre === "2") {
@@ -166,7 +157,6 @@ const EquilibreHorairesGrade = () => {
     let sum = 0;
     matieres.forEach((matiere) => {
       sum += Number(matiere.volume);
-      console.log("sum", sum);
     });
 
     return sum;

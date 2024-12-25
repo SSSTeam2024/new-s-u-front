@@ -662,7 +662,7 @@ const EditProfilPersonnel = () => {
     Swal.fire({
       position: "center",
       icon: "success",
-      title: "Matière a été modifié avec succès",
+      title: "Personnel a été modifié avec succès",
       showConfirmButton: false,
       timer: 2000,
     });

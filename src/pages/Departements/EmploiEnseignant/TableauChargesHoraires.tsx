@@ -19,7 +19,7 @@ export interface outputData {
 }
 
 const TableauChargesHoraires = () => {
-  document.title = "Tableau des charges horaires | Smart University";
+  document.title = "Tableau des charges horaires | ENIGA";
 
   const navigate = useNavigate();
 
@@ -39,9 +39,6 @@ const TableauChargesHoraires = () => {
 
   useEffect(() => {
     if (areTeachersFetched && arePeriodsFetched && !hasProcessed) {
-      console.log("enseignants:", enseignants);
-      console.log("teachersPeriods:", teachersPeriods);
-
       // Perform your logic here
       processBothData(enseignants, teachersPeriods);
 
@@ -57,7 +54,6 @@ const TableauChargesHoraires = () => {
   ]);
 
   const processBothData = (teachers: any, periods: any) => {
-    console.log("Processing combined data:", teachers, periods);
     let output = [];
     for (const teacher of teachers) {
       let outputElement: outputData = {
@@ -72,27 +68,25 @@ const TableauChargesHoraires = () => {
         (period: any) =>
           period.id_teacher._id === teacher._id && period.semestre === "1"
       );
-      console.log("smester1Periods", smester1Periods);
 
       let smester2Periods = periods.filter(
         (period: any) =>
           period.id_teacher._id === teacher._id && period.semestre === "2"
       );
-      console.log("smester2Periods", smester2Periods);
 
       let teachingHoursS1;
       let teachingHoursS2;
       if (smester1Periods.length > 0) {
         let mergedS1 = mergeIntervals(smester1Periods);
         teachingHoursS1 = getTeacherAverageHoursPerWeek(teacher, mergedS1);
-        console.log("teachingHoursS1", teachingHoursS1);
+
         outputElement.charge_s1 = String(teachingHoursS1.hours);
       }
 
       if (smester2Periods.length > 0) {
         let mergedS2 = mergeIntervals(smester2Periods);
         teachingHoursS2 = getTeacherAverageHoursPerWeek(teacher, mergedS2);
-        console.log("teachingHoursS2", teachingHoursS2);
+
         outputElement.charge_s2 = String(teachingHoursS2.hours);
       }
 
@@ -107,7 +101,7 @@ const TableauChargesHoraires = () => {
         const rest =
           Number(outputElement.moyenne) -
           Number(outputElement.teacher.grade.charge_horaire.annualMaxHE);
-        console.log("REST", rest);
+
         if (rest <= 0) {
           outputElement.charge_hs = "0";
           outputElement.charge_hx = "0";
@@ -131,7 +125,6 @@ const TableauChargesHoraires = () => {
       output.push(outputElement);
     }
 
-    console.log("output", output);
     setTableData(output);
   };
 
@@ -242,11 +235,7 @@ const TableauChargesHoraires = () => {
     charge_horaire: any,
     semestre: string
   ) => {
-    //"bg-danger text-white"
-    //console.log("teachingHours", teaching_Hours);
     const teachingHours = Number(teaching_Hours);
-    //console.log("charge_horaire", charge_horaire);
-    //console.log("semestre", semestre);
     const annualVolume = Number(charge_horaire?.annualMaxHE!);
     const HS_Max_S1 =
       Number(charge_horaire?.s1MaxHE!) + Number(charge_horaire?.s1MaxHS!);

@@ -10,9 +10,8 @@ import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import "jspdf-autotable";
 
-
 const GenerateDemande = () => {
-  document.title = "Demande Etudiant | Smart University";
+  document.title = "Demande Etudiant | ENIGA";
   const location = useLocation();
   const demandeLocation = location.state;
   const { data: AllVariablesGlobales = [] } = useFetchVaribaleGlobaleQuery();
@@ -46,27 +45,25 @@ const GenerateDemande = () => {
 
   //     await doc.html(bodyRef.current, options);
 
-      
   //   } catch (error) {
   //     console.error("Error generating PDF: ", error);
   //     setIsGenerating(false);
   //   }
   // };
 
-
-  const extractTableData = (tableElement:any) => {
+  const extractTableData = (tableElement: any) => {
     if (!tableElement) {
       console.error("Invalid table element");
       return [];
     }
-  
+
     const rows = tableElement.querySelectorAll("tr");
-    const data:any = [];
-  
-    rows.forEach((row:any) => {
-      const rowData:any = [];
+    const data: any = [];
+
+    rows.forEach((row: any) => {
+      const rowData: any = [];
       const cells = row.querySelectorAll("th, td");
-      cells.forEach((cell:any) => {
+      cells.forEach((cell: any) => {
         // You can choose to extract more than just innerText, like attributes if needed
         rowData.push(cell.innerText.trim());
       });
@@ -75,7 +72,7 @@ const GenerateDemande = () => {
         data.push(rowData);
       }
     });
-  
+
     return data;
   };
   // const generatePDF = async () => {
@@ -86,13 +83,13 @@ const GenerateDemande = () => {
   //       setIsGenerating(false);
   //       return;
   //     }
-  
+
   //     const doc = new jsPDF({
   //       orientation: "portrait",
   //       unit: "mm",
   //       format: "a4",
   //     });
-  
+
   //     // Render entire body using html2pdf to preserve image and text formatting
   //     const html2pdfOptions = {
   //       html2canvas: { scale: 0.28, useCORS: true },
@@ -101,7 +98,7 @@ const GenerateDemande = () => {
   //         pdf.save("document.pdf");
   //       },
   //     };
-  
+
   //     // Render the header using html2pdf (handles images automatically)
   //     if (bodyRef.current) {
   //       // Temporarily create a div with only the header content for rendering
@@ -113,7 +110,7 @@ const GenerateDemande = () => {
   //         <h3 style="text-align: center;">Demande Document</h3>
   //         <hr style="border: 1px solid #000;">
   //       `;
-  
+
   //       // Add header to the PDF document using `html` method
   //       await doc.html(headerDiv, {
   //         x: 10,
@@ -121,11 +118,11 @@ const GenerateDemande = () => {
   //         html2canvas: { scale: 0.28 },
   //       });
   //     }
-  
+
   //     // Manually add tables using autoTable
   //     const tables = bodyRef.current.querySelectorAll("table");
   //     let startY = 50; // Adjust starting position after header
-  
+
   //     tables.forEach((table) => {
   //       autoTable(doc, {
   //         html: table,
@@ -156,7 +153,7 @@ const GenerateDemande = () => {
   //       const finalY = (doc as any).autoTable.previous?.finalY || startY;
   //       startY = finalY + 10; // Add some space between tables
   //     });
-  
+
   //     // Add footer using html2pdf if needed
   //     if (bodyRef.current) {
   //       const footerDiv = document.createElement("div");
@@ -170,14 +167,14 @@ const GenerateDemande = () => {
   //           Address: ${AllVariablesGlobales[2]?.address_fr} | Phone: ${AllVariablesGlobales[2]?.phone} | Website: ${AllVariablesGlobales[2]?.website}
   //         </p>
   //       `;
-  
+
   //       await doc.html(footerDiv, {
   //         x: 0,
   //         y: doc.internal.pageSize.height - 30, // Position footer at the bottom
   //         html2canvas: { scale: 0.28 },
   //       });
   //     }
-  
+
   //     // Render full content with html2pdf to finalize image loading
   //     await doc.html(bodyRef.current, html2pdfOptions);
   //   } catch (error) {
@@ -194,13 +191,13 @@ const GenerateDemande = () => {
         setIsGenerating(false);
         return;
       }
-  
+
       const doc = new jsPDF({
         orientation: "portrait",
         unit: "mm",
         format: "a4",
       });
-  
+
       // Render header as before
       const headerDiv = document.createElement("div");
       headerDiv.style.padding = "10mm";
@@ -215,11 +212,11 @@ const GenerateDemande = () => {
         y: 10,
         html2canvas: { scale: 0.28 },
       });
-  
+
       // Process tables
       const tables = bodyRef.current.querySelectorAll("table");
       let startY = 50;
-  
+
       tables.forEach((table) => {
         const tableData = extractTableData(table);
         autoTable(doc, {
@@ -232,13 +229,13 @@ const GenerateDemande = () => {
             lineColor: [0, 0, 0],
             fillColor: [255, 255, 255],
             textColor: [0, 0, 0],
-            halign: 'center', // Center align the text in the cells
-            valign: 'middle', // Vertically align the text in the middle
+            halign: "center", // Center align the text in the cells
+            valign: "middle", // Vertically align the text in the middle
           },
           headStyles: {
             fillColor: [200, 200, 200], // Light gray header background
             textColor: [0, 0, 0], // Black text
-            fontStyle: 'bold', // Bold header text
+            fontStyle: "bold", // Bold header text
           },
           didParseCell: (data) => {
             // Additional styling for each cell if needed
@@ -247,11 +244,11 @@ const GenerateDemande = () => {
             }
           },
         });
-  
+
         const finalY = (doc as any).autoTable.previous.finalY || startY;
         startY = finalY + 10; // Space between tables
       });
-  
+
       // Render footer as before
       const footerDiv = document.createElement("div");
       footerDiv.style.padding = "10mm";
@@ -266,7 +263,7 @@ const GenerateDemande = () => {
         y: doc.internal.pageSize.height - 30,
         html2canvas: { scale: 0.28 },
       });
-  
+
       // Finalize PDF
       await doc.html(bodyRef.current, {
         html2canvas: { scale: 0.28, useCORS: true },
@@ -275,14 +272,11 @@ const GenerateDemande = () => {
           pdf.save("document.pdf");
         },
       });
-  
     } catch (error) {
       console.error("Error generating PDF: ", error);
       setIsGenerating(false);
     }
   };
-
- 
 
   return (
     <React.Fragment>
@@ -300,7 +294,6 @@ const GenerateDemande = () => {
               backgroundColor: "#ffffff",
               boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
               border: "1px solid #ddd",
-              
             }}
           >
             <Row>
@@ -332,16 +325,13 @@ const GenerateDemande = () => {
               />
             </Row>
             <Row className="mt-auto">
-           
-
-                <FooterPDF 
-                  address_fr={AllVariablesGlobales[2]?.address_fr!}
-                  code={AllVariablesGlobales[2]?.code_postal!}
-                  fax={AllVariablesGlobales[2]?.fax!}
-                  phone={AllVariablesGlobales[2]?.phone!}
-                  website={AllVariablesGlobales[2]?.website!}
-                />
-              
+              <FooterPDF
+                address_fr={AllVariablesGlobales[2]?.address_fr!}
+                code={AllVariablesGlobales[2]?.code_postal!}
+                fax={AllVariablesGlobales[2]?.fax!}
+                phone={AllVariablesGlobales[2]?.phone!}
+                website={AllVariablesGlobales[2]?.website!}
+              />
             </Row>
           </div>
           <div className="hstack gap-2 justify-content-end d-print-none mt-4">

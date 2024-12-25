@@ -19,20 +19,17 @@ import img1 from "assets/images/users/avatar-1.jpg";
 import { useFetchDemandePersonnelQuery } from "features/demandePersonnel/demandePersonnelSlice";
 
 const DemandeTablePersonnel = () => {
-  document.title = " Table Demande Personnel | Smart University";
+  document.title = " Table Demande Personnel | ENIGA";
 
   const location = useLocation();
   const personnelDetails = location.state;
   const idPersonnel = personnelDetails?._id;
-  console.log("id personnel", idPersonnel);
 
   const { data: demandes, error, isLoading } = useFetchDemandePersonnelQuery();
   const filteredDemandes = demandes?.filter(
     (demande) =>
       (demande.personnelId as unknown as { _id: string })._id === idPersonnel
   );
-
-  console.log("filtered demandes", filteredDemandes);
 
   const [modal_AddUserModals, setmodal_AddUserModals] =
     useState<boolean>(false);

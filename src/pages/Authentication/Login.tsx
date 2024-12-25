@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Button, Card, Col, Container, Form, Row } from "react-bootstrap";
 
-import logo from "assets/images/logo-sm.png";
+import logo from "assets/images/logo.png";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
@@ -15,7 +15,7 @@ import { setCredentials } from "features/account/authSlice";
 import Cookies from "js-cookie";
 
 const Login = (props: any) => {
-  document.title = "Login | Smart University";
+  document.title = "Login | ENIGA";
   const [login, { isLoading }] = useLoginMutation();
   const [formState, setFormState] = React.useState<LoginRequest>({
     login: "",
@@ -56,7 +56,7 @@ const Login = (props: any) => {
   return (
     <React.Fragment>
       <section className="auth-page-wrapper position-relative bg-light min-vh-100 d-flex align-items-center justify-content-between">
-        <div className="auth-header position-fixed top-0 start-0 end-0 bg-body">
+        {/* <div className="auth-header position-fixed top-0 start-0 end-0 bg-body">
           <Container fluid={true}>
             <Row className="justify-content-between align-items-center">
               <Col className="col-2">
@@ -77,14 +77,14 @@ const Login = (props: any) => {
               </Col>
             </Row>
           </Container>
-        </div>
+        </div> */}
         <div className="w-100">
           <Container>
             <Row className="justify-content-center">
               <Col lg={6}>
                 <div className="auth-card mx-lg-3">
                   <Card className="border-0 mb-0">
-                    <Card.Header className="bg-primary border-0">
+                    <Card.Header className="bg-dark bg-opacity-10 border-0 ">
                       <Row>
                         <Col lg={4} className="col-3">
                           <img src={logo} alt="" className="img-fluid" />
@@ -92,31 +92,31 @@ const Login = (props: any) => {
                       </Row>
                     </Card.Header>
                     <Card.Body>
-                      <p className="text-muted fs-15">se connecter</p>
+                      <p className="text-muted fs-15">Se connecter</p>
                       <div className="p-2">
                         <div className="mb-3">
                           <Form.Label htmlFor="username">Login</Form.Label>
                           <Form.Control
                             type="email"
                             className="form-control"
-                            placeholder="Enter username"
+                            placeholder="Entrez nom d'utilisateur"
                             onChange={handleChange}
                             name="login"
                           />
                         </div>
                         <div className="mb-3">
-                          <div className="float-end">
+                          {/* <div className="float-end">
                             <Link to="/forgot-password" className="text-muted">
-                              Forgot password?
+                              Mot de passe oublié?
                             </Link>
-                          </div>
+                          </div> */}
                           <Form.Label htmlFor="password-input">
-                            Password
+                            Mot de passe
                           </Form.Label>
                           <div className="position-relative auth-pass-inputgroup mb-3">
                             <Form.Control
                               className="form-control pe-5 password-input"
-                              placeholder="Enter password"
+                              placeholder="Entrez mot de passe"
                               id="password-input"
                               name="password"
                               onChange={handleChange}
@@ -133,48 +133,66 @@ const Login = (props: any) => {
                             </Button>
                           </div>
                         </div>
-                        <div className="form-check">
+                        {/* <div className="form-check">
                           <Form.Check
                             type="checkbox"
                             value=""
                             id="auth-remember-check"
                           />
                           <Form.Label htmlFor="auth-remember-check">
-                            Remember me
+                            Rappelez-vous de moi
                           </Form.Label>
-                        </div>
+                        </div> */}
                         <div>
-                          <Button
-                            variant="primary"
-                            className="w-100"
-                            type="submit"
-                            onClick={async () => {
-                              try {
-                                const user: any = await login(
-                                  formState
-                                ).unwrap();
-                                if (user) {
-                                  if (user.user.status === "Active") {
-                                    dispatch(setCredentials(user));
+                          {isLoading ? (
+                            <button className="btn btn-outline-warning btn-load w-100">
+                              <span className="d-flex align-items-center">
+                                <span
+                                  className="spinner-border flex-shrink-0"
+                                  role="status"
+                                >
+                                  <span className="visually-hidden">
+                                    Loading...
+                                  </span>
+                                </span>
+                                <span className="flex-grow-1 ms-2">
+                                  Loading...
+                                </span>
+                              </span>
+                            </button>
+                          ) : (
+                            <Button
+                              variant="soft-warning"
+                              className="w-100"
+                              type="submit"
+                              onClick={async () => {
+                                try {
+                                  const user: any = await login(
+                                    formState
+                                  ).unwrap();
+                                  if (user) {
+                                    if (user.user.status === "Active") {
+                                      dispatch(setCredentials(user));
 
-                                    Cookies.set("astk", user.user.api_token, {
-                                      expires: 1 / 4,
-                                    });
-                                    notify();
+                                      Cookies.set("astk", user.user.api_token, {
+                                        expires: 1 / 4,
+                                      });
+                                      notify();
+                                    }
+                                    if (user.user.status !== "Active") {
+                                      Errornotify("Your Account is Inactive!");
+                                    }
+                                  } else {
+                                    Errornotify(msgError);
                                   }
-                                  if (user.user.status !== "Active") {
-                                    Errornotify("Your Account is Inactive!");
-                                  }
-                                } else {
-                                  Errornotify(msgError);
+                                } catch (err: any) {
+                                  console.log(err);
                                 }
-                              } catch (err: any) {
-                                console.log(err);
-                              }
-                            }}
-                          >
-                            Sign In
-                          </Button>
+                              }}
+                            >
+                              Se connecter
+                            </Button>
+                          )}
                         </div>
                       </div>
                     </Card.Body>
@@ -190,8 +208,8 @@ const Login = (props: any) => {
                 <Col lg={12}>
                   <div className="text-center">
                     <p className="mb-0 text-muted">
-                      ©{new Date().getFullYear()} Smart University. Crafted with{" "}
-                      <i className="mdi mdi-heart text-danger"></i> by Team 3S
+                      ©{new Date().getFullYear()} ENIGA. Réalisé avec{" "}
+                      <i className="mdi mdi-heart text-danger"></i> l'équipe 3S
                     </p>
                   </div>
                 </Col>

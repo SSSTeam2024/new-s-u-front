@@ -13,10 +13,14 @@ import Breadcrumb from "Common/BreadCrumb";
 import { Link, useNavigate } from "react-router-dom";
 import TableContainer from "Common/TableContainer";
 import Swal from "sweetalert2";
-import { Departement, useDeleteDepartementMutation, useFetchDepartementsQuery } from "features/departement/departement";
+import {
+  Departement,
+  useDeleteDepartementMutation,
+  useFetchDepartementsQuery,
+} from "features/departement/departement";
 
 const ListDepartement = () => {
-  document.title = "Liste Des Départements | Smart University";
+  document.title = "Liste Des Départements | ENIGA";
 
   const navigate = useNavigate();
 
@@ -72,7 +76,7 @@ const ListDepartement = () => {
       {
         Header: (
           <div className="form-check">
-          <input
+            <input
               className="form-check-input"
               type="checkbox"
               id="checkAll"
@@ -112,7 +116,7 @@ const ListDepartement = () => {
         disableFilters: true,
         filterable: true,
       },
-   
+
       {
         Header: "Nom chéf Dép.",
         accessor: "nom_chef_dep",
@@ -125,8 +129,19 @@ const ListDepartement = () => {
         disableFilters: true,
         filterable: true,
         Cell: ({ cell: { value } }: any) => (
-          <a href={`${process.env.REACT_APP_API_URL}/files/departementFiles/${value}`} target="_blank" rel="noopener noreferrer">
-            <i className="bi bi-file-pdf" style={{ cursor: "pointer", fontSize: "1.5em", marginLeft:"30px" }}></i>
+          <a
+            href={`${process.env.REACT_APP_API_URL}/files/departementFiles/${value}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <i
+              className="bi bi-file-pdf"
+              style={{
+                cursor: "pointer",
+                fontSize: "1.5em",
+                marginLeft: "30px",
+              }}
+            ></i>
           </a>
         ),
       },
@@ -197,7 +212,6 @@ const ListDepartement = () => {
             title="Gestion Des Départements"
             pageTitle="Liste Des Départements"
           />
-          
 
           <Row id="sellersList">
             <Col lg={12}>
@@ -226,7 +240,7 @@ const ListDepartement = () => {
                         <option value="Inactive">Desactivé</option>
                       </select>
                     </Col>
-                  
+
                     <Col className="col-lg-auto ms-auto">
                       <div className="hstack gap-2">
                         <Button
@@ -236,7 +250,6 @@ const ListDepartement = () => {
                         >
                           Ajouter département
                         </Button>
-                      
                       </div>
                     </Col>
                   </Row>

@@ -1,29 +1,21 @@
 import React, { useMemo, useState } from "react";
-import {
-  Button,
-  Card,
-  Col,
-  Container,
-  
-  Row,
-} from "react-bootstrap";
+import { Button, Card, Col, Container, Row } from "react-bootstrap";
 import Breadcrumb from "Common/BreadCrumb";
 import { Link, useNavigate } from "react-router-dom";
 import TableContainer from "Common/TableContainer";
 import { useFetchShortCodeQuery } from "features/shortCode/shortCodeSlice";
 
 const ShortCode = () => {
-  document.title = "Liste des code courts | Smart University";
+  document.title = "Liste des code courts | ENIGA";
 
   const navigate = useNavigate();
 
-  const {data: allShortCodes = []} = useFetchShortCodeQuery()
+  const { data: allShortCodes = [] } = useFetchShortCodeQuery();
 
   const [languageFilter, setLanguageFilter] = useState("tout");
 
-
   // Handle language filter change
-  const handleLanguageChange = (event:any) => {
+  const handleLanguageChange = (event: any) => {
     setLanguageFilter(event.target.value);
   };
   // Filter the data based on the selected language
@@ -31,7 +23,9 @@ const ShortCode = () => {
     if (languageFilter === "tout") {
       return allShortCodes; // Show all short codes if "All" is selected
     }
-    return allShortCodes.filter((shortCode) => shortCode.intended_for === languageFilter);
+    return allShortCodes.filter(
+      (shortCode) => shortCode.intended_for === languageFilter
+    );
   }, [allShortCodes, languageFilter]);
   const columns = useMemo(
     () => [
@@ -48,7 +42,7 @@ const ShortCode = () => {
         disableFilters: true,
         filterable: true,
       },
-      
+
       {
         Header: "Langue",
         accessor: "langue",
@@ -167,7 +161,6 @@ const ShortCode = () => {
                         <option value="enseignant">Enseignant</option>
                         <option value="etudiant">Etudiant</option>
                         <option value="personnel">Personnel</option>
-                     
                       </select>
                     </Col>
 
@@ -176,7 +169,9 @@ const ShortCode = () => {
                         <Button
                           variant="primary"
                           className="add-btn"
-                          onClick={() =>navigate("/shortCode/ajouter-short-code")}
+                          onClick={() =>
+                            navigate("/shortCode/ajouter-short-code")
+                          }
                         >
                           Ajouter un code court
                         </Button>
@@ -194,7 +189,7 @@ const ShortCode = () => {
                   >
                     <TableContainer
                       columns={columns || []}
-                      data={filteredShortCodes  || []}
+                      data={filteredShortCodes || []}
                       // isGlobalFilter={false}
                       iscustomPageSize={false}
                       isBordered={false}

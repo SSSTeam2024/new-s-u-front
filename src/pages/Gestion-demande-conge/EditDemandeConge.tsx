@@ -7,7 +7,7 @@ import Flatpickr from "react-flatpickr";
 import "flatpickr/dist/themes/material_blue.css";
 
 const EditDemandeConge = () => {
-  document.title = "Modifier Demande de Congé | Smart University";
+  document.title = "Modifier Demande de Congé | ENIGA";
 
   const navigate = useNavigate();
   const location = useLocation();

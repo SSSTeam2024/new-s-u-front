@@ -21,7 +21,7 @@ import {
 } from "features/etatPersonnel/etatPersonnelSlice";
 
 const ListEtatPersonnels = () => {
-  document.title = "Liste états des personnels | Smart University";
+  document.title = "Liste états des personnels | ENIGA";
 
   const navigate = useNavigate();
 

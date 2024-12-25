@@ -1,12 +1,5 @@
 import React, { useState } from "react";
-import {
-  Button,
-  Card,
-  Col,
-  Container,
-  Form,
-  Row
-} from "react-bootstrap";
+import { Button, Card, Col, Container, Form, Row } from "react-bootstrap";
 import Flatpickr from "react-flatpickr";
 import Dropzone from "react-dropzone";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
@@ -14,30 +7,38 @@ import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import Swal from "sweetalert2";
 import "flatpickr/dist/flatpickr.min.css";
 import Select from "react-select";
-import { useAddReclamationEnseignantMutation, Reclamation } from "features/reclamationEnseignant/reclamationEnseignantSlice";
-import { useFetchEnseignantsQuery, Enseignant } from "features/enseignant/enseignantSlice";
+import {
+  useAddReclamationEnseignantMutation,
+  Reclamation,
+} from "features/reclamationEnseignant/reclamationEnseignantSlice";
+import {
+  useFetchEnseignantsQuery,
+  Enseignant,
+} from "features/enseignant/enseignantSlice";
 import { useNavigate } from "react-router-dom";
-import { RootState } from 'app/store';
-import { useSelector } from 'react-redux';
-import { selectCurrentUser } from 'features/account/authSlice'; 
+import { RootState } from "app/store";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "features/account/authSlice";
 
 const AjouterReclamationEnseignant = () => {
-  document.title = "Ajouter Reclamation Enseignant | Smart University";
+  document.title = "Ajouter Reclamation Enseignant | ENIGA";
   const navigate = useNavigate();
   const user = useSelector((state: RootState) => selectCurrentUser(state));
   const [addReclamationEnseignant] = useAddReclamationEnseignantMutation();
   const { data: enseignants } = useFetchEnseignantsQuery();
-  const enseignant: Enseignant[] = Array.isArray(enseignants) ? enseignants : [];
-  
+  const enseignant: Enseignant[] = Array.isArray(enseignants)
+    ? enseignants
+    : [];
+
   const [formData, setFormData] = useState<Partial<Reclamation>>({
-    _id:"",
+    _id: "",
     enseignantId: "",
-    title:  "",
+    title: "",
     description: "",
     response: "",
     status: "",
-    createdAt:"",
-    updatedAt:"",
+    createdAt: "",
+    updatedAt: "",
     pdf: "",
     pdfBase64String: "",
     pdfExtension: "",
@@ -46,10 +47,12 @@ const AjouterReclamationEnseignant = () => {
     videoExtension: "",
     photos: [],
     galleryBase64Strings: [],
-    galleryExtensions:[],
+    galleryExtensions: [],
   });
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const onChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setFormData((prevState) => ({
       ...prevState,
       [e.target.id]: e.target.value,
@@ -81,7 +84,9 @@ const AjouterReclamationEnseignant = () => {
     }
   };
 
-  const onSubmitReclamationEnseignant = async (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmitReclamationEnseignant = async (
+    e: React.FormEvent<HTMLFormElement>
+  ) => {
     e.preventDefault();
     try {
       await addReclamationEnseignant(formData).unwrap();
@@ -107,7 +112,9 @@ const AjouterReclamationEnseignant = () => {
     });
   };
 
-  function convertToBase64(file: File): Promise<{ base64Data: string; extension: string }> {
+  function convertToBase64(
+    file: File
+  ): Promise<{ base64Data: string; extension: string }> {
     return new Promise((resolve, reject) => {
       const fileReader = new FileReader();
       fileReader.onload = () => {
@@ -130,30 +137,36 @@ const AjouterReclamationEnseignant = () => {
         return {
           base64Data,
           extension,
-          fileName: file.name
+          fileName: file.name,
         };
       })
     );
-    
+
     setFormData((prevState) => ({
       ...prevState,
-      photos: base64Images.map(img => img.base64Data + "." + img.extension),
-      galleryBase64Strings: base64Images.map(img => img.base64Data),
-      galleryExtensions: base64Images.map(img => img.extension)
+      photos: base64Images.map((img) => img.base64Data + "." + img.extension),
+      galleryBase64Strings: base64Images.map((img) => img.base64Data),
+      galleryExtensions: base64Images.map((img) => img.extension),
     }));
   };
 
   const handleDeleteFile = (indexToRemove: number) => {
     setFormData((prevData) => {
-      const newGallery = prevData.photos?.filter((_, index) => index !== indexToRemove);
-      const newGalleryBase64Strings = prevData.galleryBase64Strings?.filter((_, index) => index !== indexToRemove);
-      const newGalleryExtension = prevData.galleryExtensions?.filter((_, index) => index !== indexToRemove);
+      const newGallery = prevData.photos?.filter(
+        (_, index) => index !== indexToRemove
+      );
+      const newGalleryBase64Strings = prevData.galleryBase64Strings?.filter(
+        (_, index) => index !== indexToRemove
+      );
+      const newGalleryExtension = prevData.galleryExtensions?.filter(
+        (_, index) => index !== indexToRemove
+      );
 
       return {
         ...prevData,
         photos: newGallery,
         galleryBase64Strings: newGalleryBase64Strings,
-        galleryExtensions: newGalleryExtension
+        galleryExtensions: newGalleryExtension,
       };
     });
   };
@@ -176,13 +189,18 @@ const AjouterReclamationEnseignant = () => {
                         </div>
                       </div>
                       <div className="flex-grow-1">
-                        <h5 className="card-title">Nouvelle reclamation enseignant</h5>
+                        <h5 className="card-title">
+                          Nouvelle reclamation enseignant
+                        </h5>
                       </div>
                     </div>
                   </Card.Header>
                   <Card.Body></Card.Body>
                   <div className="mb-3">
-                    <Form className="tablelist-form" onSubmit={onSubmitReclamationEnseignant}>
+                    <Form
+                      className="tablelist-form"
+                      onSubmit={onSubmitReclamationEnseignant}
+                    >
                       <Form.Group className="mb-3">
                         <Form.Label>Titre</Form.Label>
                         <Form.Control
@@ -207,7 +225,10 @@ const AjouterReclamationEnseignant = () => {
                       <Form.Group className="mb-3">
                         <Form.Label>Enseignant</Form.Label>
                         <Select
-                          options={enseignant.map(c => ({ value: c._id, label: c.nom_fr }))}
+                          options={enseignant.map((c) => ({
+                            value: c._id,
+                            label: c.nom_fr,
+                          }))}
                           onChange={onSelectChange}
                         />
                       </Form.Group>
@@ -219,50 +240,57 @@ const AjouterReclamationEnseignant = () => {
                           options={{
                             dateFormat: "d/m/Y",
                           }}
-                          value={selectedDate ? [selectedDate] : []} 
+                          value={selectedDate ? [selectedDate] : []}
                           onChange={handleDateChange}
                           id="date_avis"
                         />
                       </Form.Group>
 
                       <Form.Group className="mb-3">
-  <Form.Label>Vidéo</Form.Label>
-  <Form.Control
-    type="file"
-    accept="video/*"
-    onChange={async (e) => {
-      const input = e.target as HTMLInputElement;
-      const file = input.files?.[0];
-      if (file) {
-        const { base64Data, extension } = await convertToBase64(file);
-        setFormData(prev => ({
-          ...prev,
-          videoBase64String: base64Data,
-          videoExtension: extension,
-        }));
-      }
-    }}
-  />
-</Form.Group>
+                        <Form.Label>Vidéo</Form.Label>
+                        <Form.Control
+                          type="file"
+                          accept="video/*"
+                          onChange={async (e) => {
+                            const input = e.target as HTMLInputElement;
+                            const file = input.files?.[0];
+                            if (file) {
+                              const { base64Data, extension } =
+                                await convertToBase64(file);
+                              setFormData((prev) => ({
+                                ...prev,
+                                videoBase64String: base64Data,
+                                videoExtension: extension,
+                              }));
+                            }
+                          }}
+                        />
+                      </Form.Group>
 
-{formData.videoBase64String && (
-  <div className="video-preview mt-3">
-    <video controls width="100%">
-      <source
-        src={`data:video/${formData.videoExtension};base64,${formData.videoBase64String}`}
-        type={`video/${formData.videoExtension}`}
-      />
-      Your browser does not support the video tag.
-    </video>
-    <Button
-      className="mt-2"
-      variant="danger"
-      onClick={() => setFormData(prev => ({ ...prev, videoBase64String: "", videoExtension: "" }))}
-    >
-      Supprimer la vidéo
-    </Button>
-  </div>
-)}
+                      {formData.videoBase64String && (
+                        <div className="video-preview mt-3">
+                          <video controls width="100%">
+                            <source
+                              src={`data:video/${formData.videoExtension};base64,${formData.videoBase64String}`}
+                              type={`video/${formData.videoExtension}`}
+                            />
+                            Your browser does not support the video tag.
+                          </video>
+                          <Button
+                            className="mt-2"
+                            variant="danger"
+                            onClick={() =>
+                              setFormData((prev) => ({
+                                ...prev,
+                                videoBase64String: "",
+                                videoExtension: "",
+                              }))
+                            }
+                          >
+                            Supprimer la vidéo
+                          </Button>
+                        </div>
+                      )}
 
                       <Form.Group className="mb-3">
                         <Form.Label>PDF</Form.Label>
@@ -273,8 +301,9 @@ const AjouterReclamationEnseignant = () => {
                             const input = e.target as HTMLInputElement;
                             const file = input.files?.[0];
                             if (file) {
-                              const { base64Data, extension } = await convertToBase64(file);
-                              setFormData(prev => ({
+                              const { base64Data, extension } =
+                                await convertToBase64(file);
+                              setFormData((prev) => ({
                                 ...prev,
                                 pdfBase64String: base64Data,
                                 pdfExtension: extension,
@@ -286,15 +315,23 @@ const AjouterReclamationEnseignant = () => {
 
                       <Form.Group className="mb-3">
                         <Form.Label>Galerie</Form.Label>
-                        <Dropzone onDrop={(acceptedFiles) => handleAcceptedFiles(acceptedFiles)}>
+                        <Dropzone
+                          onDrop={(acceptedFiles) =>
+                            handleAcceptedFiles(acceptedFiles)
+                          }
+                        >
                           {({ getRootProps, getInputProps }) => (
-                            <div className="dropzone dz-clickable text-center" {...getRootProps()}>
+                            <div
+                              className="dropzone dz-clickable text-center"
+                              {...getRootProps()}
+                            >
                               <div className="dz-message needsclick">
                                 <div className="mb-3">
                                   <i className="display-4 text-muted ri-upload-cloud-2-fill" />
                                 </div>
                                 <h5>
-                                  Déposez des photos ici ou cliquez pour télécharger.
+                                  Déposez des photos ici ou cliquez pour
+                                  télécharger.
                                 </h5>
                               </div>
                               <input {...getInputProps()} />
@@ -329,7 +366,14 @@ const AjouterReclamationEnseignant = () => {
                       </Form.Group>
 
                       <div className="text-end">
-                        <Button variant="secondary" onClick={() => navigate("/reclamation-enseignant/liste-reclamation-enseignant")}>
+                        <Button
+                          variant="secondary"
+                          onClick={() =>
+                            navigate(
+                              "/reclamation-enseignant/liste-reclamation-enseignant"
+                            )
+                          }
+                        >
                           Annuler
                         </Button>
                         <Button variant="primary" type="submit">

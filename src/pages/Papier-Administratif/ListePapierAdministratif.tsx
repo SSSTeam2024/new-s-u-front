@@ -1,31 +1,31 @@
 import React, { useMemo, useState } from "react";
-import {
-  Button,
-  Card,
-  Col,
-  Container,
-  Row,
-} from "react-bootstrap";
+import { Button, Card, Col, Container, Row } from "react-bootstrap";
 import Breadcrumb from "Common/BreadCrumb";
 import { Link, useNavigate } from "react-router-dom";
 import TableContainer from "Common/TableContainer";
 import Swal from "sweetalert2";
-import { TypeInscriptionEtudiant,  useDeleteTypeInscriptionEtudiantMutation, useFetchTypeInscriptionsEtudiantQuery } from "features/typeInscriptionEtudiant/typeInscriptionEtudiant";
-import { PapierAdministratif, useDeletePapierAdministratifMutation, useFetchPapierAdministratifQuery } from "features/papierAdministratif/papierAdministratif";
-
+import {
+  TypeInscriptionEtudiant,
+  useDeleteTypeInscriptionEtudiantMutation,
+  useFetchTypeInscriptionsEtudiantQuery,
+} from "features/typeInscriptionEtudiant/typeInscriptionEtudiant";
+import {
+  PapierAdministratif,
+  useDeletePapierAdministratifMutation,
+  useFetchPapierAdministratifQuery,
+} from "features/papierAdministratif/papierAdministratif";
 
 const ListePapierAdministratifs = () => {
-  document.title =
-    "Liste papier administratifs | Smart University";
+  document.title = "Liste papier administratifs | ENIGA";
 
   const navigate = useNavigate();
 
   const [modal_AddParametreModals, setmodal_AddParametreModals] =
     useState<boolean>(false);
-    const [searchQuery, setSearchQuery] = useState("");
-    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      setSearchQuery(event.target.value.toLowerCase());
-    };
+  const [searchQuery, setSearchQuery] = useState("");
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(event.target.value.toLowerCase());
+  };
   function tog_AddParametreModals() {
     setmodal_AddParametreModals(!modal_AddParametreModals);
   }
@@ -34,7 +34,7 @@ const ListePapierAdministratifs = () => {
     navigate("/ajoutPapierAdministratif");
   }
   const { data = [] } = useFetchPapierAdministratifQuery();
-  console.log(data)
+  console.log(data);
   const [deletePapierAdministratif] = useDeletePapierAdministratifMutation();
 
   const swalWithBootstrapButtons = Swal.mixin({
@@ -54,7 +54,7 @@ const ListePapierAdministratifs = () => {
       cancelButtonText: "Non, annuler!",
       reverseButtons: true,
     });
-  
+
     if (result.isConfirmed) {
       try {
         await deletePapierAdministratif(_id).unwrap();
@@ -79,7 +79,6 @@ const ListePapierAdministratifs = () => {
       );
     }
   };
-  
 
   // const flattenData = (data: any[]) => {
   //   return data.flatMap(item =>
@@ -90,11 +89,9 @@ const ListePapierAdministratifs = () => {
   //     }))
   //   );
   // };
-  
+
   // // Assuming `data` is the initial array
   // const flattenedData = flattenData(data);
-  
-  
 
   const columns = useMemo(
     () => [
@@ -123,7 +120,7 @@ const ListePapierAdministratifs = () => {
         disableFilters: true,
         filterable: true,
       },
-    
+
       {
         Header: "Action",
         disableFilters: true,
@@ -182,15 +179,18 @@ const ListePapierAdministratifs = () => {
     ],
     []
   );
-  
+
   // Use `flattenedData` as the data source for your table
-  
+
   return (
     <React.Fragment>
       <div className="page-content">
         <Container fluid={true}>
-          <Breadcrumb title="Papier Administratifs" pageTitle="Liste des papiers administratifs" />
-         
+          <Breadcrumb
+            title="Papier Administratifs"
+            pageTitle="Liste des papiers administratifs"
+          />
+
           <Row id="sellersList">
             <Col lg={12}>
               <Card>
@@ -207,7 +207,7 @@ const ListePapierAdministratifs = () => {
                         />
                         <i className="ri-search-line search-icon"></i>
                       </div>
-                    </Col> 
+                    </Col>
                     <Col className="col-lg-auto ms-auto">
                       <div className="hstack gap-2">
                         <Button
@@ -217,7 +217,6 @@ const ListePapierAdministratifs = () => {
                         >
                           Ajouter papier administratif
                         </Button>
-                      
                       </div>
                     </Col>
                   </Row>
@@ -230,18 +229,18 @@ const ListePapierAdministratifs = () => {
                     className="table align-middle table-nowrap"
                     id="customerTable"
                   >
-                     <TableContainer
-                columns={(columns || [])}
-                data={(data || [])}
-                // isGlobalFilter={false}
-                iscustomPageSize={false}
-                isBordered={false}
-                customPageSize={10}
-                className="custom-header-css table align-middle table-nowrap"
-                tableClass="table-centered align-middle table-nowrap mb-0"
-                theadClass="text-muted table-light"
-                SearchPlaceholder='Search Products...'
-            />
+                    <TableContainer
+                      columns={columns || []}
+                      data={data || []}
+                      // isGlobalFilter={false}
+                      iscustomPageSize={false}
+                      isBordered={false}
+                      customPageSize={10}
+                      className="custom-header-css table align-middle table-nowrap"
+                      tableClass="table-centered align-middle table-nowrap mb-0"
+                      theadClass="text-muted table-light"
+                      SearchPlaceholder="Search Products..."
+                    />
                   </table>
                   <div className="noresult" style={{ display: "none" }}>
                     <div className="text-center py-4">

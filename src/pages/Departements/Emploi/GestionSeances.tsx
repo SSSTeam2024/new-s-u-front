@@ -12,16 +12,14 @@ import {
 } from "features/seance/seance";
 
 const GestionSeances = () => {
-  document.title = "Liste emplois des classes | Smart University";
+  document.title = "Liste emplois des classes | ENIGA";
 
   const navigate = useNavigate();
 
   const location = useLocation();
   const params = location.state;
-  console.log("params page seance", params);
 
   const { data = [] } = useFetchAllSeancesByTimeTableIdQuery(params?._id!);
-  console.log(data);
 
   const [deleteSeance] = useDeleteSeanceMutation();
 
@@ -33,7 +31,6 @@ const GestionSeances = () => {
     buttonsStyling: false,
   });
   const AlertDelete = async (seance: Seance) => {
-    console.log("seance", seance);
     swalWithBootstrapButtons
       .fire({
         title: "Êtes-vous sûr?",

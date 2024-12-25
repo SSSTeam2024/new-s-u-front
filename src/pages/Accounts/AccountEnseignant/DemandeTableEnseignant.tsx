@@ -19,14 +19,12 @@ import img1 from "assets/images/users/avatar-1.jpg";
 import { useFetchDemandeEnseignantQuery } from "features/demandeEnseignant/demandeEnseignantSlice";
 
 const DemandeTableEnseignant = () => {
-  document.title = "table Demande Enseignant | Smart University";
+  document.title = "table Demande Enseignant | ENIGA";
 
   const location = useLocation();
   const EnseignantDetails = location.state;
-  console.log("EnseignantDetails", EnseignantDetails);
 
   const idEnseignant = EnseignantDetails?._id;
-  console.log("id enseignant", idEnseignant);
 
   const { data: demandes, error, isLoading } = useFetchDemandeEnseignantQuery();
   // Filter demandes only if idEnseignant is defined
@@ -38,7 +36,6 @@ const DemandeTableEnseignant = () => {
         idEnseignant
     );
   }, [demandes, idEnseignant]);
-  console.log("filtered demandes", filteredDemandes);
 
   const [modal_AddUserModals, setmodal_AddUserModals] =
     useState<boolean>(false);

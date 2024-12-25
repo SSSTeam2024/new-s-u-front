@@ -21,7 +21,7 @@ import {
 } from "features/postePersonnel/postePersonnel";
 
 const ListePostPersonnels = () => {
-  document.title = "Liste postes des personnels | Smart University";
+  document.title = "Liste postes des personnels | ENIGA";
 
   const navigate = useNavigate();
 

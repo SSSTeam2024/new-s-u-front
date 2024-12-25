@@ -24,21 +24,17 @@ const ReclamationTablePersonnel = () => {
   const location = useLocation();
   const personnelDetails = location.state;
   const idPersonnel = personnelDetails?._id;
-  console.log("id personnel", idPersonnel);
 
   const {
     data: reclamations,
     error,
     isLoading,
   } = useFetchReclamationsPersonnelQuery();
-  console.log("reclamation personnel", reclamations);
   const filteredReclamation = reclamations?.filter(
     (reclamation) =>
       (reclamation.personnelId as unknown as { _id: string })._id ===
       idPersonnel
   );
-
-  console.log("filtered demandes", filteredReclamation);
 
   const [modal_AddUserModals, setmodal_AddUserModals] =
     useState<boolean>(false);

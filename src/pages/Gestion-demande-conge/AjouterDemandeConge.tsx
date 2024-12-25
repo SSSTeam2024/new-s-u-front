@@ -24,7 +24,7 @@ interface OptionType {
 }
 
 const AjouterDemandeConge = () => {
-  document.title = "Ajouter Demande de Congé | Smart University";
+  document.title = "Ajouter Demande de Congé | ENIGA";
   const [leaveType, setLeaveType] = useState<string>("");
   const [selectedSubcategory, setSelectedSubcategory] = useState<
     LeaveSubcategory[]

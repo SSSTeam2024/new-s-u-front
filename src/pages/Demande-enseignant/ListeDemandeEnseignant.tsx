@@ -30,7 +30,7 @@ import {
 } from "features/demandeEnseignant/demandeEnseignantSlice";
 
 const ListeDemandeEnseignant = () => {
-  document.title = "Demande Enseignant | Smart University";
+  document.title = "Demande Enseignant | ENIGA";
 
   const user = useSelector((state: RootState) => selectCurrentUser(state));
 
@@ -42,7 +42,6 @@ const ListeDemandeEnseignant = () => {
     error,
     isLoading,
   } = useFetchDemandeEnseignantQuery();
-  console.log("data", demandesEnseignant);
 
   // Mutation hooks
   const [addReclamation] = useAddDemandeEnseignantMutation();

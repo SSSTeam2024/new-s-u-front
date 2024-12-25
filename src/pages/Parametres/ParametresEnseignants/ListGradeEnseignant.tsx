@@ -18,13 +18,13 @@ import {
   useDeleteGradeEnseignantMutation,
   useFetchGradesEnseignantQuery,
 } from "features/gradeEnseignant/gradeEnseignant";
-import { actionAuthorization } from 'utils/pathVerification';
-import { RootState } from 'app/store';
-import { useSelector } from 'react-redux';
-import { selectCurrentUser } from 'features/account/authSlice';
+import { actionAuthorization } from "utils/pathVerification";
+import { RootState } from "app/store";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "features/account/authSlice";
 
 const ListGradeEnseignants = () => {
-  document.title = "Liste grades des enseignants | Smart University";
+  document.title = "Liste grades des enseignants | ENIGA";
   const user = useSelector((state: RootState) => selectCurrentUser(state));
 
   const navigate = useNavigate();
@@ -135,52 +135,64 @@ const ListGradeEnseignants = () => {
         accessor: (gradeEnseignant: GradeEnseignant) => {
           return (
             <ul className="hstack gap-2 list-unstyled mb-0">
-               {actionAuthorization("/parametre-enseignant/grade/edit-grade-enseignant",user?.permissions!)? 
-              <li>
-                <Link
-                  to="/parametre-enseignant/grade/edit-grade-enseignant"
-                  state={gradeEnseignant}
-                  className="badge bg-primary-subtle text-primary edit-item-btn"
-                >
-                  <i
-                    className="ph ph-pencil-line"
-                    style={{
-                      transition: "transform 0.3s ease-in-out",
-                      cursor: "pointer",
-                      fontSize: "1.5em",
-                    }}
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.transform = "scale(1.2)")
-                    }
-                    onMouseLeave={(e) =>
-                      (e.currentTarget.style.transform = "scale(1)")
-                    }
-                  ></i>
-                </Link>
-              </li>  : <></> }
-              {actionAuthorization("/parametre-enseignant/grade/supprimer-grade-enseignant",user?.permissions!)? 
-              <li>
-                <Link
-                  to="#"
-                  className="badge bg-danger-subtle text-danger remove-item-btn"
-                >
-                  <i
-                    className="ph ph-trash"
-                    style={{
-                      transition: "transform 0.3s ease-in-out",
-                      cursor: "pointer",
-                      fontSize: "1.5em",
-                    }}
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.transform = "scale(1.2)")
-                    }
-                    onMouseLeave={(e) =>
-                      (e.currentTarget.style.transform = "scale(1)")
-                    }
-                    onClick={() => AlertDelete(gradeEnseignant?._id!)}
-                  ></i>
-                </Link>
-              </li> : <></> }
+              {actionAuthorization(
+                "/parametre-enseignant/grade/edit-grade-enseignant",
+                user?.permissions!
+              ) ? (
+                <li>
+                  <Link
+                    to="/parametre-enseignant/grade/edit-grade-enseignant"
+                    state={gradeEnseignant}
+                    className="badge bg-primary-subtle text-primary edit-item-btn"
+                  >
+                    <i
+                      className="ph ph-pencil-line"
+                      style={{
+                        transition: "transform 0.3s ease-in-out",
+                        cursor: "pointer",
+                        fontSize: "1.5em",
+                      }}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.transform = "scale(1.2)")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.transform = "scale(1)")
+                      }
+                    ></i>
+                  </Link>
+                </li>
+              ) : (
+                <></>
+              )}
+              {actionAuthorization(
+                "/parametre-enseignant/grade/supprimer-grade-enseignant",
+                user?.permissions!
+              ) ? (
+                <li>
+                  <Link
+                    to="#"
+                    className="badge bg-danger-subtle text-danger remove-item-btn"
+                  >
+                    <i
+                      className="ph ph-trash"
+                      style={{
+                        transition: "transform 0.3s ease-in-out",
+                        cursor: "pointer",
+                        fontSize: "1.5em",
+                      }}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.transform = "scale(1.2)")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.transform = "scale(1)")
+                      }
+                      onClick={() => AlertDelete(gradeEnseignant?._id!)}
+                    ></i>
+                  </Link>
+                </li>
+              ) : (
+                <></>
+              )}
             </ul>
           );
         },

@@ -100,7 +100,7 @@ const AddDepartement = () => {
     if (file) {
       const { base64Data, extension } = await convertToBase64(file);
       const newPDF = base64Data + "." + extension;
-      console.log(extension);
+
       setFormData({
         ...formData,
         signature: newPDF,

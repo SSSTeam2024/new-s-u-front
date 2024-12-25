@@ -15,7 +15,7 @@ import { espaceTelechargement } from "Common/data/espaceTelechargement";
 import TableContainer from "Common/TableContainer";
 
 const ListEspaceTelechargement = () => {
-  document.title = "Liste des éspaces des téléchargements |  Smart University";
+  document.title = "Liste des éspaces des téléchargements |  ENIGA";
 
   const navigate = useNavigate();
 
@@ -26,152 +26,168 @@ const ListEspaceTelechargement = () => {
   }
   const columns = useMemo(
     () => [
-        {
-            Header: (<div className="form-check"> <input className="form-check-input" type="checkbox" id="checkAll" value="option" /> </div>),
-            Cell: (cellProps: any) => {
-                return (<div className="form-check"> <input className="form-check-input" type="checkbox" name="chk_child" defaultValue="option1" /> </div>);
-            },
-            id: '#',
+      {
+        Header: (
+          <div className="form-check">
+            {" "}
+            <input
+              className="form-check-input"
+              type="checkbox"
+              id="checkAll"
+              value="option"
+            />{" "}
+          </div>
+        ),
+        Cell: (cellProps: any) => {
+          return (
+            <div className="form-check">
+              {" "}
+              <input
+                className="form-check-input"
+                type="checkbox"
+                name="chk_child"
+                defaultValue="option1"
+              />{" "}
+            </div>
+          );
         },
-       
-        {
-            Header: "Titre",
-            accessor: "titre",
-            disableFilters: true,
-            filterable: true,
-        },
-       
-        {
-            Header: "Description",
-            accessor: "description",
-            disableFilters: true,
-            filterable: true,
-        },
-        {
-            Header: "Cible",
-            accessor: "category",
-            disableFilters: true,
-            filterable: true,
-        },
-        {
-          Header: "Date d'ajout",
-          accessor: "",
-          disableFilters: true,
-          filterable: true,
+        id: "#",
       },
-        {
-            Header: "Fichier",
-            disableFilters: true,
-            filterable: true,
-            accessor: (cellProps: any) => {
-                return (
-                    <ul className="hstack gap-2 list-unstyled mb-0">
-                      <li>
-                        <Link
-                          to="#"
-                          className="badge bg-success-subtle text-success remove-item-btn"
-                        >
-                          <i
-                            className="ph bi-file-earmark-arrow-down"
-                            style={{
-                              transition: "transform 0.3s ease-in-out",
-                              cursor: "pointer",
-                              fontSize: "1.5em",
-                            }}
-                            onMouseEnter={(e) =>
-                              (e.currentTarget.style.transform = "scale(1.2)")
-                            }
-                            onMouseLeave={(e) =>
-                              (e.currentTarget.style.transform = "scale(1)")
-                            }
-                            
-                          ></i>
-                        </Link>
-                      </li>
-                    </ul>
-                  );
-            },
+
+      {
+        Header: "Titre",
+        accessor: "titre",
+        disableFilters: true,
+        filterable: true,
+      },
+
+      {
+        Header: "Description",
+        accessor: "description",
+        disableFilters: true,
+        filterable: true,
+      },
+      {
+        Header: "Cible",
+        accessor: "category",
+        disableFilters: true,
+        filterable: true,
+      },
+      {
+        Header: "Date d'ajout",
+        accessor: "",
+        disableFilters: true,
+        filterable: true,
+      },
+      {
+        Header: "Fichier",
+        disableFilters: true,
+        filterable: true,
+        accessor: (cellProps: any) => {
+          return (
+            <ul className="hstack gap-2 list-unstyled mb-0">
+              <li>
+                <Link
+                  to="#"
+                  className="badge bg-success-subtle text-success remove-item-btn"
+                >
+                  <i
+                    className="ph bi-file-earmark-arrow-down"
+                    style={{
+                      transition: "transform 0.3s ease-in-out",
+                      cursor: "pointer",
+                      fontSize: "1.5em",
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.transform = "scale(1.2)")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.transform = "scale(1)")
+                    }
+                  ></i>
+                </Link>
+              </li>
+            </ul>
+          );
         },
-        {
-            Header: "Action",
-            disableFilters: true,
-            filterable: true,
-            accessor: (cellProps: any) => {
-                return (
-                    <ul className="hstack gap-2 list-unstyled mb-0">
-                      <li>
-                        <Link
-                          to="#"
-                          className="badge bg-info-subtle text-info view-item-btn"
-               
-                        >
-                          <i
-                            className="ph ph-eye"
-                            style={{
-                              transition: "transform 0.3s ease-in-out",
-                              cursor: "pointer",
-                              fontSize: "1.5em",
-                            }}
-                            onMouseEnter={(e) =>
-                              (e.currentTarget.style.transform = "scale(1.4)")
-                            }
-                            onMouseLeave={(e) =>
-                              (e.currentTarget.style.transform = "scale(1)")
-                            }
-                          ></i>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          to="#"
-                          className="badge bg-primary-subtle text-primary edit-item-btn"
-                    
-                        >
-                          <i
-                            className="ph ph-pencil-line"
-                            style={{
-                              transition: "transform 0.3s ease-in-out",
-                              cursor: "pointer",
-                              fontSize: "1.5em",
-                            }}
-                            onMouseEnter={(e) =>
-                              (e.currentTarget.style.transform = "scale(1.2)")
-                            }
-                            onMouseLeave={(e) =>
-                              (e.currentTarget.style.transform = "scale(1)")
-                            }
-                          ></i>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          to="#"
-                          className="badge bg-danger-subtle text-danger remove-item-btn"
-                        >
-                          <i
-                            className="ph ph-trash"
-                            style={{
-                              transition: "transform 0.3s ease-in-out",
-                              cursor: "pointer",
-                              fontSize: "1.5em",
-                            }}
-                            onMouseEnter={(e) =>
-                              (e.currentTarget.style.transform = "scale(1.2)")
-                            }
-                            onMouseLeave={(e) =>
-                              (e.currentTarget.style.transform = "scale(1)")
-                            }
-                            
-                          ></i>
-                        </Link>
-                      </li>
-                    </ul>
-                  );
-            },
+      },
+      {
+        Header: "Action",
+        disableFilters: true,
+        filterable: true,
+        accessor: (cellProps: any) => {
+          return (
+            <ul className="hstack gap-2 list-unstyled mb-0">
+              <li>
+                <Link
+                  to="#"
+                  className="badge bg-info-subtle text-info view-item-btn"
+                >
+                  <i
+                    className="ph ph-eye"
+                    style={{
+                      transition: "transform 0.3s ease-in-out",
+                      cursor: "pointer",
+                      fontSize: "1.5em",
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.transform = "scale(1.4)")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.transform = "scale(1)")
+                    }
+                  ></i>
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="#"
+                  className="badge bg-primary-subtle text-primary edit-item-btn"
+                >
+                  <i
+                    className="ph ph-pencil-line"
+                    style={{
+                      transition: "transform 0.3s ease-in-out",
+                      cursor: "pointer",
+                      fontSize: "1.5em",
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.transform = "scale(1.2)")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.transform = "scale(1)")
+                    }
+                  ></i>
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="#"
+                  className="badge bg-danger-subtle text-danger remove-item-btn"
+                >
+                  <i
+                    className="ph ph-trash"
+                    style={{
+                      transition: "transform 0.3s ease-in-out",
+                      cursor: "pointer",
+                      fontSize: "1.5em",
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.transform = "scale(1.2)")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.transform = "scale(1)")
+                    }
+                  ></i>
+                </Link>
+              </li>
+            </ul>
+          );
         },
+      },
     ],
     []
-);
+  );
   return (
     <React.Fragment>
       <div className="page-content">
@@ -272,7 +288,7 @@ const ListEspaceTelechargement = () => {
                         name="civilStatus"
                         id="civilStatus"
                         multiple
-                     
+
                         // required
                       >
                         {/* <option value="">Saisir catégorie</option> */}
@@ -327,17 +343,17 @@ const ListEspaceTelechargement = () => {
                     id="customerTable"
                   >
                     <TableContainer
-                columns={(columns || [])}
-                data={(espaceTelechargement || [])}
-                // isGlobalFilter={false}
-                iscustomPageSize={false}
-                isBordered={false}
-                customPageSize={10}
-                className="custom-header-css table align-middle table-nowrap"
-                tableClass="table-centered align-middle table-nowrap mb-0"
-                theadClass="text-muted table-light"
-                SearchPlaceholder='Search Products...'
-            />
+                      columns={columns || []}
+                      data={espaceTelechargement || []}
+                      // isGlobalFilter={false}
+                      iscustomPageSize={false}
+                      isBordered={false}
+                      customPageSize={10}
+                      className="custom-header-css table align-middle table-nowrap"
+                      tableClass="table-centered align-middle table-nowrap mb-0"
+                      theadClass="text-muted table-light"
+                      SearchPlaceholder="Search Products..."
+                    />
                   </table>
                   <div className="noresult" style={{ display: "none" }}>
                     <div className="text-center py-4">

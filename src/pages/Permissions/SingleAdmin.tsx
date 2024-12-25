@@ -34,7 +34,7 @@
 // }
 
 // const SingleAdmin = () => {
-//   document.title = "Page Admin | Smart University";
+//   document.title = "Page Admin | ENIGA";
 //   const location = useLocation();
 //   const userId = location.state._id;
 //   console.log("userId", userId)
@@ -46,7 +46,6 @@
 //   const [allChecked, setAllChecked] = useState<boolean>(false);
 
 //   const { data: usersResponse, isLoading: isLoadingUsers } = useFetchAllUsersQuery();
-
 
 //   useEffect(() => {
 //     if (permissions) {
@@ -85,7 +84,6 @@
 
 //   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 //     e.preventDefault();
-
 
 //     const permissionIds = Object.keys(checkedState).filter((key) => checkedState[key]);
 //     console.log("permissionIds", permissionIds)
@@ -291,16 +289,20 @@ interface Permission {
 }
 
 const SingleAdmin = () => {
-  document.title = "Page Admin | Smart University";
+  document.title = "Page Admin | ENIGA";
   const location = useLocation();
   const userId = location.state._id;
   console.log("userId", userId);
 
-  const { data: permissions = [], isLoading: isLoadingPermissions } = useFetchUserPermissionsByUserIdQuery({ userId });
+  const { data: permissions = [], isLoading: isLoadingPermissions } =
+    useFetchUserPermissionsByUserIdQuery({ userId });
   console.log("permissions", permissions);
-  const { data: usersResponse, isLoading: isLoadingUsers } = useFetchAllUsersQuery();
+  const { data: usersResponse, isLoading: isLoadingUsers } =
+    useFetchAllUsersQuery();
 
-  const [expandedSections, setExpandedSections] = useState<{ [section: string]: boolean }>({});
+  const [expandedSections, setExpandedSections] = useState<{
+    [section: string]: boolean;
+  }>({});
 
   const toggleSection = (section: string) => {
     setExpandedSections((prevState) => ({
@@ -309,8 +311,12 @@ const SingleAdmin = () => {
     }));
   };
 
-  const groupPermissions = (permissions: Permission[]): { [section: string]: { [sub_section: string]: Permission[] } } => {
-    const grouped: { [section: string]: { [sub_section: string]: Permission[] } } = {};
+  const groupPermissions = (
+    permissions: Permission[]
+  ): { [section: string]: { [sub_section: string]: Permission[] } } => {
+    const grouped: {
+      [section: string]: { [sub_section: string]: Permission[] };
+    } = {};
 
     permissions.forEach((permission) => {
       if (!grouped[permission.section]) {
@@ -329,7 +335,10 @@ const SingleAdmin = () => {
 
   if (isLoadingPermissions || isLoadingUsers) {
     return (
-      <div className="d-flex justify-content-center align-items-center" style={{ height: "100vh" }}>
+      <div
+        className="d-flex justify-content-center align-items-center"
+        style={{ height: "100vh" }}
+      >
         <Spinner animation="border" variant="primary" />
       </div>
     );
@@ -348,21 +357,34 @@ const SingleAdmin = () => {
                 </Card.Header>
                 <Card.Body>
                   <Card className="border-0 shadow-none mb-0">
-                    <Card.Body className="rounded profile-basic" style={{ backgroundImage: `url(${img4})`, backgroundSize: "cover" }}></Card.Body>
+                    <Card.Body
+                      className="rounded profile-basic"
+                      style={{
+                        backgroundImage: `url(${img4})`,
+                        backgroundSize: "cover",
+                      }}
+                    ></Card.Body>
                     <Card.Body>
                       <div className="mt-n5 text-center">
-                        <img src={img1} alt="" className="avatar-lg rounded-circle p-1 bg-body mt-n3" />
+                        <img
+                          src={img1}
+                          alt=""
+                          className="avatar-lg rounded-circle p-1 bg-body mt-n3"
+                        />
                       </div>
                     </Card.Body>
                     <Card.Body className="pt-0 text-center">
                       <h5 className="fs-17">{location.state.name}</h5>
                       <div className="mb-3 text-muted">
-                        <i className="bi bi-geo-alt"></i> {location.state.app_name}
+                        <i className="bi bi-geo-alt"></i>{" "}
+                        {location.state.app_name}
                       </div>
                       <p>{location.state.email}</p>
                       <div className="hstack gap-2 justify-content-center">
                         <Button variant="primary">Invite to Project</Button>
-                        <Button variant='outline-info' className="btn-icon"><i className="bi bi-chat-left-text"></i></Button>
+                        <Button variant="outline-info" className="btn-icon">
+                          <i className="bi bi-chat-left-text"></i>
+                        </Button>
                       </div>
                     </Card.Body>
                   </Card>
@@ -387,28 +409,43 @@ const SingleAdmin = () => {
                   {/* <Button variant="light" onClick={() => toggleSection(section)}>
                     {expandedSections[section] ? "Hide" : "Show"}
                   </Button> */}
-                  <Button variant="light" onClick={() => toggleSection(section)}>
-                    <i className={`bi ${expandedSections[section] ? "bi-caret-up-fill" : "bi-caret-down-fill"}`}></i>
+                  <Button
+                    variant="light"
+                    onClick={() => toggleSection(section)}
+                  >
+                    <i
+                      className={`bi ${
+                        expandedSections[section]
+                          ? "bi-caret-up-fill"
+                          : "bi-caret-down-fill"
+                      }`}
+                    ></i>
                   </Button>
-
                 </Card.Header>
                 {expandedSections[section] && (
                   <Card.Body>
                     <Row>
-                      {Object.keys(groupedPermissions[section]).map((sub_section, index) => (
-                        <Col lg={4} key={index} className="mb-3">
-                          <div className="border p-2 rounded">
-                            <h5 className="mb-2">{sub_section}</h5>
-                            <ul className="list-group">
-                              {groupedPermissions[section][sub_section].map(permission => (
-                                <li key={permission._id} className="border-0 list-group-item mb-0">
-                                  {permission.name}
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        </Col>
-                      ))}
+                      {Object.keys(groupedPermissions[section]).map(
+                        (sub_section, index) => (
+                          <Col lg={4} key={index} className="mb-3">
+                            <div className="border p-2 rounded">
+                              <h5 className="mb-2">{sub_section}</h5>
+                              <ul className="list-group">
+                                {groupedPermissions[section][sub_section].map(
+                                  (permission) => (
+                                    <li
+                                      key={permission._id}
+                                      className="border-0 list-group-item mb-0"
+                                    >
+                                      {permission.name}
+                                    </li>
+                                  )
+                                )}
+                              </ul>
+                            </div>
+                          </Col>
+                        )
+                      )}
                     </Row>
                   </Card.Body>
                 )}
@@ -422,4 +459,3 @@ const SingleAdmin = () => {
 };
 
 export default SingleAdmin;
-

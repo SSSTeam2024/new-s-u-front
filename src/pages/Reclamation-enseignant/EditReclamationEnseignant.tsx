@@ -45,14 +45,15 @@ type UpdateDemandePayload = {
   status: String;
 };
 const EditReclamationEnseignant = () => {
-  document.title = "Modifier Réclamation Etudiant | Smart University";
+  document.title = "Modifier Réclamation Etudiant | ENIGA";
   const location = useLocation();
   console.log("state", location);
   const enseignantId = location.state?.enseignantId?._id!;
   const state = location.state as ReclamationState; // Adjust based on your type
   const [response, setResponse] = useState(location.state?.response || "");
-  console.log("response",location.state.response)
-  const [updateReclamationEnseignant] = useUpdateReclamationEnseignantMutation();
+  console.log("response", location.state.response);
+  const [updateReclamationEnseignant] =
+    useUpdateReclamationEnseignantMutation();
 
   const navigate = useNavigate();
   const Navigate = (enseignantId: any) => {
@@ -122,7 +123,8 @@ const EditReclamationEnseignant = () => {
                         <Image
                           src={`${process.env.REACT_APP_API_URL}/files/enseignantFiles/PhotoProfil/${location.state?.enseignantId?.photo_profil}`}
                           alt=""
-                          className="rounded-circle p-1 bg-body mt-n5" width="150"
+                          className="rounded-circle p-1 bg-body mt-n5"
+                          width="150"
                         />
                       </div>
                     </Card.Body>

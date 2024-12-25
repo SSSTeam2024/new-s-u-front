@@ -16,7 +16,7 @@ interface Section {
   name_section_fr: string;
   name_section_ar: string;
   abreviation: string;
-  departements: string[]
+  departements: string[];
 }
 
 interface FormData {
@@ -60,7 +60,6 @@ const AddClasse = () => {
     useFetchSectionsByNiveauIdQuery(selectedNiveauId ?? "", {
       skip: !selectedNiveauId,
     });
-  console.log("sections", sectionsData);
 
   const [formData, setFormData] = useState<FormData>({
     _id: "",
@@ -141,7 +140,6 @@ const AddClasse = () => {
     }
   };
 
-
   const notify = () => {
     Swal.fire({
       position: "center",
@@ -163,120 +161,144 @@ const AddClasse = () => {
 
   return (
     <React.Fragment>
-    <div className="page-content">
-      <Container fluid={true}>
-        <Row>
-          <Col lg={12}>
-            <Form className="tablelist-form" onSubmit={onSubmitClasse}>
-              <Row>
-                <Col lg={4}>
-                  <div className="mb-3">
-                    <Form.Label htmlFor="nom_classe_fr">Nom Classe (FR)</Form.Label>
-                    <Form.Control
-                      type="text"
-                      id="nom_classe_fr"
-                      placeholder=""
-                      required
-                      onChange={(e) => setFormData({ ...formData, nom_classe_fr: e.target.value })}
-                      value={formData.nom_classe_fr}
-                    />
-                  </div>
-                </Col>
-                <Col lg={4}>
-                  <div className="mb-3">
-                    <Form.Label htmlFor="departement">Departement</Form.Label>
-                    <select
-                      className="form-select text-muted"
-                      name="departement"
-                      id="departement"
-                      onChange={(e) => setFormData({
-                        ...formData,
-                        departement: departements.find(d => d._id === e.target.value) || formData.departement,
-                      })}
-                    >
-                      <option value="">Sélectionner Département</option>
-                      {departements.map((departement) => (
-                        <option key={departement._id} value={departement._id}>
-                          {departement.name_fr}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </Col>
-                <Col lg={4}>
-                  <div className="mb-3">
-                    <Form.Label htmlFor="niveau_classe">Niveau</Form.Label>
-                    <select
-                      className="form-select text-muted"
-                      name="niveau_classe"
-                      id="niveau_classe"
-                      value={formData.niveau_classe._id}
-                      onChange={handleChange}
-                    >
-                      <option value="">Sélectionner Niveau</option>
-                      {niveaux.map((niveau) => (
-                        <option key={niveau._id} value={niveau._id}>
-                          {niveau.name_niveau_fr}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </Col>
-              </Row>
-              <Row>
-                <Col lg={4}>
-                  <div className="mb-3">
-                    <Form.Label htmlFor="section_classe">Section</Form.Label>
-                    <select
-                      className="form-select text-muted"
-                      name="section_classe"
-                      id="section_classe"
-                      value={formData.niveau_classe.sections.map((section) => section._id)}
-                      onChange={(e) => {
-                        const selectedSectionIds = Array.from(
-                          e.target.selectedOptions,
-                          (option) => option.value
-                        );
-                        const selectedSections = (sectionsData && 'sections' in sectionsData && sectionsData.sections) 
-                          ? sectionsData.sections.filter((section) => selectedSectionIds.includes(section._id)) 
-                          : [];
-                        setFormData((prevState) => ({
-                          ...prevState,
-                          niveau_classe: {
-                            ...prevState.niveau_classe,
-                            sections: selectedSections,
-                          },
-                        }));
-                      }}
-                      multiple
-                    >
-                      {(sectionsData && 'sections' in sectionsData && sectionsData.sections) 
-                        ? sectionsData.sections.map((section: Section) => (
-                          <option key={section._id} value={section._id}>
-                            {section.name_section_fr}
+      <div className="page-content">
+        <Container fluid={true}>
+          <Row>
+            <Col lg={12}>
+              <Form className="tablelist-form" onSubmit={onSubmitClasse}>
+                <Row>
+                  <Col lg={4}>
+                    <div className="mb-3">
+                      <Form.Label htmlFor="nom_classe_fr">
+                        Nom Classe (FR)
+                      </Form.Label>
+                      <Form.Control
+                        type="text"
+                        id="nom_classe_fr"
+                        placeholder=""
+                        required
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            nom_classe_fr: e.target.value,
+                          })
+                        }
+                        value={formData.nom_classe_fr}
+                      />
+                    </div>
+                  </Col>
+                  <Col lg={4}>
+                    <div className="mb-3">
+                      <Form.Label htmlFor="departement">Departement</Form.Label>
+                      <select
+                        className="form-select text-muted"
+                        name="departement"
+                        id="departement"
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            departement:
+                              departements.find(
+                                (d) => d._id === e.target.value
+                              ) || formData.departement,
+                          })
+                        }
+                      >
+                        <option value="">Sélectionner Département</option>
+                        {departements.map((departement) => (
+                          <option key={departement._id} value={departement._id}>
+                            {departement.name_fr}
                           </option>
-                        )) 
-                        : null}
-                    </select>
-                  </div>
-                </Col>
-              </Row>
+                        ))}
+                      </select>
+                    </div>
+                  </Col>
+                  <Col lg={4}>
+                    <div className="mb-3">
+                      <Form.Label htmlFor="niveau_classe">Niveau</Form.Label>
+                      <select
+                        className="form-select text-muted"
+                        name="niveau_classe"
+                        id="niveau_classe"
+                        value={formData.niveau_classe._id}
+                        onChange={handleChange}
+                      >
+                        <option value="">Sélectionner Niveau</option>
+                        {niveaux.map((niveau) => (
+                          <option key={niveau._id} value={niveau._id}>
+                            {niveau.name_niveau_fr}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col lg={4}>
+                    <div className="mb-3">
+                      <Form.Label htmlFor="section_classe">Section</Form.Label>
+                      <select
+                        className="form-select text-muted"
+                        name="section_classe"
+                        id="section_classe"
+                        value={formData.niveau_classe.sections.map(
+                          (section) => section._id
+                        )}
+                        onChange={(e) => {
+                          const selectedSectionIds = Array.from(
+                            e.target.selectedOptions,
+                            (option) => option.value
+                          );
+                          const selectedSections =
+                            sectionsData &&
+                            "sections" in sectionsData &&
+                            sectionsData.sections
+                              ? sectionsData.sections.filter((section) =>
+                                  selectedSectionIds.includes(section._id)
+                                )
+                              : [];
+                          setFormData((prevState) => ({
+                            ...prevState,
+                            niveau_classe: {
+                              ...prevState.niveau_classe,
+                              sections: selectedSections,
+                            },
+                          }));
+                        }}
+                        multiple
+                      >
+                        {sectionsData &&
+                        "sections" in sectionsData &&
+                        sectionsData.sections
+                          ? sectionsData.sections.map((section: Section) => (
+                              <option key={section._id} value={section._id}>
+                                {section.name_section_fr}
+                              </option>
+                            ))
+                          : null}
+                      </select>
+                    </div>
+                  </Col>
+                </Row>
 
-              <div className="modal-footer">
-                <div className="hstack gap-2 justify-content-end">
-                  <Button className="btn-ghost-danger" onClick={tog_retourParametres}>
-                    Retour
-                  </Button>
-                  <Button variant="success" id="add-btn" type="submit">
-                    Ajouter
-                  </Button>
+                <div className="modal-footer">
+                  <div className="hstack gap-2 justify-content-end">
+                    <Button
+                      className="btn-ghost-danger"
+                      onClick={tog_retourParametres}
+                    >
+                      Retour
+                    </Button>
+                    <Button variant="success" id="add-btn" type="submit">
+                      Ajouter
+                    </Button>
+                  </div>
                 </div>
-              </div>
-            </Form>
-          </Col>
-        </Row>
-      </Container>
-    </div>
+              </Form>
+            </Col>
+          </Row>
+        </Container>
+      </div>
     </React.Fragment>
   );
 };

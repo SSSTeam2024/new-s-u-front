@@ -21,7 +21,7 @@ import {
 } from "features/section/section";
 
 const ListSections = () => {
-  document.title = "Liste des sections | Smart University";
+  document.title = "Liste des sections | ENIGA";
 
   const navigate = useNavigate();
 
@@ -101,7 +101,7 @@ const ListSections = () => {
         },
         id: "#",
       },
-     
+
       {
         Header: "Nom Section (FR)",
         accessor: "name_section_fr",

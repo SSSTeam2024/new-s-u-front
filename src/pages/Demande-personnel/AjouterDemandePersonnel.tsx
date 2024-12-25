@@ -34,7 +34,7 @@ import { useSelector } from "react-redux";
 import { selectCurrentUser } from "features/account/authSlice";
 
 const AjouterDemandePersonnel = () => {
-  document.title = "Ajouter Demande Personnel | Smart University";
+  document.title = "Ajouter Demande Personnel | ENIGA";
   const navigate = useNavigate();
   const user = useSelector((state: RootState) => selectCurrentUser(state));
   const [addDemandePersonnel] = useAddDemandePersonnelMutation();

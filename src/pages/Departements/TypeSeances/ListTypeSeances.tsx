@@ -21,7 +21,7 @@ import {
 } from "features/typeSeance/typeSeance";
 
 const ListTypeSeances = () => {
-  document.title = "Liste Types Séances | Smart University";
+  document.title = "Liste Types Séances | ENIGA";
 
   const navigate = useNavigate();
 

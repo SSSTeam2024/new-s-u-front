@@ -10,7 +10,7 @@ import Breadcrumb from "Common/BreadCrumb";
 import { useParams } from "react-router-dom";
 
 const EditAvisPersonnel = () => {
-  document.title = "Edit Avis Personnel | Smart University";
+  document.title = "Edit Avis Personnel | ENIGA";
 
   //   const { id } = useParams();
   //   const dispatch = useDispatch();

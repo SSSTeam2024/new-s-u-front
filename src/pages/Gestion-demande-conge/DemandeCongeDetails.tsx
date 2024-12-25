@@ -12,7 +12,6 @@ const DemandeCongeDetails: React.FC = () => {
   document.title = "Détails de demande de Congé | Smart Institute";
   const location = useLocation();
   const demandeConge = location.state;
-  console.log("demandeConge", demandeConge);
 
   const user = useSelector((state: RootState) => selectCurrentUser(state));
 

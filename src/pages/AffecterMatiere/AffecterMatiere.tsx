@@ -21,12 +21,11 @@ interface MatiereOption {
 }
 
 const AffecterMatiere = () => {
-  document.title = "Affecter matiére aux groupes/classes | Smart University";
+  document.title = "Affecter matiére aux groupes/classes | ENIGA";
 
   const [selectedMatieres, setSelectedMatieres] = useState<Matiere[]>([]);
   const navigate = useNavigate();
   const { data: allMatieres = [], error, refetch } = useFetchMatiereQuery();
-  console.log("allMatieres", allMatieres);
   const [
     assignMatiereToClasse,
     { isLoading: isAssigningMatiere, isError: assignMatiereError },
@@ -75,11 +74,7 @@ const AffecterMatiere = () => {
 
   const handleDeleteClick = async (matiereId: string) => {
     try {
-      console.log("Deleting matiere with ID:", matiereId);
-
       await deleteAssignedMatiereFromClasse({ classeId, matiereId }).unwrap();
-
-      console.log("Matiere deleted successfully.");
 
       setSelectedMatieres((prevMatieres) =>
         prevMatieres.filter((m) => m._id !== matiereId)
@@ -89,9 +84,7 @@ const AffecterMatiere = () => {
     }
   };
 
-  useEffect(() => {
-    console.log("Selected matieres after deletion:", selectedMatieres);
-  }, [selectedMatieres]);
+  useEffect(() => {}, [selectedMatieres]);
 
   const handleSubmit = async () => {
     try {

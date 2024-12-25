@@ -22,7 +22,7 @@ interface OptionType {
 }
 
 const AjouterSoldeConge = () => {
-  document.title = "Ajouter Demande de Congé | Smart University";
+  document.title = "Ajouter Demande de Congé | ENIGA";
 
   const [personnell, setPersonnel] = useState<Personnel | null>(null);
   const [leaveType, setLeaveType] = useState<string>("");

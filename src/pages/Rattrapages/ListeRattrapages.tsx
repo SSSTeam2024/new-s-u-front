@@ -25,7 +25,7 @@ import { format } from "date-fns";
 import "./style.css";
 
 const ListeRattrapages = () => {
-  document.title = "Liste des rattrapages | Smart University";
+  document.title = "Liste des rattrapages | ENIGA";
 
   const navigate = useNavigate();
   function tog_AddRattrapage() {

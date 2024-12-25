@@ -19,26 +19,22 @@ import img1 from "assets/images/users/avatar-1.jpg";
 import { useFetchReclamationsEnseignantQuery } from "features/reclamationEnseignant/reclamationEnseignantSlice";
 
 const ReclamationEnseignantTable = () => {
-  document.title = "Table Reclamation Enseignant | Smart University";
+  document.title = "Table Reclamation Enseignant | ENIGA";
 
   const location = useLocation();
   const EnseignantDetails = location.state;
   const idEnseignant = EnseignantDetails?._id;
-  console.log("id student", idEnseignant);
 
   const {
     data: reclamations,
     error,
     isLoading,
   } = useFetchReclamationsEnseignantQuery();
-  console.log("reclamationenseignant", reclamations);
   const filteredReclamation = reclamations?.filter(
     (reclamation) =>
       (reclamation.enseignantId as unknown as { _id: string })._id ===
       idEnseignant
   );
-
-  console.log("filtered demandes", filteredReclamation);
 
   const [modal_AddUserModals, setmodal_AddUserModals] =
     useState<boolean>(false);

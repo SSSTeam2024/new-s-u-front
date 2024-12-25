@@ -1,20 +1,17 @@
 import React, { useMemo, useState } from "react";
-import {
-  Button,
-  Card,
-  Col,
-  Container,
-  Row,
-} from "react-bootstrap";
+import { Button, Card, Col, Container, Row } from "react-bootstrap";
 import Breadcrumb from "Common/BreadCrumb";
 import { Link, useNavigate } from "react-router-dom";
 import TableContainer from "Common/TableContainer";
 import Swal from "sweetalert2";
-import { Niveau, useDeleteNiveauMutation, useFetchNiveauxQuery } from "features/niveau/niveau";
-
+import {
+  Niveau,
+  useDeleteNiveauMutation,
+  useFetchNiveauxQuery,
+} from "features/niveau/niveau";
 
 const ListNiveau = () => {
-  document.title = "Liste des niveaux | Smart University";
+  document.title = "Liste des niveaux | ENIGA";
 
   const navigate = useNavigate();
 
@@ -67,104 +64,125 @@ const ListNiveau = () => {
   };
   const columns = useMemo(
     () => [
-        {
-            Header: (<div className="form-check"> <input className="form-check-input" type="checkbox" id="checkAll" value="option" /> </div>),
-            Cell: (cellProps: any) => {
-                return (<div className="form-check"> <input className="form-check-input" type="checkbox" name="chk_child" defaultValue="option1" /> </div>);
-            },
-            id: '#',
+      {
+        Header: (
+          <div className="form-check">
+            {" "}
+            <input
+              className="form-check-input"
+              type="checkbox"
+              id="checkAll"
+              value="option"
+            />{" "}
+          </div>
+        ),
+        Cell: (cellProps: any) => {
+          return (
+            <div className="form-check">
+              {" "}
+              <input
+                className="form-check-input"
+                type="checkbox"
+                name="chk_child"
+                defaultValue="option1"
+              />{" "}
+            </div>
+          );
         },
-      
-        {
-            Header: "Niveau Classe",
-            accessor: "name_niveau_fr",
-            disableFilters: true,
-            filterable: true,
+        id: "#",
+      },
+
+      {
+        Header: "Niveau Classe",
+        accessor: "name_niveau_fr",
+        disableFilters: true,
+        filterable: true,
+      },
+
+      {
+        Header: "المستوى التعليمي",
+        accessor: "name_niveau_ar",
+        disableFilters: true,
+        filterable: true,
+      },
+      {
+        Header: "Abréviation",
+        accessor: "abreviation",
+        disableFilters: true,
+        filterable: true,
+      },
+      {
+        Header: "Sections",
+        accessor: (row: any) => row?.sections?.length! || "",
+        disableFilters: true,
+        filterable: true,
+      },
+      {
+        Header: "Action",
+        disableFilters: true,
+        filterable: true,
+        accessor: (niveau: Niveau) => {
+          return (
+            <ul className="hstack gap-2 list-unstyled mb-0">
+              <li>
+                <Link
+                  to="/departement/gestion-classes/edit-niveau"
+                  state={niveau}
+                  className="badge bg-primary-subtle text-primary edit-item-btn"
+                >
+                  <i
+                    className="ph ph-pencil-line"
+                    style={{
+                      transition: "transform 0.3s ease-in-out",
+                      cursor: "pointer",
+                      fontSize: "1.5em",
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.transform = "scale(1.2)")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.transform = "scale(1)")
+                    }
+                  ></i>
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="#"
+                  className="badge bg-danger-subtle text-danger remove-item-btn"
+                >
+                  <i
+                    className="ph ph-trash"
+                    style={{
+                      transition: "transform 0.3s ease-in-out",
+                      cursor: "pointer",
+                      fontSize: "1.5em",
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.transform = "scale(1.2)")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.transform = "scale(1)")
+                    }
+                    onClick={() => AlertDelete(niveau?._id!)}
+                  ></i>
+                </Link>
+              </li>
+            </ul>
+          );
         },
-       
-        {
-            Header: "المستوى التعليمي",
-            accessor: "name_niveau_ar",
-            disableFilters: true,
-            filterable: true,
-        },
-        {
-            Header: "Abréviation",
-            accessor: "abreviation",
-            disableFilters: true,
-            filterable: true,
-        },
-        {
-          Header: "Sections",
-          accessor: (row: any) => row?.sections?.length! || "",
-          disableFilters: true,
-          filterable: true,
-        },
-        {
-            Header: "Action",
-            disableFilters: true,
-            filterable: true,
-            accessor: (niveau: Niveau) => {
-                return (
-                    <ul className="hstack gap-2 list-unstyled mb-0">
-                      
-                      <li>
-                        <Link
-                          to="/departement/gestion-classes/edit-niveau"
-                          state={niveau}
-                          className="badge bg-primary-subtle text-primary edit-item-btn"
-                    
-                        >
-                          <i
-                            className="ph ph-pencil-line"
-                            style={{
-                              transition: "transform 0.3s ease-in-out",
-                              cursor: "pointer",
-                              fontSize: "1.5em",
-                            }}
-                            onMouseEnter={(e) =>
-                              (e.currentTarget.style.transform = "scale(1.2)")
-                            }
-                            onMouseLeave={(e) =>
-                              (e.currentTarget.style.transform = "scale(1)")
-                            }
-                          ></i>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          to="#"
-                          className="badge bg-danger-subtle text-danger remove-item-btn"
-                        >
-                          <i
-                            className="ph ph-trash"
-                            style={{
-                              transition: "transform 0.3s ease-in-out",
-                              cursor: "pointer",
-                              fontSize: "1.5em",
-                            }}
-                            onMouseEnter={(e) =>
-                              (e.currentTarget.style.transform = "scale(1.2)")
-                            }
-                            onMouseLeave={(e) =>
-                              (e.currentTarget.style.transform = "scale(1)")
-                            }
-                            onClick={() => AlertDelete(niveau?._id!)}
-                          ></i>
-                        </Link>
-                      </li>
-                    </ul>
-                  );
-            },
-        },
+      },
     ],
     []
-);
+  );
   return (
     <React.Fragment>
       <div className="page-content">
         <Container fluid={true}>
-          <Breadcrumb title="Gestion des départements" pageTitle="Liste des niveaux" />
+          <Breadcrumb
+            title="Gestion des départements"
+            pageTitle="Liste des niveaux"
+          />
 
           <Row id="sellersList">
             <Col lg={12}>
@@ -202,7 +220,6 @@ const ListNiveau = () => {
                         >
                           Ajouter niveau
                         </Button>
-                      
                       </div>
                     </Col>
                   </Row>
@@ -291,17 +308,17 @@ const ListNiveau = () => {
                     id="customerTable"
                   >
                     <TableContainer
-                columns={(columns || [])}
-                data={(data || [])}
-                // isGlobalFilter={false}
-                iscustomPageSize={false}
-                isBordered={false}
-                customPageSize={10}
-                className="custom-header-css table align-middle table-nowrap"
-                tableClass="table-centered align-middle table-nowrap mb-0"
-                theadClass="text-muted table-light"
-                SearchPlaceholder='Search Products...'
-            />
+                      columns={columns || []}
+                      data={data || []}
+                      // isGlobalFilter={false}
+                      iscustomPageSize={false}
+                      isBordered={false}
+                      customPageSize={10}
+                      className="custom-header-css table align-middle table-nowrap"
+                      tableClass="table-centered align-middle table-nowrap mb-0"
+                      theadClass="text-muted table-light"
+                      SearchPlaceholder="Search Products..."
+                    />
                   </table>
                   <div className="noresult" style={{ display: "none" }}>
                     <div className="text-center py-4">

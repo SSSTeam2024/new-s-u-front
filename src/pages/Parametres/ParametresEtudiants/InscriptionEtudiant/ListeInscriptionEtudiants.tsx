@@ -1,26 +1,23 @@
 import React, { useMemo, useState } from "react";
-import {
-  Button,
-  Card,
-  Col,
-  Container,
-  Row,
-} from "react-bootstrap";
+import { Button, Card, Col, Container, Row } from "react-bootstrap";
 import Breadcrumb from "Common/BreadCrumb";
 import { Link, useNavigate } from "react-router-dom";
 import TableContainer from "Common/TableContainer";
 import Swal from "sweetalert2";
-import { TypeInscriptionEtudiant,  useDeleteTypeInscriptionEtudiantMutation, useFetchTypeInscriptionsEtudiantQuery } from "features/typeInscriptionEtudiant/typeInscriptionEtudiant";
-import { actionAuthorization } from 'utils/pathVerification';
-import { RootState } from 'app/store';
-import { useSelector } from 'react-redux';
-import { selectCurrentUser } from 'features/account/authSlice'; 
+import {
+  TypeInscriptionEtudiant,
+  useDeleteTypeInscriptionEtudiantMutation,
+  useFetchTypeInscriptionsEtudiantQuery,
+} from "features/typeInscriptionEtudiant/typeInscriptionEtudiant";
+import { actionAuthorization } from "utils/pathVerification";
+import { RootState } from "app/store";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "features/account/authSlice";
 
 const ListeInscriptionEtudiants = () => {
-  document.title ="Liste inscriptions des étudiants | Smart University";
+  document.title = "Liste inscriptions des étudiants | ENIGA";
 
-    const user = useSelector((state: RootState) => selectCurrentUser(state));
-
+  const user = useSelector((state: RootState) => selectCurrentUser(state));
 
   const navigate = useNavigate();
 
@@ -34,7 +31,8 @@ const ListeInscriptionEtudiants = () => {
     navigate("/parametre-etudiant/inscription/add-inscription-etudiant");
   }
   const { data = [] } = useFetchTypeInscriptionsEtudiantQuery();
-  const [deleteTypeInscriptionEtudiant] = useDeleteTypeInscriptionEtudiantMutation();
+  const [deleteTypeInscriptionEtudiant] =
+    useDeleteTypeInscriptionEtudiantMutation();
 
   const swalWithBootstrapButtons = Swal.mixin({
     customClass: {
@@ -44,137 +42,165 @@ const ListeInscriptionEtudiants = () => {
     buttonsStyling: false,
   });
   const AlertDelete = async (_id: string) => {
-  
     swalWithBootstrapButtons
-    .fire({
-      title: "Êtes-vous sûr?",
-      text: "Vous ne pourrez pas revenir en arrière!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Oui, supprimez-le!",
-      cancelButtonText: "Non, annuler!",
-      reverseButtons: true,
-    })
-    .then((result) => {
-      if (result.isConfirmed) {
-        deleteTypeInscriptionEtudiant(_id);
-        swalWithBootstrapButtons.fire(
-          "Supprimé!",
-          "Type inscription étudiant a été supprimé.",
-          "success"
-        );
-      } else if (result.dismiss === Swal.DismissReason.cancel) {
-        swalWithBootstrapButtons.fire(
-          "Annulé",
-          "Type inscription étudiant est en sécurité :)",
-          "error"
-        );
-      }
-    });
-  }
-
-
+      .fire({
+        title: "Êtes-vous sûr?",
+        text: "Vous ne pourrez pas revenir en arrière!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Oui, supprimez-le!",
+        cancelButtonText: "Non, annuler!",
+        reverseButtons: true,
+      })
+      .then((result) => {
+        if (result.isConfirmed) {
+          deleteTypeInscriptionEtudiant(_id);
+          swalWithBootstrapButtons.fire(
+            "Supprimé!",
+            "Type inscription étudiant a été supprimé.",
+            "success"
+          );
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+          swalWithBootstrapButtons.fire(
+            "Annulé",
+            "Type inscription étudiant est en sécurité :)",
+            "error"
+          );
+        }
+      });
+  };
 
   const columns = useMemo(
     () => [
-        {
-            Header: (<div className="form-check"> <input className="form-check-input" type="checkbox" id="checkAll" value="option" /> </div>),
-            Cell: (cellProps: any) => {
-                return (<div className="form-check"> <input className="form-check-input" type="checkbox" name="chk_child" defaultValue="option1" /> </div>);
-            },
-            id: '#',
+      {
+        Header: (
+          <div className="form-check">
+            {" "}
+            <input
+              className="form-check-input"
+              type="checkbox"
+              id="checkAll"
+              value="option"
+            />{" "}
+          </div>
+        ),
+        Cell: (cellProps: any) => {
+          return (
+            <div className="form-check">
+              {" "}
+              <input
+                className="form-check-input"
+                type="checkbox"
+                name="chk_child"
+                defaultValue="option1"
+              />{" "}
+            </div>
+          );
         },
+        id: "#",
+      },
 
-        {
-            Header: "Value",
-            accessor: "value_type_inscription",
-            disableFilters: true,
-            filterable: true,
-        },
-       
-        {
-            Header: "Inscription Etudiant",
-            accessor: "type_fr",
-            disableFilters: true,
-            filterable: true,
-        },
-        {
-            Header: "تسجيل الطالب",
-            accessor: "type_ar",
-            disableFilters: true,
-            filterable: true,
-        },
-        
-        {
-            Header: "Action",
-            disableFilters: true,
-            filterable: true,
-            accessor: (typeInscriptionEtudiant: TypeInscriptionEtudiant) => {
-                return (
-                    <ul className="hstack gap-2 list-unstyled mb-0">
-    {actionAuthorization("/parametre-etudiant/inscription/edit-type-inscription-etudiant",user?.permissions!)?
+      {
+        Header: "Value",
+        accessor: "value_type_inscription",
+        disableFilters: true,
+        filterable: true,
+      },
 
-                      <li>
-                        <Link
-                          to="/parametre-etudiant/inscription/edit-type-inscription-etudiant"
-                          state={typeInscriptionEtudiant}
-                          className="badge bg-primary-subtle text-primary edit-item-btn"
-                    
-                        >
-                          <i
-                            className="ph ph-pencil-line"
-                            style={{
-                              transition: "transform 0.3s ease-in-out",
-                              cursor: "pointer",
-                              fontSize: "1.5em",
-                            }}
-                            onMouseEnter={(e) =>
-                              (e.currentTarget.style.transform = "scale(1.2)")
-                            }
-                            onMouseLeave={(e) =>
-                              (e.currentTarget.style.transform = "scale(1)")
-                            }
-                          ></i>
-                        </Link>
-                      </li> :<></>}
-                      {actionAuthorization("/parametre-etudiant/inscription/supprmier-type-inscription-etudiant",user?.permissions!)?
+      {
+        Header: "Inscription Etudiant",
+        accessor: "type_fr",
+        disableFilters: true,
+        filterable: true,
+      },
+      {
+        Header: "تسجيل الطالب",
+        accessor: "type_ar",
+        disableFilters: true,
+        filterable: true,
+      },
 
-                      <li>
-                        <Link
-                          to="#"
-                          className="badge bg-danger-subtle text-danger remove-item-btn"
-                        >
-                          <i
-                            className="ph ph-trash"
-                            style={{
-                              transition: "transform 0.3s ease-in-out",
-                              cursor: "pointer",
-                              fontSize: "1.5em",
-                            }}
-                            onMouseEnter={(e) =>
-                              (e.currentTarget.style.transform = "scale(1.2)")
-                            }
-                            onMouseLeave={(e) =>
-                              (e.currentTarget.style.transform = "scale(1)")
-                            }
-                            onClick={() => AlertDelete(typeInscriptionEtudiant?._id!)}
-                            
-                          ></i>
-                        </Link>
-                      </li> : <></>}
-                    </ul>
-                  );
-            },
+      {
+        Header: "Action",
+        disableFilters: true,
+        filterable: true,
+        accessor: (typeInscriptionEtudiant: TypeInscriptionEtudiant) => {
+          return (
+            <ul className="hstack gap-2 list-unstyled mb-0">
+              {actionAuthorization(
+                "/parametre-etudiant/inscription/edit-type-inscription-etudiant",
+                user?.permissions!
+              ) ? (
+                <li>
+                  <Link
+                    to="/parametre-etudiant/inscription/edit-type-inscription-etudiant"
+                    state={typeInscriptionEtudiant}
+                    className="badge bg-primary-subtle text-primary edit-item-btn"
+                  >
+                    <i
+                      className="ph ph-pencil-line"
+                      style={{
+                        transition: "transform 0.3s ease-in-out",
+                        cursor: "pointer",
+                        fontSize: "1.5em",
+                      }}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.transform = "scale(1.2)")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.transform = "scale(1)")
+                      }
+                    ></i>
+                  </Link>
+                </li>
+              ) : (
+                <></>
+              )}
+              {actionAuthorization(
+                "/parametre-etudiant/inscription/supprmier-type-inscription-etudiant",
+                user?.permissions!
+              ) ? (
+                <li>
+                  <Link
+                    to="#"
+                    className="badge bg-danger-subtle text-danger remove-item-btn"
+                  >
+                    <i
+                      className="ph ph-trash"
+                      style={{
+                        transition: "transform 0.3s ease-in-out",
+                        cursor: "pointer",
+                        fontSize: "1.5em",
+                      }}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.transform = "scale(1.2)")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.transform = "scale(1)")
+                      }
+                      onClick={() => AlertDelete(typeInscriptionEtudiant?._id!)}
+                    ></i>
+                  </Link>
+                </li>
+              ) : (
+                <></>
+              )}
+            </ul>
+          );
         },
+      },
     ],
     []
-);
+  );
   return (
     <React.Fragment>
       <div className="page-content">
         <Container fluid={true}>
-          <Breadcrumb title="Paramètres des étudiants" pageTitle="Liste types inscriptions des étudiants" />
-         
+          <Breadcrumb
+            title="Paramètres des étudiants"
+            pageTitle="Liste types inscriptions des étudiants"
+          />
+
           <Row id="sellersList">
             <Col lg={12}>
               <Card>
@@ -202,18 +228,23 @@ const ListeInscriptionEtudiants = () => {
                         <option value="Inactive">Desactivé</option>
                       </select>
                     </Col>
-                  
+
                     <Col className="col-lg-auto ms-auto">
                       <div className="hstack gap-2">
-                      {actionAuthorization("/parametre-etudiant/inscription/add-inscription-etudiant",user?.permissions!)?
-                        <Button
-                          variant="primary"
-                          className="add-btn"
-                          onClick={() => tog_AddTypeInscriptionEtudiant()}
-                        >
-                          Ajouter type inscription étudiant
-                        </Button> :<></>}
-                      
+                        {actionAuthorization(
+                          "/parametre-etudiant/inscription/add-inscription-etudiant",
+                          user?.permissions!
+                        ) ? (
+                          <Button
+                            variant="primary"
+                            className="add-btn"
+                            onClick={() => tog_AddTypeInscriptionEtudiant()}
+                          >
+                            Ajouter type inscription étudiant
+                          </Button>
+                        ) : (
+                          <></>
+                        )}
                       </div>
                     </Col>
                   </Row>
@@ -307,18 +338,18 @@ const ListeInscriptionEtudiants = () => {
                     className="table align-middle table-nowrap"
                     id="customerTable"
                   >
-                     <TableContainer
-                columns={(columns || [])}
-                data={(data || [])}
-                // isGlobalFilter={false}
-                iscustomPageSize={false}
-                isBordered={false}
-                customPageSize={10}
-                className="custom-header-css table align-middle table-nowrap"
-                tableClass="table-centered align-middle table-nowrap mb-0"
-                theadClass="text-muted table-light"
-                SearchPlaceholder='Search Products...'
-            />
+                    <TableContainer
+                      columns={columns || []}
+                      data={data || []}
+                      // isGlobalFilter={false}
+                      iscustomPageSize={false}
+                      isBordered={false}
+                      customPageSize={10}
+                      className="custom-header-css table align-middle table-nowrap"
+                      tableClass="table-centered align-middle table-nowrap mb-0"
+                      theadClass="text-muted table-light"
+                      SearchPlaceholder="Search Products..."
+                    />
                   </table>
                   <div className="noresult" style={{ display: "none" }}>
                     <div className="text-center py-4">
