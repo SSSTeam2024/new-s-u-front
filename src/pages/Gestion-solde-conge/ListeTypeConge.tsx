@@ -65,11 +65,11 @@ const ListeLeaveType = () => {
           <Col>
             <h2>Liste des Types de Congé</h2>
           </Col>
-          <Col className="text-end">
+          {/* <Col className="text-end">
             <Button onClick={handleNavigate} variant="primary">
               Ajouter type congé
             </Button>
-          </Col>
+          </Col> */}
         </Row>
 
         <Row>

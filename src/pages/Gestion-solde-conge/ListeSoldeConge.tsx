@@ -160,7 +160,7 @@ const ListeSoldeConge = () => {
               ) ? (
                 <li>
                   <Link
-                    to="/demandes-etudiant/Single-demande-etudiant"
+                    to="#"
                     state={cellProps}
                     className="badge bg-info-subtle text-info view-item-btn"
                     data-bs-toggle="offcanvas"
@@ -191,7 +191,7 @@ const ListeSoldeConge = () => {
               ) ? (
                 <li>
                   <Link
-                    to="/demandes-etudiant/Edit-demande-etudiant"
+                    to="#"
                     className="badge bg-success-subtle text-success edit-item-btn"
                     state={cellProps}
                   >

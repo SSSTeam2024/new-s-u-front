@@ -11,8 +11,8 @@ import { RootState } from 'app/store';
 import { useSelector } from 'react-redux';
 import { selectCurrentUser } from 'features/account/authSlice'; 
 import { actionAuthorization } from 'utils/pathVerification';
-import { useFetchAvisEnseignantQuery, AvisEnseignant } from "features/avisEnseignant/avisEnseignantSlice";
-
+import { useFetchAvisEnseignantQuery, AvisEnseignant, useDeleteAvisEnseignantMutation } from "features/avisEnseignant/avisEnseignantSlice";
+import Swal from "sweetalert2";
 
 const ListeAvisEnseignant = () => {
     document.title = "Avis Enseignant | Smart Institute";
@@ -20,8 +20,9 @@ const ListeAvisEnseignant = () => {
     const user = useSelector((state: RootState) => selectCurrentUser(state));
 
     const { data: avisEnseignant, error, isLoading } = useFetchAvisEnseignantQuery();
-console.log("avisenseignat", avisEnseignant)
 
+const { refetch } = useFetchAvisEnseignantQuery();
+    const [deleteAvisEnseignant] = useDeleteAvisEnseignantMutation();
     const [modal_AddUserModals, setmodal_AddUserModals] = useState<boolean>(false);
     const [isMultiDeleteButton, setIsMultiDeleteButton] = useState<boolean>(false)
  // State for PDF modal
@@ -32,6 +33,29 @@ console.log("avisenseignat", avisEnseignant)
     function tog_AddUserModals() {
         setmodal_AddUserModals(!modal_AddUserModals);
     }
+
+    const handleDeleteAvisEnseignant = async (id: string) => {
+            try {
+              const result = await Swal.fire({
+                title: 'Êtes-vous sûr ?',
+                text: "Vous ne pourrez pas revenir en arrière !",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Oui, supprimer !'
+              });
+        
+              if (result.isConfirmed) {
+                await deleteAvisEnseignant({ _id: id }).unwrap();
+                Swal.fire('Supprimé !', 'L\'avis personnel a été supprimée.', 'success');
+                refetch(); // Recharger les données ou mettre à jour l'UI
+              }
+            } catch (error) {
+              console.error("Erreur lors de la suppression de l'avis personnel :", error);
+              Swal.fire('Erreur !', 'Un problème est survenu lors de la suppression de l\'avis personnel.', 'error');
+            }
+          };
 
     // Checked All
     const checkedAll = useCallback(() => {
@@ -181,6 +205,7 @@ console.log("avisenseignat", avisEnseignant)
                  
                 >
                   <i
+                   onClick={() => handleDeleteAvisEnseignant(cellProps?._id!)}
                     className="ph ph-trash"
                     style={{
                       transition: "transform 0.3s ease-in-out",

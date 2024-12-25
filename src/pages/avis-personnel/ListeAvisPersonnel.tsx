@@ -11,7 +11,8 @@ import { RootState } from 'app/store';
 import { useSelector } from 'react-redux';
 import { selectCurrentUser } from 'features/account/authSlice'; 
 import { actionAuthorization } from 'utils/pathVerification';
-import { useFetchAvisPersonnelQuery, AvisPersonnel } from "features/avisPersonnel/avisPersonnelSlice";
+import { useFetchAvisPersonnelQuery, AvisPersonnel, useDeleteAvisPersonnelMutation } from "features/avisPersonnel/avisPersonnelSlice";
+import Swal from "sweetalert2";
 
 
 const ListeAvisEtudiant = () => {
@@ -21,6 +22,9 @@ const ListeAvisEtudiant = () => {
 
     const { data: avisPersonnel, error, isLoading } = useFetchAvisPersonnelQuery();
 console.log("avisenseignat", avisPersonnel)
+  const { refetch } = useFetchAvisPersonnelQuery();
+    const [deleteAvisPersonnel] = useDeleteAvisPersonnelMutation();
+
 
     const [modal_AddUserModals, setmodal_AddUserModals] = useState<boolean>(false);
     const [isMultiDeleteButton, setIsMultiDeleteButton] = useState<boolean>(false)
@@ -32,6 +36,30 @@ console.log("avisenseignat", avisPersonnel)
     function tog_AddUserModals() {
         setmodal_AddUserModals(!modal_AddUserModals);
     }
+
+
+    const handleDeleteAvisPersonnel = async (id: string) => {
+        try {
+          const result = await Swal.fire({
+            title: 'Êtes-vous sûr ?',
+            text: "Vous ne pourrez pas revenir en arrière !",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Oui, supprimer !'
+          });
+    
+          if (result.isConfirmed) {
+            await deleteAvisPersonnel({ _id: id }).unwrap();
+            Swal.fire('Supprimé !', 'L\'avis personnel a été supprimée.', 'success');
+            refetch(); // Recharger les données ou mettre à jour l'UI
+          }
+        } catch (error) {
+          console.error("Erreur lors de la suppression de l'avis personnel :", error);
+          Swal.fire('Erreur !', 'Un problème est survenu lors de la suppression de l\'avis personnel.', 'error');
+        }
+      };
 
     // Checked All
     const checkedAll = useCallback(() => {
@@ -180,6 +208,7 @@ console.log("avisenseignat", avisPersonnel)
                  
                 >
                   <i
+                  onClick={() => handleDeleteAvisPersonnel(cellProps?._id!)}
                     className="ph ph-trash"
                     style={{
                       transition: "transform 0.3s ease-in-out",

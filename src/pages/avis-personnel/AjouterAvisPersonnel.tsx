@@ -14,7 +14,7 @@ import Dropzone from "react-dropzone";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import Swal from "sweetalert2";
-import { useAddAvisEnseignantMutation, AvisEnseignant } from "features/avisEnseignant/avisEnseignantSlice";
+import { useAddAvisPersonnelMutation, AvisPersonnel } from "features/avisPersonnel/avisPersonnelSlice";
 import { useFetchDepartementsQuery, Departement} from "features/departement/departement"
 import "flatpickr/dist/flatpickr.min.css";
 import Select from "react-select";
@@ -23,19 +23,19 @@ import { useSelector } from 'react-redux';
 import { selectCurrentUser } from 'features/account/authSlice'; 
 
 
-const AjouterAvisEnseignant = () => {
-  document.title = "Ajouter Avis Enseignant | Smart University";
+const AjouterAvisPersonnel = () => {
+  document.title = "Ajouter Avis Personnel | Smart University";
 
   const user = useSelector((state: RootState) => selectCurrentUser(state));
 
   const navigate = useNavigate();
-const [addAvisEnseignant] = useAddAvisEnseignantMutation();
+const [addAvisPersonnel] = useAddAvisPersonnelMutation();
 const { data: departements } = useFetchDepartementsQuery();
 const departement: Departement[] = Array.isArray(departements) ? departements : [];
 
 
 
-const [formData, setFormData] = useState<Partial<AvisEnseignant>>({
+const [formData, setFormData] = useState<Partial<AvisPersonnel>>({
   _id: "",
   title: "",
   description: "",
@@ -82,9 +82,9 @@ const handleDateChange = (selectedDates: Date[]) => {
   }
 };
 
-const onSubmitAvisEnseignant = (e: React.FormEvent<HTMLFormElement>) => {
+const onSubmitAvisPersonnel = (e: React.FormEvent<HTMLFormElement>) => {
   e.preventDefault();
-  addAvisEnseignant(formData).then(() => setFormData(formData));
+  addAvisPersonnel(formData).then(() => setFormData(formData));
   notify();
   navigate("/avis-personnel/liste-avis-personnel");
 };
@@ -177,7 +177,7 @@ const handleDeleteFile = (indexToRemove: number) => {
                   </Card.Header>
                   <Card.Body></Card.Body>
                   <div className="mb-3">
-                    <Form className="tablelist-form"  onSubmit={onSubmitAvisEnseignant}>
+                    <Form className="tablelist-form"  onSubmit={onSubmitAvisPersonnel}>
                       <input type="hidden" id="id-field" value={formData._id} />
                       <Row>
                         <Row>
@@ -381,6 +381,6 @@ const handleDeleteFile = (indexToRemove: number) => {
   );
 };
 
-export default AjouterAvisEnseignant;
+export default AjouterAvisPersonnel;
 
 

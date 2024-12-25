@@ -106,7 +106,7 @@ const SingleDemandeEtudiant = (props: any) => {
           >
             <BodyPDF
               piece_demande={state.state?.title}
-              studentId={state.state?.studentId._id}
+              studentId={state.state?.studentId?._id!}
               enseignantId={state.state?.enseignantId}
               personnelId={state.state?.personnelId}
               raison={state.state?.raison}
