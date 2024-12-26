@@ -179,26 +179,58 @@ import EditProfilEnseignant from "pages/Gestion-enseignant/EditProfilEnseignant"
 import GestionEmploiEnseignant from "pages/Departements/EmploiEnseignant/GestionEmploiEnseignant";
 import TableauChargesHorairesClasses from "pages/Departements/Emploi/TableauChargesHorairesClasses";
 import EditProfilPersonnel from "pages/Gestion-personnel/EditProfilPersonnel";
-import EquilibreHorairesGrade from "pages/Departements/EmploiEnseignant/EquilibreHorairesGrade"
+import EquilibreHorairesGrade from "pages/Departements/EmploiEnseignant/EquilibreHorairesGrade";
 import ListeDossierAdministratifEnseignantsArchives from "pages/Gestion-enseignant/Dossieradministratif/ListeDossierAdministratifEnseignantsArchives";
 import ListeDossiersAdministratifsPersonnelsArchives from "pages/Gestion-personnel/Dossieradministratif/ListeDossiersAdministratifsPersonnelsArchives";
+import AjouterCalendrierExamen from "pages/GestionExamens/AjouterCalendrierExamen";
+import ListCalendrier from "pages/GestionExamens/ListCalendrier";
 const authProtectedRoutes = [
   { path: "/dashboard", component: <Dashboard /> },
 
   //avis etudiant
-  {path: "/avis-etudiant/liste-avis-etudiant",component: <ListeAvisEtudiant />,},
-  {path: "/avis-etudiant/ajouter-avis-etudiant", component: <AjouterAvisEtudiant /> },
-  {path: "/avis-etudiant/single-avis-etudiant",component: <SingleAvisEtudiant />,},
-  { path: "/avis-etudiant/edit-avis-etudiant", component: <EditAvisEtudiant />},
+  {
+    path: "/avis-etudiant/liste-avis-etudiant",
+    component: <ListeAvisEtudiant />,
+  },
+  {
+    path: "/avis-etudiant/ajouter-avis-etudiant",
+    component: <AjouterAvisEtudiant />,
+  },
+  {
+    path: "/avis-etudiant/single-avis-etudiant",
+    component: <SingleAvisEtudiant />,
+  },
+  {
+    path: "/avis-etudiant/edit-avis-etudiant",
+    component: <EditAvisEtudiant />,
+  },
 
   //avis enseignant
-  { path: "/avis-enseignant/liste-avis-enseignant", component: <ListeAvisEnseignant />,},
-  {path: "/avis-enseignant/ajouter-avis-enseignant",component: <AjouterAvisEnseignant />,},
-  {path: "/avis-enseignant/single-avis-enseignant",component: <SingleAvisEnseignant />,},
+  {
+    path: "/avis-enseignant/liste-avis-enseignant",
+    component: <ListeAvisEnseignant />,
+  },
+  {
+    path: "/avis-enseignant/ajouter-avis-enseignant",
+    component: <AjouterAvisEnseignant />,
+  },
+  {
+    path: "/avis-enseignant/single-avis-enseignant",
+    component: <SingleAvisEnseignant />,
+  },
   // avis personnel
-  {path: "/avis-personnel/liste-avis-personnel", component: <ListeAvisPersonnel />, },
-  {path: "/avis-personnel/ajouter-avis-personnel",component: <AjouterAvisPersonnel />, },
-  {path: "/avis-personnel/single-avis-personnel", component: <SingleAvisPersonnel />,},
+  {
+    path: "/avis-personnel/liste-avis-personnel",
+    component: <ListeAvisPersonnel />,
+  },
+  {
+    path: "/avis-personnel/ajouter-avis-personnel",
+    component: <AjouterAvisPersonnel />,
+  },
+  {
+    path: "/avis-personnel/single-avis-personnel",
+    component: <SingleAvisPersonnel />,
+  },
   // actualite
   { path: "/actualite/liste-actualite", component: <ListeActualite /> },
   { path: "/actualite/ajouter-actualite", component: <AjouterActualite /> },
@@ -208,135 +240,423 @@ const authProtectedRoutes = [
   // gestion etudiant
   { path: "/gestion-etudiant/compte-etudiant", component: <MyAccount /> },
   { path: "/gestion-etudiant/liste-etudiants", component: <ListEtudiants /> },
-  { path: "/gestion-etudiant/ajouter-etudiant", component: <AjouterEtudiant />, },
-  { path: "/gestion-etudiant/edit-compte-etudiant", component: <EditProfilEtudiant />,},
+  {
+    path: "/gestion-etudiant/ajouter-etudiant",
+    component: <AjouterEtudiant />,
+  },
+  {
+    path: "/gestion-etudiant/edit-compte-etudiant",
+    component: <EditProfilEtudiant />,
+  },
   //gestion enseignant
-  {path: "/gestion-enseignant/ajouter-enseignant",component: <AjouterEnseignant />,},
-  {path: "/gestion-enseignant/liste-enseignants",component: <ListEnseignants />,},
-  { path: "/gestion-enseignant/compte-enseignant",component: <AccountEnseignant />, },
-  { path: "/gestion-enseignant/edit-compte-enseignant", component: <EditProfilEnseignant />, },
+  {
+    path: "/gestion-enseignant/ajouter-enseignant",
+    component: <AjouterEnseignant />,
+  },
+  {
+    path: "/gestion-enseignant/liste-enseignants",
+    component: <ListEnseignants />,
+  },
+  {
+    path: "/gestion-enseignant/compte-enseignant",
+    component: <AccountEnseignant />,
+  },
+  {
+    path: "/gestion-enseignant/edit-compte-enseignant",
+    component: <EditProfilEnseignant />,
+  },
   // Dossier Administratif Enseignant
-  { path: "/gestion-enseignant/ajouter-dossier-administartif", component: <AddDossieradministratif />,},
-  { path: "/gestion-enseignant/liste-dossier-administartif", component: <ListeDossierAdministratif />, },
-  { path: "/gestion-enseignant/details-dossier-administratif", component: <ViewDossierAdministratif />, },
-  { path: "/gestion-enseignant/edit-dossier-administratif",component: <EditDossierAdministratifEnseignants />,},
-  { path: "/gestion-enseignant/liste-archive-dossier-administratif",component: <ListeDossierAdministratifEnseignantsArchives />,},
+  {
+    path: "/gestion-enseignant/ajouter-dossier-administartif",
+    component: <AddDossieradministratif />,
+  },
+  {
+    path: "/gestion-enseignant/liste-dossier-administartif",
+    component: <ListeDossierAdministratif />,
+  },
+  {
+    path: "/gestion-enseignant/details-dossier-administratif",
+    component: <ViewDossierAdministratif />,
+  },
+  {
+    path: "/gestion-enseignant/edit-dossier-administratif",
+    component: <EditDossierAdministratifEnseignants />,
+  },
+  {
+    path: "/gestion-enseignant/liste-archive-dossier-administratif",
+    component: <ListeDossierAdministratifEnseignantsArchives />,
+  },
   //gestion personnel
-  {path: "/gestion-personnel/ajouter-personnel", component: <AjouterPersonnels />, },
-  {path: "/gestion-personnel/liste-personnels",component: <ListPersonnels />, },
-  {path: "/gestion-personnel/compte-personnel",component: <AccountPersonnel />,},
-  {path: "/gestion-personnel/edit-compte-personnel",component: <EditProfilPersonnel />,},
+  {
+    path: "/gestion-personnel/ajouter-personnel",
+    component: <AjouterPersonnels />,
+  },
+  {
+    path: "/gestion-personnel/liste-personnels",
+    component: <ListPersonnels />,
+  },
+  {
+    path: "/gestion-personnel/compte-personnel",
+    component: <AccountPersonnel />,
+  },
+  {
+    path: "/gestion-personnel/edit-compte-personnel",
+    component: <EditProfilPersonnel />,
+  },
   //Dossier administratif personnel
-  {path: "/gestion-personnel/ajouter-dossier-administartif", component: <AddDossieradministratifPersonnels />, },
-  {path: "/gestion-personnel/liste-dossier-administartif",component: <ListeDossierAdministratifPersonnels />  },
-  {path: "/gestion-personnel/details-dossier-administratif",component: <ViewDossierAdministratifPersonnel />, },
-  {path: "/gestion-personnel/edit-dossier-administratif", component: <EditDossierAdministratifPersonnels />, },
-  {path: "/gestion-personnel/liste-archive-dossier-administratif",component: <ListeDossiersAdministratifsPersonnelsArchives />,},
+  {
+    path: "/gestion-personnel/ajouter-dossier-administartif",
+    component: <AddDossieradministratifPersonnels />,
+  },
+  {
+    path: "/gestion-personnel/liste-dossier-administartif",
+    component: <ListeDossierAdministratifPersonnels />,
+  },
+  {
+    path: "/gestion-personnel/details-dossier-administratif",
+    component: <ViewDossierAdministratifPersonnel />,
+  },
+  {
+    path: "/gestion-personnel/edit-dossier-administratif",
+    component: <EditDossierAdministratifPersonnels />,
+  },
+  {
+    path: "/gestion-personnel/liste-archive-dossier-administratif",
+    component: <ListeDossiersAdministratifsPersonnelsArchives />,
+  },
 
   //demande etudiant
-  { path: "/demandes-etudiant/Liste-demandes-etudiant",component: <ListeDemandeEtudiant />,},
-  {path: "/demandes-etudiant/Single-demande-etudiant",component: <SingleDemandeEtudiant />,},
-  {path: "/demandes-etudiant/Edit-demande-etudiant", component: <EditDemandeEtudiant />, },
-  {path: "/demandes-etudiant/ajouter-demande-etudiant",component: <AjouterDemandeEtudiant />,},
-  { path: "/demandes-etudiant/generer-demande-etudiant", component: <GenerateDemande />},
+  {
+    path: "/demandes-etudiant/Liste-demandes-etudiant",
+    component: <ListeDemandeEtudiant />,
+  },
+  {
+    path: "/demandes-etudiant/Single-demande-etudiant",
+    component: <SingleDemandeEtudiant />,
+  },
+  {
+    path: "/demandes-etudiant/Edit-demande-etudiant",
+    component: <EditDemandeEtudiant />,
+  },
+  {
+    path: "/demandes-etudiant/ajouter-demande-etudiant",
+    component: <AjouterDemandeEtudiant />,
+  },
+  {
+    path: "/demandes-etudiant/generer-demande-etudiant",
+    component: <GenerateDemande />,
+  },
 
   //demande enseignant
-  { path: "/demandes-enseignant/liste-demande-enseignant",component: <ListeDemandeEnseignant />,},
-  {path: "/demandes-enseignant/single-demande-enseignant", component: <SingleDemandeEnseignant />, },
-  {path: "/demandes-enseignant/edit-demande-enseignant",component: <EditDemandeEnseignant />, },
-  {path: "/demandes-enseignant/ajouter-demande-enseignant", component: <AjouterDemandeEnseignant />, },
+  {
+    path: "/demandes-enseignant/liste-demande-enseignant",
+    component: <ListeDemandeEnseignant />,
+  },
+  {
+    path: "/demandes-enseignant/single-demande-enseignant",
+    component: <SingleDemandeEnseignant />,
+  },
+  {
+    path: "/demandes-enseignant/edit-demande-enseignant",
+    component: <EditDemandeEnseignant />,
+  },
+  {
+    path: "/demandes-enseignant/ajouter-demande-enseignant",
+    component: <AjouterDemandeEnseignant />,
+  },
 
   //demande personnel
-  {path: "/demandes-personnel/liste-demande-personnel",component: <ListeDemandePersonnel />, },
-  {path: "/demandes-personnel/single-demande-personnel",component: <SingleDemandePersonnel />, },
-  {path: "/demandes-personnel/edit-demande-personnel",component: <EditDemandePersonnel />, },
-  {path: "/demandes-personnel/ajouter-demande-personnel",component: <AjouterDemandePersonnel />, },
+  {
+    path: "/demandes-personnel/liste-demande-personnel",
+    component: <ListeDemandePersonnel />,
+  },
+  {
+    path: "/demandes-personnel/single-demande-personnel",
+    component: <SingleDemandePersonnel />,
+  },
+  {
+    path: "/demandes-personnel/edit-demande-personnel",
+    component: <EditDemandePersonnel />,
+  },
+  {
+    path: "/demandes-personnel/ajouter-demande-personnel",
+    component: <AjouterDemandePersonnel />,
+  },
 
   //reclamation etudiant
-  { path: "/reclamation-etudiant/liste-reclamation-etudiant",component: <ListeReclamationEtudiant /> },
-  {path: "/reclamation-etudiant/single-reclamation-etudiant",component: <SingleReclamationEtudiant />},
-  { path: "/reclamation-etudiant/edit-reclamation-etudiant", component: <EditReclamationEtudiant />, },
-  {path: "/reclamation-etudiant/ajouter-reclamation-etudiant", component: <AjouterReclamationEtudiant />, },
+  {
+    path: "/reclamation-etudiant/liste-reclamation-etudiant",
+    component: <ListeReclamationEtudiant />,
+  },
+  {
+    path: "/reclamation-etudiant/single-reclamation-etudiant",
+    component: <SingleReclamationEtudiant />,
+  },
+  {
+    path: "/reclamation-etudiant/edit-reclamation-etudiant",
+    component: <EditReclamationEtudiant />,
+  },
+  {
+    path: "/reclamation-etudiant/ajouter-reclamation-etudiant",
+    component: <AjouterReclamationEtudiant />,
+  },
   //reclamation enseignant
-  {path: "/reclamation-enseignant/liste-reclamation-enseignant",component: <ListeReclamationEnseignant />,},
-  {path: "/reclamation-enseignant/single-reclamation-enseignant",component: <SingleReclamationEnseignant />,},
-  {path: "/reclamation-enseignant/edit-reclamation-enseignant",component: <EditReclamationEnseignant />, },
-  {path: "/reclamation-enseignant/ajouter-reclamation-enseignant",component: <AjouterReclamationEnseignant />,},
+  {
+    path: "/reclamation-enseignant/liste-reclamation-enseignant",
+    component: <ListeReclamationEnseignant />,
+  },
+  {
+    path: "/reclamation-enseignant/single-reclamation-enseignant",
+    component: <SingleReclamationEnseignant />,
+  },
+  {
+    path: "/reclamation-enseignant/edit-reclamation-enseignant",
+    component: <EditReclamationEnseignant />,
+  },
+  {
+    path: "/reclamation-enseignant/ajouter-reclamation-enseignant",
+    component: <AjouterReclamationEnseignant />,
+  },
   //reclamation personnel
-  {path: "/reclamation-personnel/liste-reclamation-personnel",component: <ListeReclamationPersonnel />,},
-  { path: "/reclamation-personnel/single-reclamation-personnel", component: <SingleReclamationPersonnel />,},
-  {path: "/reclamation-personnel/edit-reclamation-personnel", component: <EditReclamationPersonnel />,},
-  {path: "/reclamation-personnel/ajouter-reclamation-personnel",component: <AjouterReclamationPersonnel />,},
+  {
+    path: "/reclamation-personnel/liste-reclamation-personnel",
+    component: <ListeReclamationPersonnel />,
+  },
+  {
+    path: "/reclamation-personnel/single-reclamation-personnel",
+    component: <SingleReclamationPersonnel />,
+  },
+  {
+    path: "/reclamation-personnel/edit-reclamation-personnel",
+    component: <EditReclamationPersonnel />,
+  },
+  {
+    path: "/reclamation-personnel/ajouter-reclamation-personnel",
+    component: <AjouterReclamationPersonnel />,
+  },
 
   //parametre Compte  Etudiants (etat et inscription)
-  {path: "/parametre-etudiant/etat/liste-etat-etudiant",component: <ListParametresEtudiants />,},
-  {path: "/parametre-etudiant/etat/ajouter-etat-etudiant",component: <AddEtatEtudiant />,},
-  {path: "/parametre-etudiant/etat/edit-etat-etudiant",component: <EditEtatEtudiant />,},
-  { path: "/parametre-etudiant/inscription/liste-inscription-etudiant",component: <ListeInscriptionEtudiants />,},
-  {path: "/parametre-etudiant/inscription/add-inscription-etudiant",component: <AddTypeInscriptionEtudiant />,},
-  {path: "/parametre-etudiant/inscription/edit-type-inscription-etudiant",component: <EditTypeInscriptionEtudiant />, },
+  {
+    path: "/parametre-etudiant/etat/liste-etat-etudiant",
+    component: <ListParametresEtudiants />,
+  },
+  {
+    path: "/parametre-etudiant/etat/ajouter-etat-etudiant",
+    component: <AddEtatEtudiant />,
+  },
+  {
+    path: "/parametre-etudiant/etat/edit-etat-etudiant",
+    component: <EditEtatEtudiant />,
+  },
+  {
+    path: "/parametre-etudiant/inscription/liste-inscription-etudiant",
+    component: <ListeInscriptionEtudiants />,
+  },
+  {
+    path: "/parametre-etudiant/inscription/add-inscription-etudiant",
+    component: <AddTypeInscriptionEtudiant />,
+  },
+  {
+    path: "/parametre-etudiant/inscription/edit-type-inscription-etudiant",
+    component: <EditTypeInscriptionEtudiant />,
+  },
 
   //parametre Compte Enseignant
-  {path: "/parametre-enseignant/etat/liste-etat-enseignant", component: <ListEtatEnseignants />,},
-  { path: "/parametre-enseignant/etat/ajouter-etat-enseignant", component: <AddEtatEnseignant />,},
-  {path: "/parametre-enseignant/etat/edit-etat-enseignant", component: <EditEtatEnseignant />,},
-  {path: "/parametre-enseignant/grade/liste-grade-enseignant",component: <ListGradeEnseignants />, },
-  { path: "/parametre-enseignant/grade/ajouter-grade-enseignant", component: <AddGradeEnseignant />, },
-  {path: "/parametre-enseignant/grade/edit-grade-enseignant",component: <EditGradeEnseignant />,},
-  { path: "/parametre-enseignant/poste/liste-poste-enseignant", component: <ListePostEnseignants />},
-  {path: "/parametre-enseignant/poste/ajouter-poste-enseignant",component: <AddPosteEnseignant />,},
-  {path: "/parametre-enseignant/poste/edit-poste-enseignant",component: <EditPosteEnseignant /> },
-  {path: "/parametre-enseignant/specialite/liste-specialite-enseignant", component: <ListSpecialiteEnseignants />,},
-  {path: "/parametre-enseignant/specialite/ajouter-specialite-enseignant",component: <AddSpecialiteEnseignant />,},
-  { path: "/parametre-enseignant/specialite/edit-specialite-enseignant", component: <EditSpecialiteEnseignant />, },
+  {
+    path: "/parametre-enseignant/etat/liste-etat-enseignant",
+    component: <ListEtatEnseignants />,
+  },
+  {
+    path: "/parametre-enseignant/etat/ajouter-etat-enseignant",
+    component: <AddEtatEnseignant />,
+  },
+  {
+    path: "/parametre-enseignant/etat/edit-etat-enseignant",
+    component: <EditEtatEnseignant />,
+  },
+  {
+    path: "/parametre-enseignant/grade/liste-grade-enseignant",
+    component: <ListGradeEnseignants />,
+  },
+  {
+    path: "/parametre-enseignant/grade/ajouter-grade-enseignant",
+    component: <AddGradeEnseignant />,
+  },
+  {
+    path: "/parametre-enseignant/grade/edit-grade-enseignant",
+    component: <EditGradeEnseignant />,
+  },
+  {
+    path: "/parametre-enseignant/poste/liste-poste-enseignant",
+    component: <ListePostEnseignants />,
+  },
+  {
+    path: "/parametre-enseignant/poste/ajouter-poste-enseignant",
+    component: <AddPosteEnseignant />,
+  },
+  {
+    path: "/parametre-enseignant/poste/edit-poste-enseignant",
+    component: <EditPosteEnseignant />,
+  },
+  {
+    path: "/parametre-enseignant/specialite/liste-specialite-enseignant",
+    component: <ListSpecialiteEnseignants />,
+  },
+  {
+    path: "/parametre-enseignant/specialite/ajouter-specialite-enseignant",
+    component: <AddSpecialiteEnseignant />,
+  },
+  {
+    path: "/parametre-enseignant/specialite/edit-specialite-enseignant",
+    component: <EditSpecialiteEnseignant />,
+  },
 
   //parametre Compte Personnel
-  {path: "/parametre-personnel/etat/liste-etat-personnel", component: <ListEtatPersonnels />, },
-  {path: "/parametre-personnel/etat/add-etat-personnel", component: <AddEtatPersonnel />,},
-  { path: "/parametre-personnel/etat/edit-etat-personnel", component: <EditEtatPersonnel />, },
-  { path: "/parametre-personnel/grade/liste-grade-personnel", component: <ListGradePersonnels />,},
-  {path: "/parametre-personnel/grade/ajouter-grade-personnel", component: <AddGradePersonnel />, },
-  { path: "/parametre-personnel/grade/edit-grade-personnel", component: <EditGradePersonnel />,},
-  {path: "/parametre-personnel/service/liste-service-personnel",component: <ListServicesPersonnels />,},
-  {path: "/parametre-personnel/service/ajouter-service-personnel", component: <AddServicesPersonnel />, },
-  {path: "/parametre-personnel/service/edit-service-personnel",component: <EditServicesPersonnel />, },
-  {path: "/parametre-personnel/poste/liste-poste-personnel",  component: <ListePostPersonnels />, },
-  {path: "/parametre-personnel/poste/ajouter-poste-personnel", component: <AddPostePersonnel />,},
-  {path: "/parametre-personnel/poste/edit-poste-personnel",component: <EditPostePersonnel />,},
-  {path: "/parametre-personnel/categorie/liste-categorie-personnel",  component: <ListCategoriePersonnels />,},
-  { path: "/parametre-personnel/categorie/ajouter-categorie-personnel", component: <AddCategoriePersonnel />, },
-  {path: "/parametre-personnel/categorie/edit-categorie-personnel", component: <EditCategoriePersonnel />, },
+  {
+    path: "/parametre-personnel/etat/liste-etat-personnel",
+    component: <ListEtatPersonnels />,
+  },
+  {
+    path: "/parametre-personnel/etat/add-etat-personnel",
+    component: <AddEtatPersonnel />,
+  },
+  {
+    path: "/parametre-personnel/etat/edit-etat-personnel",
+    component: <EditEtatPersonnel />,
+  },
+  {
+    path: "/parametre-personnel/grade/liste-grade-personnel",
+    component: <ListGradePersonnels />,
+  },
+  {
+    path: "/parametre-personnel/grade/ajouter-grade-personnel",
+    component: <AddGradePersonnel />,
+  },
+  {
+    path: "/parametre-personnel/grade/edit-grade-personnel",
+    component: <EditGradePersonnel />,
+  },
+  {
+    path: "/parametre-personnel/service/liste-service-personnel",
+    component: <ListServicesPersonnels />,
+  },
+  {
+    path: "/parametre-personnel/service/ajouter-service-personnel",
+    component: <AddServicesPersonnel />,
+  },
+  {
+    path: "/parametre-personnel/service/edit-service-personnel",
+    component: <EditServicesPersonnel />,
+  },
+  {
+    path: "/parametre-personnel/poste/liste-poste-personnel",
+    component: <ListePostPersonnels />,
+  },
+  {
+    path: "/parametre-personnel/poste/ajouter-poste-personnel",
+    component: <AddPostePersonnel />,
+  },
+  {
+    path: "/parametre-personnel/poste/edit-poste-personnel",
+    component: <EditPostePersonnel />,
+  },
+  {
+    path: "/parametre-personnel/categorie/liste-categorie-personnel",
+    component: <ListCategoriePersonnels />,
+  },
+  {
+    path: "/parametre-personnel/categorie/ajouter-categorie-personnel",
+    component: <AddCategoriePersonnel />,
+  },
+  {
+    path: "/parametre-personnel/categorie/edit-categorie-personnel",
+    component: <EditCategoriePersonnel />,
+  },
 
   // Gestion des matieres
-  { path: "/departement/gestion-matieres/liste-matieres", component: <ListMatieres /> },
-  {path: "/departement/gestion-matieres/ajouter-matiere",component: <AddMatiere />,},
-  { path: "/departement/gestion-matieres/edit-matiere", component: <EditMatiere />, },
+  {
+    path: "/departement/gestion-matieres/liste-matieres",
+    component: <ListMatieres />,
+  },
+  {
+    path: "/departement/gestion-matieres/ajouter-matiere",
+    component: <AddMatiere />,
+  },
+  {
+    path: "/departement/gestion-matieres/edit-matiere",
+    component: <EditMatiere />,
+  },
 
   // Gestion des salles
-  {path: "/departement/gestion-salles/liste-salles",component: <ListSalles />,},
-  {path: "/departement/gestion-salles/ajouter-salle",component: <AddSalle />,},
+  {
+    path: "/departement/gestion-salles/liste-salles",
+    component: <ListSalles />,
+  },
+  {
+    path: "/departement/gestion-salles/ajouter-salle",
+    component: <AddSalle />,
+  },
   { path: "/departement/gestion-salles/edit-salle", component: <EditSalle /> },
 
   // Gestion des classes
-  {path: "/departement/gestion-classes/liste-classes",component: <ListClasses />,},
-  {path: "/departement/gestion-classes/ajouter-classe",component: <AddClasse />,},
-  {path: "/departement/gestion-classes/affecter-matiere",component: <AffecterMatiere />, },
-  {path: "/departement/gestion-classes/liste-niveau",component: <ListNiveau />,},
-  {path: "/departement/gestion-classes/ajouter-niveau",component: <AddNiveau />,},
-  {path: "/departement/gestion-classes/edit-niveau",component: <EditNiveau />,},
-  {path: "/departement/gestion-classes/liste-section", component: <ListSections />, },
-  {path: "/departement/gestion-classes/ajouter-section",component: <AddSection />, },
-  {path: "/departement/gestion-classes/edit-section",component: <EditSection />,},
+  {
+    path: "/departement/gestion-classes/liste-classes",
+    component: <ListClasses />,
+  },
+  {
+    path: "/departement/gestion-classes/ajouter-classe",
+    component: <AddClasse />,
+  },
+  {
+    path: "/departement/gestion-classes/affecter-matiere",
+    component: <AffecterMatiere />,
+  },
+  {
+    path: "/departement/gestion-classes/liste-niveau",
+    component: <ListNiveau />,
+  },
+  {
+    path: "/departement/gestion-classes/ajouter-niveau",
+    component: <AddNiveau />,
+  },
+  {
+    path: "/departement/gestion-classes/edit-niveau",
+    component: <EditNiveau />,
+  },
+  {
+    path: "/departement/gestion-classes/liste-section",
+    component: <ListSections />,
+  },
+  {
+    path: "/departement/gestion-classes/ajouter-section",
+    component: <AddSection />,
+  },
+  {
+    path: "/departement/gestion-classes/edit-section",
+    component: <EditSection />,
+  },
 
   // Gestion Type seance
 
-  {path: "/departement/gestion-types-seances/liste-types-seances", component: <ListTypeSeances />,},
+  {
+    path: "/departement/gestion-types-seances/liste-types-seances",
+    component: <ListTypeSeances />,
+  },
   { path: "/parametre/add-type-seance", component: <AddTypeSeance /> },
 
   //Gestion des departements
-  {path: "/departement/gestion-departements/liste-departements",component: <ListDepartement />, },
-  {path: "/departement/gestion-departements/departements/add-departement",component: <AddDepartement />,},
-  {path: "/departement/gestion-departements/departements/edit-departement",component: <EditDepartement />,},
+  {
+    path: "/departement/gestion-departements/liste-departements",
+    component: <ListDepartement />,
+  },
+  {
+    path: "/departement/gestion-departements/departements/add-departement",
+    component: <AddDepartement />,
+  },
+  {
+    path: "/departement/gestion-departements/departements/edit-departement",
+    component: <EditDepartement />,
+  },
 
   //liste lien utils
   { path: "/liens-utils", component: <ListLienUtilst /> },
@@ -361,48 +681,124 @@ const authProtectedRoutes = [
   { path: "/shortCode/liste-short-code", component: <ShortCode /> },
   { path: "/shortCode/ajouter-short-code", component: <NewShortCode /> },
   // variable globale
-  {path: "/variable/ajouter-variables-globales",component: <AjouterVariablesGlobales />,},
+  {
+    path: "/variable/ajouter-variables-globales",
+    component: <AjouterVariablesGlobales />,
+  },
 
   // Papier administratif
-  {path: "/papier-administratif/ajouter-papier",component: <AddPapierAdministratif />,},
-  {path: "/papier-administratif/lister-papier",component: <ListePapierAdministratifs />,},
+  {
+    path: "/papier-administratif/ajouter-papier",
+    component: <AddPapierAdministratif />,
+  },
+  {
+    path: "/papier-administratif/lister-papier",
+    component: <ListePapierAdministratifs />,
+  },
 
   // gestion des Types de congés
   { path: "/type-conge/Liste-type-conge", component: <ListeLeaveType /> },
   { path: "/type-conge/ajouter-type-conge", component: <AjouterLeaveType /> },
-  {path: "/type-conge/edit-annuel-type-conge",component: <EditAnnuelLeaveType />,},
+  {
+    path: "/type-conge/edit-annuel-type-conge",
+    component: <EditAnnuelLeaveType />,
+  },
   // gestion des demandes congés
-  {path: "/demande-conge/ajouter-demande-conge",component: <AjouterDemandeConge />,},
-  {path: "/demande-conge/liste-demande-conge",component: <ListeDemandeConge />,},
-  {path: "/demande-conge/single-demande-conge",component: <DemandeCongeDetails />, },
-  {path: "/demande-conge/edit-demande-conge",component: <EditDemandeConge />,},
+  {
+    path: "/demande-conge/ajouter-demande-conge",
+    component: <AjouterDemandeConge />,
+  },
+  {
+    path: "/demande-conge/liste-demande-conge",
+    component: <ListeDemandeConge />,
+  },
+  {
+    path: "/demande-conge/single-demande-conge",
+    component: <DemandeCongeDetails />,
+  },
+  {
+    path: "/demande-conge/edit-demande-conge",
+    component: <EditDemandeConge />,
+  },
 
   // gestion des soldes congés
-  {path: "/solde-conge/Ajouter-solde-conge",component: <AjouterSoldeConge />,},
+  {
+    path: "/solde-conge/Ajouter-solde-conge",
+    component: <AjouterSoldeConge />,
+  },
   { path: "/solde-conge/liste-solde-conge", component: <ListeSoldeConge /> },
 
   // Gestion  Des fiches des voeux
-  {path: "/gestion-emplois/gestion-fiche-voeux/add-fiche-voeux",component: <AddFicheVoeux />,},
-  {path: "/gestion-emplois/gestion-fiche-voeux/liste-fiche-voeux",component: <ListFicheVoeux />,},
-  {path: "/gestion-emplois/gestion-fiche-voeux/edit-fiche-voeux",component: <EditFicheVoeux />,},
+  {
+    path: "/gestion-emplois/gestion-fiche-voeux/add-fiche-voeux",
+    component: <AddFicheVoeux />,
+  },
+  {
+    path: "/gestion-emplois/gestion-fiche-voeux/liste-fiche-voeux",
+    component: <ListFicheVoeux />,
+  },
+  {
+    path: "/gestion-emplois/gestion-fiche-voeux/edit-fiche-voeux",
+    component: <EditFicheVoeux />,
+  },
 
   // liste des rattrapages
   { path: "/rattrapage/ajouter-rattrapage", component: <AjouterRattrapage /> },
   { path: "/rattrapage/liste-rattrapages", component: <ListeRattrapages /> },
 
+  //! Calendrier Examen
+  {
+    path: "/gestion-examen/ajouter-calendrier-examen",
+    component: <AjouterCalendrierExamen />,
+  },
+  {
+    path: "/gestion-examen/liste-des-calendrier",
+    component: <ListCalendrier />,
+  },
+
   //gestion emploi classes periods
-  {path: "/gestion-emplois/emploi-classe/liste-emplois",component: <ListeEmploisClasse /> }, // liste classe
-  {path: "/gestion-emplois/emploi-classe/single-emplois", component: <SingleEmploiClasse />, }, //view
-  {path: "/gestion-emplois/emploi-classe/liste-seance",component: <GestionSeances />, }, //view tableau des seance
-  {path: "/gestion-emplois/emploi-classe/periodes-classes", component: <ListClassPeriods />,}, // creeer periode d emploi
-  {path: "/gestion-emplois/emploi-classe/tableau-des-charges-horaires-classes",component: <TableauChargesHorairesClasses />, },
+  {
+    path: "/gestion-emplois/emploi-classe/liste-emplois",
+    component: <ListeEmploisClasse />,
+  }, // liste classe
+  {
+    path: "/gestion-emplois/emploi-classe/single-emplois",
+    component: <SingleEmploiClasse />,
+  }, //view
+  {
+    path: "/gestion-emplois/emploi-classe/liste-seance",
+    component: <GestionSeances />,
+  }, //view tableau des seance
+  {
+    path: "/gestion-emplois/emploi-classe/periodes-classes",
+    component: <ListClassPeriods />,
+  }, // creeer periode d emploi
+  {
+    path: "/gestion-emplois/emploi-classe/tableau-des-charges-horaires-classes",
+    component: <TableauChargesHorairesClasses />,
+  },
 
   //gestion emploi enseignant
-  {path: "/gestion-emplois/emlpoi-enseignant/single-emplois",component: <SingleEmploiEnseignant />,},
-  {path: "/gestion-emplois/emlpoi-enseignant/liste-emplois",component: <ListeEmploiEnseignants />,},
-  {path: "/gestion-emplois/emlpoi-enseignant/tableau-charges-horaires",component: <TableauChargesHoraires />,},
-  {path: "/gestion-emplois/emlpoi-enseignant/teacher-period",component: <TeacherPeriod />, },
-  {path: "/gestion-emplois/emlpoi-enseignant/liste-charges-grade",component: <EquilibreHorairesGrade />,},
+  {
+    path: "/gestion-emplois/emlpoi-enseignant/single-emplois",
+    component: <SingleEmploiEnseignant />,
+  },
+  {
+    path: "/gestion-emplois/emlpoi-enseignant/liste-emplois",
+    component: <ListeEmploiEnseignants />,
+  },
+  {
+    path: "/gestion-emplois/emlpoi-enseignant/tableau-charges-horaires",
+    component: <TableauChargesHoraires />,
+  },
+  {
+    path: "/gestion-emplois/emlpoi-enseignant/teacher-period",
+    component: <TeacherPeriod />,
+  },
+  {
+    path: "/gestion-emplois/emlpoi-enseignant/liste-charges-grade",
+    component: <EquilibreHorairesGrade />,
+  },
 
   // Accounts
   { path: "/account", component: <MyAccount /> },

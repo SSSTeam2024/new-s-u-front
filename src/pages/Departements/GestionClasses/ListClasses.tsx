@@ -42,29 +42,46 @@ const ListClasses = () => {
   };
   const { data = [] } = useFetchClassesQuery();
   const { data: AllEtudiants = [] } = useFetchEtudiantsQuery();
-  const [updateGroupeClasse, { isLoading, isSuccess, error }] =
+  const [updateGroupeClasse, { isLoading, isSuccess }] =
     useUpdateGroupeClasseMutation();
 
   const [cinList, setCinList] = useState<string[]>([]);
   const [textareaValue, setTextareaValue] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
-  // Handle Enter key press
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter") {
       e.preventDefault();
 
-      // Validate CIN input (must be 8 digits)
-      const cin = textareaValue.trim();
-      if (/^\d{8}$/.test(cin)) {
-        setCinList((prev) => [...prev, cin]);
-        setTextareaValue(""); // Clear textarea after valid input
+      const cinInputs = textareaValue
+        .split(/[\s,]+/)
+        .map((cin) => cin.trim())
+        .filter((cin) => cin);
+
+      const invalidCINs = cinInputs.filter((cin) => !/^\d{8}$/.test(cin));
+      const validCINs = cinInputs.filter((cin) => /^\d{8}$/.test(cin));
+
+      if (invalidCINs.length > 0) {
+        setError(
+          `Les CINs suivants sont invalides : ${invalidCINs.join(", ")}`
+        );
+        setTextareaValue("");
+
+        // Automatically remove the error message after 6 seconds
+        setTimeout(() => {
+          setError(null);
+        }, 6000); // 6000ms = 6 seconds
       } else {
-        alert("Le CIN doit contenir exactement 8 chiffres !");
+        setError(null);
+        setCinList((prev) => [...prev, ...validCINs]);
+        setTextareaValue("");
       }
     }
   };
+
   const location = useLocation();
   const affectState = location.state;
+
   const handleAffecter = async () => {
     const studentIds = cinList
       .map((cin) => {
@@ -279,7 +296,7 @@ const ListClasses = () => {
                   onClick={tog_AffecterEtudiant}
                 >
                   <i
-                    className="ri-reply-all-line"
+                    className="ph ph-users-four"
                     style={{
                       transition: "transform 0.3s ease-in-out",
                       cursor: "pointer",
@@ -620,9 +637,20 @@ const ListClasses = () => {
                       >
                         Fermer
                       </Button>
-                      <Button variant="success" id="add-btn" type="submit">
-                        Affecter
-                      </Button>
+                      {selectedEtudiants.length !== 0 ? (
+                        <Button variant="success" id="add-btn" type="submit">
+                          Affecter
+                        </Button>
+                      ) : (
+                        <Button
+                          variant="dark"
+                          id="add-btn"
+                          type="submit"
+                          disabled
+                        >
+                          Affecter
+                        </Button>
+                      )}
                     </div>
                   </div>
                 </Form>
@@ -638,13 +666,17 @@ const ListClasses = () => {
                         C.I.N
                       </label>
                       <textarea
-                        className="form-control"
-                        id="exampleFormControlTextarea5"
-                        rows={3}
                         value={textareaValue}
+                        className="form-control"
                         onChange={(e) => setTextareaValue(e.target.value)}
                         onKeyDown={handleKeyDown}
+                        style={{
+                          borderColor: error ? "red" : "initial",
+                          outline: error ? "red solid 1px" : "initial",
+                        }}
+                        placeholder="Entrez les CINs séparés par des espaces, des tabulations, des nouvelles lignes ou des virgules"
                       ></textarea>
+                      {error && <p style={{ color: "red" }}>{error}</p>}
                     </div>
                     <div className="mt-2">
                       <strong>CINs ajoutés :</strong>
@@ -667,15 +699,26 @@ const ListClasses = () => {
                       >
                         Fermer
                       </Button>
-                      <Button
-                        variant="success"
-                        id="add-btn"
-                        type="button"
-                        onClick={handleAffecter}
-                        disabled={isLoading}
-                      >
-                        {isLoading ? "Affectation en cours..." : "Affecter"}
-                      </Button>
+                      {cinList.length !== 0 ? (
+                        <Button
+                          variant="success"
+                          id="add-btn"
+                          type="button"
+                          onClick={handleAffecter}
+                          disabled={isLoading}
+                        >
+                          {isLoading ? "Affectation en cours..." : "Affecter"}
+                        </Button>
+                      ) : (
+                        <Button
+                          variant="dark"
+                          id="add-btn"
+                          type="button"
+                          disabled
+                        >
+                          Affecter
+                        </Button>
+                      )}
                     </div>
                   </div>
                 </Form>
