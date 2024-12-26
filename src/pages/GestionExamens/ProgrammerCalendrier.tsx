@@ -1,279 +1,255 @@
-import React, { useMemo, useState } from "react";
-import {
-  Button,
-  Card,
-  Col,
-  Container,
-  Dropdown,
-  Form,
-  Modal,
-  Row,
-} from "react-bootstrap";
-import Breadcrumb from "Common/BreadCrumb";
-import { Link, useNavigate } from "react-router-dom";
-import TableContainer from "Common/TableContainer";
-import {
-  useFetchExamensQuery,
-  useDeleteExamenMutation,
-} from "features/examens/examenSlice";
-import Swal from "sweetalert2";
+import { useFetchClassesQuery } from "features/classe/classe";
+import { useFetchEnseignantsQuery } from "features/enseignant/enseignantSlice";
+import React, { useEffect, useState } from "react";
+import { Card, Col, Container, Form, Row } from "react-bootstrap";
+import Select from "react-select";
+import { useLocation } from "react-router-dom";
 
-const ListCalendrier = () => {
-  document.title = "Liste des Calendriers | ENIGA";
+const ProgrammerCalendrier = () => {
+  document.title = "Programmer Calendrier | ENIGA";
 
-  const [deleteCalendrier] = useDeleteExamenMutation();
+  const { data: AllClasses = [] } = useFetchClassesQuery();
+  const { data: AllEnseignants = [] } = useFetchEnseignantsQuery();
 
-  const swalWithBootstrapButtons = Swal.mixin({
-    customClass: {
-      confirmButton: "btn btn-success",
-      cancelButton: "btn btn-danger",
-    },
-    buttonsStyling: false,
-  });
+  const location = useLocation();
+  const calendrierState = location.state;
 
-  const AlertDelete = async (_id: any) => {
-    swalWithBootstrapButtons
-      .fire({
-        title: "Etes-vous sûr?",
-        text: "Vous ne pouvez pas revenir en arrière?",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Oui, supprime-le !",
-        cancelButtonText: "Non, annuler !",
-        reverseButtons: true,
-      })
-      .then((result) => {
-        if (result.isConfirmed) {
-          deleteCalendrier(_id);
-          swalWithBootstrapButtons.fire(
-            "Supprimé !",
-            "Le calendrier a été supprimé.",
-            "success"
-          );
-        } else if (result.dismiss === Swal.DismissReason.cancel) {
-          swalWithBootstrapButtons.fire(
-            "Annulé",
-            "Le calendrier est en sécurité :)",
-            "info"
-          );
+  const [days, setDays] = useState<any[]>([]);
+  const [showAddCard, setShowAddCard] = useState<boolean>(false);
+  const tog_AddCard = () => {
+    setShowAddCard(!showAddCard);
+  };
+  useEffect(() => {
+    if (calendrierState?.period) {
+      const [startDateStr, endDateStr] = calendrierState.period.split(" / ");
+      const startDateParts = startDateStr.split("-").reverse();
+      const endDateParts = endDateStr.split("-").reverse();
+
+      const startDate = new Date(
+        Date.UTC(
+          Number(startDateParts[0]),
+          Number(startDateParts[1]) - 1,
+          Number(startDateParts[2])
+        )
+      );
+
+      const endDate = new Date(
+        Date.UTC(
+          Number(endDateParts[0]),
+          Number(endDateParts[1]) - 1,
+          Number(endDateParts[2])
+        )
+      );
+
+      const generateDays = (start: Date, end: Date) => {
+        const daysArray = [];
+        let currentDate = new Date(start);
+
+        while (currentDate <= end) {
+          if (currentDate.getUTCDay() !== 0) {
+            daysArray.push(new Date(currentDate));
+          }
+          currentDate.setUTCDate(currentDate.getUTCDate() + 1);
         }
+
+        return daysArray;
+      };
+
+      const allDays = generateDays(startDate, endDate).map((date) => {
+        const dateStr = date.toISOString().split("T")[0];
+        const dayName = date.toLocaleDateString("fr-FR", { weekday: "long" });
+        const epreuvesForDate =
+          calendrierState.epreuve?.filter((epreuve: any) => {
+            // Convert epreuve.date (DD-MM-YYYY) to YYYY-MM-DD
+            const [day, month, year] = epreuve.date.split("-");
+            const normalizedEpreuveDate = `${year}-${month}-${day}`;
+            return normalizedEpreuveDate === dateStr;
+          }) || [];
+
+        return {
+          date: dateStr,
+          day: dayName,
+          epreuve: epreuvesForDate,
+        };
       });
+
+      setDays(allDays);
+    }
+  }, [calendrierState]);
+
+  const [selectedColumnValues, setSelectedColumnValues] = useState<any[]>([]);
+
+  const handleSelectValueColumnChange = (selectedOption: any) => {
+    const values = selectedOption.map((option: any) => option.value);
+    setSelectedColumnValues(values);
   };
 
-  const columns = useMemo(
-    () => [
-      {
-        Header: "Période",
-        accessor: "period",
-        disableFilters: true,
-        filterable: true,
-      },
-
-      {
-        Header: "Semestre",
-        accessor: "semestre",
-        disableFilters: true,
-        filterable: true,
-      },
-      {
-        Header: "Session",
-        accessor: "session",
-        disableFilters: true,
-        filterable: true,
-      },
-      {
-        Header: "Type",
-        accessor: "type_examen",
-        disableFilters: true,
-        filterable: true,
-      },
-      {
-        Header: "Action",
-        disableFilters: true,
-        filterable: true,
-        accessor: (cellProps: any) => {
-          return (
-            <ul className="hstack gap-2 list-unstyled mb-0">
-              <li>
-                <Link
-                  to="#"
-                  className="badge bg-info-subtle text-info view-item-btn"
-                >
-                  <i
-                    className="ph ph-eye"
-                    style={{
-                      transition: "transform 0.3s ease-in-out",
-                      cursor: "pointer",
-                      fontSize: "1.5em",
-                    }}
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.transform = "scale(1.4)")
-                    }
-                    onMouseLeave={(e) =>
-                      (e.currentTarget.style.transform = "scale(1)")
-                    }
-                  ></i>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="#"
-                  className="badge bg-primary-subtle text-primary edit-item-btn"
-                >
-                  <i
-                    className="ph ph-pencil-line"
-                    style={{
-                      transition: "transform 0.3s ease-in-out",
-                      cursor: "pointer",
-                      fontSize: "1.5em",
-                    }}
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.transform = "scale(1.2)")
-                    }
-                    onMouseLeave={(e) =>
-                      (e.currentTarget.style.transform = "scale(1)")
-                    }
-                  ></i>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/gestion-examen/programmer-calendrier"
-                  className="badge bg-dark-subtle text-dark edit-item-btn"
-                >
-                  <i
-                    className="ph ph-gear"
-                    style={{
-                      transition: "transform 0.3s ease-in-out",
-                      cursor: "pointer",
-                      fontSize: "1.5em",
-                    }}
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.transform = "scale(1.2)")
-                    }
-                    onMouseLeave={(e) =>
-                      (e.currentTarget.style.transform = "scale(1)")
-                    }
-                  ></i>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="#"
-                  className="badge bg-danger-subtle text-danger remove-item-btn"
-                  onClick={() => AlertDelete(cellProps?._id!)}
-                >
-                  <i
-                    className="ph ph-trash"
-                    style={{
-                      transition: "transform 0.3s ease-in-out",
-                      cursor: "pointer",
-                      fontSize: "1.5em",
-                    }}
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.transform = "scale(1.2)")
-                    }
-                    onMouseLeave={(e) =>
-                      (e.currentTarget.style.transform = "scale(1)")
-                    }
-                  ></i>
-                </Link>
-              </li>
-            </ul>
-          );
-        },
-      },
-    ],
-    []
-  );
-  const { data: AllCalendriers = [] } = useFetchExamensQuery();
+  const optionColumnsTable = calendrierState.group_enseignant
+    .flatMap((group: any) => group.enseignant)
+    .map((enseignantId: any) => ({
+      value: enseignantId,
+      label: `${enseignantId.prenom_fr} ${enseignantId.nom_fr}`,
+    }));
 
   return (
     <React.Fragment>
       <div className="page-content">
         <Container fluid={true}>
-          <Breadcrumb title="Liens utils" pageTitle="Liste des liens utils" />
-
-          <Row id="sellersList">
-            <Col lg={12}>
-              <Card>
-                <Card.Body>
-                  <Row className="g-3">
-                    <Col lg={3}>
-                      <div className="search-box">
-                        <input
-                          type="text"
-                          className="form-control search"
-                          placeholder="Chercher..."
-                        />
-                        <i className="ri-search-line search-icon"></i>
-                      </div>
-                    </Col>
-                    <Col className="col-lg-auto">
-                      <select
-                        className="form-select"
-                        id="idStatus"
-                        name="choices-single-default"
-                      >
-                        <option defaultValue="All">Status</option>
-                        <option value="All">tous</option>
-                        <option value="Active">Activé</option>
-                        <option value="Inactive">Desactivé</option>
-                      </select>
-                    </Col>
-
-                    <Col className="col-lg-auto ms-auto">
-                      <div className="hstack gap-2">
-                        <Button
-                          variant="primary"
-                          className="add-btn"
-                          //   onClick={() => tog_AddParametreModals()}
-                        >
-                          Ajouter un lien
-                        </Button>
-                      </div>
-                    </Col>
-                  </Row>
-                </Card.Body>
-              </Card>
-              <Card>
-                <Card.Body className="p-0">
-                  {/* <div className="table-responsive table-card mb-1"> */}
-                  <table
-                    className="table align-middle table-nowrap"
-                    id="customerTable"
-                  >
-                    <TableContainer
-                      columns={columns || []}
-                      data={AllCalendriers || []}
-                      // isGlobalFilter={false}
-                      iscustomPageSize={false}
-                      isBordered={false}
-                      customPageSize={10}
-                      className="custom-header-css table align-middle table-nowrap"
-                      tableClass="table-centered align-middle table-nowrap mb-0"
-                      theadClass="text-muted table-light"
-                      SearchPlaceholder="Search Products..."
-                    />
-                  </table>
-                  <div className="noresult" style={{ display: "none" }}>
-                    <div className="text-center py-4">
-                      <div className="avatar-md mx-auto mb-4">
-                        <div className="avatar-title bg-primary-subtle text-primary rounded-circle fs-24">
-                          <i className="bi bi-search"></i>
-                        </div>
-                      </div>
-                      <h5 className="mt-2">Sorry! No Result Found</h5>
-                      <p className="text-muted mb-0">
-                        We've searched more than 150+ seller We did not find any
-                        seller for you search.
-                      </p>
-                    </div>
+          <Card>
+            <Card.Body>
+              <Row>
+                <Col>
+                  <div className="vstack gap-2">
+                    <h3>{calendrierState.annee_universitaire}</h3>
+                    <h3>Semestre : {calendrierState.semestre}</h3>
                   </div>
-                  {/* </div> */}
-                </Card.Body>
-              </Card>
+                </Col>
+                <Col>
+                  <h3>Calendrier: {calendrierState.period}</h3>
+                </Col>
+                <Col className="text-end">
+                  <div className="vstack gap-2">
+                    <h3>Type : {calendrierState.type_examen}</h3>
+                    {calendrierState.type_examen === "Examen" && (
+                      <h3>Session : {calendrierState.session}</h3>
+                    )}
+                  </div>
+                </Col>
+              </Row>
+            </Card.Body>
+          </Card>
+          <Row className="mb-3">
+            <Col lg={1}>
+              <Form.Label>Classe: </Form.Label>
             </Col>
+            <Col lg={3}>
+              <select className="form-select">
+                <option value="">Choisir ...</option>
+                {AllClasses.map((classe) => (
+                  <option value={classe?._id!} key={classe?._id!}>
+                    {classe?.nom_classe_fr}
+                  </option>
+                ))}
+              </select>
+            </Col>
+            <Col>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={tog_AddCard}
+              >
+                Ajouter Epreuve
+              </button>
+            </Col>
+          </Row>
+          {showAddCard && (
+            <Card>
+              <Card.Body>
+                <Row>
+                  <Col>
+                    <Form.Label>Nombre de copie livré: </Form.Label>
+                    <input type="text" className="form-control" />
+                  </Col>
+                  <Col>
+                    <Form.Label>Matière: </Form.Label>
+                    <select className="form-select">
+                      <option value="">Choisir ...</option>
+                      {AllClasses.map((classe) => (
+                        <option value={classe._id} key={classe._id}>
+                          {classe.nom_classe_fr}
+                        </option>
+                      ))}
+                    </select>
+                  </Col>
+                  <Col>
+                    <Form.Label>Jour: </Form.Label>
+                    <select className="form-select">
+                      <option value="">Choisir ...</option>
+                      {days.map(({ date, day }) => (
+                        <option key={day} value={day}>
+                          {day.charAt(0).toUpperCase() + day.slice(1)} {date}
+                        </option>
+                      ))}
+                    </select>
+                  </Col>
+                </Row>
+                <Row className="mt-3">
+                  <Col>
+                    <Form.Label htmlFor="heure_debut">Heure Début</Form.Label>
+                    <input type="time" className="form-control" />
+                  </Col>
+                  <Col>
+                    <Form.Label htmlFor="heure_fin">Heure Fin</Form.Label>
+                    <input type="time" className="form-control" />
+                  </Col>
+                  <Col>
+                    <Form.Label htmlFor="salle">Salle</Form.Label>
+                    <select className="form-select">
+                      <option value="">Choisir ...</option>
+                      <option value="Salle 11">Salle 11</option>
+                      <option value="Salle 12">Salle 12</option>
+                      <option value="Salle 13">Salle 13</option>
+                    </select>
+                  </Col>
+                  <Col>
+                    <Form.Label htmlFor="salle">E.R</Form.Label>
+                    <Select
+                      closeMenuOnSelect={false}
+                      isMulti
+                      options={optionColumnsTable}
+                    />
+                  </Col>
+                  <Col>
+                    <Form.Label htmlFor="salle">E.S</Form.Label>
+                    <Select
+                      closeMenuOnSelect={false}
+                      isMulti
+                      options={optionColumnsTable}
+                    />
+                  </Col>
+                </Row>
+                <Row className="mt-2">
+                  <Col className="d-flex justify-content-end">
+                    <button type="button" className="btn btn-info">
+                      Ajouter
+                    </button>
+                  </Col>
+                </Row>
+              </Card.Body>
+            </Card>
+          )}
+          <Row>
+            <div style={{ overflowX: "auto", width: "100%" }}>
+              <table className="table table-bordered table-striped w-100">
+                <tbody>
+                  {days.map(({ date, day, epreuve }) => (
+                    <tr key={date}>
+                      <td className="py-3 px-4 fw-bold text-center bg-light">
+                        {day.charAt(0).toUpperCase() + day.slice(1)} {date}
+                      </td>
+                      <td className="py-3 px-4 text-center">
+                        {epreuve.length === 0 ? (
+                          <em className="text-muted">Pas de séances</em>
+                        ) : (
+                          <ul className="list-unstyled">
+                            {epreuve.map((exam: any, index: any) => (
+                              <li key={index}>
+                                <strong>
+                                  {exam.matiere?.nom || "Matière inconnue"}
+                                </strong>{" "}
+                                <br />
+                                {exam.heure_debut} - {exam.heure_fin} <br />
+                                Salle: {exam.salle?.nom || "Non attribuée"}
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </Row>
         </Container>
       </div>
@@ -281,4 +257,4 @@ const ListCalendrier = () => {
   );
 };
 
-export default ListCalendrier;
+export default ProgrammerCalendrier;

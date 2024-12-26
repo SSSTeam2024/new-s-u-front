@@ -140,6 +140,7 @@ const ListCalendrier = () => {
                 <Link
                   to="/gestion-examen/programmer-calendrier"
                   className="badge bg-dark-subtle text-dark edit-item-btn"
+                  state={cellProps}
                 >
                   <i
                     className="ph ph-gear"

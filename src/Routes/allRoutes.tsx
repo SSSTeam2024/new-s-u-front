@@ -184,6 +184,7 @@ import ListeDossierAdministratifEnseignantsArchives from "pages/Gestion-enseigna
 import ListeDossiersAdministratifsPersonnelsArchives from "pages/Gestion-personnel/Dossieradministratif/ListeDossiersAdministratifsPersonnelsArchives";
 import AjouterCalendrierExamen from "pages/GestionExamens/AjouterCalendrierExamen";
 import ListCalendrier from "pages/GestionExamens/ListCalendrier";
+import ProgrammerCalendrier from "pages/GestionExamens/ProgrammerCalendrier";
 const authProtectedRoutes = [
   { path: "/dashboard", component: <Dashboard /> },
 
@@ -754,6 +755,10 @@ const authProtectedRoutes = [
   {
     path: "/gestion-examen/liste-des-calendrier",
     component: <ListCalendrier />,
+  },
+  {
+    path: "/gestion-examen/programmer-calendrier",
+    component: <ProgrammerCalendrier />,
   },
 
   //gestion emploi classes periods

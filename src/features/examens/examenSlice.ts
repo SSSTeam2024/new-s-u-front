@@ -20,8 +20,8 @@ export interface Examen {
     matiere: any
     classe: any
   }[],
-  
 }
+
 export const examenSlice = createApi({
   reducerPath: "Examen",
   baseQuery: fetchBaseQuery({
