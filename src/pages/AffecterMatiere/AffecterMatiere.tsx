@@ -18,6 +18,7 @@ interface MatiereOption {
   code_matiere: string;
   volume: string;
   nbr_elimination: string;
+  regime_matiere: string;
 }
 
 const AffecterMatiere = () => {
@@ -55,6 +56,7 @@ const AffecterMatiere = () => {
       semestre: option.semestre,
       volume: option.volume,
       nbr_elimination: option.nbr_elimination,
+      regime_matiere: option.regime_matiere,
     }));
 
     const uniqueMatieres = [...selectedMatieres, ...matieres].reduce(
@@ -117,6 +119,7 @@ const AffecterMatiere = () => {
     code_matiere: matiere.code_matiere,
     volume: matiere.volume,
     nbr_elimination: matiere.nbr_elimination,
+    regime_matiere: matiere.regime_matiere,
   }));
 
   const customStyles = {

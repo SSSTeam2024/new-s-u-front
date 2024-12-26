@@ -30,6 +30,7 @@ const AddMatiere = () => {
     semestre: "S1",
     volume: "",
     nbr_elimination: "",
+    regime_matiere: "",
   });
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((prevState) => ({
@@ -152,6 +153,30 @@ const AddMatiere = () => {
                       />
                     </div>
                   </Col>
+                  <Col lg={4}>
+                    <div className="mb-3">
+                      <Form.Label htmlFor="regime_matiere">
+                        Régime Matière
+                      </Form.Label>
+                      <select
+                        className="form-select text-muted"
+                        name="regime_matiere"
+                        id="regime_matiere"
+                        value={formData.regime_matiere}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            regime_matiere: e.target.value,
+                          })
+                        }
+                      >
+                        <option value="">Sélectionner Régime Matière</option>
+                        <option value="TP">TP</option>
+                        <option value="CC">CC</option>
+                        <option value="MX">MX</option>
+                      </select>
+                    </div>
+                  </Col>
 
                   <Col lg={4}>
                     <div className="mb-3">
@@ -169,14 +194,10 @@ const AddMatiere = () => {
                         }
                       >
                         <option value="">Sélectionner Type Matière</option>
-                        <option value="½ TD">½ TD</option>
-                        <option value="½ TP">½ TP</option>
-                        <option value="TP/TD">TP/TD</option>
                         <option value="TP">TP</option>
                         <option value="TD">TD</option>
-                        <option value="Cours">Cours</option>
-                        <option value="Cours Intégré">Cours Intégré</option>
-                        <option value="1/2 Cours">1/2 Cours</option>
+                        <option value="C">C</option>
+                        <option value="CI">CI</option>
                       </select>
                     </div>
                   </Col>

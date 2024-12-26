@@ -958,7 +958,7 @@ const AjouterEtudiant = () => {
                       </div>
                       <div className="flex-grow-1">
                         <h5 className="card-title">
-                          معلومات شخصية / Information Personnel
+                          معلومات شخصية / Informations Personnelles
                         </h5>
                       </div>
                     </div>

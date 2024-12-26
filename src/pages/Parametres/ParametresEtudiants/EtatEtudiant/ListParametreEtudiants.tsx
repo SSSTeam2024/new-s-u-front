@@ -203,7 +203,7 @@ const ListParametresEtudiants = () => {
         <Container fluid={true}>
           <Breadcrumb
             title="Paramètres des Etudiants"
-            pageTitle="Liste paramètres des étudiants"
+            pageTitle="Liste états comptes des étudiants"
           />
 
           <Row id="sellersList">

@@ -205,6 +205,8 @@ const ListeRattrapages = () => {
       },
       {
         Header: "Etat",
+        disableFilters: true,
+        filterable: true,
         accessor: "etat",
         Cell: ({ value }: { value: any }) => {
           if (value === "Refusée") {
@@ -231,6 +233,8 @@ const ListeRattrapages = () => {
       },
       {
         Header: "Status",
+        disableFilters: true,
+        filterable: true,
         accessor: "status",
         Cell: ({ value }: { value: any }) => {
           if (value === "Faite") {

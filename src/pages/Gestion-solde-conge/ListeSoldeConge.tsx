@@ -255,7 +255,10 @@ const ListeSoldeConge = () => {
     <React.Fragment>
       <div className="page-content">
         <Container fluid={true}>
-          <Breadcrumb title="Demande Etudiant" pageTitle="Liste des demandes" />
+          <Breadcrumb
+            title="Gestions des congés"
+            pageTitle="Liste des congés"
+          />
 
           <Row id="usersList">
             <Col lg={12}>
