@@ -55,6 +55,7 @@ import { teachersPeriodsSlice } from "features/teachersPeriods/teachersPeriods";
 import { rattrapageSlice } from "features/rattrapage/rattrapage";
 import { ficheVoeuxSlice } from "features/ficheVoeux/ficheVoeux";
 import { seanceSlice } from "features/seance/seance";
+import { examenSlice } from "features/examens/examenSlice";
 
 export const store = configureStore({
     reducer: { 
@@ -105,7 +106,7 @@ export const store = configureStore({
     [rattrapageSlice.reducerPath]: rattrapageSlice.reducer,
     [ficheVoeuxSlice.reducerPath]: ficheVoeuxSlice.reducer,
     [seanceSlice.reducerPath]: seanceSlice.reducer,
-
+    [examenSlice.reducerPath]: examenSlice.reducer,
       auth: authSlice,
       Layout: LayoutReducer,
       ForgetPassword: ForgetPasswordReducer,
@@ -161,6 +162,7 @@ export const store = configureStore({
         rattrapageSlice.middleware,
         ficheVoeuxSlice.middleware,
         seanceSlice.middleware,
+        examenSlice.middleware
       ]
         
       );

@@ -39,13 +39,11 @@ const EditActualite = () => {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
-    const { name, value } = e.target;
-    if (formData) {
-      setFormData({
-        ...formData,
-        [name]: value,
-      });
-    }
+    setFormData((prevState: any) => ({
+      ...prevState,
+      [e.target.id]: e.target.value,
+    }));
+    
   };
  
   const onDescriptionChange = (event: any, editor: any) => {

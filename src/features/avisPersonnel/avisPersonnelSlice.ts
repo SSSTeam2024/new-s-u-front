@@ -29,12 +29,16 @@ export interface AvisPersonnel {
           },
           providesTags: ['Avis'],
         }),
-        fetchAvisPersonnelById: builder.query<AvisPersonnel[], void>({
-            query(_id) {
-              return `get-avis-personnel/${_id}`;
-            },
-            providesTags: ['Avis'],
-          }),
+         fetchAvisPersonnelById: builder.query<AvisPersonnel, { _id: string }>({
+                                query({ _id }) {
+                                  return {
+                                    url: 'get-avis-personnel',
+                                    method: 'POST',
+                                    body: { _id },
+                                  };
+                                },
+                                providesTags: ['Avis'],
+                              }),
         addAvisPersonnel: builder.mutation<void, Partial<AvisPersonnel>>({
           query(avisPersonnel) {
             return {
@@ -47,20 +51,20 @@ export interface AvisPersonnel {
         }),
         updateAvisPersonnel: builder.mutation<void, AvisPersonnel>({
           query(avisPersonnel) {
-            const { _id, ...rest } = avisPersonnel;
             return {
-              url: `edit-demande-personnel/${_id}`,
+              url: `edit-demande-personnel`,
               method: 'PUT',
-              body: rest,
+              body: avisPersonnel,
             };
           },
           invalidatesTags: ['Avis'],
         }),
-        deleteAvisPersonnel: builder.mutation<void, string>({
+        deleteAvisPersonnel: builder.mutation<AvisPersonnel, { _id: string }>({
           query(_id) {
             return {
-              url: `delete-demande-personnel/${_id}`,
+              url: `delete-demande-personnel`,
               method: 'DELETE',
+              body:{ _id }
             };
           },
           invalidatesTags: ['Avis'],

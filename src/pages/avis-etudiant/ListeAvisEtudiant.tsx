@@ -11,6 +11,7 @@ import {
 import Breadcrumb from "Common/BreadCrumb";
 import CountUp from "react-countup";
 import TableContainer from "Common/TableContainer";
+import Swal from "sweetalert2";
 import { userList } from "Common/data";
 import Flatpickr from "react-flatpickr";
 import dummyImg from "../../assets/images/users/user-dummy-img.jpg";
@@ -22,15 +23,14 @@ import { actionAuthorization } from "utils/pathVerification";
 import {
   useFetchAvisEtudiantQuery,
   Avis,
+  useDeleteAvisEtudiantMutation,
 } from "features/avisEtudiant/avisEtudiantSlice";
-
 const ListeAvisEtudiant = () => {
   document.title = "Avis Etudiant | Smart Institute";
-
   const user = useSelector((state: RootState) => selectCurrentUser(state));
-
   const { data: avisEtudiant, error, isLoading } = useFetchAvisEtudiantQuery();
-
+  const { refetch } = useFetchAvisEtudiantQuery();
+  const [deleteAvisEtudiant] = useDeleteAvisEtudiantMutation();
   const [modal_AddUserModals, setmodal_AddUserModals] =
     useState<boolean>(false);
   const [isMultiDeleteButton, setIsMultiDeleteButton] =
@@ -38,16 +38,38 @@ const ListeAvisEtudiant = () => {
   // State for PDF modal
   const [showPdfModal, setShowPdfModal] = useState<boolean>(false);
   const [pdfUrl, setPdfUrl] = useState<string>("");
-
   function tog_AddUserModals() {
     setmodal_AddUserModals(!modal_AddUserModals);
   }
-
+  const handleDeleteAvisEtudiant = async (id: string) => {
+    try {
+      const result = await Swal.fire({
+        title: "Êtes-vous sûr ?",
+        text: "Vous ne pourrez pas revenir en arrière !",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085D6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Oui, supprimer !",
+      });
+      if (result.isConfirmed) {
+        await deleteAvisEtudiant({ _id: id }).unwrap();
+        Swal.fire("Supprimé !", "L'aavis etudiant a été supprimée.", "success");
+        refetch(); // Recharger les données ou mettre à jour l'UI
+      }
+    } catch (error) {
+      console.error("Erreur lors de la suppression de l'actualité :", error);
+      Swal.fire(
+        "Erreur !",
+        "Un problème est survenu lors de la suppression de l'actualité.",
+        "error"
+      );
+    }
+  };
   // Checked All
   const checkedAll = useCallback(() => {
     const checkall = document.getElementById("checkAll") as HTMLInputElement;
     const ele = document.querySelectorAll(".userCheckBox");
-
     if (checkall.checked) {
       ele.forEach((ele: any) => {
         ele.checked = true;
@@ -59,28 +81,23 @@ const ListeAvisEtudiant = () => {
     }
     checkedbox();
   }, []);
-
   const checkedbox = () => {
     const ele = document.querySelectorAll(".userCheckBox:checked");
     ele.length > 0
       ? setIsMultiDeleteButton(true)
       : setIsMultiDeleteButton(false);
   };
-
   const handleShowPdfModal = (fileName: string) => {
     let link =
       `${process.env.REACT_APP_API_URL}/files/avisEtudiantFiles/pdf/` +
       fileName;
-
     setPdfUrl(link);
     setShowPdfModal(true);
   };
-
   const handleClosePdfModal = () => {
     setShowPdfModal(false);
     setPdfUrl("");
   };
-
   const columns = useMemo(
     () => [
       {
@@ -89,7 +106,6 @@ const ListeAvisEtudiant = () => {
         disableFilters: true,
         filterable: true,
       },
-
       {
         Header: "Auteur",
         accessor: (row: any) => row.auteurId?.login || "",
@@ -121,7 +137,6 @@ const ListeAvisEtudiant = () => {
           </Button>
         ),
       },
-
       {
         Header: "Action",
         disableFilters: true,
@@ -198,6 +213,7 @@ const ListeAvisEtudiant = () => {
                     className="badge bg-danger-subtle text-danger remove-item-btn"
                   >
                     <i
+                      onClick={() => handleDeleteAvisEtudiant(cellProps?._id!)}
                       className="ph ph-trash"
                       style={{
                         transition: "transform 0.3s ease-in-out",
@@ -223,13 +239,11 @@ const ListeAvisEtudiant = () => {
     ],
     [checkedAll]
   );
-
   return (
     <React.Fragment>
       <div className="page-content">
         <Container fluid={true}>
-          <Breadcrumb title="Liste des Avis" pageTitle="Avis étudiants" />
-
+          <Breadcrumb title="Liste des Avis" pageTitle="More" />
           <Row id="usersList">
             <Col lg={12}>
               <Card>
@@ -245,7 +259,6 @@ const ListeAvisEtudiant = () => {
                         <i className="ri-search-line search-icon"></i>
                       </div>
                     </Col>
-
                     {isMultiDeleteButton && (
                       <Button variant="danger" className="btn-icon">
                         <i className="ri-delete-bin-2-line"></i>
@@ -283,7 +296,6 @@ const ListeAvisEtudiant = () => {
           </Row>
         </Container>
       </div>
-
       {/* PDF Modal */}
       <Modal show={showPdfModal} onHide={handleClosePdfModal} size="lg">
         <Modal.Header closeButton>
@@ -302,198 +314,4 @@ const ListeAvisEtudiant = () => {
     </React.Fragment>
   );
 };
-
 export default ListeAvisEtudiant;
-
-// import React, { useState, useMemo, useCallback } from 'react';
-// import { Button, Card, Col, Container, Modal, Row } from 'react-bootstrap';
-// import Breadcrumb from 'Common/BreadCrumb';
-// import TableContainer from 'Common/TableContainer';
-// import { useSelector } from 'react-redux';
-// import { RootState } from 'app/store';
-// import { selectCurrentUser } from 'features/account/authSlice';
-// import { actionAuthorization } from 'utils/pathVerification';
-// import { Avis, useFetchAvisEtudiantQuery } from 'features/avisEtudiant/avisEtudiantSlice';
-// import { Link } from 'react-router-dom';
-
-// const ListeAvisEtudiant = () => {
-//     document.title = 'Avis Etudiant | Smart Institute';
-
-//     // Redux state
-//     const user = useSelector((state: RootState) => selectCurrentUser(state));
-
-//     // RTK Query
-//     const { data: avisEtudiant = [], isLoading } = useFetchAvisEtudiantQuery();
-
-//     // Component state
-//     const [showPdfModal, setShowPdfModal] = useState<boolean>(false);
-//     const [pdfUrl, setPdfUrl] = useState<string>('');
-//     const [globalFilter, setGlobalFilter] = useState<string>("");
-//     const [isMultiDeleteButton, setIsMultiDeleteButton] = useState<boolean>(false);
-
-//     // Modal handlers
-//     const handleShowPdfModal = (fileName: string) => {
-//         setPdfUrl(`${process.env.REACT_APP_API_URL}/files/avisEtudiantFiles/pdf/${fileName}`);
-//         setShowPdfModal(true);
-//     };
-
-//     const handleClosePdfModal = () => {
-//         setPdfUrl('');
-//         setShowPdfModal(false);
-//     };
-
-//     // Filtered data based on search
-
-//     const filteredData = useMemo(() => {
-//       return (avisEtudiant as Avis[]).filter((item) =>
-//         item.title.toLowerCase().includes(globalFilter.toLowerCase()) ||
-//         item.auteurId.toLowerCase().includes(globalFilter.toLowerCase())
-//       );
-//     }, [avisEtudiant]);
-
-//   if (isLoading) return <div>Loading...</div>;
-
-//     // Checkbox state and handlers
-
-//     // const checkedAll = useCallback(() => {
-//     //     const checkAll = document.getElementById('checkAll') as HTMLInputElement;
-//     //     const checkboxes = document.querySelectorAll('.userCheckBox') as NodeListOf<HTMLInputElement>;
-
-//     //     checkboxes.forEach((checkbox) => (checkbox.checked = checkAll.checked));
-//     //     setIsMultiDeleteButton(checkboxes.length > 0 && checkAll.checked);
-//     // }, []);
-
-//     // Table columns
-//     const columns = useMemo(() => [
-//         {
-//             Header: 'Titre',
-//             accessor: 'title',
-//         },
-//         {
-//             Header: 'Auteur',
-//             accessor: (row: any) => row.auteurId?.name || '',
-//         },
-//         {
-//             Header: 'PDF',
-//             accessor: 'pdf',
-//             Cell: ({ row }: any) => (
-//                 <Button variant="link" onClick={() => handleShowPdfModal(row.original.pdf)}>
-//                     Ouvrir PDF
-//                 </Button>
-//             ),
-//         },
-//         {
-//             Header: 'Lien',
-//             accessor: 'lien',
-//             Cell: ({ cell: { value } }: any) => (
-//                 <Button variant="link" onClick={() => window.open(value, '_blank')}>
-//                     Aller au lien
-//                 </Button>
-//             ),
-//         },
-//         {
-//             Header: 'Action',
-//             Cell: ({ row }: any) => (
-//                 <ul className="hstack gap-2 list-unstyled mb-0">
-//                     {actionAuthorization('/avis-etudiant/single-avis-etudiant', user?.permissions!) && (
-//                         <li>
-//                             <Link
-//                                 to="/avis-etudiant/single-avis-etudiant"
-//                                 state={row.original}
-//                                 className="badge bg-info-subtle text-info view-item-btn"
-//                             >
-//                                 <i className="ph ph-eye"></i>
-//                             </Link>
-//                         </li>
-//                     )}
-//                     {actionAuthorization('/avis-etudiant/edit-avis-etudiant', user?.permissions!) && (
-//                         <li>
-//                             <Link
-//                                 to="/avis-etudiant/edit-avis-etudiant"
-//                                 state={row.original}
-//                                 className="badge bg-success-subtle text-success edit-item-btn"
-//                             >
-//                                 <i className="ph ph-pencil-line"></i>
-//                             </Link>
-//                         </li>
-//                     )}
-//                     {actionAuthorization('/avis-etudiant/supprimer-avis-etudiant', user?.permissions!) && (
-//                         <li>
-//                             <Button variant="danger" className="badge bg-danger-subtle text-danger remove-item-btn">
-//                                 <i className="ph ph-trash"></i>
-//                             </Button>
-//                         </li>
-//                     )}
-//                 </ul>
-//             ),
-//         },
-//     ], [user?.permissions]);
-
-//     return (
-//         <React.Fragment>
-//             <div className="page-content">
-//                 <Container fluid>
-//                     <Breadcrumb title="Liste des Avis" pageTitle="More" />
-//                     <Row>
-//                         <Col lg={12}>
-//                             <Card>
-//                                 <Card.Body>
-//                                     <Row className="g-3">
-//                                         <Col lg={3}>
-//                                         <div className="search-box">
-//                                                 <input
-//                                                     type="text"
-//                                                     placeholder="Search..."
-//                                                     value={globalFilter}
-//                                                     onChange={(e) => setGlobalFilter(e.target.value)}
-//                                                 />
-//                                             </div>
-//                                         </Col>
-//                                         {isMultiDeleteButton && (
-//                                             <Button variant="danger" className="btn-icon">
-//                                                 <i className="ri-delete-bin-2-line"></i>
-//                                             </Button>
-//                                         )}
-//                                     </Row>
-//                                 </Card.Body>
-//                             </Card>
-//                             <Card>
-//                                 <Card.Body className="p-0">
-//                                     <TableContainer
-//                                         columns={columns}
-//                                         data={filteredData}
-//                                         isGlobalFilter={false}
-//                                         iscustomPageSize={false}
-//                                         isBordered={false}
-//                                         customPageSize={10}
-//                                         className="custom-header-css table align-middle table-nowrap"
-//                                         tableClass="table-centered align-middle table-nowrap mb-0"
-//                                         theadClass="text-muted table-light"
-//                                         SearchPlaceholder="Rechercher..."
-//                                     />
-//                                 </Card.Body>
-//                             </Card>
-//                         </Col>
-//                     </Row>
-//                 </Container>
-//             </div>
-//             {/* PDF Modal */}
-//             <Modal show={showPdfModal} onHide={handleClosePdfModal} size="lg">
-//                 <Modal.Header closeButton>
-//                     <Modal.Title>PDF Viewer</Modal.Title>
-//                 </Modal.Header>
-//                 <Modal.Body>
-//                     <iframe
-//                         src={pdfUrl}
-//                         width="100%"
-//                         height="600px"
-//                         style={{ border: 'none' }}
-//                         title="PDF Viewer"
-//                     ></iframe>
-//                 </Modal.Body>
-//             </Modal>
-//         </React.Fragment>
-//     );
-// };
-
-// export default ListeAvisEtudiant;

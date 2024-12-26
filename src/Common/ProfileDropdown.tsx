@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Dropdown } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import { createSelector } from "reselect";
-import avatar1 from "assets/images/users/avatar-1.jpg";
+import avatar1 from "assets/images/administrator-male.png";
 import { RootState } from "../app/store";
 import { selectCurrentUser } from "../features/account/authSlice";
 import axios from "axios";

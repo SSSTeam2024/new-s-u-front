@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export interface Avis {
-  _id: string;
+  _id?: string;
   title: string;
   auteurId: string;
   description: string;
@@ -30,12 +30,16 @@ export interface Avis {
           },
           providesTags: ['Avis'],
         }),
-        fetchAvisEtudiantById: builder.query<Avis[], void>({
-            query(_id) {
-              return `get-avis-etudiant/${_id}`;
-            },
-            providesTags: ['Avis'],
-          }),
+        fetchAvisEtudiantById: builder.query<Avis, { _id: string }>({
+                        query({ _id }) {
+                          return {
+                            url: 'get-avis-etudiant',
+                            method: 'POST',
+                            body: { _id },
+                          };
+                        },
+                        providesTags: ['Avis'],
+                      }),
         addAvisEtudiant: builder.mutation<void, Partial<Avis>>({
           query(avisEtudiant) {
             return {
@@ -48,20 +52,21 @@ export interface Avis {
         }),
         updateAvisEtudiant: builder.mutation<void, Avis>({
           query(avisEtudiant) {
-            const { _id, ...rest } = avisEtudiant;
+          
             return {
-              url: `edit-avis-etudiant/${_id}`,
+              url: `edit-avis-etudiant`,
               method: 'PUT',
-              body: rest,
+              body: avisEtudiant,
             };
           },
           invalidatesTags: ['Avis'],
         }),
-        deleteAvisEtudiant: builder.mutation<void, string>({
+        deleteAvisEtudiant: builder.mutation<Avis,{ _id: string }>({
           query(_id) {
             return {
-              url: `delete-avis-etudiant/${_id}`,
+              url: `delete-avis-etudiant`,
               method: 'DELETE',
+              body:{ _id }
             };
           },
           invalidatesTags: ['Avis'],

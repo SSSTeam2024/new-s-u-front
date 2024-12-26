@@ -13,27 +13,26 @@ import CountUp from "react-countup";
 import TableContainer from "Common/TableContainer";
 import { userList } from "Common/data";
 import Flatpickr from "react-flatpickr";
-import dummyImg from "../../assets/images/users/user-dummy-img.jpg";
-import { Link } from "react-router-dom";
-import { RootState } from "app/store";
-import { useSelector } from "react-redux";
-import { selectCurrentUser } from "features/account/authSlice";
-import { actionAuthorization } from "utils/pathVerification";
-import {
-  useFetchAvisPersonnelQuery,
-  AvisPersonnel,
-} from "features/avisPersonnel/avisPersonnelSlice";
+import dummyImg from "../../assets/images/users/user-dummy-img.jpg"
+import { Link } from 'react-router-dom';
+import { RootState } from 'app/store';
+import { useSelector } from 'react-redux';
+import { selectCurrentUser } from 'features/account/authSlice'; 
+import { actionAuthorization } from 'utils/pathVerification';
+import { useFetchAvisPersonnelQuery, AvisPersonnel, useDeleteAvisPersonnelMutation } from "features/avisPersonnel/avisPersonnelSlice";
+import Swal from "sweetalert2";
+
 
 const ListeAvisEtudiant = () => {
-  document.title = "Avis Personnel | Smart Institute";
+  document.title = "Avis Personnel | ENIGA";
 
   const user = useSelector((state: RootState) => selectCurrentUser(state));
 
-  const {
-    data: avisPersonnel,
-    error,
-    isLoading,
-  } = useFetchAvisPersonnelQuery();
+    const { data: avisPersonnel, error, isLoading } = useFetchAvisPersonnelQuery();
+console.log("avisenseignat", avisPersonnel)
+  const { refetch } = useFetchAvisPersonnelQuery();
+    const [deleteAvisPersonnel] = useDeleteAvisPersonnelMutation();
+
 
   const [modal_AddUserModals, setmodal_AddUserModals] =
     useState<boolean>(false);
@@ -70,7 +69,30 @@ const ListeAvisEtudiant = () => {
       ? setIsMultiDeleteButton(true)
       : setIsMultiDeleteButton(false);
   };
+    const handleDeleteAvisPersonnel = async (id: string) => {
+        try {
+          const result = await Swal.fire({
+            title: 'Êtes-vous sûr ?',
+            text: "Vous ne pourrez pas revenir en arrière !",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Oui, supprimer !'
+          });
+    
+          if (result.isConfirmed) {
+            await deleteAvisPersonnel({ _id: id }).unwrap();
+            Swal.fire('Supprimé !', 'L\'avis personnel a été supprimée.', 'success');
+            refetch(); // Recharger les données ou mettre à jour l'UI
+          }
+        } catch (error) {
+          console.error("Erreur lors de la suppression de l'avis personnel :", error);
+          Swal.fire('Erreur !', 'Un problème est survenu lors de la suppression de l\'avis personnel.', 'error');
+        }
+      };
 
+   
   const handleShowPdfModal = (fileName: string) => {
     let link =
       `${process.env.REACT_APP_API_URL}/files/avisPersonnelFiles/pdf/` +
@@ -85,146 +107,138 @@ const ListeAvisEtudiant = () => {
     setPdfUrl("");
   };
 
-  const columns = useMemo(
-    () => [
-      {
-        Header: "Titre",
-        accessor: "title",
-        disableFilters: true,
-        filterable: true,
-      },
+  
 
-      // {
-      //     Header: "Date",
-      //     accessor: "date_avis",
-      //     disableFilters: true,
-      //     filterable: true,
-      // },
-      {
-        Header: "Auteur",
-        accessor: (row: any) => row.auteurId?.name || "",
-        disableFilters: true,
-        filterable: true,
-      },
-      {
-        Header: "PDF",
-        accessor: "pdf",
-        disableFilters: true,
-        filterable: true,
-        Cell: ({ row }: any) => (
-          <Button
-            variant="link"
-            onClick={() => handleShowPdfModal(row.original.pdf)}
-          >
-            Ouvrir PDF
-          </Button>
-        ),
-      },
-      {
-        Header: "Lien",
-        accessor: "lien",
-        disableFilters: true,
-        filterable: true,
-        Cell: ({ cell: { value } }: any) => (
-          <Button variant="link" onClick={() => window.open(value, "_blank")}>
-            Aller au lien
-          </Button>
-        ),
-      },
-
-      {
-        Header: "Action",
-        disableFilters: true,
-        filterable: true,
-        accessor: (cellProps: any) => {
-          return (
-            <ul className="hstack gap-2 list-unstyled mb-0">
-              {actionAuthorization(
-                "/avis-personnel/single-avis-personnel",
-                user?.permissions!
-              ) ? (
-                <li>
-                  <Link
-                    to="/avis-enseignant/single-avis-enseignant"
-                    state={cellProps}
-                    className="badge bg-info-subtle text-info view-item-btn"
-                    data-bs-toggle="offcanvas"
-                  >
-                    <i
-                      className="ph ph-eye"
-                      style={{
-                        transition: "transform 0.3s ease-in-out",
-                        cursor: "pointer",
-                        fontSize: "1.5em",
-                      }}
-                      onMouseEnter={(e) =>
-                        (e.currentTarget.style.transform = "scale(1.4)")
-                      }
-                      onMouseLeave={(e) =>
-                        (e.currentTarget.style.transform = "scale(1)")
-                      }
-                    ></i>
-                  </Link>
-                </li>
-              ) : (
-                <></>
-              )}
-              {actionAuthorization(
-                "/avis-personnel/edit-avis-personnel",
-                user?.permissions!
-              ) ? (
-                <li>
-                  <Link
-                    to="/avis-personnel/edit-avis-personnel"
-                    className="badge bg-success-subtle text-success edit-item-btn"
-                  >
-                    <i
-                      className="ph ph-pencil-line"
-                      style={{
-                        transition: "transform 0.3s ease-in-out",
-                        cursor: "pointer",
-                        fontSize: "1.5em",
-                      }}
-                      onMouseEnter={(e) =>
-                        (e.currentTarget.style.transform = "scale(1.4)")
-                      }
-                      onMouseLeave={(e) =>
-                        (e.currentTarget.style.transform = "scale(1)")
-                      }
-                    ></i>
-                  </Link>
-                </li>
-              ) : (
-                <></>
-              )}
-              {actionAuthorization(
-                "/avis-personnel/supprimer-avis-personnel",
-                user?.permissions!
-              ) ? (
-                <li>
-                  <Link
-                    to="#"
-                    className="badge bg-danger-subtle text-danger remove-item-btn"
-                  >
-                    <i
-                      className="ph ph-trash"
-                      style={{
-                        transition: "transform 0.3s ease-in-out",
-                        cursor: "pointer",
-                        fontSize: "1.5em",
-                      }}
-                      onMouseEnter={(e) =>
-                        (e.currentTarget.style.transform = "scale(1.4)")
-                      }
-                      onMouseLeave={(e) =>
-                        (e.currentTarget.style.transform = "scale(1)")
-                      }
-                    ></i>
-                  </Link>
-                </li>
-              ) : (
-                <></>
-              )}
+    const columns = useMemo(
+        () => [
+        
+            {
+                Header: "Titre",
+                accessor: "title",
+                disableFilters: true,
+                filterable: true,
+            },
+          
+            // {
+            //     Header: "Date",
+            //     accessor: "date_avis",
+            //     disableFilters: true,
+            //     filterable: true,
+            // },
+            {
+                Header: "Auteur",
+                accessor: (row: any) => row.auteurId?.name || "",
+                disableFilters: true,
+                filterable: true,
+            },
+            {
+                Header: "PDF",
+                accessor: "pdf",
+                disableFilters: true,
+                filterable: true,
+                Cell: ({ row }: any) => (
+                    <Button
+                        variant="link"
+                        onClick={() => handleShowPdfModal(row.original.pdf)}
+                    >
+                        Ouvrir PDF
+                    </Button>
+                )
+            },
+            {
+                Header: "Lien",
+                accessor: "lien",
+                disableFilters: true,
+                filterable: true,
+                Cell: ({ cell: { value } }: any) => (
+                    <Button
+                        variant="link"
+                        onClick={() => window.open(value, "_blank")}
+                    >
+                        Aller au lien
+                    </Button>
+                )
+            },
+      
+            {
+                Header: "Action",
+                disableFilters: true,
+                filterable: true,
+                accessor: (cellProps: any) => {
+                    return (
+                        <ul className="hstack gap-2 list-unstyled mb-0">
+              {actionAuthorization("/avis-personnel/single-avis-personnel",user?.permissions!)?
+              <li>
+                <Link
+                  to="/avis-enseignant/single-avis-enseignant"
+                  state={cellProps}
+                  className="badge bg-info-subtle text-info view-item-btn"
+                  data-bs-toggle="offcanvas"
+                >
+                  <i
+                    className="ph ph-eye"
+                    style={{
+                      transition: "transform 0.3s ease-in-out",
+                      cursor: "pointer",
+                      fontSize: "1.5em",
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.transform = "scale(1.4)")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.transform = "scale(1)")
+                    }
+                  ></i>
+                </Link>
+              </li> : <></>
+                } 
+                  {actionAuthorization("/avis-personnel/edit-avis-personnel",user?.permissions!)?
+             <li>
+                <Link
+                  to="/avis-personnel/edit-avis-personnel"
+                  className="badge bg-success-subtle text-success edit-item-btn"
+                >
+                  <i
+                    className="ph ph-pencil-line"
+                    style={{
+                      transition: "transform 0.3s ease-in-out",
+                      cursor: "pointer",
+                      fontSize: "1.5em",
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.transform = "scale(1.4)")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.transform = "scale(1)")
+                    }
+                  ></i>
+                </Link>
+              </li>
+              :<></> }
+              {actionAuthorization("/avis-personnel/supprimer-avis-personnel",user?.permissions!)?
+              <li>
+                <Link
+                  to="#"
+                  className="badge bg-danger-subtle text-danger remove-item-btn"
+                 
+                >
+                  <i
+                  onClick={() => handleDeleteAvisPersonnel(cellProps?._id!)}
+                    className="ph ph-trash"
+                    style={{
+                      transition: "transform 0.3s ease-in-out",
+                      cursor: "pointer",
+                      fontSize: "1.5em",
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.transform = "scale(1.4)")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.transform = "scale(1)")
+                    }
+                  ></i>
+                </Link>
+              </li> :<></> }
             </ul>
           );
         },
