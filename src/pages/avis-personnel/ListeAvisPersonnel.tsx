@@ -237,7 +237,7 @@ const ListeAvisEtudiant = () => {
     <React.Fragment>
       <div className="page-content">
         <Container fluid={true}>
-          <Breadcrumb title="Liste des Avis" pageTitle="More" />
+          <Breadcrumb title="Liste des Avis" pageTitle="Avis personnels" />
 
           <Row id="usersList">
             <Col lg={12}>

@@ -161,7 +161,7 @@ const TemplateBody = () => {
     <React.Fragment>
       <div className="page-content">
         <Container fluid={true}>
-          <Breadcrumb title="Liens utils" pageTitle="Liste des liens utils" />
+          <Breadcrumb title="Liste des modèles" pageTitle="Liste des modèles" />
 
           <Row id="sellersList">
             <Col lg={12}>

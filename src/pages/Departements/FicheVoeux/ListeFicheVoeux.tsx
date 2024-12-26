@@ -318,7 +318,7 @@ const ListFicheVoeux = () => {
       <div className="page-content">
         <Container fluid={true}>
           <Breadcrumb
-            title="Gestion des départements"
+            title="Gestion des emplois"
             pageTitle="Liste fiches des voeux enseignants "
           />
 

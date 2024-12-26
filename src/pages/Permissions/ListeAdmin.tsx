@@ -208,7 +208,7 @@ const ListeAdmin = () => {
                   ></i>
                 </Link>
               </li>
-              <li>
+              {/* <li>
                 <Link
                   to="/admin/history-admin"
                   state={admin}
@@ -229,11 +229,11 @@ const ListeAdmin = () => {
                     }
                   ></i>
                 </Link>
-              </li>
+              </li> */}
               <li>
                 <Link
                   onClick={() => handleShow(admin._id)}
-                  className="badge bg-danger-subtle text-danger edit-item-btn"
+                  className="badge bg-warning-subtle text-warning edit-item-btn"
                   to={""}
                 >
                   <i

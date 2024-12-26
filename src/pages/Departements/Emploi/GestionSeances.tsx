@@ -134,7 +134,7 @@ const GestionSeances = () => {
       <div className="page-content">
         <Container fluid={true}>
           <Breadcrumb
-            title="Gestion des séances"
+            title="Gestion des emplois"
             pageTitle="Liste des séances"
           />
 
