@@ -21,21 +21,25 @@ export interface AvisEnseignant {
     baseQuery: fetchBaseQuery({
       baseUrl: `${process.env.REACT_APP_API_URL}/api/avis-enseignant/`, // Adjust endpoint base URL
     }),
-    tagTypes: ['Avis'],
+    tagTypes: ['AvisEnseignant'],
     endpoints(builder) {
       return {
         fetchAvisEnseignant: builder.query<AvisEnseignant, void>({
           query() {
             return 'get-all-avis-enseignants';
           },
-          providesTags: ['Avis'],
+          providesTags: ['AvisEnseignant'],
         }),
-        fetchAvisEnseignantById: builder.query<AvisEnseignant[], void>({
-            query(_id) {
-              return `get-avis-enseignant/${_id}`;
-            },
-            providesTags: ['Avis'],
-          }),
+        fetchAvisEnseignantById: builder.query<AvisEnseignant, { _id: string }>({
+                 query({ _id }) {
+                   return {
+                     url: 'get-avis-enseignant',
+                     method: 'POST',
+                     body: { _id },
+                   };
+                 },
+                 providesTags: ['AvisEnseignant'],
+               }),
         addAvisEnseignant: builder.mutation<void, Partial<AvisEnseignant>>({
           query(avisEnseignant) {
             return {
@@ -44,27 +48,28 @@ export interface AvisEnseignant {
               body: avisEnseignant,
             };
           },
-          invalidatesTags: ['Avis'],
+          invalidatesTags: ['AvisEnseignant'],
         }),
         updateAvisEnseignant: builder.mutation<void, AvisEnseignant>({
           query(avisEnseignant) {
-            const { _id, ...rest } = avisEnseignant;
+           
             return {
-              url: `edit-demande-enseignant/${_id}`,
+              url: `edit-demande-enseignant`,
               method: 'PUT',
-              body: rest,
+              body: avisEnseignant,
             };
           },
-          invalidatesTags: ['Avis'],
+          invalidatesTags: ['AvisEnseignant'],
         }),
-        deleteAvisEnseignant: builder.mutation<void, string>({
+        deleteAvisEnseignant: builder.mutation<AvisEnseignant, { _id: string }>({
           query(_id) {
             return {
-              url: `delete-demande-enseignant/${_id}`,
+              url: `delete-demande-enseignant`,
               method: 'DELETE',
+              body:{ _id }
             };
           },
-          invalidatesTags: ['Avis'],
+          invalidatesTags: ['AvisEnseignant'],
         }),
       };
     },
