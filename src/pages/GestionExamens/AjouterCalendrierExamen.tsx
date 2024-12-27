@@ -269,7 +269,7 @@ const AjouterCalendrierExamen = () => {
                     >
                       <option value="Choisir">Choisir...</option>
                       <option value="DS">DS</option>
-                      <option value="Examen">Examen</option>
+                      <option value="Examens">Examens</option>
                     </select>
                   </Col>
                   {selectedTypeExamen === "Examen" && (

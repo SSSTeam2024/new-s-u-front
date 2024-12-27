@@ -9,6 +9,7 @@ export interface Matiere {
   volume: string;
   nbr_elimination: string;
   regime_matiere: string;
+  classes?: any[]
 }
 export const matiereSlice = createApi({
   reducerPath: "Matiere",
