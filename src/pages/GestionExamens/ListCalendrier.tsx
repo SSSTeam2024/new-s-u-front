@@ -7,6 +7,7 @@ import {
   Dropdown,
   Form,
   Modal,
+  Offcanvas,
   Row,
 } from "react-bootstrap";
 import Breadcrumb from "Common/BreadCrumb";
@@ -17,6 +18,7 @@ import {
   useDeleteExamenMutation,
 } from "features/examens/examenSlice";
 import Swal from "sweetalert2";
+import SimpleBar from "simplebar-react";
 
 const ListCalendrier = () => {
   document.title = "Liste des Calendriers | ENIGA";
@@ -91,16 +93,18 @@ const ListCalendrier = () => {
         Header: "Action",
         disableFilters: true,
         filterable: true,
-        accessor: (cellProps: any) => {
+        accessor: (calendrier: any) => {
           return (
             <ul className="hstack gap-2 list-unstyled mb-0">
               <li>
                 <Link
                   to="#"
+                  state={calendrier}
                   className="badge bg-info-subtle text-info view-item-btn"
+                  onClick={() => handleShow(calendrier)}
                 >
                   <i
-                    className="ph ph-eye"
+                    className="ph ph-users-three"
                     style={{
                       transition: "transform 0.3s ease-in-out",
                       cursor: "pointer",
@@ -140,7 +144,7 @@ const ListCalendrier = () => {
                 <Link
                   to="/gestion-examen/programmer-calendrier"
                   className="badge bg-dark-subtle text-dark edit-item-btn"
-                  state={cellProps}
+                  state={calendrier}
                 >
                   <i
                     className="ph ph-gear"
@@ -160,9 +164,31 @@ const ListCalendrier = () => {
               </li>
               <li>
                 <Link
+                  to="/gestion-examen/details-calendrier-examen"
+                  className="badge bg-secondary-subtle text-secondary edit-item-btn"
+                  state={calendrier}
+                >
+                  <i
+                    className="ph ph-calendar-blank"
+                    style={{
+                      transition: "transform 0.3s ease-in-out",
+                      cursor: "pointer",
+                      fontSize: "1.5em",
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.transform = "scale(1.2)")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.transform = "scale(1)")
+                    }
+                  ></i>
+                </Link>
+              </li>
+              <li>
+                <Link
                   to="#"
                   className="badge bg-danger-subtle text-danger remove-item-btn"
-                  onClick={() => AlertDelete(cellProps?._id!)}
+                  onClick={() => AlertDelete(calendrier?._id!)}
                 >
                   <i
                     className="ph ph-trash"
@@ -187,8 +213,21 @@ const ListCalendrier = () => {
     ],
     []
   );
-  const { data: AllCalendriers = [] } = useFetchExamensQuery();
+  const {
+    data: AllCalendriers = [],
+    isLoading,
+    isError,
+  } = useFetchExamensQuery();
+  console.log("AllCalendriers", AllCalendriers);
+  const [show, setShow] = useState(false);
+  const [selectedCalendrier, setSelectedCalendrier] = useState<any>(null);
 
+  const handleClose = () => setShow(false);
+
+  const handleShow = (calendrier: any) => {
+    setSelectedCalendrier(calendrier);
+    setShow(true);
+  };
   return (
     <React.Fragment>
       <div className="page-content">
@@ -278,6 +317,177 @@ const ListCalendrier = () => {
           </Row>
         </Container>
       </div>
+
+      {/* Offcanvas for displaying exam planification details */}
+      <Offcanvas show={show} onHide={handleClose}>
+        <Offcanvas.Header closeButton>
+          <Offcanvas.Title>Détails de Calendrier Examen</Offcanvas.Title>
+        </Offcanvas.Header>
+        <Offcanvas.Body>
+          {isLoading && <p>Chargement...</p>}
+          {isError && (
+            <p>Erreur lors de la récupération des détails des examens.</p>
+          )}
+          {!isLoading && !isError && selectedCalendrier && (
+            <SimpleBar>
+              <p>
+                <strong>Période:</strong> {selectedCalendrier.period}
+              </p>
+              <p>
+                <strong>Semestre:</strong> {selectedCalendrier.semestre}
+              </p>
+              <p>
+                <strong>Session:</strong> {selectedCalendrier.session}
+              </p>
+              <p>
+                <strong>Type:</strong> {selectedCalendrier.type_examen}
+              </p>
+
+              <div className="acitivity-timeline acitivity-main">
+                {selectedCalendrier.group_enseignant.map(
+                  (group: any, index: any) => {
+                    const dateParts = group.date.split("-");
+                    const formattedDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
+                    const date = new Date(formattedDate);
+                    if (isNaN(date.getTime())) {
+                      console.error(`Invalid date format: ${group.date}`);
+                      return (
+                        <div key={index} className="activity-item d-flex mb-3">
+                          <p className="text-danger">
+                            Invalid Date: {group.date}
+                          </p>
+                        </div>
+                      );
+                    }
+                    const dayName = date.toLocaleDateString("fr-FR", {
+                      weekday: "long",
+                    });
+
+                    return (
+                      <div key={index} className="activity-item d-flex mb-3">
+                        <div className="flex-shrink-0 activity-avatar"></div>
+                        <div className="flex-grow-1 ms-3">
+                          <h6 className="mb-0 lh-base">{dayName}</h6>
+                          {group.enseignant && group.enseignant.length > 0 ? (
+                            <p className="text-muted mb-0">
+                              <strong>{group.date}:</strong>{" "}
+                              {group.enseignant
+                                .map(
+                                  (enseignant: any) =>
+                                    `${
+                                      enseignant.prenom_fr ||
+                                      "Prenom non disponible"
+                                    } ${
+                                      enseignant.nom_fr || "Nom non disponible"
+                                    }`
+                                )
+                                .join(", ")}
+                            </p>
+                          ) : (
+                            <p className="text-muted">
+                              <strong>{group.date}:</strong> Aucun enseignant
+                              disponible.
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  }
+                )}
+              </div>
+
+              {/* <div className="acitivity-timeline acitivity-main">
+                {selectedCalendrier.epreuve.map((epreuve: any, index: any) => (
+                  <div key={index} className="acitivity-item d-flex mb-3">
+                    <div className="flex-shrink-0 acitivity-avatar"></div>
+                    <div className="flex-grow-1 ms-3">
+                      <h6 className="mb-0 lh-base">{`jour ${index + 1}`}</h6>
+                      {epreuve.group_surveillants.length > 0 ? (
+                        epreuve?.group_surveillants?.map(
+                          (surveillant: any, i: any) => (
+                            <p key={i} className="text-muted mb-0">
+                              <strong>-</strong>{" "}
+                              {surveillant.prenom_fr || "Prenom non disponible"}{" "}
+                              {surveillant.nom_fr || "Nom non disponible"}
+                            </p>
+                          )
+                        )
+                      ) : (
+                        <p className="text-muted">
+                          <strong>-</strong> Aucun surveillant disponible.
+                        </p>
+                      )}
+                      <p className="text-muted mt-2">
+                        <strong>Date:</strong> {epreuve.date} |
+                        <strong> Heure:</strong> {epreuve.heure_debut} -{" "}
+                        {epreuve.heure_fin}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div> */}
+
+              {/* <div className="acitivity-timeline acitivity-main">
+                <div className="acitivity-item d-flex">
+                  <div className="flex-shrink-0 acitivity-avatar"></div>
+                  <div className="flex-grow-1 ms-3">
+                    <h6 className="mb-0 lh-base">Matières</h6>
+                    <p className="text-muted mb-0" key={1}>
+                      <strong>-</strong> here is the code
+                    </p>
+                    <p className="text-muted mb-0" key={2}>
+                      <strong>-</strong> here is the code
+                    </p>
+                  </div>
+                </div>
+                <div className="acitivity-item py-3 d-flex">
+                  <div className="flex-shrink-0">
+                    <div className="acitivity-avatar"></div>
+                  </div>
+                  <div className="flex-grow-1 ms-3">
+                    <h6 className="mb-0 lh-base">Jours</h6>
+                    <p className="mb-2 text-muted" key={1}>
+                      vvv
+                    </p>
+                    <p className="mb-2 text-muted" key={2}>
+                      vvv
+                    </p>
+                  </div>
+                </div>
+              </div> */}
+
+              {/* <div>
+                {selectedCalendrier.epreuve.map((epreuve: any, index: any) => (
+                  <div key={index} className="mb-3">
+                    <h6>
+                     
+                    </h6>
+                    {epreuve.group_surveillants.length > 0 ? (
+                      epreuve?.group_surveillants?.map(
+                        (surveillant: any, i: any) => (
+                          <p key={i} className="text-muted mb-0">
+                            - {surveillant.prenom_fr || "Prenom non disponible"}{" "}
+                            {surveillant.nom_fr || "Nom non disponible"}
+                          </p>
+                        )
+                      )
+                    ) : (
+                      <p className="text-muted">
+                        Aucun surveillant disponible.
+                      </p>
+                    )}
+                    <p className="text-muted mt-2">
+                      <strong>Date:</strong> {epreuve.date} |
+                      <strong> Heure:</strong> {epreuve.heure_debut} -{" "}
+                      {epreuve.heure_fin}
+                    </p>
+                  </div>
+                ))}
+              </div> */}
+            </SimpleBar>
+          )}
+        </Offcanvas.Body>
+      </Offcanvas>
     </React.Fragment>
   );
 };

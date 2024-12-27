@@ -185,6 +185,7 @@ import ListeDossiersAdministratifsPersonnelsArchives from "pages/Gestion-personn
 import AjouterCalendrierExamen from "pages/GestionExamens/AjouterCalendrierExamen";
 import ListCalendrier from "pages/GestionExamens/ListCalendrier";
 import ProgrammerCalendrier from "pages/GestionExamens/ProgrammerCalendrier";
+import CalendrierDetails from "pages/GestionExamens/CalendrierDetails";
 const authProtectedRoutes = [
   { path: "/dashboard", component: <Dashboard /> },
 
@@ -751,6 +752,11 @@ const authProtectedRoutes = [
   {
     path: "/gestion-examen/ajouter-calendrier-examen",
     component: <AjouterCalendrierExamen />,
+  },
+  // claendrier details
+  {
+    path: "/gestion-examen/details-calendrier-examen",
+    component: <CalendrierDetails />,
   },
   {
     path: "/gestion-examen/liste-des-calendrier",
