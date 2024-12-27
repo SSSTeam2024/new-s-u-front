@@ -13,6 +13,8 @@ export interface Examen {
   }[],
   epreuve: {
     group_surveillants: any [],
+    group_responsables?: any[],
+    nbr_copie?: string,
     date: string
     heure_debut: string
     heure_fin: string
@@ -20,6 +22,11 @@ export interface Examen {
     matiere: any
     classe: any
   }[],
+}
+
+export interface GetExamenByRegime {
+    semester: string,
+    regime: string
 }
 
 export const examenSlice = createApi({
@@ -62,6 +69,16 @@ export const examenSlice = createApi({
         }),
         invalidatesTags: ["Examen"],
       }),
+      getExamenByRegime: builder.mutation<void, GetExamenByRegime>({
+        query(payload) {
+            return{
+                url: `get-examen-by-regime-semestre`,
+                method: "POST",
+                body: payload
+            }
+        },
+        invalidatesTags: ["Examen"],
+      }),
     };
   },
   
@@ -72,4 +89,5 @@ export const {
    useDeleteExamenMutation,
    useFetchExamensQuery,
    useUpdateExamenMutation,
+   useGetExamenByRegimeMutation
 } = examenSlice;
