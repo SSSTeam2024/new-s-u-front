@@ -15,6 +15,9 @@ import { useFetchShortCodeQuery } from "features/shortCode/shortCodeSlice";
 import { useAddNewTemplateBodyMutation } from "features/templateBody/templateBodySlice";
 import "./body.css";
 import JoditEditor from "jodit-react";
+import { renderAsync } from "docx-preview";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 
 const NewTemplateBody = () => {
   document.title = "Ajouter Corps du Modèle | Smart Institute";
@@ -22,6 +25,82 @@ const NewTemplateBody = () => {
   const navigate = useNavigate();
   const [addNewTemplateBody, { isLoading }] = useAddNewTemplateBodyMutation();
   const { data: shortCodeList = [] } = useFetchShortCodeQuery();
+
+  //************************************************************************** */
+
+  const [content, setContent] = useState<any>("");
+
+  const previewContainer: any = useRef(null);
+
+  const [selectedWord, setSelectedWord] = useState("");
+
+  const rangeRef: any = useRef(null);
+
+  const [canSaveTemplate, setCanSaveTemplate] = useState<boolean>(false);
+
+  const [isDocumentLoaded, setIsDocumentLoaded] = useState<boolean>(false);
+
+  const handleFileUpload = async (event: any) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = async (e: any) => {
+        const arrayBuffer = e.target.result;
+        if (previewContainer.current) {
+          previewContainer.current.innerHTML = ""; // Clear existing content
+          await renderAsync(arrayBuffer, previewContainer.current);
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    }
+    previewContainer.current.contentEditable = true;
+    setIsDocumentLoaded(true);
+  };
+
+  // Capture cursor position
+  const captureCursorPosition = () => {
+    const selection = window.getSelection();
+    if (selection && selection.rangeCount > 0) {
+      rangeRef.current = selection.getRangeAt(0);
+    }
+  };
+
+  const handleInsertWord = () => {
+    if (rangeRef.current && selectedWord) {
+      const span = document.createElement("span");
+      span.textContent = selectedWord;
+      rangeRef.current.insertNode(span);
+      rangeRef.current.collapse(false); // Move cursor to the end of the inserted word
+      rangeRef.current = null; // Clear the range
+    }
+  };
+
+  const handleShortCodeInsertion = (code: string) => {
+    setCanSaveTemplate(false);
+    if (rangeRef.current && code) {
+      const span = document.createElement("span");
+      span.textContent = code;
+      rangeRef.current.insertNode(span);
+      rangeRef.current.collapse(false); // Move cursor to the end of the inserted word
+      rangeRef.current = null; // Clear the range
+    }
+  };
+
+  const handleSaveEdited = () => {
+    if (previewContainer.current) {
+      const editedContent = previewContainer.current.innerHTML;
+      console.log("Edited Content:", editedContent);
+      // You can save or send this content as needed
+      // setContent(JSON.stringify(editedContent));
+      setTemplateBody((prevState) => ({
+        ...prevState,
+        body: JSON.stringify(editedContent),
+      }));
+      setCanSaveTemplate(true);
+    }
+  };
+
+  //************************************************************************** */
 
   const initialTemplateBody = {
     _id: "",
@@ -186,35 +265,29 @@ const NewTemplateBody = () => {
     }));
   };
 
-  const handleShortCodeInsertion = (code: string) => {
-    setTemplateBody((prevState) => ({
-      ...prevState,
-      body: `${prevState.body}${code}`,
-    }));
-  };
-
-  const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    try {
-      await addNewTemplateBody(templateBody).unwrap();
-      Swal.fire({
-        position: "center",
-        icon: "success",
-        title: "Le corps du modèle a été créé avec succès.",
-        showConfirmButton: false,
-        timer: 2000,
-      });
-      navigate("/template/liste-template-body");
-    } catch (error) {
-      Swal.fire({
-        icon: "error",
-        title: "Erreur",
-        text: "Une erreur est survenue lors de la création du corps du modèle.",
-      });
-    } finally {
-      setTemplateBody(initialTemplateBody);
-    }
-  };
+  const handleFormSubmit =
+    async (/* e: React.FormEvent<HTMLFormElement> */) => {
+      // e.preventDefault();
+      try {
+        await addNewTemplateBody(templateBody).unwrap();
+        Swal.fire({
+          position: "center",
+          icon: "success",
+          title: "Le corps du modèle a été créé avec succès.",
+          showConfirmButton: false,
+          timer: 2000,
+        });
+        navigate("/template/liste-template-body");
+      } catch (error) {
+        Swal.fire({
+          icon: "error",
+          title: "Erreur",
+          text: "Une erreur est survenue lors de la création du corps du modèle.",
+        });
+      } //finally {
+      //   setTemplateBody(initialTemplateBody);
+      // }
+    };
 
   const handleNextStep = () => setStep((prevStep) => prevStep + 1);
 
@@ -285,7 +358,7 @@ const NewTemplateBody = () => {
             </Card.Header>
 
             <Card.Body>
-              <Form onSubmit={handleFormSubmit}>
+              <Form /* onSubmit={handleFormSubmit} */>
                 {step === 1 && (
                   <>
                     <Row>
@@ -361,7 +434,32 @@ const NewTemplateBody = () => {
                             </Button>
                           ))}
                         </div>
-                        <div className="center">
+                        <input
+                          type="file"
+                          accept=".docx"
+                          onChange={handleFileUpload}
+                        />
+                        <button
+                          onClick={handleSaveEdited}
+                          disabled={
+                            canSaveTemplate === true ||
+                            isDocumentLoaded === false
+                          }
+                        >
+                          Enregistrer les modifications
+                        </button>
+
+                        <div
+                          ref={previewContainer}
+                          style={{
+                            border: "1px solid #ccc",
+                            padding: "10px",
+                            marginTop: "20px",
+                            minHeight: "300px",
+                          }}
+                          onMouseUp={captureCursorPosition}
+                        ></div>
+                        {/* <div className="center">
                           <JoditEditor
                             ref={editor}
                             value={body}
@@ -370,7 +468,7 @@ const NewTemplateBody = () => {
                               handleBodyChange(newContent)
                             }
                           />
-                        </div>
+                        </div> */}
                       </Col>
                     </Row>
 
@@ -381,7 +479,8 @@ const NewTemplateBody = () => {
                       <Button
                         variant="primary"
                         type="submit"
-                        disabled={isLoading}
+                        disabled={isLoading || canSaveTemplate === false}
+                        onClick={handleFormSubmit}
                       >
                         {isLoading ? (
                           <Spinner as="span" animation="border" size="sm" />

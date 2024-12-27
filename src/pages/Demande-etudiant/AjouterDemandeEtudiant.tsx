@@ -51,8 +51,8 @@ const AjouterDemandeEtudiant = () => {
   };
   // Filter students based on selected class
   const filteredEtudiants = selectedClasse
-    ? etudiant.filter(
-        (etudiant) => etudiant.groupe_classe._id === selectedClasse
+    ? etudiant?.filter(
+        (etudiant) => etudiant?.groupe_classe?._id! === selectedClasse
       )
     : etudiant; // Show all students if no class is selected
 
@@ -121,7 +121,9 @@ const AjouterDemandeEtudiant = () => {
     e: React.FormEvent<HTMLFormElement>
   ) => {
     e.preventDefault();
+
     try {
+      console.log("formdata",formData)
       await addDemandeEtudiant(formData).unwrap();
       notify();
       navigate("/demandes-etudiant/Liste-demandes-etudiant");

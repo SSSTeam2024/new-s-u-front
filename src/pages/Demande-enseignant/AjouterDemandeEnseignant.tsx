@@ -293,7 +293,7 @@ const AjouterDemandeEnseignant = () => {
                               id="description"
                               value={formData.description ?? ""}
                               onChange={onChange}
-                              required
+                              // required
                             />
                           </Form.Group>
                         </Col>

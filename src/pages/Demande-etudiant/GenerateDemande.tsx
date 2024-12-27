@@ -6,14 +6,22 @@ import TitlePDF from "Common/TitlePDF";
 import BodyPDF from "Common/BodyPDF";
 import { useFetchVaribaleGlobaleQuery } from "features/variableGlobale/variableGlobaleSlice";
 import HeaderPDF from "Common/HeaderPDF";
-import { jsPDF } from "jspdf";
+// import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import "jspdf-autotable";
+
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
+
+import { replaceShortCodes } from "helpers/GlobalFunctions/administrative_demand_helper";
 
 const GenerateDemande = () => {
   document.title = "Demande Etudiant | ENIGA";
   const location = useLocation();
   const demandeLocation = location.state;
+
+  console.log(demandeLocation?.piece_demande);
+
   const { data: AllVariablesGlobales = [] } = useFetchVaribaleGlobaleQuery();
   const bodyRef = useRef<HTMLDivElement | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -183,6 +191,45 @@ const GenerateDemande = () => {
   //   }
   // };
 
+  const handleSaveAsPDF = async () => {
+    let generatedDocument = replaceShortCodes(
+      demandeLocation,
+      AllVariablesGlobales
+    );
+
+    if (generatedDocument) {
+      const tempContainer = document.createElement("div");
+      tempContainer.style.position = "absolute";
+      tempContainer.style.left = "-9999px";
+      tempContainer.style.width = "fit-content";
+      tempContainer.style.background = "#fff";
+      tempContainer.innerHTML = generatedDocument;
+
+      document.body.appendChild(tempContainer);
+
+      const canvas = await html2canvas(tempContainer, { scale: 2 });
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "px",
+        format: [tempContainer.offsetWidth, tempContainer.offsetHeight],
+      });
+      pdf.addImage(
+        imgData,
+        "PNG",
+        0,
+        0,
+        tempContainer.offsetWidth,
+        tempContainer.offsetHeight
+      );
+      pdf.save("document.pdf");
+
+      document.body.removeChild(tempContainer);
+    } else {
+      alert("No content available to save as PDF.");
+    }
+  };
+
   const generatePDF = async () => {
     try {
       setIsGenerating(true);
@@ -296,7 +343,7 @@ const GenerateDemande = () => {
               border: "1px solid #ddd",
             }}
           >
-            <Row>
+            {/* <Row>
               <HeaderPDF
                 logo_etablissement={
                   AllVariablesGlobales[2]?.logo_etablissement!
@@ -304,10 +351,10 @@ const GenerateDemande = () => {
                 logo_republique={AllVariablesGlobales[2]?.logo_republique!}
                 logo_universite={AllVariablesGlobales[2]?.logo_universite!}
               />
-            </Row>
-            <Row>
+            </Row> */}
+            {/* <Row>
               <TitlePDF piece_demande={demandeLocation?.piece_demande!} />
-            </Row>
+            </Row> */}
             <Row>
               <BodyPDF
                 piece_demande={demandeLocation?.piece_demande!}
@@ -324,7 +371,7 @@ const GenerateDemande = () => {
                 allVariables={AllVariablesGlobales[2]}
               />
             </Row>
-            <Row className="mt-auto">
+            {/* <Row className="mt-auto">
               <FooterPDF
                 address_fr={AllVariablesGlobales[2]?.address_fr!}
                 code={AllVariablesGlobales[2]?.code_postal!}
@@ -332,10 +379,12 @@ const GenerateDemande = () => {
                 phone={AllVariablesGlobales[2]?.phone!}
                 website={AllVariablesGlobales[2]?.website!}
               />
-            </Row>
+            </Row> */}
           </div>
           <div className="hstack gap-2 justify-content-end d-print-none mt-4">
-            <Button onClick={generatePDF}>Download as PDF</Button>
+            <Button onClick={/* generatePDF */ handleSaveAsPDF}>
+              Télécharger
+            </Button>
           </div>
         </Container>
       </div>

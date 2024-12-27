@@ -96,7 +96,7 @@ const SingleDemandeEtudiant = (props: any) => {
     <React.Fragment>
       <div className="page-content">
         <Container fluid={true}>
-          <div
+          {/* <div
             style={{
               visibility: "hidden", // Hide it but keep it rendered on the page
               position: "absolute",
@@ -116,7 +116,7 @@ const SingleDemandeEtudiant = (props: any) => {
               departement={state.state?.departement}
               allVariables={allVariables}
             />
-          </div>
+          </div> */}
           <Breadcrumb
             title="Demande Etudiant"
             pageTitle="Details de la Demande"

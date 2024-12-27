@@ -69,6 +69,8 @@ const BodyPDF = forwardRef<HTMLDivElement, ChildProps>((props: any, ref) => {
 
   let newBody = piece_demande?.body ?? "";
 
+  console.log(newBody);
+
   useEffect(() => {
     // STUDENT AR
     if (newBody?.includes("اسم-الطالب")) {
@@ -154,8 +156,8 @@ const BodyPDF = forwardRef<HTMLDivElement, ChildProps>((props: any, ref) => {
     if (newBody?.includes("nationalité-etudiant")) {
       newBody = newBody?.replace("nationalité-etudiant", studentId.nationalite);
     }
-    if (newBody?.includes("CIN d'Étudiant")) {
-      newBody = newBody?.replace("CIN d'Étudiant", studentId.num_CIN);
+    if (newBody?.includes("cin_etudiant")) {
+      newBody = newBody?.replace("cin_etudiant", studentId.num_CIN);
     }
     if (newBody?.includes("etat-compte-etudiant")) {
       newBody = newBody?.replace(
@@ -230,6 +232,7 @@ const BodyPDF = forwardRef<HTMLDivElement, ChildProps>((props: any, ref) => {
     }
     // UNIVERSITY FR
     if (newBody?.includes("nom_directeur")) {
+      console.log(allVariables);
       newBody = newBody?.replace("nom_directeur", allVariables.directeur_fr);
     }
 
@@ -689,8 +692,8 @@ const BodyPDF = forwardRef<HTMLDivElement, ChildProps>((props: any, ref) => {
         enseignantId.specilaite.specialite_ar
       );
     }
-
-    setNewUpdateBody(newBody);
+    console.log(newBody);
+    setNewUpdateBody(JSON.parse(newBody));
   }, [piece_demande, studentId, anneeScolaire, allVariables]);
 
   // const tempDiv = `<p>hello table</p><table style="border-collapse:collapse;width: 100%; border: 1px solid black;">
@@ -702,8 +705,21 @@ const BodyPDF = forwardRef<HTMLDivElement, ChildProps>((props: any, ref) => {
   //                  </table>`;
 
   return (
-    <div ref={ref}>
-      <div dangerouslySetInnerHTML={{ __html: newUpdateBody }} />
+    <div
+      ref={ref}
+      style={{
+        border: "1px solid #ccc",
+        padding: "10px",
+        marginTop: "20px",
+        minHeight: "300px",
+        background: "#f9f9f9",
+      }}
+    >
+      <div
+        dangerouslySetInnerHTML={{
+          __html: /* JSON.parse(newUpdateBody) */ newUpdateBody,
+        }}
+      />
     </div>
   );
 });

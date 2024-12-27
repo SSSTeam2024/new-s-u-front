@@ -7,10 +7,14 @@ const TemplateBodyDetail = () => {
   const location = useLocation();
   const templateBody = location.state; // Extract the template body data from location
 
+  console.log(templateBody?.body);
+
   if (!templateBody) {
     return (
       <div>
-        <h4>Aucune donnée disponible. Veuillez revenir en arrière et réessayer.</h4>
+        <h4>
+          Aucune donnée disponible. Veuillez revenir en arrière et réessayer.
+        </h4>
         <Button variant="secondary" onClick={() => navigate(-1)}>
           Retour
         </Button>
@@ -36,7 +40,9 @@ const TemplateBodyDetail = () => {
                         </div>
                       </div>
                       <div className="flex-grow-1">
-                        <h5 className="card-title">Détails du Corps du Modèle</h5>
+                        <h5 className="card-title">
+                          Détails du Corps du Modèle
+                        </h5>
                       </div>
                     </div>
                   </Card.Header>
@@ -49,24 +55,35 @@ const TemplateBodyDetail = () => {
 
                     <div className="mb-3">
                       <h4 className="card-title mb-0">Langue</h4>
-                      <p>{templateBody?.langue}</p> 
+                      <p>{templateBody?.langue}</p>
                     </div>
 
                     <div className="mb-3">
                       <h4 className="card-title mb-0">Destiné à</h4>
-                      <p>{templateBody?.intended_for}</p> 
+                      <p>{templateBody?.intended_for}</p>
                     </div>
 
                     <div className="mb-3">
                       <h4 className="card-title mb-0">Corps</h4>
-                      <div dangerouslySetInnerHTML={{ __html: templateBody?.body }} /> 
+                      <div
+                        style={{
+                          border: "1px solid #ccc",
+                          padding: "10px",
+                          marginTop: "20px",
+                          minHeight: "300px",
+                          background: "#f9f9f9",
+                        }}
+                      >
+                        <div
+                          dangerouslySetInnerHTML={{
+                            __html: JSON.parse(templateBody?.body),
+                          }}
+                        ></div>
+                      </div>
                     </div>
 
                     <div className="hstack gap-2 justify-content-end">
-                      <Button
-                        variant="secondary"
-                        onClick={() => navigate(-1)} 
-                      >
+                      <Button variant="secondary" onClick={() => navigate(-1)}>
                         Retour
                       </Button>
                     </div>
