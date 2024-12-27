@@ -409,7 +409,7 @@ const TableauChargesHoraires = () => {
       <div className="page-content">
         <Container fluid={true}>
           <Breadcrumb
-            title="Gestion des départements"
+            title="Gestion des emplois"
             pageTitle="Tableau des charges horiares"
           />
 

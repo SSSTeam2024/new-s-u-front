@@ -2,12 +2,14 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export interface Matiere {
   _id: string;
-  code_matiere: string,
-  matiere: string,
-  type: string,
-  semestre: string,
-  volume: string,
-  nbr_elimination: string,
+  code_matiere: string;
+  matiere: string;
+  type: string;
+  semestre: string;
+  volume: string;
+  nbr_elimination: string;
+  regime_matiere: string;
+  classes?: any[]
 }
 export const matiereSlice = createApi({
   reducerPath: "Matiere",
@@ -54,8 +56,8 @@ export const matiereSlice = createApi({
 });
 
 export const {
-    useAddMatiereMutation,
-    useDeleteMatiereMutation,
-    useFetchMatiereQuery,
-    useUpdateMatiereMutation
+  useAddMatiereMutation,
+  useDeleteMatiereMutation,
+  useFetchMatiereQuery,
+  useUpdateMatiereMutation,
 } = matiereSlice;

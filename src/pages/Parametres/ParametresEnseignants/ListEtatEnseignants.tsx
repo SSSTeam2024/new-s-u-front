@@ -279,7 +279,7 @@ const ListEtatEnseignants = () => {
         <Container fluid={true}>
           <Breadcrumb
             title="Paramètres des enseignants"
-            pageTitle="Liste états des enseignants"
+            pageTitle="Liste états comptes des enseignants"
           />
 
           <Row id="sellersList">

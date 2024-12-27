@@ -45,6 +45,7 @@ const Navdata = () => {
   const [isDeaprtement, setIsDeaprtement] = useState(false);
   const [isEmplois, setIsEmplois] = useState(false);
   const [isRattrapage, setIsRattrapage] = useState(false);
+  const [isExamen, setIsExamen] = useState(false);
   const [isConge, setIsConge] = useState(false);
   const [isModele, setIsModele] = useState(false);
   const [isLevel1, setIsLevel1] = useState(false);
@@ -161,6 +162,9 @@ const Navdata = () => {
     if (iscurrentState !== "Emplois") {
       setIsEmplois(false);
     }
+    if (iscurrentState !== "Examen") {
+      setIsExamen(false);
+    }
   }, [
     iscurrentState,
     isEcommerce,
@@ -180,6 +184,7 @@ const Navdata = () => {
     isPersonnel,
     isDeaprtement,
     isParametreEtudiant,
+    isExamen,
   ]);
   let routes = userPermissions
     ? userPermissions.map((permission) => permission.path)
@@ -270,7 +275,6 @@ const Navdata = () => {
           parentId: "Gestion-enseignant",
           icon: "bi bi-person-lines-fill",
         },
-       
       ],
     },
     //gestion personnel
@@ -897,7 +901,36 @@ const Navdata = () => {
         },
       ],
     },
-
+    //! Gestion Examens
+    {
+      id: "Gestion-des-examens",
+      label: "Gestion des Examens",
+      link: "/#",
+      icon: "bi bi-calendar-event",
+      click: function (e: any) {
+        e.preventDefault();
+        setIsExamen(!isExamen);
+        setIscurrentState("Examen");
+        updateIconSidebar(e);
+      },
+      stateVariables: isExamen,
+      subItems: [
+        {
+          id: "AjouterCalendrierExamen",
+          label: "Ajouter Calendrier Examen",
+          link: "/gestion-examen/ajouter-calendrier-examen",
+          parentId: "Gestion-des-examens",
+          icon: "bi bi-calendar2-plus",
+        },
+        {
+          id: "ListCalendrierExamen",
+          label: "Liste Des Calendrier",
+          link: "/gestion-examen/liste-des-calendrier",
+          parentId: "Gestion-des-examens",
+          icon: "bi bi-card-list",
+        },
+      ],
+    },
     //Gestion des congés
     {
       id: "congés",

@@ -28,6 +28,7 @@ interface Matiere {
   semestre: string;
   volume: string;
   nbr_elimination: string;
+  regime_matiere: string;
 }
 
 const ListMatieres = () => {
@@ -139,6 +140,12 @@ const ListMatieres = () => {
       {
         Header: "Type",
         accessor: "type",
+        disableFilters: true,
+        filterable: true,
+      },
+      {
+        Header: "Régime",
+        accessor: "regime_matiere",
         disableFilters: true,
         filterable: true,
       },

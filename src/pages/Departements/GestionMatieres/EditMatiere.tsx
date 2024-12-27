@@ -22,6 +22,7 @@ const EditMatiere = () => {
     type: "",
     matiere: "",
     code_matiere: "",
+    regime_matiere: "",
   });
 
   useEffect(() => {
@@ -34,6 +35,7 @@ const EditMatiere = () => {
         type: matiere.type,
         matiere: matiere.matiere,
         code_matiere: matiere.code_matiere,
+        regime_matiere: matiere.regime_matiere,
       });
     }
   }, [matiere]);
@@ -77,6 +79,16 @@ const EditMatiere = () => {
       timer: 2000,
     });
   };
+
+  const toggleSemestre = () => {
+    setFormData((prevState) => ({
+      ...prevState,
+      semestre: prevState.semestre === "S1" ? "S2" : "S1",
+    }));
+  };
+  function tog_retourParametres() {
+    navigate("/departement/gestion-matieres/liste-matieres");
+  }
   return (
     <React.Fragment>
       <div className="page-content">
@@ -89,6 +101,29 @@ const EditMatiere = () => {
                   className="d-none alert alert-danger py-2"
                 ></div>
                 <input type="hidden" id="id-field" />
+                <Row>
+                  <Col lg={3}>
+                    <div className="mb-3">
+                      <Form.Label htmlFor="semestre">Semestre</Form.Label>
+                      <div className="form-check form-switch form-switch-lg from-switch-info">
+                        <input
+                          className="form-check-input"
+                          type="checkbox"
+                          role="switch"
+                          id="SwitchCheck6"
+                          checked={formData.semestre === "S2"}
+                          onChange={toggleSemestre}
+                        />
+                        <label
+                          className="form-check-label"
+                          htmlFor="SwitchCheck6"
+                        >
+                          {formData.semestre}
+                        </label>
+                      </div>
+                    </div>
+                  </Col>
+                </Row>
                 <Row>
                   <Col lg={4}>
                     <div className="mb-3">
@@ -105,7 +140,6 @@ const EditMatiere = () => {
                       />
                     </div>
                   </Col>
-
                   <Col lg={4}>
                     <div className="mb-3">
                       <Form.Label htmlFor="matiere">Matières</Form.Label>
@@ -119,33 +153,55 @@ const EditMatiere = () => {
                       />
                     </div>
                   </Col>
+                  <Col lg={4}>
+                    <div className="mb-3">
+                      <Form.Label htmlFor="regime_matiere">
+                        Régime Matière
+                      </Form.Label>
+                      <select
+                        className="form-select text-muted"
+                        name="regime_matiere"
+                        id="regime_matiere"
+                        value={formData.regime_matiere}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            regime_matiere: e.target.value,
+                          })
+                        }
+                      >
+                        <option value="">Sélectionner Régime Matière</option>
+                        <option value="TP">TP</option>
+                        <option value="CC">CC</option>
+                        <option value="MX">MX</option>
+                      </select>
+                    </div>
+                  </Col>
 
                   <Col lg={4}>
                     <div className="mb-3">
-                      <Form.Label htmlFor="type">Type</Form.Label>
-                      <Form.Control
-                        type="text"
+                      <Form.Label htmlFor="type">Type Matière</Form.Label>
+                      <select
+                        className="form-select text-muted"
+                        name="type"
                         id="type"
-                        placeholder=""
-                        required
-                        onChange={onChange}
                         value={formData.type}
-                      />
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            type: e.target.value,
+                          })
+                        }
+                      >
+                        <option value="">Sélectionner Type Matière</option>
+                        <option value="TP">TP</option>
+                        <option value="TD">TD</option>
+                        <option value="C">C</option>
+                        <option value="CI">CI</option>
+                      </select>
                     </div>
                   </Col>
-                  <Col lg={4}>
-                    <div className="mb-3">
-                      <Form.Label htmlFor="semestre">Semestre</Form.Label>
-                      <Form.Control
-                        type="text"
-                        id="semestre"
-                        placeholder=""
-                        required
-                        onChange={onChange}
-                        value={formData.semestre}
-                      />
-                    </div>
-                  </Col>
+
                   <Col lg={4}>
                     <div className="mb-3">
                       <Form.Label htmlFor="volume">Volume</Form.Label>
@@ -153,7 +209,6 @@ const EditMatiere = () => {
                         type="number"
                         id="volume"
                         placeholder=""
-                        required
                         onChange={onChange}
                         value={formData.volume}
                       />
@@ -168,7 +223,6 @@ const EditMatiere = () => {
                         type="text"
                         id="nbr_elimination"
                         placeholder=""
-                        required
                         onChange={onChange}
                         value={formData.nbr_elimination}
                       />
@@ -181,9 +235,7 @@ const EditMatiere = () => {
                     <Button
                       className="btn-ghost-danger"
                       onClick={() => {
-                        navigate(
-                          "/departement/gestion-matieres/liste-matieres"
-                        );
+                        tog_retourParametres();
                       }}
                     >
                       Retour

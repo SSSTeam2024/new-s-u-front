@@ -182,7 +182,10 @@ import EditProfilPersonnel from "pages/Gestion-personnel/EditProfilPersonnel";
 import EquilibreHorairesGrade from "pages/Departements/EmploiEnseignant/EquilibreHorairesGrade";
 import ListeDossierAdministratifEnseignantsArchives from "pages/Gestion-enseignant/Dossieradministratif/ListeDossierAdministratifEnseignantsArchives";
 import ListeDossiersAdministratifsPersonnelsArchives from "pages/Gestion-personnel/Dossieradministratif/ListeDossiersAdministratifsPersonnelsArchives";
-
+import AjouterCalendrierExamen from "pages/GestionExamens/AjouterCalendrierExamen";
+import ListCalendrier from "pages/GestionExamens/ListCalendrier";
+import ProgrammerCalendrier from "pages/GestionExamens/ProgrammerCalendrier";
+import CalendrierDetails from "pages/GestionExamens/CalendrierDetails";
 const authProtectedRoutes = [
   { path: "/dashboard", component: <Dashboard /> },
 
@@ -744,6 +747,25 @@ const authProtectedRoutes = [
   // liste des rattrapages
   { path: "/rattrapage/ajouter-rattrapage", component: <AjouterRattrapage /> },
   { path: "/rattrapage/liste-rattrapages", component: <ListeRattrapages /> },
+
+  //! Calendrier Examen
+  {
+    path: "/gestion-examen/ajouter-calendrier-examen",
+    component: <AjouterCalendrierExamen />,
+  },
+  // claendrier details
+  {
+    path: "/gestion-examen/details-calendrier-examen",
+    component: <CalendrierDetails />,
+  },
+  {
+    path: "/gestion-examen/liste-des-calendrier",
+    component: <ListCalendrier />,
+  },
+  {
+    path: "/gestion-examen/programmer-calendrier",
+    component: <ProgrammerCalendrier />,
+  },
 
   //gestion emploi classes periods
   {
