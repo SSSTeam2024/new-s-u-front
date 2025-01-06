@@ -9,7 +9,7 @@ export interface Examen {
   period: string,
   group_enseignant: {
     enseignant: string[],
-    date: string
+    date: string[]
   }[],
   epreuve: {
     group_surveillants: any [],
@@ -95,5 +95,6 @@ export const {
    useDeleteExamenMutation,
    useFetchExamensQuery,
    useUpdateExamenMutation,
-   useGetExamenByRegimeMutation
+   useGetExamenByRegimeMutation,
+   useFetchExamenByIdQuery
 } = examenSlice;
