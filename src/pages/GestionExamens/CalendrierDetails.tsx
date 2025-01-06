@@ -46,12 +46,9 @@ const CalendrierDetails: React.FC = () => {
   const [filterApplied, setFilterApplied] = useState(false);
 
   // useEffect(() => {
-  //   if (
-  //     calendrierState?.period &&
-  //     (selectedClasse || selectedJour || selectedSalle || selectedTeacher)
-  //   ) {
+  //   if (calendrierState?.period) {
   //     const [start, end] = calendrierState?.period
-  //       ?.split(" / ")
+  //       .split(" / ")
   //       .map((d: string) => {
   //         const [day, month, year] = d.split("-");
   //         return new Date(`${year}-${month}-${day}`);
@@ -66,6 +63,7 @@ const CalendrierDetails: React.FC = () => {
   //           const dayName = current.toLocaleDateString("fr-FR", {
   //             weekday: "long",
   //           });
+
   //           const parseDate = (date: string) => {
   //             const parts = date.split("-");
   //             if (parts.length === 3) {
@@ -109,18 +107,10 @@ const CalendrierDetails: React.FC = () => {
   //     };
 
   //     const allDays = generateDays(start, end);
-  //     setDays(allDays);
-  //   } else {
-  //     setDays([]);
+  //     setDays(allDays); // Populate days immediately when the component loads
   //   }
-  // }, [
-  //   calendrierState,
-  //   AllExamens,
-  //   selectedClasse,
-  //   selectedJour,
-  //   selectedSalle,
-  //   selectedTeacher,
-  // ]);
+  // }, [calendrierState]);
+
   useEffect(() => {
     if (calendrierState?.period) {
       const [start, end] = calendrierState?.period
@@ -133,32 +123,22 @@ const CalendrierDetails: React.FC = () => {
       const generateDays = (start: Date, end: Date) => {
         const result: { date: string; day: string; epreuve: any[] }[] = [];
         let current = new Date(start);
+
         while (current <= end) {
           if (current.getDay() !== 0) {
-            const formattedDate = current.toISOString().split("T")[0];
+            // Skip Sundays
+            const formattedDate = current.toISOString().split("T")[0]; // yyyy-mm-dd
             const dayName = current.toLocaleDateString("fr-FR", {
               weekday: "long",
             });
-
-            const parseDate = (date: string) => {
-              const parts = date.split("-");
-              if (parts.length === 3) {
-                return `${parts[2]}-${parts[1]}-${parts[0]}`;
-              }
-              return date;
-            };
 
             const epreuves = calendrierState.epreuve.filter((exam: any) => {
               if (!exam.date || isNaN(new Date(exam.date).getTime())) {
                 return false;
               }
-              const sanitizedDate = exam.date.includes("-")
-                ? parseDate(exam.date)
-                : exam.date;
 
-              const examDate = new Date(sanitizedDate)
-                .toISOString()
-                .split("T")[0];
+              // Directly compare the yyyy-mm-dd format
+              const examDate = new Date(exam.date).toISOString().split("T")[0];
 
               return (
                 examDate === formattedDate &&
@@ -187,9 +167,6 @@ const CalendrierDetails: React.FC = () => {
     }
   }, [calendrierState]);
 
-  // const filteredDays = days.filter(({ day }) =>
-  //   selectedJour ? day === selectedJour : true
-  // );
   const applyFilters = () => {
     return days.filter(({ day, epreuve }) => {
       return (
