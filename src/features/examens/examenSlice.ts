@@ -43,7 +43,13 @@ export const examenSlice = createApi({
         },
         providesTags: ["Examen"],
       }),
-
+      fetchExamenById: builder.query<Examen, number | void>({
+        query: (_id) => ({
+          url: `get-examen/${_id}`,
+          method: "GET",
+        }),
+        providesTags: ["Examen"],
+      }),
       addExamen: builder.mutation<void, Examen>({
         query(payload) {
           return {

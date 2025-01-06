@@ -24,7 +24,11 @@ const ListCalendrier = () => {
   document.title = "Liste des Calendriers | ENIGA";
 
   const [deleteCalendrier] = useDeleteExamenMutation();
+  const navigate = useNavigate();
 
+  const tog_AddCalendar = () => {
+    navigate("/gestion-examen/ajouter-calendrier-examen");
+  };
   const swalWithBootstrapButtons = Swal.mixin({
     customClass: {
       confirmButton: "btn btn-success",
@@ -232,7 +236,10 @@ const ListCalendrier = () => {
     <React.Fragment>
       <div className="page-content">
         <Container fluid={true}>
-          <Breadcrumb title="Liens utils" pageTitle="Liste des liens utils" />
+          <Breadcrumb
+            title="Liste des Calendriers"
+            pageTitle="Gestions des Examens"
+          />
 
           <Row id="sellersList">
             <Col lg={12}>
@@ -267,9 +274,9 @@ const ListCalendrier = () => {
                         <Button
                           variant="primary"
                           className="add-btn"
-                          //   onClick={() => tog_AddParametreModals()}
+                          onClick={() => tog_AddCalendar()}
                         >
-                          Ajouter un lien
+                          Ajouter un calendrier
                         </Button>
                       </div>
                     </Col>

@@ -44,6 +44,12 @@ const ProgrammerCalendrier = () => {
       setShowAddCard(!showAddCard);
     }
   };
+
+  const handleSelectClasse = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = event.target.value;
+    setSelectedClasse(value);
+  };
+
   useEffect(() => {
     if (calendrierState?.period) {
       const [startDateStr, endDateStr] = calendrierState.period.split(" / ");
@@ -83,12 +89,18 @@ const ProgrammerCalendrier = () => {
       const allDays = generateDays(startDate, endDate).map((date) => {
         const dateStr = date.toISOString().split("T")[0];
         const dayName = date.toLocaleDateString("fr-FR", { weekday: "long" });
+
         const epreuvesForDate =
           calendrierState.epreuve?.filter((epreuve: any) => {
             // Convert epreuve.date (DD-MM-YYYY) to YYYY-MM-DD
             const [day, month, year] = epreuve.date.split("-");
             const normalizedEpreuveDate = `${day}-${month}-${year}`;
-            return normalizedEpreuveDate === dateStr;
+
+            // Check if the epreuve belongs to the selected class
+            return (
+              normalizedEpreuveDate === dateStr &&
+              (selectedClasse ? epreuve.classe._id === selectedClasse : true)
+            );
           }) || [];
 
         return {
@@ -100,7 +112,7 @@ const ProgrammerCalendrier = () => {
 
       setDays(allDays);
     }
-  }, [calendrierState]);
+  }, [calendrierState, selectedClasse]);
 
   const [selectedColumnValues, setSelectedColumnValues] = useState<any[]>([]);
 
@@ -125,11 +137,6 @@ const ProgrammerCalendrier = () => {
 
   const handleNombreCopie = (e: any) => {
     setNombreCopie(e.target.value);
-  };
-
-  const handleSelectClasse = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = event.target.value;
-    setSelectedClasse(value);
   };
 
   const handleSelectSalle = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -491,52 +498,53 @@ const ProgrammerCalendrier = () => {
               </Card>
             )}
           </Form>
-          <Row>
-            <div style={{ overflowX: "auto", width: "100%" }}>
-              <table className="table table-bordered table-striped w-100">
-                <tbody>
-                  {days.map(({ date, day, epreuve }) => {
-                    const hasExams = epreuve.length > 0;
-                    const numberOfColumns = hasExams ? epreuve.length : 1;
+          {selectedClasse !== "" && (
+            <Row>
+              <div style={{ overflowX: "auto", width: "100%" }}>
+                <table className="table table-bordered table-striped w-100">
+                  <tbody>
+                    {days.map(({ date, day, epreuve }) => {
+                      const hasExams = epreuve.length > 0;
 
-                    return (
-                      <tr key={date}>
-                        <td
-                          className="py-3 px-4 fw-bold text-center bg-light"
-                          rowSpan={1}
-                        >
-                          {day.charAt(0).toUpperCase() + day.slice(1)} {date}
-                        </td>
-                        {hasExams ? (
-                          epreuve.map((exam: any, index: any) => (
-                            <td key={index} className="py-3 px-4 text-center">
-                              <ul className="list-unstyled mb-0">
-                                <li>
-                                  <strong>
-                                    {exam.matiere?.matiere ||
-                                      "Matière inconnue"}
-                                  </strong>
-                                  <br />
-                                  {exam.heure_debut} - {exam.heure_fin}
-                                  <br />
-                                  Salle: {exam.salle?.salle || "Non attribuée"}
-                                </li>
-                              </ul>
-                            </td>
-                          ))
-                        ) : (
-                          // No exams placeholder
-                          <td className="py-3 px-4 text-center">
-                            <em className="text-muted">Pas de séances</em>
+                      return (
+                        <tr key={date}>
+                          <td
+                            className="py-3 px-4 fw-bold text-center bg-light"
+                            rowSpan={1}
+                          >
+                            {day.charAt(0).toUpperCase() + day.slice(1)} {date}
                           </td>
-                        )}
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          </Row>
+                          {hasExams ? (
+                            epreuve.map((exam: any, index: any) => (
+                              <td key={index} className="py-3 px-4 text-center">
+                                <ul className="list-unstyled mb-0">
+                                  <li>
+                                    <strong>
+                                      {exam.matiere?.matiere ||
+                                        "Matière inconnue"}
+                                    </strong>
+                                    <br />
+                                    {exam.heure_debut} - {exam.heure_fin}
+                                    <br />
+                                    Salle:{" "}
+                                    {exam.salle?.salle || "Non attribuée"}
+                                  </li>
+                                </ul>
+                              </td>
+                            ))
+                          ) : (
+                            <td className="py-3 px-4 text-center">
+                              <em className="text-muted">Pas de épreuves</em>
+                            </td>
+                          )}
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </Row>
+          )}
         </Container>
       </div>
     </React.Fragment>
