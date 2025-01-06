@@ -353,48 +353,58 @@ const ListCalendrier = () => {
               <div className="acitivity-timeline acitivity-main">
                 {selectedCalendrier.group_enseignant.map(
                   (group: any, index: any) => {
-                    const dateParts = group.date.split("-");
-                    const formattedDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
-                    const date = new Date(formattedDate);
-                    if (isNaN(date.getTime())) {
-                      console.error(`Invalid date format: ${group.date}`);
-                      return (
-                        <div key={index} className="activity-item d-flex mb-3">
-                          <p className="text-danger">
-                            Invalid Date: {group.date}
-                          </p>
-                        </div>
-                      );
-                    }
-                    const dayName = date.toLocaleDateString("fr-FR", {
-                      weekday: "long",
-                    });
-
                     return (
                       <div key={index} className="activity-item d-flex mb-3">
                         <div className="flex-shrink-0 activity-avatar"></div>
                         <div className="flex-grow-1 ms-3">
-                          <h6 className="mb-0 lh-base">{dayName}</h6>
-                          {group.enseignant && group.enseignant.length > 0 ? (
-                            <p className="text-muted mb-0">
-                              <strong>{group.date}:</strong>{" "}
-                              {group.enseignant
-                                .map(
-                                  (enseignant: any) =>
-                                    `${
-                                      enseignant.prenom_fr ||
-                                      "Prenom non disponible"
-                                    } ${
-                                      enseignant.nom_fr || "Nom non disponible"
-                                    }`
-                                )
-                                .join(", ")}
-                            </p>
-                          ) : (
-                            <p className="text-muted">
-                              <strong>{group.date}:</strong> Aucun enseignant
-                              disponible.
-                            </p>
+                          {group.date.map(
+                            (dateString: string, dateIndex: number) => {
+                              const date = new Date(dateString);
+
+                              if (isNaN(date.getTime())) {
+                                console.error(
+                                  `Invalid date format: ${dateString}`
+                                );
+                                return (
+                                  <p key={dateIndex} className="text-danger">
+                                    Invalid Date: {dateString}
+                                  </p>
+                                );
+                              }
+
+                              const dayName = date.toLocaleDateString("fr-FR", {
+                                weekday: "long",
+                              });
+
+                              return (
+                                <div key={dateIndex}>
+                                  <h6 className="mb-0 lh-base">{dayName}</h6>
+                                  {group.enseignant &&
+                                  group.enseignant.length > 0 ? (
+                                    <p className="text-muted mb-0">
+                                      <strong>{dateString}:</strong>{" "}
+                                      {group.enseignant
+                                        .map(
+                                          (enseignant: any) =>
+                                            `${
+                                              enseignant.prenom_fr ||
+                                              "Prenom non disponible"
+                                            } ${
+                                              enseignant.nom_fr ||
+                                              "Nom non disponible"
+                                            }`
+                                        )
+                                        .join(", ")}
+                                    </p>
+                                  ) : (
+                                    <p className="text-muted">
+                                      <strong>{dateString}:</strong> Aucun
+                                      enseignant disponible.
+                                    </p>
+                                  )}
+                                </div>
+                              );
+                            }
                           )}
                         </div>
                       </div>
