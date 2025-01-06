@@ -84,6 +84,17 @@ const stylesCalenderFilter = StyleSheet.create({
   },
 });
 
+interface Props {
+  title: string;
+  filteredDays: {
+    date: string;
+    day: string;
+    epreuve: any[];
+  }[];
+  filterBy: "day" | "classe" | "salle" | null;
+  filterValue?: string | null; // Allow null and undefined
+}
+
 const CalendrierDetails: React.FC = () => {
   document.title = "Détails du Calendrier | ENIGA";
 
@@ -259,26 +270,161 @@ const CalendrierDetails: React.FC = () => {
         heure_debut: exam.heure_debut,
         heure_fin: exam.heure_fin,
         matiere: exam.matiere.matiere,
-        showDay: index === 0, // Show day only for the first entry of each day
-        rowspan: epreuve.length, // Span across the number of exams on the same day
+        showDay: index === 0,
+        rowspan: epreuve.length,
       }))
     );
   };
 
+  // const CalendarPDF = ({
+  //   title,
+  //   filteredDays,
+  // }: {
+  //   title: string;
+  //   filteredDays: { date: string; day: string; epreuve: any[] }[];
+  // }) => {
+  //   const rows = groupByDay(filteredDays);
+
+  //   return (
+  //     <Document>
+  //       <Page orientation="landscape" style={stylesCalenderFilter.page}>
+  //         {/* Title */}
+  //         <Text style={stylesCalenderFilter.title}>{title}</Text>
+
+  //         {/* Timetable */}
+  //         <View style={stylesCalenderFilter.timetable}>
+  //           {/* Header Row */}
+  //           <View
+  //             style={[stylesCalenderFilter.row, stylesCalenderFilter.headerRow]}
+  //           >
+  //             <Text
+  //               style={[
+  //                 stylesCalenderFilter.cell,
+  //                 stylesCalenderFilter.dayCell,
+  //               ]}
+  //             >
+  //               Jour
+  //             </Text>
+  //             <Text
+  //               style={[
+  //                 stylesCalenderFilter.cell,
+  //                 stylesCalenderFilter.classeCell,
+  //               ]}
+  //             >
+  //               Classe
+  //             </Text>
+  //             <Text
+  //               style={[
+  //                 stylesCalenderFilter.cell,
+  //                 stylesCalenderFilter.salleCell,
+  //               ]}
+  //             >
+  //               Salle
+  //             </Text>
+  //             <Text
+  //               style={[
+  //                 stylesCalenderFilter.cell,
+  //                 stylesCalenderFilter.matiereCell,
+  //               ]}
+  //             >
+  //               Matière
+  //             </Text>
+  //             <Text
+  //               style={[
+  //                 stylesCalenderFilter.cell,
+  //                 stylesCalenderFilter.timeCell,
+  //               ]}
+  //             >
+  //               Horaire
+  //             </Text>
+  //           </View>
+
+  //           {/* Data Rows */}
+  //           {rows.map((row, idx) => (
+  //             <View key={idx} style={stylesCalenderFilter.row}>
+  //               {/* Day Cell (Only show for the first row of each day and merge cells) */}
+  //               {row.showDay && (
+  //                 <Text
+  //                   style={[
+  //                     stylesCalenderFilter.cell,
+  //                     stylesCalenderFilter.dayCell,
+  //                   ]}
+  //                 >
+  //                   {row.day.charAt(0).toUpperCase() + row.day.slice(1)} -{" "}
+  //                   {row.date}
+  //                 </Text>
+  //               )}
+  //               {!row.showDay && (
+  //                 <Text
+  //                   style={[
+  //                     stylesCalenderFilter.cell,
+  //                     stylesCalenderFilter.dayCell,
+  //                   ]}
+  //                 ></Text>
+  //               )}
+
+  //               {/* Classe */}
+  //               <Text
+  //                 style={[
+  //                   stylesCalenderFilter.cell,
+  //                   stylesCalenderFilter.classeCell,
+  //                 ]}
+  //               >
+  //                 {row.classe}
+  //               </Text>
+
+  //               {/* Salle */}
+  //               <Text
+  //                 style={[
+  //                   stylesCalenderFilter.cell,
+  //                   stylesCalenderFilter.salleCell,
+  //                 ]}
+  //               >
+  //                 {row.salle}
+  //               </Text>
+
+  //               {/* Matière */}
+  //               <Text
+  //                 style={[
+  //                   stylesCalenderFilter.cell,
+  //                   stylesCalenderFilter.matiereCell,
+  //                 ]}
+  //               >
+  //                 {row.matiere}
+  //               </Text>
+
+  //               {/* Horaire */}
+  //               <Text
+  //                 style={[
+  //                   stylesCalenderFilter.cell,
+  //                   stylesCalenderFilter.timeCell,
+  //                 ]}
+  //               >
+  //                 {row.heure_debut} - {row.heure_fin}
+  //               </Text>
+  //             </View>
+  //           ))}
+  //         </View>
+  //       </Page>
+  //     </Document>
+  //   );
+  // };
   const CalendarPDF = ({
     title,
     filteredDays,
-  }: {
-    title: string;
-    filteredDays: { date: string; day: string; epreuve: any[] }[];
-  }) => {
+    filterBy,
+    filterValue = "", // Provide a default value for consistency
+  }: Props) => {
     const rows = groupByDay(filteredDays);
 
     return (
       <Document>
         <Page orientation="landscape" style={stylesCalenderFilter.page}>
           {/* Title */}
-          <Text style={stylesCalenderFilter.title}>{title}</Text>
+          <Text style={stylesCalenderFilter.title}>
+            {title}
+            {filterValue ? ` - ${filterValue}` : ""}
+          </Text>
 
           {/* Timetable */}
           <View style={stylesCalenderFilter.timetable}>
@@ -286,30 +432,37 @@ const CalendrierDetails: React.FC = () => {
             <View
               style={[stylesCalenderFilter.row, stylesCalenderFilter.headerRow]}
             >
-              <Text
-                style={[
-                  stylesCalenderFilter.cell,
-                  stylesCalenderFilter.dayCell,
-                ]}
-              >
-                Jour
-              </Text>
-              <Text
-                style={[
-                  stylesCalenderFilter.cell,
-                  stylesCalenderFilter.classeCell,
-                ]}
-              >
-                Classe
-              </Text>
-              <Text
-                style={[
-                  stylesCalenderFilter.cell,
-                  stylesCalenderFilter.salleCell,
-                ]}
-              >
-                Salle
-              </Text>
+              {/* Conditionally render column headers */}
+              {filterBy && filterBy !== "day" && (
+                <Text
+                  style={[
+                    stylesCalenderFilter.cell,
+                    stylesCalenderFilter.dayCell,
+                  ]}
+                >
+                  Jour
+                </Text>
+              )}
+              {filterBy !== "classe" && (
+                <Text
+                  style={[
+                    stylesCalenderFilter.cell,
+                    stylesCalenderFilter.classeCell,
+                  ]}
+                >
+                  Classe
+                </Text>
+              )}
+              {filterBy !== "salle" && (
+                <Text
+                  style={[
+                    stylesCalenderFilter.cell,
+                    stylesCalenderFilter.salleCell,
+                  ]}
+                >
+                  Salle
+                </Text>
+              )}
               <Text
                 style={[
                   stylesCalenderFilter.cell,
@@ -331,8 +484,8 @@ const CalendrierDetails: React.FC = () => {
             {/* Data Rows */}
             {rows.map((row, idx) => (
               <View key={idx} style={stylesCalenderFilter.row}>
-                {/* Day Cell (Only show for the first row of each day and merge cells) */}
-                {row.showDay && (
+                {/* Conditionally render columns */}
+                {filterBy !== "day" && row.showDay && (
                   <Text
                     style={[
                       stylesCalenderFilter.cell,
@@ -343,7 +496,7 @@ const CalendrierDetails: React.FC = () => {
                     {row.date}
                   </Text>
                 )}
-                {!row.showDay && (
+                {filterBy !== "day" && !row.showDay && (
                   <Text
                     style={[
                       stylesCalenderFilter.cell,
@@ -352,25 +505,27 @@ const CalendrierDetails: React.FC = () => {
                   ></Text>
                 )}
 
-                {/* Classe */}
-                <Text
-                  style={[
-                    stylesCalenderFilter.cell,
-                    stylesCalenderFilter.classeCell,
-                  ]}
-                >
-                  {row.classe}
-                </Text>
+                {filterBy !== "classe" && (
+                  <Text
+                    style={[
+                      stylesCalenderFilter.cell,
+                      stylesCalenderFilter.classeCell,
+                    ]}
+                  >
+                    {row.classe}
+                  </Text>
+                )}
 
-                {/* Salle */}
-                <Text
-                  style={[
-                    stylesCalenderFilter.cell,
-                    stylesCalenderFilter.salleCell,
-                  ]}
-                >
-                  {row.salle}
-                </Text>
+                {filterBy !== "salle" && (
+                  <Text
+                    style={[
+                      stylesCalenderFilter.cell,
+                      stylesCalenderFilter.salleCell,
+                    ]}
+                  >
+                    {row.salle}
+                  </Text>
+                )}
 
                 {/* Matière */}
                 <Text
@@ -433,6 +588,7 @@ const CalendrierDetails: React.FC = () => {
                   <CalendarPDF
                     title={`Calendrier des Examens - Classe`}
                     filteredDays={filteredDays}
+                    filterBy={activeFilter} // Ensure this is passed correctly
                   />
                 }
                 fileName={`Calendrier_Classe.pdf`}
@@ -468,9 +624,8 @@ const CalendrierDetails: React.FC = () => {
                 document={
                   <CalendarPDF
                     title={`Calendrier des Examens - Salle`}
-                    filteredDays={filteredDays.filter(({ epreuve }) =>
-                      epreuve.some((exam) => exam.salle._id === selectedSalle)
-                    )}
+                    filteredDays={filteredDays}
+                    filterBy={activeFilter} // Ensure this is passed correctly
                   />
                 }
                 fileName={`Calendrier_Salle.pdf`}
@@ -506,9 +661,8 @@ const CalendrierDetails: React.FC = () => {
                 document={
                   <CalendarPDF
                     title={`Calendrier des Examens - Jour`}
-                    filteredDays={filteredDays.filter(
-                      ({ day }) => day === selectedJour
-                    )}
+                    filteredDays={filteredDays}
+                    filterBy={activeFilter} // Ensure this is passed correctly
                   />
                 }
                 fileName={`Calendrier_Jour.pdf`}

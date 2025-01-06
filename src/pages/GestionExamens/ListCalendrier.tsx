@@ -353,7 +353,7 @@ const ListCalendrier = () => {
               <div className="acitivity-timeline acitivity-main">
                 {selectedCalendrier.group_enseignant.map(
                   (group: any, index: any) => {
-                    const dateParts = group.date.split("-");
+                    const dateParts = group.date?.split("-");
                     const formattedDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
                     const date = new Date(formattedDate);
                     if (isNaN(date.getTime())) {
