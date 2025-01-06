@@ -234,6 +234,8 @@ const ProgrammerCalendrier = () => {
     const isMatchingRegimeMatiere =
       (calendrierState?.type_examen! === "EXAMEN" &&
         matiere.regime_matiere === "MX") ||
+      (calendrierState?.type_examen! === "Examens" &&
+        matiere.regime_matiere === "MX") ||
       (calendrierState?.type_examen! === "DS" &&
         matiere.regime_matiere === "CC");
     const isMatchingClasse = matiere?.classes!.some(
