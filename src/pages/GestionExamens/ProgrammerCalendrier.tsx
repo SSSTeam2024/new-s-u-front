@@ -233,6 +233,8 @@ const ProgrammerCalendrier = () => {
     const isMatchingRegimeMatiere =
       (calendrierState?.type_examen! === "EXAMEN" &&
         matiere.regime_matiere === "MX") ||
+      (calendrierState?.type_examen! === "Examens" &&
+        matiere.regime_matiere === "MX") ||
       (calendrierState?.type_examen! === "DS" &&
         matiere.regime_matiere === "CC");
     const isMatchingClasse = matiere?.classes!.some(
@@ -242,8 +244,8 @@ const ProgrammerCalendrier = () => {
     const isNotAlreadyExamined = !calendrierState.epreuve.some(
       (epreuve: any) => {
         return (
-          epreuve.matiere._id === matiere._id &&
-          epreuve.classe._id === selectedClasse
+          epreuve?.matiere?._id! === matiere?._id! &&
+          epreuve?.classe?._id! === selectedClasse
         );
       }
     );
