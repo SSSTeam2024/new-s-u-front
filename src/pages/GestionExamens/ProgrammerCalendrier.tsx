@@ -145,6 +145,7 @@ const ProgrammerCalendrier = () => {
   };
 
   const handleSelectMatiere = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    console.log(event.target.value);
     const value = event.target.value;
     setSelectedMatiere(value);
   };
@@ -241,7 +242,7 @@ const ProgrammerCalendrier = () => {
       (classe) =>
         classe._id === selectedClasse || classe.nom_classe_fr === selectedClasse
     );
-    const isNotAlreadyExamined = !calendrierState.epreuve.some(
+    const isNotAlreadyExamined = !calendrierState?.epreuve?.some(
       (epreuve: any) => {
         return (
           epreuve?.matiere?._id! === matiere?._id! &&
