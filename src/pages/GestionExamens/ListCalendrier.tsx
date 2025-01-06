@@ -222,7 +222,7 @@ const ListCalendrier = () => {
     isLoading,
     isError,
   } = useFetchExamensQuery();
-  console.log("AllCalendriers", AllCalendriers);
+
   const [show, setShow] = useState(false);
   const [selectedCalendrier, setSelectedCalendrier] = useState<any>(null);
 

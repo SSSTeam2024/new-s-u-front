@@ -31,6 +31,7 @@ const ProgrammerCalendrier = () => {
   const [heureDebut, setHeureDebut] = useState<string>("");
   const [heureFin, setHeureFin] = useState<string>("");
   const [availableSalles, setAvailableSalles] = useState<any[]>([]);
+  const [availableEnseignants, setAvailableEnseignants] = useState<any[]>([]);
 
   const location = useLocation();
   const calendrierState = location.state;
@@ -44,6 +45,47 @@ const ProgrammerCalendrier = () => {
       setShowAddCard(!showAddCard);
     }
   };
+
+  const filterEnseignantSurveillants = () => {
+    if (!selectedJour || !heureDebut || !heureFin) return [];
+
+    const relevantGroupEnseignants = calendrierState.group_enseignant.filter(
+      (group: any) => group.date.includes(selectedJour)
+    );
+
+    const relevantEnseignantIds = new Set(
+      relevantGroupEnseignants.flatMap((group: any) =>
+        group.enseignant.map((ens: any) => ens._id)
+      )
+    );
+
+    const usedEnseignantIds = new Set<string>();
+    AllExamens.forEach((exam) => {
+      exam.epreuve.forEach((ep) => {
+        if (
+          ep.date === selectedJour &&
+          ((ep.heure_debut <= heureFin && ep.heure_debut >= heureDebut) ||
+            (ep.heure_fin >= heureDebut && ep.heure_fin <= heureFin) ||
+            (ep.heure_debut <= heureDebut && ep.heure_fin >= heureFin))
+        ) {
+          ep.group_surveillants.forEach((surveillant: any) =>
+            usedEnseignantIds.add(surveillant._id)
+          );
+        }
+      });
+    });
+
+    return AllEnseignants.filter(
+      (enseignant) =>
+        relevantEnseignantIds.has(enseignant._id) &&
+        !usedEnseignantIds.has(enseignant._id)
+    );
+  };
+
+  useEffect(() => {
+    const filteredEnseignants = filterEnseignantSurveillants();
+    setAvailableEnseignants(filteredEnseignants);
+  }, [selectedJour, heureDebut, heureFin, calendrierState, AllExamens]);
 
   const handleSelectClasse = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const value = event.target.value;
@@ -117,16 +159,23 @@ const ProgrammerCalendrier = () => {
   const [selectedColumnValues, setSelectedColumnValues] = useState<any[]>([]);
 
   const handleSelectValueColumnChange = (selectedOption: any) => {
-    const values = selectedOption.map((option: any) => option.value);
-    setSelectedColumnValues(values);
+    const ids = selectedOption.map((option: any) => option.value._id);
+    setSelectedColumnValues(ids);
   };
 
-  const optionColumnsTable = calendrierState
-    ?.group_enseignant!.flatMap((group: any) => group.enseignant)
-    .map((enseignantId: any) => ({
-      value: enseignantId,
-      label: `${enseignantId.prenom_fr} ${enseignantId.nom_fr}`,
-    }));
+  const [selectedEnseignantSurveillant, setSelectedEnseignantSurveillant] =
+    useState<any[]>([]);
+
+  const handleSelectEnseignantSurveillantChange = (selectedOption: any) => {
+    const ids = selectedOption.map((option: any) => option.value._id);
+    setSelectedEnseignantSurveillant(ids);
+  };
+
+  console.log("availableEnseignants", availableEnseignants);
+  const optionColumnsTable = availableEnseignants.map((enseignant: any) => ({
+    value: enseignant,
+    label: `${enseignant.prenom_fr} ${enseignant.nom_fr}`,
+  }));
 
   const optionEnseignantResponsables = AllEnseignants.map(
     (enseignant: any) => ({
@@ -145,7 +194,6 @@ const ProgrammerCalendrier = () => {
   };
 
   const handleSelectMatiere = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    console.log(event.target.value);
     const value = event.target.value;
     setSelectedMatiere(value);
   };
@@ -187,17 +235,15 @@ const ProgrammerCalendrier = () => {
   const handleHeureFinChange = (e: any) => {
     const selectedHeureFin = e.target.value;
 
-    // Validate that the selected heure_fin is greater than the heure_debut
     if (
       new Date(`1970-01-01T${selectedHeureFin}:00`) <=
       new Date(`1970-01-01T${heureDebut}:00`)
     ) {
       alert("Cette classe a déjà un examen prévu à l'heure sélectionnée.");
-      setHeureFin(""); // Reset the value
+      setHeureFin("");
       return;
     }
 
-    // Check for conflicts with existing exams
     const conflict = AllExamens.some((examen) =>
       examen.epreuve.some((epreuve) => {
         if (
@@ -242,7 +288,7 @@ const ProgrammerCalendrier = () => {
       (classe) =>
         classe._id === selectedClasse || classe.nom_classe_fr === selectedClasse
     );
-    const isNotAlreadyExamined = !calendrierState?.epreuve?.some(
+    const isNotAlreadyExamined = !calendrierState.epreuve.some(
       (epreuve: any) => {
         return (
           epreuve?.matiere?._id! === matiere?._id! &&
@@ -296,8 +342,8 @@ const ProgrammerCalendrier = () => {
   const handleSubmit = async () => {
     try {
       const newEpreuve = {
-        group_surveillants: [],
-        group_responsables: [],
+        group_surveillants: selectedEnseignantSurveillant,
+        group_responsables: selectedColumnValues,
         nbr_copie: nombreCopie,
         date: selectedJour,
         heure_debut: heureDebut,
@@ -465,23 +511,25 @@ const ProgrammerCalendrier = () => {
                       />
                     </Col>
                     <Col>
-                      <Form.Label htmlFor="salle">
+                      <Form.Label htmlFor="enseignant_responsable">
                         Enseignant(s) Responsable
                       </Form.Label>
                       <Select
                         closeMenuOnSelect={false}
                         isMulti
                         options={optionEnseignantResponsables}
+                        onChange={handleSelectValueColumnChange}
                       />
                     </Col>
                     <Col>
-                      <Form.Label htmlFor="salle">
+                      <Form.Label htmlFor="enseignant_surveillant">
                         Enseignant(s) Surveillant
                       </Form.Label>
                       <Select
                         closeMenuOnSelect={false}
                         isMulti
                         options={optionColumnsTable}
+                        onChange={handleSelectEnseignantSurveillantChange}
                       />
                     </Col>
                   </Row>
