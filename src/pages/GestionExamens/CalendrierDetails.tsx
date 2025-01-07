@@ -91,7 +91,7 @@ interface Props {
     day: string;
     epreuve: any[];
   }[];
-  filterBy: "day" | "classe" | "salle" | null;
+  filterBy: "jour" | "classe" | "salle" | null;
   filterValue?: string | null; // Allow null and undefined
 }
 
@@ -110,7 +110,7 @@ const CalendrierDetails: React.FC = () => {
     { date: string; day: string; epreuve: any[] }[]
   >([]);
   const [selectedClasse, setSelectedClasse] = useState(null);
-  const [selectedJour, setSelectedJour] = useState(null);
+  const [selectedJour, setSelectedJour] = useState("");
   const [selectedSalle, setSelectedSalle] = useState(null);
   const [selectedTeacher, setSelectedTeacher] = useState(null);
   const [activeFilter, setActiveFilter] = useState(null);
@@ -147,8 +147,9 @@ const CalendrierDetails: React.FC = () => {
 
               return (
                 examDate === formattedDate &&
-                (!selectedClasse || exam.classe?._id === selectedClasse) &&
-                (!selectedSalle || exam.salle?._id === selectedSalle) &&
+                (!selectedClasse ||
+                  exam.classe?.nom_classe_fr === selectedClasse) &&
+                (!selectedSalle || exam.salle?.salle! === selectedSalle) &&
                 (!selectedTeacher ||
                   exam.group_surveillants.some(
                     (teacher: any) => teacher._id === selectedTeacher
@@ -175,14 +176,15 @@ const CalendrierDetails: React.FC = () => {
 
   const applyFilters = () => {
     return days
-      .filter(({ day }) => !selectedJour || day === selectedJour)
+      .filter(({ day }) => !selectedJour || day === selectedJour.split(" ")[0])
       .map(({ date, day, epreuve }) => ({
         date,
         day,
         epreuve: epreuve.filter(
           (exam: any) =>
-            (!selectedSalle || exam.salle?._id === selectedSalle) &&
-            (!selectedClasse || exam.classe?._id === selectedClasse) &&
+            (!selectedSalle || exam.salle?.salle! === selectedSalle) &&
+            (!selectedClasse ||
+              exam.classe?.nom_classe_fr === selectedClasse) &&
             (!selectedTeacher ||
               exam.group_surveillants.some(
                 (teacher: any) => teacher._id === selectedTeacher
@@ -250,7 +252,7 @@ const CalendrierDetails: React.FC = () => {
 
   const resetFilters = () => {
     setSelectedClasse(null);
-    setSelectedJour(null);
+    setSelectedJour("");
     setSelectedSalle(null);
     setSelectedTeacher(null);
     setActiveFilter(null);
@@ -413,7 +415,7 @@ const CalendrierDetails: React.FC = () => {
     title,
     filteredDays,
     filterBy,
-    filterValue = "", // Provide a default value for consistency
+    filterValue = "",
   }: Props) => {
     const rows = groupByDay(filteredDays);
 
@@ -432,8 +434,9 @@ const CalendrierDetails: React.FC = () => {
             <View
               style={[stylesCalenderFilter.row, stylesCalenderFilter.headerRow]}
             >
-              {/* Conditionally render column headers */}
-              {filterBy && filterBy !== "day" && (
+              {filterBy && filterBy === "jour" ? (
+                ""
+              ) : (
                 <Text
                   style={[
                     stylesCalenderFilter.cell,
@@ -485,7 +488,7 @@ const CalendrierDetails: React.FC = () => {
             {rows.map((row, idx) => (
               <View key={idx} style={stylesCalenderFilter.row}>
                 {/* Conditionally render columns */}
-                {filterBy !== "day" && row.showDay && (
+                {filterBy !== "jour" && row.showDay && (
                   <Text
                     style={[
                       stylesCalenderFilter.cell,
@@ -496,7 +499,7 @@ const CalendrierDetails: React.FC = () => {
                     {row.date}
                   </Text>
                 )}
-                {filterBy !== "day" && !row.showDay && (
+                {filterBy !== "jour" && !row.showDay && (
                   <Text
                     style={[
                       stylesCalenderFilter.cell,
@@ -504,7 +507,6 @@ const CalendrierDetails: React.FC = () => {
                     ]}
                   ></Text>
                 )}
-
                 {filterBy !== "classe" && (
                   <Text
                     style={[
@@ -586,9 +588,9 @@ const CalendrierDetails: React.FC = () => {
               <PDFDownloadLink
                 document={
                   <CalendarPDF
-                    title={`Calendrier des Examens - Classe`}
+                    title={`Calendrier des Examens - Classe ${selectedClasse}`}
                     filteredDays={filteredDays}
-                    filterBy={activeFilter} // Ensure this is passed correctly
+                    filterBy={activeFilter}
                   />
                 }
                 fileName={`Calendrier_Classe.pdf`}
@@ -606,7 +608,7 @@ const CalendrierDetails: React.FC = () => {
             >
               <option value="">Choisir...</option>
               {AllClasses.map((classe) => (
-                <option key={classe._id} value={classe._id}>
+                <option key={classe._id} value={classe.nom_classe_fr}>
                   {classe.nom_classe_fr}
                 </option>
               ))}
@@ -623,9 +625,9 @@ const CalendrierDetails: React.FC = () => {
               <PDFDownloadLink
                 document={
                   <CalendarPDF
-                    title={`Calendrier des Examens - Salle`}
+                    title={`Calendrier des Examens - Salle ${selectedSalle}`}
                     filteredDays={filteredDays}
-                    filterBy={activeFilter} // Ensure this is passed correctly
+                    filterBy={activeFilter}
                   />
                 }
                 fileName={`Calendrier_Salle.pdf`}
@@ -643,7 +645,7 @@ const CalendrierDetails: React.FC = () => {
             >
               <option value="">Choisir...</option>
               {AllSalles.map((salle) => (
-                <option key={salle._id} value={salle._id}>
+                <option key={salle._id} value={salle.salle}>
                   {salle.salle}
                 </option>
               ))}
@@ -660,9 +662,9 @@ const CalendrierDetails: React.FC = () => {
               <PDFDownloadLink
                 document={
                   <CalendarPDF
-                    title={`Calendrier des Examens - Jour`}
+                    title={`Calendrier des Examens - ${selectedJour}`}
                     filteredDays={filteredDays}
-                    filterBy={activeFilter} // Ensure this is passed correctly
+                    filterBy={activeFilter}
                   />
                 }
                 fileName={`Calendrier_Jour.pdf`}
@@ -679,8 +681,8 @@ const CalendrierDetails: React.FC = () => {
               onChange={(e) => handleFilterChange("jour", e.target.value)}
             >
               <option value="">Choisir...</option>
-              {days.map(({ day }, idx) => (
-                <option key={idx} value={day}>
+              {days.map(({ day, date }, idx) => (
+                <option key={idx} value={`${day} ${date}`}>
                   {day}
                 </option>
               ))}
@@ -740,29 +742,53 @@ const CalendrierDetails: React.FC = () => {
                     <td className="py-3 px-4 fw-bold text-center bg-light">
                       {day.charAt(0).toUpperCase() + day.slice(1)} {date}
                     </td>
-                    <td className="py-3 px-4 text-center">
-                      {epreuve.length === 0 ? (
-                        <em className="text-muted">Pas d'examens</em>
-                      ) : (
-                        <ul className="list-unstyled">
-                          {epreuve.map((exam: any, idx: number) => (
-                            <li key={idx}>
+                    {selectedClasse ? (
+                      <>
+                        {epreuve.length === 0 ? (
+                          <td className="py-3 px-4 text-center">
+                            <em className="text-muted">Pas d'examens</em>
+                          </td>
+                        ) : (
+                          epreuve.map((exam, idx) => (
+                            <td key={idx} className="py-3 px-4 text-center">
                               <strong>
                                 {exam.matiere?.matiere || "Inconnu"}
                               </strong>
                               <br />
                               {`${exam.heure_debut} - ${exam.heure_fin}`}
                               <br />
-                              {`${exam.salle?.salle || "Non attribuée"}`}
+                              {exam.salle?.salle || "Non attribuée"}
                               <br />
-                              {`${
-                                exam.classe?.nom_classe_fr || "Non attribuée"
-                              }`}
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                    </td>
+                              {exam.classe?.nom_classe_fr || "Non attribuée"}
+                            </td>
+                          ))
+                        )}
+                      </>
+                    ) : (
+                      <td className="py-3 px-4 text-center">
+                        {epreuve.length === 0 ? (
+                          <em className="text-muted">Pas d'examens</em>
+                        ) : (
+                          <ul className="list-unstyled">
+                            {epreuve.map((exam: any, idx: number) => (
+                              <li key={idx}>
+                                <strong>
+                                  {exam.matiere?.matiere || "Inconnu"}
+                                </strong>
+                                <br />
+                                {`${exam.heure_debut} - ${exam.heure_fin}`}
+                                <br />
+                                {`${exam.salle?.salle || "Non attribuée"}`}
+                                <br />
+                                {`${
+                                  exam.classe?.nom_classe_fr || "Non attribuée"
+                                }`}
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </td>
+                    )}
                   </tr>
                 ))
               ) : filterApplied ? (
@@ -777,7 +803,7 @@ const CalendrierDetails: React.FC = () => {
                 <tr>
                   <td className="text-center py-3 px-4" colSpan={2}>
                     <em className="text-muted">
-                      Sélectionner des filtres pour afficher les jours...
+                      Sélectionnez des filtres pour afficher les jours...
                     </em>
                   </td>
                 </tr>
