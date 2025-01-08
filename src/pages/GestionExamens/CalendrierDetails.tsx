@@ -1,12 +1,19 @@
 import { useFetchClassesQuery } from "features/classe/classe";
 import { useFetchEnseignantsQuery } from "features/enseignant/enseignantSlice";
-import React, { useEffect, useState } from "react";
-import { Button, Card, Col, Container, Form, Row } from "react-bootstrap";
-import Select from "react-select";
-import { useLocation } from "react-router-dom";
+import React, { useEffect, useState, useMemo } from "react";
+import {
+  Button,
+  Card,
+  Col,
+  Container,
+  Form,
+  Row,
+  Table,
+  Modal,
+} from "react-bootstrap";
+import { Link, useLocation } from "react-router-dom";
 import { useFetchSallesQuery } from "features/salles/salles";
 import {
-  pdf,
   StyleSheet,
   Document,
   Page,
@@ -14,6 +21,58 @@ import {
   Text,
   PDFDownloadLink,
 } from "@react-pdf/renderer";
+import { useModifierExamenEpreuveMutation } from "features/examens/examenSlice";
+import { useFetchEtudiantsQuery } from "features/etudiant/etudiantSlice";
+
+const predefinedColors = [
+  "#d3d3d3", // light gray
+  "#a9a9a9", // dark gray
+  "#808080", // gray
+  "#ffcccb", // light pink
+  "#90ee90", // light green
+  "#add8e6", // light blue
+  "#ffffe0", // light yellow
+  "#dda0dd", // plum
+  "#f0e68c", // khaki
+  "#ffb6c1", // light coral
+];
+
+const styleGlobalCalendar = StyleSheet.create({
+  page: { padding: 24 },
+  title: {
+    fontSize: 24,
+    textAlign: "center",
+    marginBottom: 8,
+  },
+  secondTitle: {
+    fontSize: 20,
+    textAlign: "center",
+    marginBottom: 5,
+  },
+  thirdTitle: {
+    fontSize: 16,
+    textAlign: "center",
+    marginBottom: 20,
+  },
+  table: {
+    width: "100%",
+    marginTop: 10,
+  },
+  tableRow: {
+    flexDirection: "row",
+  },
+  tableCell: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: "#000",
+    padding: 5,
+    fontSize: 10,
+  },
+  headerCell: {
+    backgroundColor: "#f0f0f0",
+    fontWeight: "bold",
+  },
+});
 
 const styles = StyleSheet.create({
   page: { padding: 30 },
@@ -101,6 +160,7 @@ const CalendrierDetails: React.FC = () => {
   const { data: AllClasses = [] } = useFetchClassesQuery();
   const { data: AllSalles = [] } = useFetchSallesQuery();
   const { data: AllEnseignants = [] } = useFetchEnseignantsQuery();
+  const [modifierExamenEpreuve] = useModifierExamenEpreuveMutation();
 
   const location = useLocation();
   const calendrierState = location.state;
@@ -115,6 +175,24 @@ const CalendrierDetails: React.FC = () => {
   const [selectedTeacher, setSelectedTeacher] = useState(null);
   const [activeFilter, setActiveFilter] = useState(null);
   const [filterApplied, setFilterApplied] = useState(false);
+  const [openViewModal, setOpenViewModal] = useState<boolean>(false);
+  const [openEditModal, setOpenEditModal] = useState<boolean>(false);
+  const [selectedEpreuve, setSelectedEpreuve] = useState<any>(null);
+
+  const tog_ViewModal = (ep?: any) => {
+    setSelectedEpreuve(ep || null);
+    setOpenViewModal(!openViewModal);
+  };
+
+  const tog_EditModal = (epreuveId?: string) => {
+    if (epreuveId) {
+      setCalendarEpreuve((prevState) => ({
+        ...prevState,
+        epreuveId,
+      }));
+    }
+    setOpenEditModal(!openEditModal);
+  };
 
   useEffect(() => {
     if (calendrierState?.period) {
@@ -556,6 +634,325 @@ const CalendrierDetails: React.FC = () => {
     );
   };
 
+  const dateColorMap = useMemo(() => {
+    const uniqueDates = Array.from(
+      new Set<string>(calendrierState.epreuve.map((ep: any) => ep.date))
+    );
+
+    const map = new Map<string, string>();
+
+    uniqueDates.forEach((date, index) => {
+      map.set(date, predefinedColors[index % predefinedColors.length]);
+    });
+
+    return map;
+  }, [calendrierState.epreuve]);
+
+  const getBackgroundColor = (date: string) => {
+    return dateColorMap.get(date) || "#ffffff";
+  };
+
+  const [status, setStatus] = useState("Faite"); // Default value is "Faite"
+
+  const handleToggle = () => {
+    setStatus((prevStatus) =>
+      prevStatus === "Faite" ? "Non Terminé" : "Faite"
+    );
+  };
+
+  const initialCalendarEpreuve = {
+    id_Calendrier: "",
+    epreuveId: "",
+    epreuve_status: "",
+    nbre_present: "",
+    nbre_absent: "",
+    nbre_exclus: "",
+    notes: "",
+  };
+  const [calendarEpreuve, setCalendarEpreuve] = useState(
+    initialCalendarEpreuve
+  );
+  const {
+    id_Calendrier,
+    epreuveId,
+    epreuve_status,
+    nbre_present,
+    nbre_absent,
+    nbre_exclus,
+    notes,
+  } = calendarEpreuve;
+
+  const onChangeCalendarEpreuve = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setCalendarEpreuve((prevState) => ({
+      ...prevState,
+      [e.target.id]: e.target.value,
+    }));
+  };
+
+  const onSubmitCalendarEpreuve = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      calendarEpreuve["id_Calendrier"] = calendrierState?._id!;
+      calendarEpreuve["epreuve_status"] = status;
+      modifierExamenEpreuve(calendarEpreuve)
+        .then(() => setCalendarEpreuve(initialCalendarEpreuve))
+        // .then(() => notifyHourBand())
+        .then(() => tog_EditModal());
+    } catch (error) {
+      alert(error);
+    }
+  };
+  const { data: AllEtudiants = [] } = useFetchEtudiantsQuery();
+
+  const GlobalCalendar = () => {
+    const [start, end] = calendrierState.period.split(" / ");
+
+    const [startDay, startMonth, startYear] = start.split("-");
+    const monthName = new Date(
+      Number(startYear),
+      Number(startMonth) - 1
+    ).toLocaleString("fr-FR", {
+      month: "long",
+    });
+
+    const [endDay] = end.split("-");
+
+    return (
+      <Document>
+        <Page orientation="landscape" style={styleGlobalCalendar.page}>
+          {/* Header */}
+          <Text style={styleGlobalCalendar.title}>
+            Session des {calendrierState.type_examen} {calendrierState.session}
+          </Text>
+          <Text style={styleGlobalCalendar.secondTitle}>
+            {monthName.charAt(0).toUpperCase() + monthName.slice(1)} {startYear}
+          </Text>
+          <Text style={styleGlobalCalendar.thirdTitle}>
+            {startDay} - {endDay}
+          </Text>
+
+          {/* Table */}
+          <View style={styleGlobalCalendar.table}>
+            {/* Table Header */}
+            <View style={styleGlobalCalendar.tableRow}>
+              <Text
+                style={[
+                  styleGlobalCalendar.tableCell,
+                  styleGlobalCalendar.headerCell,
+                ]}
+              >
+                Date
+              </Text>
+              <Text
+                style={[
+                  styleGlobalCalendar.tableCell,
+                  styleGlobalCalendar.headerCell,
+                ]}
+              >
+                H. Début
+              </Text>
+              <Text
+                style={[
+                  styleGlobalCalendar.tableCell,
+                  styleGlobalCalendar.headerCell,
+                ]}
+              >
+                H. Fin
+              </Text>
+              <Text
+                style={[
+                  styleGlobalCalendar.tableCell,
+                  styleGlobalCalendar.headerCell,
+                ]}
+              >
+                Durée
+              </Text>
+              <Text
+                style={[
+                  styleGlobalCalendar.tableCell,
+                  styleGlobalCalendar.headerCell,
+                ]}
+              >
+                Groupe
+              </Text>
+              <Text
+                style={[
+                  styleGlobalCalendar.tableCell,
+                  styleGlobalCalendar.headerCell,
+                ]}
+              >
+                Epreuve
+              </Text>
+              <Text
+                style={[
+                  styleGlobalCalendar.tableCell,
+                  styleGlobalCalendar.headerCell,
+                ]}
+              >
+                Salle
+              </Text>
+              <Text
+                style={[
+                  styleGlobalCalendar.tableCell,
+                  styleGlobalCalendar.headerCell,
+                ]}
+              >
+                Responsable(s)
+              </Text>
+              <Text
+                style={[
+                  styleGlobalCalendar.tableCell,
+                  styleGlobalCalendar.headerCell,
+                ]}
+              >
+                Surveillant(s)
+              </Text>
+              <Text
+                style={[
+                  styleGlobalCalendar.tableCell,
+                  styleGlobalCalendar.headerCell,
+                ]}
+              >
+                N° Copie
+              </Text>
+            </View>
+            {/* Table Body */}
+            {calendrierState.epreuve.map((ep: any, index: any) => {
+              const startTime = new Date(`1970-01-01T${ep.heure_debut}`);
+              const endTime = new Date(`1970-01-01T${ep.heure_fin}`);
+              const durationMs = endTime.getTime() - startTime.getTime();
+
+              const durationHours = Math.floor(durationMs / (1000 * 60 * 60));
+              const durationMinutes = Math.floor(
+                (durationMs % (1000 * 60 * 60)) / (1000 * 60)
+              );
+
+              const formattedDuration = `${durationHours}h ${durationMinutes}m`;
+              return (
+                <View style={styleGlobalCalendar.tableRow} key={index}>
+                  <Text style={styleGlobalCalendar.tableCell}>{ep.date}</Text>
+                  <Text style={styleGlobalCalendar.tableCell}>
+                    {ep.heure_debut}
+                  </Text>
+                  <Text style={styleGlobalCalendar.tableCell}>
+                    {ep.heure_fin}
+                  </Text>
+                  <Text style={styleGlobalCalendar.tableCell}>
+                    {formattedDuration}
+                  </Text>
+                  <Text style={styleGlobalCalendar.tableCell}>
+                    {ep.classe.nom_classe_fr}
+                  </Text>
+                  <Text style={styleGlobalCalendar.tableCell}>
+                    {ep.matiere.matiere.length > 24
+                      ? `${ep.matiere.matiere.slice(
+                          0,
+                          24
+                        )}\n${ep.matiere.matiere.slice(24)}`
+                      : ep.matiere.matiere}
+                  </Text>
+                  <Text style={styleGlobalCalendar.tableCell}>
+                    {ep.salle.salle}
+                  </Text>
+                  <Text style={styleGlobalCalendar.tableCell}>
+                    {ep.group_responsables
+                      .map((res: any) => `${res.prenom_fr} ${res.nom_fr}`)
+                      .join(", ")}
+                  </Text>
+                  <Text style={styleGlobalCalendar.tableCell}>
+                    {ep.group_surveillants
+                      .map((sur: any) => `${sur.prenom_fr} ${sur.nom_fr}`)
+                      .join(", ")}
+                  </Text>
+                  <Text style={styleGlobalCalendar.tableCell}>
+                    {ep.nbr_copie}
+                  </Text>
+                </View>
+              );
+            })}
+          </View>
+        </Page>
+      </Document>
+    );
+  };
+
+  const ListEmergement = ({ classeId }: { classeId: string }) => {
+    const etudiants = AllEtudiants.filter(
+      (etudiant) => etudiant?.groupe_classe?._id! === classeId
+    );
+
+    return (
+      <Document>
+        <Page orientation="landscape">
+          <Text>Header</Text>
+          {/* Table */}
+          <View style={styleGlobalCalendar.table}>
+            {/* Table Header */}
+            <View style={styleGlobalCalendar.tableRow}>
+              <Text
+                style={[
+                  styleGlobalCalendar.tableCell,
+                  styleGlobalCalendar.headerCell,
+                ]}
+              >
+                C.I.N
+              </Text>
+              <Text
+                style={[
+                  styleGlobalCalendar.tableCell,
+                  styleGlobalCalendar.headerCell,
+                ]}
+              >
+                Nom & Prénom
+              </Text>
+              <Text
+                style={[
+                  styleGlobalCalendar.tableCell,
+                  styleGlobalCalendar.headerCell,
+                ]}
+              >
+                Entre
+              </Text>
+              <Text
+                style={[
+                  styleGlobalCalendar.tableCell,
+                  styleGlobalCalendar.headerCell,
+                ]}
+              >
+                Sortie
+              </Text>
+              <Text
+                style={[
+                  styleGlobalCalendar.tableCell,
+                  styleGlobalCalendar.headerCell,
+                ]}
+              >
+                Nombre de Pages
+              </Text>
+            </View>
+            {etudiants.map((etudiant, index) => {
+              return (
+                <View style={styleGlobalCalendar.tableRow} key={index}>
+                  <Text style={styleGlobalCalendar.tableCell}>
+                    {etudiant.num_CIN}
+                  </Text>
+                  <Text style={styleGlobalCalendar.tableCell}>
+                    {etudiant.nom_fr} {etudiant.prenom_fr}
+                  </Text>
+                  <Text style={styleGlobalCalendar.tableCell}></Text>
+                  <Text style={styleGlobalCalendar.tableCell}></Text>
+                  <Text style={styleGlobalCalendar.tableCell}></Text>
+                </View>
+              );
+            })}
+          </View>
+        </Page>
+      </Document>
+    );
+  };
+
   return (
     <div className="page-content">
       <Container fluid>
@@ -800,17 +1197,362 @@ const CalendrierDetails: React.FC = () => {
                   </td>
                 </tr>
               ) : (
-                <tr>
-                  <td className="text-center py-3 px-4" colSpan={2}>
-                    <em className="text-muted">
-                      Sélectionnez des filtres pour afficher les jours...
-                    </em>
-                  </td>
-                </tr>
+                ""
               )}
             </tbody>
           </table>
         </Row>
+        <Row>
+          <div className="table-responsive">
+            <Table className="table-nowrap mb-0">
+              <thead>
+                <tr>
+                  <th scope="col">Date</th>
+                  <th scope="col">H. Début</th>
+                  <th scope="col">H. Fin</th>
+                  <th scope="col">Durée</th>
+                  <th scope="col">Groupe</th>
+                  <th scope="col">Epreuve</th>
+                  <th scope="col">Salle</th>
+                  <th scope="col">Responsable(s)</th>
+                  <th scope="col">Surveillant(s)</th>
+                  <th scope="col">N° Copie</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {calendrierState.epreuve.map((ep: any) => {
+                  const startTime = new Date(`1970-01-01T${ep.heure_debut}`);
+                  const endTime = new Date(`1970-01-01T${ep.heure_fin}`);
+                  const durationMs = endTime.getTime() - startTime.getTime();
+
+                  const durationHours = Math.floor(
+                    durationMs / (1000 * 60 * 60)
+                  );
+                  const durationMinutes = Math.floor(
+                    (durationMs % (1000 * 60 * 60)) / (1000 * 60)
+                  );
+
+                  const formattedDuration = `${durationHours}h ${durationMinutes}m`;
+                  const backgroundColor = getBackgroundColor(ep.date);
+                  return (
+                    <tr
+                      key={ep.date + ep.heure_debut + ep.heure_fin}
+                      style={{ backgroundColor }}
+                    >
+                      <td>{ep.date}</td>
+                      <td>{ep.heure_debut}</td>
+                      <td>{ep.heure_fin}</td>
+                      <td>{formattedDuration}</td>
+                      <td>{ep?.classe?.nom_classe_fr!}</td>
+                      <td>
+                        {ep?.matiere?.matiere.length > 24 ? (
+                          <>
+                            <span>{ep.matiere.matiere.slice(0, 24)}</span>
+                            <br />
+                            <span>{ep.matiere.matiere.slice(24)}</span>
+                          </>
+                        ) : (
+                          ep?.matiere?.matiere
+                        )}
+                      </td>
+                      <td>{ep?.salle?.salle!}</td>
+                      <td>
+                        <ul className="list-unstyled">
+                          {ep.group_responsables.map((res: any) => (
+                            <li key={res.prenom_fr + res.nom_fr}>
+                              {res.prenom_fr} {res.nom_fr}
+                            </li>
+                          ))}
+                        </ul>
+                      </td>
+                      <td>
+                        <ul className="list-unstyled">
+                          {ep.group_surveillants.map((sur: any) => (
+                            <li key={sur.prenom_fr + sur.nom_fr}>
+                              {sur.prenom_fr} {sur.nom_fr}
+                            </li>
+                          ))}
+                        </ul>
+                      </td>
+                      <td>{ep.nbr_copie}</td>
+                      <td>{ep?.epreuveStatus!}</td>
+                      <td>
+                        <ul className="hstack gap-2 list-unstyled mb-0">
+                          <li>
+                            <button
+                              type="button"
+                              className="btn bg-info-subtle text-info view-item-btn btn-sm"
+                              onClick={() => tog_ViewModal(ep)}
+                            >
+                              <i className="ph ph-eye fs-18"></i>
+                            </button>
+                          </li>
+                          <li>
+                            <button
+                              type="button"
+                              className="btn bg-success-subtle text-success edit-item-btn btn-sm"
+                              onClick={() => tog_EditModal(ep?._id!)}
+                            >
+                              <i className="ph ph-pencil-simple-line fs-18"></i>
+                            </button>
+                          </li>
+                          <li>
+                            <Link
+                              to="#"
+                              className="badge bg-dark-subtle text-dark qrcode-btn"
+                            >
+                              <i className="ph ph-qr-code fs-20"></i>
+                            </Link>
+                          </li>
+                          <li>
+                            <button
+                              type="button"
+                              className="btn bg-primary-subtle text-primary generatefile-btn btn-sm"
+                            >
+                              <PDFDownloadLink
+                                document={
+                                  <ListEmergement classeId={ep?.classe?._id!} />
+                                }
+                                fileName={`Liste-émergement${ep?.classe
+                                  ?._id!}.pdf`}
+                                className="text-decoration-none"
+                              >
+                                <i className="ph ph-clipboard-text fs-18"></i>{" "}
+                              </PDFDownloadLink>
+                            </button>
+                          </li>
+                        </ul>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </Table>
+            <div className="d-flex justify-content-end mt-3">
+              <Button
+                variant="link"
+                className="me-2 p-0 fs-22"
+                style={{ cursor: "pointer" }}
+              >
+                <PDFDownloadLink
+                  document={<GlobalCalendar />}
+                  fileName={`Calendrier_des_Examens- ${calendrierState.period}.pdf`}
+                  className="text-decoration-none"
+                >
+                  <i className="bi bi-printer-fill text-success"></i>
+                </PDFDownloadLink>
+              </Button>
+            </div>
+          </div>
+        </Row>
+        {/* View Modal */}
+        <Modal
+          className="fade zoomIn"
+          size="sm"
+          show={openViewModal}
+          onHide={() => {
+            tog_ViewModal();
+          }}
+          centered
+        >
+          <Modal.Header className="px-4 pt-4" closeButton>
+            <h5 className="modal-title fs-18" id="exampleModalLabel">
+              Détails Epreuve
+            </h5>
+          </Modal.Header>
+          <Modal.Body className="p-4">
+            <Row>
+              <Col>
+                <div className="vstack gap-1">
+                  <p>
+                    Epreuve de:{" "}
+                    <span className="fw-bold">
+                      {selectedEpreuve?.matiere?.matiere}
+                    </span>{" "}
+                  </p>
+                  <p className="text-center">
+                    Le <span className="fw-bold">{selectedEpreuve?.date!}</span>{" "}
+                    de{" "}
+                    <span className="fw-bold">
+                      {selectedEpreuve?.heure_debut!}
+                    </span>{" "}
+                    à{" "}
+                    <span className="fw-bold">
+                      {selectedEpreuve?.heure_fin!}
+                    </span>
+                  </p>
+                </div>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <p>
+                  <span className="fw-medium">Nombre de copies:</span>{" "}
+                  <span>{selectedEpreuve?.nbr_copie}</span>
+                </p>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <p>
+                  <span className="fw-medium">Nombre de présence:</span>{" "}
+                  <span>{selectedEpreuve?.nbrePresent}</span>
+                </p>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <p>
+                  <span className="fw-medium">Nombre d'absence: </span>
+                  <span>{selectedEpreuve?.nbreAbsent}</span>
+                </p>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <p>
+                  <span className="fw-medium">Nombre d'exclus: </span>
+                  <span>{selectedEpreuve?.nbreExclus}</span>
+                </p>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <p>
+                  <span className="fw-medium">Notes: </span>
+                  <span>{selectedEpreuve?.epreuveNotes}</span>
+                </p>
+              </Col>
+            </Row>
+            <Row>
+              <Col className="d-flex justify-content-center">
+                {(selectedEpreuve?.epreuveStatus === "Done" ||
+                  selectedEpreuve?.epreuveStatus === "Faite") && (
+                  <span className="badge text-bg-success">
+                    {selectedEpreuve?.epreuveStatus}
+                  </span>
+                )}
+                {(selectedEpreuve?.epreuveStatus === "Non Terminé" ||
+                  selectedEpreuve?.epreuveStatus === "") && (
+                  <span className="badge text-bg-warning">
+                    {selectedEpreuve?.epreuveStatus}
+                  </span>
+                )}
+              </Col>
+            </Row>
+          </Modal.Body>
+        </Modal>
+        {/* Edit Modal */}
+        <Modal
+          className="fade zoomIn"
+          size="sm"
+          show={openEditModal}
+          onHide={() => {
+            tog_EditModal();
+          }}
+          centered
+        >
+          <Modal.Header className="px-4 pt-4" closeButton>
+            <h5 className="modal-title fs-18" id="exampleModalLabel">
+              Modifier Epreuve
+            </h5>
+          </Modal.Header>
+          <Modal.Body className="p-4">
+            <Form onSubmit={onSubmitCalendarEpreuve}>
+              <Row className="mb-2">
+                <Col lg={8}>
+                  <Form.Label>Nombre de Copies</Form.Label>
+                </Col>
+                <Col lg={2}>
+                  <h4>25</h4>
+                  {/* To Fix Later*/}
+                </Col>
+              </Row>
+              <Row className="mb-2">
+                <Col className="d-flex justify-content-center">
+                  <div className="form-check form-switch form-switch-secondary">
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      role="switch"
+                      id="SwitchCheck2"
+                      checked={status === "Faite"}
+                      onChange={handleToggle}
+                    />
+                    <label className="form-check-label" htmlFor="SwitchCheck2">
+                      {status}
+                    </label>
+                  </div>
+                </Col>
+              </Row>
+              <Row className="mb-2">
+                <Col lg={3}>
+                  <Form.Label htmlFor="nbre_present">Présent</Form.Label>
+                </Col>
+                <Col>
+                  <input
+                    type="text"
+                    className="form-control"
+                    onChange={onChangeCalendarEpreuve}
+                    id="nbre_present"
+                    name="nbre_present"
+                  />
+                </Col>
+              </Row>
+              <Row className="mb-2">
+                <Col lg={3}>
+                  <Form.Label htmlFor="nbre_absent">Absent</Form.Label>
+                </Col>
+                <Col>
+                  <input
+                    type="text"
+                    className="form-control"
+                    onChange={onChangeCalendarEpreuve}
+                    id="nbre_absent"
+                    name="nbre_absent"
+                  />
+                </Col>
+              </Row>
+              <Row className="mb-2">
+                <Col lg={3}>
+                  <Form.Label htmlFor="nbre_exclus">Exclus</Form.Label>
+                </Col>
+                <Col>
+                  <input
+                    type="text"
+                    className="form-control"
+                    onChange={onChangeCalendarEpreuve}
+                    id="nbre_exclus"
+                    name="nbre_exclus"
+                  />
+                </Col>
+              </Row>
+              <Row className="mb-2">
+                <Col lg={3}>
+                  <Form.Label htmlFor="notes">Notes</Form.Label>
+                </Col>
+                <Col>
+                  <textarea
+                    rows={2}
+                    className="form-control"
+                    onChange={onChangeCalendarEpreuve}
+                    id="notes"
+                    name="notes"
+                  />
+                </Col>
+              </Row>
+              <Row>
+                <Col className="d-flex justify-content-end">
+                  <button type="submit" className="btn btn-secondary">
+                    Modifier
+                  </button>
+                </Col>
+              </Row>
+            </Form>
+          </Modal.Body>
+        </Modal>
       </Container>
     </div>
   );

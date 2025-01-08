@@ -116,6 +116,16 @@ export const etudiantSlice = createApi({
         },
         providesTags: ['Etudiant'],
       }),
+      fetchEtudiantsByIdClasse: builder.query<Etudiant[], { _id: string }>({
+        query({ _id }) {
+          return {
+            url: 'get-etudiant-by-idclasse',
+            method: 'POST',
+            body: { _id },
+          };
+        },
+        providesTags: ['Etudiant'],
+      }),
       addEtudiant: builder.mutation<void, Etudiant>({
         query(payload) {
           return {
@@ -171,4 +181,4 @@ export const etudiantSlice = createApi({
   },
 });
 
-export const { useAddEtudiantMutation, useFetchEtudiantsQuery, useFetchEtudiantByIdQuery, useDeleteEtudiantMutation, useUpdateEtudiantMutation, useGetTypeInscriptionByIdStudentMutation, useUpdateGroupeClasseMutation } = etudiantSlice;
+export const { useAddEtudiantMutation, useFetchEtudiantsQuery, useFetchEtudiantByIdQuery, useDeleteEtudiantMutation, useUpdateEtudiantMutation, useGetTypeInscriptionByIdStudentMutation, useUpdateGroupeClasseMutation, useFetchEtudiantsByIdClasseQuery } = etudiantSlice;

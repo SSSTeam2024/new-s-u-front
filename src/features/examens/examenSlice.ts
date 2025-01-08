@@ -12,6 +12,7 @@ export interface Examen {
     date: string[]
   }[],
   epreuve: {
+    _id?: string,
     group_surveillants: any [],
     group_responsables?: any[],
     nbr_copie?: string,
@@ -21,12 +22,27 @@ export interface Examen {
     salle: any
     matiere: any
     classe: any
+    epreuveStatus?: string
+    nbrePresent?: string
+  nbreAbsent?: string
+  nbreExclus?: string
+  epreuveNotes?: string
   }[],
 }
 
 export interface GetExamenByRegime {
     semester: string,
     regime: string
+}
+
+export interface DataToEditExamsEpreuve {
+  id_Calendrier?: string
+  epreuveId?: string
+  epreuve_status?: string
+  nbre_present?: string
+  nbre_absent?: string
+  nbre_exclus?: string
+  notes?: string
 }
 
 export const examenSlice = createApi({
@@ -54,6 +70,16 @@ export const examenSlice = createApi({
         query(payload) {
           return {
             url: "/create-examen",
+            method: "POST",
+            body: payload,
+          };
+        },
+        invalidatesTags: ["Examen"],
+      }),
+      ModifierExamenEpreuve: builder.mutation<void, DataToEditExamsEpreuve>({
+        query(payload) {
+          return {
+            url: "/EpeditreuveData",
             method: "POST",
             body: payload,
           };
@@ -96,5 +122,6 @@ export const {
    useFetchExamensQuery,
    useUpdateExamenMutation,
    useGetExamenByRegimeMutation,
-   useFetchExamenByIdQuery
+   useFetchExamenByIdQuery,
+   useModifierExamenEpreuveMutation
 } = examenSlice;
