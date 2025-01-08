@@ -784,42 +784,42 @@ const CalendrierDetails: React.FC = () => {
               const formattedDuration = `${durationHours}h ${durationMinutes}m`;
               return (
                 <View style={styleGlobalCalendar.tableRow} key={index}>
-                  <Text style={styleGlobalCalendar.tableCell}>{ep.date}</Text>
+                  <Text style={styleGlobalCalendar.tableCell}>{ep?.date!}</Text>
                   <Text style={styleGlobalCalendar.tableCell}>
-                    {ep.heure_debut}
+                    {ep?.heure_debut!}
                   </Text>
                   <Text style={styleGlobalCalendar.tableCell}>
-                    {ep.heure_fin}
+                    {ep?.heure_fin!}
                   </Text>
                   <Text style={styleGlobalCalendar.tableCell}>
                     {formattedDuration}
                   </Text>
                   <Text style={styleGlobalCalendar.tableCell}>
-                    {ep.classe.nom_classe_fr}
+                    {ep?.classe?.nom_classe_fr!}
                   </Text>
                   <Text style={styleGlobalCalendar.tableCell}>
-                    {ep.matiere.matiere.length > 24
-                      ? `${ep.matiere.matiere.slice(
+                    {ep?.matiere?.matiere?.length > 24
+                      ? `${ep?.matiere?.matiere?.slice(
                           0,
                           24
-                        )}\n${ep.matiere.matiere.slice(24)}`
-                      : ep.matiere.matiere}
+                        )}\n${ep?.matiere?.matiere?.slice(24)}`
+                      : ep?.matiere?.matiere!}
                   </Text>
                   <Text style={styleGlobalCalendar.tableCell}>
-                    {ep.salle.salle}
+                    {ep?.salle?.salle!}
                   </Text>
                   <Text style={styleGlobalCalendar.tableCell}>
-                    {ep.group_responsables
-                      .map((res: any) => `${res.prenom_fr} ${res.nom_fr}`)
+                    {ep?.group_responsables
+                      ?.map((res: any) => `${res?.prenom_fr!} ${res?.nom_fr!}`)
                       .join(", ")}
                   </Text>
                   <Text style={styleGlobalCalendar.tableCell}>
-                    {ep.group_surveillants
-                      .map((sur: any) => `${sur.prenom_fr} ${sur.nom_fr}`)
+                    {ep?.group_surveillants
+                      ?.map((sur: any) => `${sur?.prenom_fr!} ${sur?.nom_fr!}`)
                       .join(", ")}
                   </Text>
                   <Text style={styleGlobalCalendar.tableCell}>
-                    {ep.nbr_copie}
+                    {ep?.nbr_copie!}
                   </Text>
                 </View>
               );
