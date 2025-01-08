@@ -2,11 +2,9 @@ import { useFetchClassesQuery } from "features/classe/classe";
 import { useFetchEnseignantsQuery } from "features/enseignant/enseignantSlice";
 import React, { useEffect, useState } from "react";
 import { Button, Card, Col, Container, Form, Row } from "react-bootstrap";
-import Select from "react-select";
 import { useLocation } from "react-router-dom";
 import { useFetchSallesQuery } from "features/salles/salles";
 import {
-  pdf,
   StyleSheet,
   Document,
   Page,
@@ -14,17 +12,26 @@ import {
   Text,
   PDFDownloadLink,
 } from "@react-pdf/renderer";
+import { useFetchVaribaleGlobaleQuery } from "features/variableGlobale/variableGlobaleSlice";
 
 const styles = StyleSheet.create({
   page: { padding: 30 },
   title: { fontSize: 24, textAlign: "center", marginBottom: 20 },
-  section: { marginBottom: 10 },
-  text: { fontSize: 14 },
+  section: { marginBottom: 20 },
+  text: { fontSize: 14, marginBottom: 15 },
+  listItem: { fontSize: 14, marginLeft: 20, marginBottom: 5 },
+  footer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 20,
+  },
+  leftAlign: { fontSize: 14 },
+  rightAlign: { fontSize: 14 },
 });
 
 const stylesCalenderFilter = StyleSheet.create({
   page: {
-    padding: 10,
+    padding: 50,
   },
   header: {
     marginBottom: 20,
@@ -47,7 +54,7 @@ const stylesCalenderFilter = StyleSheet.create({
   timetable: {
     borderWidth: 1,
     borderColor: "#000",
-    marginTop: 10,
+    marginTop: 50,
   },
   row: {
     flexDirection: "row",
@@ -92,7 +99,7 @@ interface Props {
     epreuve: any[];
   }[];
   filterBy: "jour" | "classe" | "salle" | null;
-  filterValue?: string | null; // Allow null and undefined
+  filterValue?: string | null;
 }
 
 const CalendrierDetails: React.FC = () => {
@@ -101,6 +108,8 @@ const CalendrierDetails: React.FC = () => {
   const { data: AllClasses = [] } = useFetchClassesQuery();
   const { data: AllSalles = [] } = useFetchSallesQuery();
   const { data: AllEnseignants = [] } = useFetchEnseignantsQuery();
+  const { data: variableGlobales = [] } = useFetchVaribaleGlobaleQuery();
+  console.log("variableGlobales", variableGlobales);
 
   const location = useLocation();
   const calendrierState = location.state;
@@ -211,11 +220,24 @@ const CalendrierDetails: React.FC = () => {
           Vous êtes convoqué(e) pour surveiller les examens selon le planning
           suivant :
         </Text>
-        {exams.map((exam, idx) => (
-          <Text key={idx} style={styles.text}>
-            - {exam.day.charAt(0).toUpperCase() + exam.day.slice(1)} {exam.date}
+        <View style={styles.section}>
+          {exams.map((exam, idx) => (
+            <Text key={idx} style={styles.listItem}>
+              - {exam.day.charAt(0).toUpperCase() + exam.day.slice(1)}{" "}
+              {exam.date}
+            </Text>
+          ))}
+        </View>
+        <Text style={styles.text}>
+          Nous comptons sur votre présence et votre ponctualité pour assurer le
+          bon déroulement des épreuves.
+        </Text>
+        <View style={styles.footer}>
+          <Text style={styles.leftAlign}>
+            Signature l'équipe administrative
           </Text>
-        ))}
+          <Text style={styles.rightAlign}>Signature l'enseignant</Text>
+        </View>
       </Page>
     </Document>
   );
@@ -237,15 +259,24 @@ const CalendrierDetails: React.FC = () => {
         )
       ),
     }));
-  const selectedTeacherName = AllEnseignants.find(
+
+  const selectedTeacherDetails = AllEnseignants.find(
     (t) => t._id === selectedTeacher
-  )?.prenom_fr;
+  );
+
+  const selectedTeacherPrenom = selectedTeacherDetails?.prenom_fr || "";
+  const selectedTeacherNom = selectedTeacherDetails?.nom_fr || "";
+
+  const teacherName = `${selectedTeacherPrenom} ${selectedTeacherNom}`;
 
   const handleFilterChange = (filter: any, value: any) => {
+    resetFilters();
+
     if (filter === "classe") setSelectedClasse(value);
     if (filter === "jour") setSelectedJour(value);
     if (filter === "salle") setSelectedSalle(value);
     if (filter === "teacher") setSelectedTeacher(value);
+
     setActiveFilter(filter);
     setFilterApplied(true);
   };
@@ -278,139 +309,13 @@ const CalendrierDetails: React.FC = () => {
     );
   };
 
-  // const CalendarPDF = ({
-  //   title,
-  //   filteredDays,
-  // }: {
-  //   title: string;
-  //   filteredDays: { date: string; day: string; epreuve: any[] }[];
-  // }) => {
-  //   const rows = groupByDay(filteredDays);
+  const currentDate = new Date();
+  const currentYear = currentDate.getFullYear();
+  const currentMonth = currentDate.getMonth();
 
-  //   return (
-  //     <Document>
-  //       <Page orientation="landscape" style={stylesCalenderFilter.page}>
-  //         {/* Title */}
-  //         <Text style={stylesCalenderFilter.title}>{title}</Text>
+  const startYear = currentMonth >= 8 ? currentYear : currentYear - 1;
+  const endYear = startYear + 1;
 
-  //         {/* Timetable */}
-  //         <View style={stylesCalenderFilter.timetable}>
-  //           {/* Header Row */}
-  //           <View
-  //             style={[stylesCalenderFilter.row, stylesCalenderFilter.headerRow]}
-  //           >
-  //             <Text
-  //               style={[
-  //                 stylesCalenderFilter.cell,
-  //                 stylesCalenderFilter.dayCell,
-  //               ]}
-  //             >
-  //               Jour
-  //             </Text>
-  //             <Text
-  //               style={[
-  //                 stylesCalenderFilter.cell,
-  //                 stylesCalenderFilter.classeCell,
-  //               ]}
-  //             >
-  //               Classe
-  //             </Text>
-  //             <Text
-  //               style={[
-  //                 stylesCalenderFilter.cell,
-  //                 stylesCalenderFilter.salleCell,
-  //               ]}
-  //             >
-  //               Salle
-  //             </Text>
-  //             <Text
-  //               style={[
-  //                 stylesCalenderFilter.cell,
-  //                 stylesCalenderFilter.matiereCell,
-  //               ]}
-  //             >
-  //               Matière
-  //             </Text>
-  //             <Text
-  //               style={[
-  //                 stylesCalenderFilter.cell,
-  //                 stylesCalenderFilter.timeCell,
-  //               ]}
-  //             >
-  //               Horaire
-  //             </Text>
-  //           </View>
-
-  //           {/* Data Rows */}
-  //           {rows.map((row, idx) => (
-  //             <View key={idx} style={stylesCalenderFilter.row}>
-  //               {/* Day Cell (Only show for the first row of each day and merge cells) */}
-  //               {row.showDay && (
-  //                 <Text
-  //                   style={[
-  //                     stylesCalenderFilter.cell,
-  //                     stylesCalenderFilter.dayCell,
-  //                   ]}
-  //                 >
-  //                   {row.day.charAt(0).toUpperCase() + row.day.slice(1)} -{" "}
-  //                   {row.date}
-  //                 </Text>
-  //               )}
-  //               {!row.showDay && (
-  //                 <Text
-  //                   style={[
-  //                     stylesCalenderFilter.cell,
-  //                     stylesCalenderFilter.dayCell,
-  //                   ]}
-  //                 ></Text>
-  //               )}
-
-  //               {/* Classe */}
-  //               <Text
-  //                 style={[
-  //                   stylesCalenderFilter.cell,
-  //                   stylesCalenderFilter.classeCell,
-  //                 ]}
-  //               >
-  //                 {row.classe}
-  //               </Text>
-
-  //               {/* Salle */}
-  //               <Text
-  //                 style={[
-  //                   stylesCalenderFilter.cell,
-  //                   stylesCalenderFilter.salleCell,
-  //                 ]}
-  //               >
-  //                 {row.salle}
-  //               </Text>
-
-  //               {/* Matière */}
-  //               <Text
-  //                 style={[
-  //                   stylesCalenderFilter.cell,
-  //                   stylesCalenderFilter.matiereCell,
-  //                 ]}
-  //               >
-  //                 {row.matiere}
-  //               </Text>
-
-  //               {/* Horaire */}
-  //               <Text
-  //                 style={[
-  //                   stylesCalenderFilter.cell,
-  //                   stylesCalenderFilter.timeCell,
-  //                 ]}
-  //               >
-  //                 {row.heure_debut} - {row.heure_fin}
-  //               </Text>
-  //             </View>
-  //           ))}
-  //         </View>
-  //       </Page>
-  //     </Document>
-  //   );
-  // };
   const CalendarPDF = ({
     title,
     filteredDays,
@@ -422,11 +327,58 @@ const CalendrierDetails: React.FC = () => {
     return (
       <Document>
         <Page orientation="landscape" style={stylesCalenderFilter.page}>
-          {/* Title */}
-          <Text style={stylesCalenderFilter.title}>
-            {title}
-            {filterValue ? ` - ${filterValue}` : ""}
-          </Text>
+          {/* Header Section */}
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              marginBottom: 10,
+            }}
+          >
+            {/* Left Section */}
+            <View style={{ flex: 1, flexWrap: "wrap", maxWidth: "30%" }}>
+              <Text
+                style={{
+                  fontSize: 10,
+                  fontWeight: "bold",
+                  textAlign: "left",
+                }}
+              >
+                {variableGlobales[2]?.universite_fr!}
+              </Text>
+              <Text
+                style={{
+                  fontSize: 10,
+                  textAlign: "left",
+                }}
+              >
+                {variableGlobales[2]?.etablissement_fr!}
+              </Text>
+            </View>
+
+            {/* Center Section (Title with Subtitle) */}
+            <View style={{ flex: 1, alignItems: "center" }}>
+              <Text style={{ fontSize: 14, fontWeight: "bold" }}>{title}</Text>
+              {filterValue && (
+                <Text style={{ fontSize: 12, marginTop: 5 }}>
+                  {filterValue}
+                </Text>
+              )}
+            </View>
+
+            {/* Right Section */}
+            <View style={{ alignItems: "flex-end" }}>
+              <Text style={{ fontSize: 10 }}>
+                A.U: {startYear}/{endYear}
+              </Text>
+              <Text style={{ fontSize: 10 }}>
+                Semestre: {calendrierState?.semestre!}
+              </Text>
+              <Text style={{ fontSize: 10 }}>
+                Période: {calendrierState?.period!}
+              </Text>
+            </View>
+          </View>
 
           {/* Timetable */}
           <View style={stylesCalenderFilter.timetable}>
@@ -487,25 +439,23 @@ const CalendrierDetails: React.FC = () => {
             {/* Data Rows */}
             {rows.map((row, idx) => (
               <View key={idx} style={stylesCalenderFilter.row}>
-                {/* Conditionally render columns */}
-                {filterBy !== "jour" && row.showDay && (
+                {/* Conditionally render the Day column */}
+                {filterBy !== "jour" && (
                   <Text
                     style={[
                       stylesCalenderFilter.cell,
                       stylesCalenderFilter.dayCell,
+                      idx > 0 && row.day === rows[idx - 1].day
+                        ? { borderWidth: 0 }
+                        : {},
                     ]}
                   >
-                    {row.day.charAt(0).toUpperCase() + row.day.slice(1)} -{" "}
-                    {row.date}
+                    {idx === 0 || row.day !== rows[idx - 1].day
+                      ? `${
+                          row.day.charAt(0).toUpperCase() + row.day.slice(1)
+                        } - ${row.date}`
+                      : ""}
                   </Text>
-                )}
-                {filterBy !== "jour" && !row.showDay && (
-                  <Text
-                    style={[
-                      stylesCalenderFilter.cell,
-                      stylesCalenderFilter.dayCell,
-                    ]}
-                  ></Text>
                 )}
                 {filterBy !== "classe" && (
                   <Text
@@ -585,10 +535,24 @@ const CalendrierDetails: React.FC = () => {
               className="me-2 p-0"
               style={{ cursor: "pointer" }}
             >
-              <PDFDownloadLink
+              {/* <PDFDownloadLink
                 document={
                   <CalendarPDF
                     title={`Calendrier des Examens - Classe ${selectedClasse}`}
+                    filteredDays={filteredDays}
+                    filterBy={activeFilter}
+                  />
+                }
+                fileName={`Calendrier_Classe.pdf`}
+                className="text-decoration-none"
+              >
+                <i className="bi bi-printer-fill"></i>
+              </PDFDownloadLink> */}
+              <PDFDownloadLink
+                document={
+                  <CalendarPDF
+                    title={`Calendrier des Examens`}
+                    filterValue={`Classe ${selectedClasse}`}
                     filteredDays={filteredDays}
                     filterBy={activeFilter}
                   />
@@ -603,7 +567,6 @@ const CalendrierDetails: React.FC = () => {
             <select
               className="form-select"
               value={selectedClasse || ""}
-              disabled={!!activeFilter && activeFilter !== "classe"}
               onChange={(e) => handleFilterChange("classe", e.target.value)}
             >
               <option value="">Choisir...</option>
@@ -622,10 +585,24 @@ const CalendrierDetails: React.FC = () => {
               className="me-2 p-0"
               style={{ cursor: "pointer" }}
             >
-              <PDFDownloadLink
+              {/* <PDFDownloadLink
                 document={
                   <CalendarPDF
                     title={`Calendrier des Examens - Salle ${selectedSalle}`}
+                    filteredDays={filteredDays}
+                    filterBy={activeFilter}
+                  />
+                }
+                fileName={`Calendrier_Salle.pdf`}
+                className="text-decoration-none"
+              >
+                <i className="bi bi-printer-fill"></i>
+              </PDFDownloadLink> */}
+              <PDFDownloadLink
+                document={
+                  <CalendarPDF
+                    title={`Calendrier des Examens`}
+                    filterValue={`Salle ${selectedSalle}`}
                     filteredDays={filteredDays}
                     filterBy={activeFilter}
                   />
@@ -640,7 +617,6 @@ const CalendrierDetails: React.FC = () => {
             <select
               className="form-select"
               value={selectedSalle || ""}
-              disabled={!!activeFilter && activeFilter !== "salle"}
               onChange={(e) => handleFilterChange("salle", e.target.value)}
             >
               <option value="">Choisir...</option>
@@ -659,10 +635,24 @@ const CalendrierDetails: React.FC = () => {
               className="me-2 p-0"
               style={{ cursor: "pointer" }}
             >
-              <PDFDownloadLink
+              {/* <PDFDownloadLink
                 document={
                   <CalendarPDF
                     title={`Calendrier des Examens - ${selectedJour}`}
+                    filteredDays={filteredDays}
+                    filterBy={activeFilter}
+                  />
+                }
+                fileName={`Calendrier_Jour.pdf`}
+                className="text-decoration-none"
+              >
+                <i className="bi bi-printer-fill"></i>
+              </PDFDownloadLink> */}
+              <PDFDownloadLink
+                document={
+                  <CalendarPDF
+                    title={`Calendrier des Examens`}
+                    filterValue={`${selectedJour}`}
                     filteredDays={filteredDays}
                     filterBy={activeFilter}
                   />
@@ -677,7 +667,6 @@ const CalendrierDetails: React.FC = () => {
             <select
               className="form-select"
               value={selectedJour || ""}
-              disabled={!!activeFilter && activeFilter !== "jour"}
               onChange={(e) => handleFilterChange("jour", e.target.value)}
             >
               <option value="">Choisir...</option>
@@ -700,7 +689,6 @@ const CalendrierDetails: React.FC = () => {
             <select
               className="form-select"
               value={selectedTeacher || ""}
-              disabled={!!activeFilter && activeFilter !== "teacher"}
               onChange={(e) => handleFilterChange("teacher", e.target.value)}
             >
               <option value="">Choisir...</option>
@@ -716,7 +704,7 @@ const CalendrierDetails: React.FC = () => {
               <PDFDownloadLink
                 document={
                   <ConvocationPDF
-                    teacherName={selectedTeacherName!}
+                    teacherName={teacherName!}
                     exams={filteredExamsForTeacher}
                   />
                 }
@@ -727,10 +715,6 @@ const CalendrierDetails: React.FC = () => {
               </PDFDownloadLink>
             </Col>
           )}
-
-          <Col lg={2}>
-            <Button onClick={resetFilters}>Réinitialiser les filtres</Button>
-          </Col>
         </Row>
 
         <Row>
