@@ -16,6 +16,7 @@ import { useFetchSallesQuery } from "features/salles/salles";
 import {
   StyleSheet,
   Document,
+  Image,
   Page,
   View,
   Text,
@@ -24,6 +25,7 @@ import {
 import { useFetchVaribaleGlobaleQuery } from "features/variableGlobale/variableGlobaleSlice";
 import { useModifierExamenEpreuveMutation } from "features/examens/examenSlice";
 import { useFetchEtudiantsQuery } from "features/etudiant/etudiantSlice";
+import QRCode from "qrcode";
 
 const predefinedColors = [
   "#E5E4E2", // Platinum
@@ -196,6 +198,14 @@ const stylesCalenderFilter = StyleSheet.create({
   },
   nbrePages: {
     width: 105,
+    fontWeight: "bold",
+  },
+  codeZone: {
+    width: 250,
+    fontWeight: "bold",
+  },
+  infoZone: {
+    width: 310,
     fontWeight: "bold",
   },
 });
@@ -1039,119 +1049,112 @@ const CalendrierDetails: React.FC = () => {
               </Text>
             </View>
           </View>
-
           {/* Table */}
-          <View style={styleGlobalCalendar.table}>
-            {/* Table Header */}
-            <View style={stylesCalenderFilter.timetable}>
-              {/* Header */}
-              <View
+          {/* Table Header */}
+          <View style={stylesCalenderFilter.timetable}>
+            {/* Header */}
+            <View
+              style={[stylesCalenderFilter.row, stylesCalenderFilter.headerRow]}
+            >
+              <Text
                 style={[
-                  stylesCalenderFilter.row,
-                  stylesCalenderFilter.headerRow,
+                  stylesCalenderFilter.cell,
+                  stylesCalenderFilter.numEtudiant,
                 ]}
               >
-                <Text
-                  style={[
-                    stylesCalenderFilter.cell,
-                    stylesCalenderFilter.numEtudiant,
-                  ]}
-                >
-                  N°
-                </Text>
-                <Text
-                  style={[
-                    stylesCalenderFilter.cell,
-                    stylesCalenderFilter.cinEtudiant,
-                  ]}
-                >
-                  C.I.N
-                </Text>
-                <Text
-                  style={[
-                    stylesCalenderFilter.cell,
-                    stylesCalenderFilter.nomEtudiant,
-                  ]}
-                >
-                  Nom et Prénom
-                </Text>
-                <Text
-                  style={[
-                    stylesCalenderFilter.cell,
-                    stylesCalenderFilter.entreEtudiant,
-                  ]}
-                >
-                  Entré
-                </Text>
-                <Text
-                  style={[
-                    stylesCalenderFilter.cell,
-                    stylesCalenderFilter.entreEtudiant,
-                  ]}
-                >
-                  Sortie
-                </Text>
-                <Text
-                  style={[
-                    stylesCalenderFilter.cell,
-                    stylesCalenderFilter.nbrePages,
-                  ]}
-                >
-                  Nombre de page(s)
-                </Text>
-              </View>
-              {/* Body */}
-              {etudiants.map((etudiant, index) => {
-                return (
-                  <View style={stylesCalenderFilter.row} key={index}>
-                    <Text
-                      style={[
-                        stylesCalenderFilter.cell,
-                        stylesCalenderFilter.numEtudiant,
-                      ]}
-                    >
-                      {index + 1}
-                    </Text>
-                    <Text
-                      style={[
-                        stylesCalenderFilter.cell,
-                        stylesCalenderFilter.cinEtudiant,
-                      ]}
-                    >
-                      {etudiant.num_CIN}
-                    </Text>
-                    <Text
-                      style={[
-                        stylesCalenderFilter.cell,
-                        stylesCalenderFilter.nomEtudiant,
-                      ]}
-                    >
-                      {etudiant.nom_fr} {etudiant.prenom_fr}
-                    </Text>
-                    <Text
-                      style={[
-                        stylesCalenderFilter.cell,
-                        stylesCalenderFilter.entreEtudiant,
-                      ]}
-                    ></Text>
-                    <Text
-                      style={[
-                        stylesCalenderFilter.cell,
-                        stylesCalenderFilter.entreEtudiant,
-                      ]}
-                    ></Text>
-                    <Text
-                      style={[
-                        stylesCalenderFilter.cell,
-                        stylesCalenderFilter.nbrePages,
-                      ]}
-                    ></Text>
-                  </View>
-                );
-              })}
+                N°
+              </Text>
+              <Text
+                style={[
+                  stylesCalenderFilter.cell,
+                  stylesCalenderFilter.cinEtudiant,
+                ]}
+              >
+                C.I.N
+              </Text>
+              <Text
+                style={[
+                  stylesCalenderFilter.cell,
+                  stylesCalenderFilter.nomEtudiant,
+                ]}
+              >
+                Nom et Prénom
+              </Text>
+              <Text
+                style={[
+                  stylesCalenderFilter.cell,
+                  stylesCalenderFilter.entreEtudiant,
+                ]}
+              >
+                Entré
+              </Text>
+              <Text
+                style={[
+                  stylesCalenderFilter.cell,
+                  stylesCalenderFilter.entreEtudiant,
+                ]}
+              >
+                Sortie
+              </Text>
+              <Text
+                style={[
+                  stylesCalenderFilter.cell,
+                  stylesCalenderFilter.nbrePages,
+                ]}
+              >
+                Nombre de page(s)
+              </Text>
             </View>
+            {/* Body */}
+            {etudiants.map((etudiant, index) => {
+              return (
+                <View style={stylesCalenderFilter.row} key={index}>
+                  <Text
+                    style={[
+                      stylesCalenderFilter.cell,
+                      stylesCalenderFilter.numEtudiant,
+                    ]}
+                  >
+                    {index + 1}
+                  </Text>
+                  <Text
+                    style={[
+                      stylesCalenderFilter.cell,
+                      stylesCalenderFilter.cinEtudiant,
+                    ]}
+                  >
+                    {etudiant.num_CIN}
+                  </Text>
+                  <Text
+                    style={[
+                      stylesCalenderFilter.cell,
+                      stylesCalenderFilter.nomEtudiant,
+                    ]}
+                  >
+                    {etudiant.nom_fr} {etudiant.prenom_fr}
+                  </Text>
+                  <Text
+                    style={[
+                      stylesCalenderFilter.cell,
+                      stylesCalenderFilter.entreEtudiant,
+                    ]}
+                  ></Text>
+                  <Text
+                    style={[
+                      stylesCalenderFilter.cell,
+                      stylesCalenderFilter.entreEtudiant,
+                    ]}
+                  ></Text>
+                  <Text
+                    style={[
+                      stylesCalenderFilter.cell,
+                      stylesCalenderFilter.nbrePages,
+                    ]}
+                  ></Text>
+                </View>
+              );
+            })}
           </View>
-
           {/* Footer */}
           <View
             style={{
@@ -1168,7 +1171,33 @@ const CalendrierDetails: React.FC = () => {
     );
   };
 
-  const QrCodePage = () => {
+  const QrCodePage = ({ epreuve }: { epreuve: any }) => {
+    const etudiants = AllEtudiants.filter(
+      (etudiant) => etudiant?.groupe_classe?._id! === epreuve?.classe?._id!
+    );
+    const [start, end] = calendrierState.period.split(" / ");
+
+    const [startDay, startMonth, startYear] = start.split("-");
+    const monthName = new Date(
+      Number(startYear),
+      Number(startMonth) - 1
+    ).toLocaleString("fr-FR", {
+      month: "long",
+    });
+
+    const generateQRCode = async (etudiant: any) => {
+      const qrData = `${etudiant.nom_fr} ${etudiant.prenom_fr}\n${
+        etudiant.num_CIN
+      }\n${epreuve?.matiere?.matiere!}\nSession: ${monthName} 2025`;
+      try {
+        const qrCode = await QRCode.toDataURL(qrData);
+        return qrCode;
+      } catch (err) {
+        console.error("Error generating QR code:", err);
+        return null;
+      }
+    };
+
     return (
       <Document>
         <Page orientation="portrait" style={{ padding: 30 }}>
@@ -1207,7 +1236,7 @@ const CalendrierDetails: React.FC = () => {
                 {calendrierState.session}
               </Text>
               <Text style={styleGlobalCalendar.secondTitle}>
-                {/* Groupe: {epreuve?.classe?.nom_classe_fr!} */}
+                Groupe: {epreuve?.classe?.nom_classe_fr!}
               </Text>
             </View>
             {/* Right Section */}
@@ -1223,13 +1252,59 @@ const CalendrierDetails: React.FC = () => {
               </Text>
             </View>
           </View>
-
           {/* Table */}
-          <View style={styleGlobalCalendar.table}>
-            {/* Table Header */}
-            <Text>QRC Table</Text>
+          <View style={stylesCalenderFilter.timetable}>
+            {/* Body */}
+            {etudiants.map((etudiant, index) => {
+              const qrCode = generateQRCode(etudiant);
+              return (
+                <View style={stylesCalenderFilter.row} key={index}>
+                  <View
+                    style={[
+                      stylesCalenderFilter.cell,
+                      stylesCalenderFilter.codeZone,
+                    ]}
+                  >
+                    <Image src={qrCode} style={{ width: 100, height: 80 }} />
+                  </View>
+                  <Text
+                    style={[
+                      stylesCalenderFilter.cell,
+                      stylesCalenderFilter.infoZone,
+                    ]}
+                  >
+                    {etudiant.nom_fr} {etudiant.prenom_fr}
+                    {"\n"}
+                    {etudiant.num_CIN}
+                    {"\n"}
+                    {epreuve?.matiere?.matiere!}
+                    {"\n"}
+                    Session: {monthName} 2025
+                  </Text>
+                  {/* <Text
+                    style={[
+                      stylesCalenderFilter.cell,
+                      stylesCalenderFilter.codeZone,
+                    ]}
+                  ></Text>
+                  <Text
+                    style={[
+                      stylesCalenderFilter.cell,
+                      stylesCalenderFilter.infoZone,
+                    ]}
+                  >
+                    {etudiant.nom_fr} {etudiant.prenom_fr}
+                    {"\n"}
+                    {etudiant.num_CIN}
+                    {"\n"}
+                    {epreuve?.matiere?.matiere!}
+                    {"\n"}
+                    Session: {monthName} 2025
+                  </Text> */}
+                </View>
+              );
+            })}
           </View>
-
           {/* Footer */}
           <View
             style={{
@@ -1631,7 +1706,7 @@ const CalendrierDetails: React.FC = () => {
                               className="btn bg-warning-subtle qrcode-btn btn-sm"
                             >
                               <PDFDownloadLink
-                                document={<QrCodePage />}
+                                document={<QrCodePage epreuve={ep} />}
                                 fileName={`qrcode - ${ep?.classe
                                   ?.nom_classe_fr!}.pdf`}
                                 className="text-decoration-none"
