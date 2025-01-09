@@ -26,16 +26,10 @@ import { useModifierExamenEpreuveMutation } from "features/examens/examenSlice";
 import { useFetchEtudiantsQuery } from "features/etudiant/etudiantSlice";
 
 const predefinedColors = [
-  "#d3d3d3", // light gray
-  "#a9a9a9", // dark gray
-  "#808080", // gray
-  "#ffcccb", // light pink
-  "#90ee90", // light green
-  "#add8e6", // light blue
-  "#ffffe0", // light yellow
-  "#dda0dd", // plum
-  "#f0e68c", // khaki
-  "#ffb6c1", // light coral
+  "#E5E4E2", // Platinum
+  "#C0C0C0", // Silver
+  "#D3D3D3", // Light Gray
+  "#A9A9A9", // Dark Gray
 ];
 
 const styleGlobalCalendar = StyleSheet.create({
@@ -46,17 +40,16 @@ const styleGlobalCalendar = StyleSheet.create({
     marginBottom: 8,
   },
   secondTitle: {
-    fontSize: 20,
+    fontSize: 12,
     textAlign: "center",
-    marginBottom: 5,
   },
   thirdTitle: {
-    fontSize: 16,
+    fontSize: 11,
     textAlign: "center",
     marginBottom: 20,
   },
   table: {
-    width: "100%",
+    // width: "100%",
     marginTop: 10,
   },
   tableRow: {
@@ -72,6 +65,9 @@ const styleGlobalCalendar = StyleSheet.create({
   headerCell: {
     backgroundColor: "#f0f0f0",
     fontWeight: "bold",
+  },
+  heureCell: {
+    width: 30,
   },
 });
 
@@ -148,6 +144,58 @@ const stylesCalenderFilter = StyleSheet.create({
   },
   headerRow: {
     backgroundColor: "#f0f0f0",
+    fontWeight: "bold",
+  },
+  dateCell: {
+    width: 70,
+    fontWeight: "bold",
+  },
+  heureCell: {
+    width: 55,
+    fontWeight: "bold",
+  },
+  dureeCell: {
+    width: 50,
+    fontWeight: "bold",
+  },
+  groupeCell: {
+    width: 80,
+    fontWeight: "bold",
+  },
+  epreuveCell: {
+    width: 115,
+    fontWeight: "bold",
+  },
+  salleepreuveCell: {
+    width: 40,
+    fontWeight: "bold",
+  },
+  responsableCell: {
+    width: 110,
+    fontWeight: "bold",
+  },
+  nombreCopie: {
+    width: 60,
+    fontWeight: "bold",
+  },
+  numEtudiant: {
+    width: 50,
+    fontWeight: "bold",
+  },
+  cinEtudiant: {
+    width: 85,
+    fontWeight: "bold",
+  },
+  nomEtudiant: {
+    width: 160,
+    fontWeight: "bold",
+  },
+  entreEtudiant: {
+    width: 70,
+    fontWeight: "bold",
+  },
+  nbrePages: {
+    width: 105,
     fontWeight: "bold",
   },
 });
@@ -669,108 +717,147 @@ const CalendrierDetails: React.FC = () => {
       month: "long",
     });
 
-    const [endDay] = end.split("-");
-
     return (
       <Document>
-        <Page orientation="landscape" style={styleGlobalCalendar.page}>
-          {/* Header */}
-          <Text style={styleGlobalCalendar.title}>
-            Session des {calendrierState.type_examen} {calendrierState.session}
-          </Text>
-          <Text style={styleGlobalCalendar.secondTitle}>
-            {monthName.charAt(0).toUpperCase() + monthName.slice(1)} {startYear}
-          </Text>
-          <Text style={styleGlobalCalendar.thirdTitle}>
-            {startDay} - {endDay}
-          </Text>
+        <Page orientation="landscape" style={stylesCalenderFilter.page}>
+          {/* Header Section */}
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+            }}
+          >
+            {/* Left Section */}
+            <View style={{ flex: 1, flexWrap: "wrap", maxWidth: "20%" }}>
+              <Text
+                style={{
+                  fontSize: 10,
+                  fontWeight: "bold",
+                  textAlign: "left",
+                }}
+              >
+                {variableGlobales[2]?.universite_fr!}
+              </Text>
+              <Text
+                style={{
+                  fontSize: 10,
+                  textAlign: "left",
+                }}
+              >
+                {variableGlobales[2]?.etablissement_fr!}
+              </Text>
+            </View>
+            <View style={{ flex: 1, alignItems: "center" }}>
+              <Text style={{ fontSize: 14, fontWeight: "bold" }}>
+                Session des {calendrierState.type_examen}{" "}
+                {calendrierState.session}
+              </Text>
+              <Text style={styleGlobalCalendar.secondTitle}>
+                {monthName.charAt(0).toUpperCase() + monthName.slice(1)}{" "}
+                {startYear}
+              </Text>
+            </View>
+            <View style={{ alignItems: "flex-end" }}>
+              <Text style={{ fontSize: 10 }}>
+                A.U: {startYear}/{endYear}
+              </Text>
+              <Text style={{ fontSize: 10 }}>
+                Semestre: {calendrierState?.semestre!}
+              </Text>
+              <Text style={{ fontSize: 10 }}>
+                Période: {calendrierState?.period!}
+              </Text>
+            </View>
+          </View>
 
           {/* Table */}
-          <View style={styleGlobalCalendar.table}>
-            {/* Table Header */}
-            <View style={styleGlobalCalendar.tableRow}>
+          <View style={stylesCalenderFilter.timetable}>
+            {/* Header */}
+            <View
+              style={[stylesCalenderFilter.row, stylesCalenderFilter.headerRow]}
+            >
               <Text
                 style={[
-                  styleGlobalCalendar.tableCell,
-                  styleGlobalCalendar.headerCell,
+                  stylesCalenderFilter.cell,
+                  stylesCalenderFilter.dateCell,
                 ]}
               >
                 Date
               </Text>
               <Text
                 style={[
-                  styleGlobalCalendar.tableCell,
-                  styleGlobalCalendar.headerCell,
+                  stylesCalenderFilter.cell,
+                  stylesCalenderFilter.heureCell,
                 ]}
               >
                 H. Début
               </Text>
               <Text
                 style={[
-                  styleGlobalCalendar.tableCell,
-                  styleGlobalCalendar.headerCell,
+                  stylesCalenderFilter.cell,
+                  stylesCalenderFilter.heureCell,
                 ]}
               >
                 H. Fin
               </Text>
               <Text
                 style={[
-                  styleGlobalCalendar.tableCell,
-                  styleGlobalCalendar.headerCell,
+                  stylesCalenderFilter.cell,
+                  stylesCalenderFilter.dureeCell,
                 ]}
               >
                 Durée
               </Text>
               <Text
                 style={[
-                  styleGlobalCalendar.tableCell,
-                  styleGlobalCalendar.headerCell,
+                  stylesCalenderFilter.cell,
+                  stylesCalenderFilter.groupeCell,
                 ]}
               >
                 Groupe
               </Text>
               <Text
                 style={[
-                  styleGlobalCalendar.tableCell,
-                  styleGlobalCalendar.headerCell,
+                  stylesCalenderFilter.cell,
+                  stylesCalenderFilter.epreuveCell,
                 ]}
               >
                 Epreuve
               </Text>
               <Text
                 style={[
-                  styleGlobalCalendar.tableCell,
-                  styleGlobalCalendar.headerCell,
+                  stylesCalenderFilter.cell,
+                  stylesCalenderFilter.salleepreuveCell,
                 ]}
               >
                 Salle
               </Text>
               <Text
                 style={[
-                  styleGlobalCalendar.tableCell,
-                  styleGlobalCalendar.headerCell,
+                  stylesCalenderFilter.cell,
+                  stylesCalenderFilter.responsableCell,
                 ]}
               >
                 Responsable(s)
               </Text>
               <Text
                 style={[
-                  styleGlobalCalendar.tableCell,
-                  styleGlobalCalendar.headerCell,
+                  stylesCalenderFilter.cell,
+                  stylesCalenderFilter.responsableCell,
                 ]}
               >
                 Surveillant(s)
               </Text>
               <Text
                 style={[
-                  styleGlobalCalendar.tableCell,
-                  styleGlobalCalendar.headerCell,
+                  stylesCalenderFilter.cell,
+                  stylesCalenderFilter.nombreCopie,
                 ]}
               >
                 N° Copie
               </Text>
             </View>
-            {/* Table Body */}
+            {/* Body */}
             {calendrierState.epreuve.map((ep: any, index: any) => {
               const startTime = new Date(`1970-01-01T${ep.heure_debut}`);
               const endTime = new Date(`1970-01-01T${ep.heure_fin}`);
@@ -783,21 +870,53 @@ const CalendrierDetails: React.FC = () => {
 
               const formattedDuration = `${durationHours}h ${durationMinutes}m`;
               return (
-                <View style={styleGlobalCalendar.tableRow} key={index}>
-                  <Text style={styleGlobalCalendar.tableCell}>{ep?.date!}</Text>
-                  <Text style={styleGlobalCalendar.tableCell}>
+                <View style={stylesCalenderFilter.row} key={index}>
+                  <Text
+                    style={[
+                      stylesCalenderFilter.cell,
+                      stylesCalenderFilter.dateCell,
+                    ]}
+                  >
+                    {ep?.date!}
+                  </Text>
+                  <Text
+                    style={[
+                      stylesCalenderFilter.cell,
+                      stylesCalenderFilter.heureCell,
+                    ]}
+                  >
                     {ep?.heure_debut!}
                   </Text>
-                  <Text style={styleGlobalCalendar.tableCell}>
+                  <Text
+                    style={[
+                      stylesCalenderFilter.cell,
+                      stylesCalenderFilter.heureCell,
+                    ]}
+                  >
                     {ep?.heure_fin!}
                   </Text>
-                  <Text style={styleGlobalCalendar.tableCell}>
+                  <Text
+                    style={[
+                      stylesCalenderFilter.cell,
+                      stylesCalenderFilter.dureeCell,
+                    ]}
+                  >
                     {formattedDuration}
                   </Text>
-                  <Text style={styleGlobalCalendar.tableCell}>
+                  <Text
+                    style={[
+                      stylesCalenderFilter.cell,
+                      stylesCalenderFilter.groupeCell,
+                    ]}
+                  >
                     {ep?.classe?.nom_classe_fr!}
                   </Text>
-                  <Text style={styleGlobalCalendar.tableCell}>
+                  <Text
+                    style={[
+                      stylesCalenderFilter.cell,
+                      stylesCalenderFilter.epreuveCell,
+                    ]}
+                  >
                     {ep?.matiere?.matiere?.length > 24
                       ? `${ep?.matiere?.matiere?.slice(
                           0,
@@ -805,101 +924,323 @@ const CalendrierDetails: React.FC = () => {
                         )}\n${ep?.matiere?.matiere?.slice(24)}`
                       : ep?.matiere?.matiere!}
                   </Text>
-                  <Text style={styleGlobalCalendar.tableCell}>
+                  <Text
+                    style={[
+                      stylesCalenderFilter.cell,
+                      stylesCalenderFilter.salleepreuveCell,
+                    ]}
+                  >
                     {ep?.salle?.salle!}
                   </Text>
-                  <Text style={styleGlobalCalendar.tableCell}>
+                  <Text
+                    style={[
+                      stylesCalenderFilter.cell,
+                      stylesCalenderFilter.responsableCell,
+                    ]}
+                  >
                     {ep?.group_responsables
                       ?.map((res: any) => `${res?.prenom_fr!} ${res?.nom_fr!}`)
                       .join(", ")}
                   </Text>
-                  <Text style={styleGlobalCalendar.tableCell}>
+                  <Text
+                    style={[
+                      stylesCalenderFilter.cell,
+                      stylesCalenderFilter.responsableCell,
+                    ]}
+                  >
                     {ep?.group_surveillants
                       ?.map((sur: any) => `${sur?.prenom_fr!} ${sur?.nom_fr!}`)
                       .join(", ")}
                   </Text>
-                  <Text style={styleGlobalCalendar.tableCell}>
+                  <Text
+                    style={[
+                      stylesCalenderFilter.cell,
+                      stylesCalenderFilter.nombreCopie,
+                    ]}
+                  >
                     {ep?.nbr_copie!}
                   </Text>
                 </View>
               );
             })}
           </View>
+          {/* Footer */}
+          <View
+            style={{
+              position: "absolute",
+              bottom: 10,
+              right: 10,
+            }}
+            render={({ pageNumber }) => (
+              <Text style={{ fontSize: 10 }}>Page {pageNumber}</Text>
+            )}
+          />
         </Page>
       </Document>
     );
   };
 
-  const ListEmergement = ({ classeId }: { classeId: string }) => {
+  const ListEmergement = ({ epreuve }: { epreuve: any }) => {
     const etudiants = AllEtudiants.filter(
-      (etudiant) => etudiant?.groupe_classe?._id! === classeId
+      (etudiant) => etudiant?.groupe_classe?._id! === epreuve?.classe?._id!
     );
 
     return (
       <Document>
-        <Page orientation="landscape">
-          <Text>Header</Text>
+        <Page orientation="portrait" style={{ padding: 30 }}>
+          {/* Header */}
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              marginBottom: 10,
+            }}
+          >
+            {/* Left Section */}
+            <View style={{ flex: 1, flexWrap: "wrap", maxWidth: "30%" }}>
+              <Text
+                style={{
+                  fontSize: 10,
+                  fontWeight: "bold",
+                  textAlign: "left",
+                }}
+              >
+                {variableGlobales[2]?.universite_fr!}
+              </Text>
+              <Text
+                style={{
+                  fontSize: 10,
+                  textAlign: "left",
+                }}
+              >
+                {variableGlobales[2]?.etablissement_fr!}
+              </Text>
+            </View>
+            {/* Center Section */}
+            <View style={{ flex: 1, alignItems: "center" }}>
+              <Text style={{ fontSize: 14, fontWeight: "bold" }}>
+                Session des {calendrierState.type_examen}{" "}
+                {calendrierState.session}
+              </Text>
+              <Text style={styleGlobalCalendar.secondTitle}>
+                Groupe: {epreuve?.classe?.nom_classe_fr!}
+              </Text>
+            </View>
+            {/* Right Section */}
+            <View style={{ alignItems: "flex-end" }}>
+              <Text style={{ fontSize: 10 }}>
+                A.U: {startYear}/{endYear}
+              </Text>
+              <Text style={{ fontSize: 10 }}>
+                Semestre: {calendrierState?.semestre!}
+              </Text>
+              <Text style={{ fontSize: 10 }}>
+                Période: {calendrierState?.period!}
+              </Text>
+            </View>
+          </View>
+
           {/* Table */}
           <View style={styleGlobalCalendar.table}>
             {/* Table Header */}
-            <View style={styleGlobalCalendar.tableRow}>
-              <Text
+            <View style={stylesCalenderFilter.timetable}>
+              {/* Header */}
+              <View
                 style={[
-                  styleGlobalCalendar.tableCell,
-                  styleGlobalCalendar.headerCell,
+                  stylesCalenderFilter.row,
+                  stylesCalenderFilter.headerRow,
                 ]}
               >
-                C.I.N
+                <Text
+                  style={[
+                    stylesCalenderFilter.cell,
+                    stylesCalenderFilter.numEtudiant,
+                  ]}
+                >
+                  N°
+                </Text>
+                <Text
+                  style={[
+                    stylesCalenderFilter.cell,
+                    stylesCalenderFilter.cinEtudiant,
+                  ]}
+                >
+                  C.I.N
+                </Text>
+                <Text
+                  style={[
+                    stylesCalenderFilter.cell,
+                    stylesCalenderFilter.nomEtudiant,
+                  ]}
+                >
+                  Nom et Prénom
+                </Text>
+                <Text
+                  style={[
+                    stylesCalenderFilter.cell,
+                    stylesCalenderFilter.entreEtudiant,
+                  ]}
+                >
+                  Entré
+                </Text>
+                <Text
+                  style={[
+                    stylesCalenderFilter.cell,
+                    stylesCalenderFilter.entreEtudiant,
+                  ]}
+                >
+                  Sortie
+                </Text>
+                <Text
+                  style={[
+                    stylesCalenderFilter.cell,
+                    stylesCalenderFilter.nbrePages,
+                  ]}
+                >
+                  Nombre de page(s)
+                </Text>
+              </View>
+              {/* Body */}
+              {etudiants.map((etudiant, index) => {
+                return (
+                  <View style={stylesCalenderFilter.row} key={index}>
+                    <Text
+                      style={[
+                        stylesCalenderFilter.cell,
+                        stylesCalenderFilter.numEtudiant,
+                      ]}
+                    >
+                      {index + 1}
+                    </Text>
+                    <Text
+                      style={[
+                        stylesCalenderFilter.cell,
+                        stylesCalenderFilter.cinEtudiant,
+                      ]}
+                    >
+                      {etudiant.num_CIN}
+                    </Text>
+                    <Text
+                      style={[
+                        stylesCalenderFilter.cell,
+                        stylesCalenderFilter.nomEtudiant,
+                      ]}
+                    >
+                      {etudiant.nom_fr} {etudiant.prenom_fr}
+                    </Text>
+                    <Text
+                      style={[
+                        stylesCalenderFilter.cell,
+                        stylesCalenderFilter.entreEtudiant,
+                      ]}
+                    ></Text>
+                    <Text
+                      style={[
+                        stylesCalenderFilter.cell,
+                        stylesCalenderFilter.entreEtudiant,
+                      ]}
+                    ></Text>
+                    <Text
+                      style={[
+                        stylesCalenderFilter.cell,
+                        stylesCalenderFilter.nbrePages,
+                      ]}
+                    ></Text>
+                  </View>
+                );
+              })}
+            </View>
+          </View>
+
+          {/* Footer */}
+          <View
+            style={{
+              position: "absolute",
+              bottom: 10,
+              right: 10,
+            }}
+            render={({ pageNumber }) => (
+              <Text style={{ fontSize: 10 }}>Page {pageNumber}</Text>
+            )}
+          />
+        </Page>
+      </Document>
+    );
+  };
+
+  const QrCodePage = () => {
+    return (
+      <Document>
+        <Page orientation="portrait" style={{ padding: 30 }}>
+          {/* Header */}
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              marginBottom: 10,
+            }}
+          >
+            {/* Left Section */}
+            <View style={{ flex: 1, flexWrap: "wrap", maxWidth: "30%" }}>
+              <Text
+                style={{
+                  fontSize: 10,
+                  fontWeight: "bold",
+                  textAlign: "left",
+                }}
+              >
+                {variableGlobales[2]?.universite_fr!}
               </Text>
               <Text
-                style={[
-                  styleGlobalCalendar.tableCell,
-                  styleGlobalCalendar.headerCell,
-                ]}
+                style={{
+                  fontSize: 10,
+                  textAlign: "left",
+                }}
               >
-                Nom & Prénom
-              </Text>
-              <Text
-                style={[
-                  styleGlobalCalendar.tableCell,
-                  styleGlobalCalendar.headerCell,
-                ]}
-              >
-                Entre
-              </Text>
-              <Text
-                style={[
-                  styleGlobalCalendar.tableCell,
-                  styleGlobalCalendar.headerCell,
-                ]}
-              >
-                Sortie
-              </Text>
-              <Text
-                style={[
-                  styleGlobalCalendar.tableCell,
-                  styleGlobalCalendar.headerCell,
-                ]}
-              >
-                Nombre de Pages
+                {variableGlobales[2]?.etablissement_fr!}
               </Text>
             </View>
-            {etudiants.map((etudiant, index) => {
-              return (
-                <View style={styleGlobalCalendar.tableRow} key={index}>
-                  <Text style={styleGlobalCalendar.tableCell}>
-                    {etudiant.num_CIN}
-                  </Text>
-                  <Text style={styleGlobalCalendar.tableCell}>
-                    {etudiant.nom_fr} {etudiant.prenom_fr}
-                  </Text>
-                  <Text style={styleGlobalCalendar.tableCell}></Text>
-                  <Text style={styleGlobalCalendar.tableCell}></Text>
-                  <Text style={styleGlobalCalendar.tableCell}></Text>
-                </View>
-              );
-            })}
+            {/* Center Section */}
+            <View style={{ flex: 1, alignItems: "center" }}>
+              <Text style={{ fontSize: 14, fontWeight: "bold" }}>
+                Session des {calendrierState.type_examen}{" "}
+                {calendrierState.session}
+              </Text>
+              <Text style={styleGlobalCalendar.secondTitle}>
+                {/* Groupe: {epreuve?.classe?.nom_classe_fr!} */}
+              </Text>
+            </View>
+            {/* Right Section */}
+            <View style={{ alignItems: "flex-end" }}>
+              <Text style={{ fontSize: 10 }}>
+                A.U: {startYear}/{endYear}
+              </Text>
+              <Text style={{ fontSize: 10 }}>
+                Semestre: {calendrierState?.semestre!}
+              </Text>
+              <Text style={{ fontSize: 10 }}>
+                Période: {calendrierState?.period!}
+              </Text>
+            </View>
           </View>
+
+          {/* Table */}
+          <View style={styleGlobalCalendar.table}>
+            {/* Table Header */}
+            <Text>QRC Table</Text>
+          </View>
+
+          {/* Footer */}
+          <View
+            style={{
+              position: "absolute",
+              bottom: 10,
+              right: 10,
+            }}
+            render={({ pageNumber }) => (
+              <Text style={{ fontSize: 10 }}>Page {pageNumber}</Text>
+            )}
+          />
         </Page>
       </Document>
     );
@@ -1285,12 +1626,19 @@ const CalendrierDetails: React.FC = () => {
                             </button>
                           </li>
                           <li>
-                            <Link
-                              to="#"
-                              className="badge bg-dark-subtle text-dark qrcode-btn"
+                            <button
+                              type="button"
+                              className="btn bg-warning-subtle qrcode-btn btn-sm"
                             >
-                              <i className="ph ph-qr-code fs-20"></i>
-                            </Link>
+                              <PDFDownloadLink
+                                document={<QrCodePage />}
+                                fileName={`qrcode - ${ep?.classe
+                                  ?.nom_classe_fr!}.pdf`}
+                                className="text-decoration-none"
+                              >
+                                <i className="ph ph-qr-code text-dark fs-18"></i>
+                              </PDFDownloadLink>
+                            </button>
                           </li>
                           <li>
                             <button
@@ -1298,11 +1646,9 @@ const CalendrierDetails: React.FC = () => {
                               className="btn bg-primary-subtle text-primary generatefile-btn btn-sm"
                             >
                               <PDFDownloadLink
-                                document={
-                                  <ListEmergement classeId={ep?.classe?._id!} />
-                                }
-                                fileName={`Liste-émergement${ep?.classe
-                                  ?._id!}.pdf`}
+                                document={<ListEmergement epreuve={ep} />}
+                                fileName={`Liste-émergement - ${ep?.classe
+                                  ?.nom_classe_fr!}.pdf`}
                                 className="text-decoration-none"
                               >
                                 <i className="ph ph-clipboard-text fs-18"></i>{" "}
@@ -1324,7 +1670,7 @@ const CalendrierDetails: React.FC = () => {
               >
                 <PDFDownloadLink
                   document={<GlobalCalendar />}
-                  fileName={`Calendrier_des_Examens- ${calendrierState.period}.pdf`}
+                  fileName={`Calendrier_des_${calendrierState.type_examen} - ${calendrierState.period}.pdf`}
                   className="text-decoration-none"
                 >
                   <i className="bi bi-printer-fill text-success"></i>
