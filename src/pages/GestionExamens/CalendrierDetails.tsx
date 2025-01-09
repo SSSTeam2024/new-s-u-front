@@ -517,9 +517,8 @@ const CalendrierDetails: React.FC = () => {
             </View>
 
             {/* Data Rows */}
-            {rows.map((row, idx) => (
+            {/* {rows.map((row, idx) => (
               <View key={idx} style={stylesCalenderFilter.row}>
-                {/* Conditionally render the Day column */}
                 {filterBy !== "jour" && (
                   <Text
                     style={[
@@ -548,6 +547,58 @@ const CalendrierDetails: React.FC = () => {
                   </Text>
                 )}
 
+                {filterBy !== "salle" && (
+                  <Text
+                    style={[
+                      stylesCalenderFilter.cell,
+                      stylesCalenderFilter.salleCell,
+                    ]}
+                  >
+                    {row.salle}
+                  </Text>
+                )}
+                <Text
+                  style={[
+                    stylesCalenderFilter.cell,
+                    stylesCalenderFilter.matiereCell,
+                  ]}
+                >
+                  {row.matiere}
+                </Text>
+
+                <Text
+                  style={[
+                    stylesCalenderFilter.cell,
+                    stylesCalenderFilter.timeCell,
+                  ]}
+                >
+                  {row.heure_debut} - {row.heure_fin}
+                </Text>
+              </View>
+            ))} */}
+
+            {rows.map((row, idx) => (
+              <View key={idx} style={stylesCalenderFilter.row}>
+                {/* Render the Day column only if it's the first row for that day */}
+                {filterBy !== "jour" && (
+                  <Text
+                    style={[
+                      stylesCalenderFilter.cell,
+                      stylesCalenderFilter.dayCell,
+                      idx === 0 || row.day !== rows[idx - 1].day
+                        ? {}
+                        : { display: "none" }, // Hide the cell for subsequent rows with the same day
+                    ]}
+                  >
+                    {idx === 0 || row.day !== rows[idx - 1].day
+                      ? `${
+                          row.day.charAt(0).toUpperCase() + row.day.slice(1)
+                        } - ${row.date}`
+                      : ""}
+                  </Text>
+                )}
+
+                {/* Salle */}
                 {filterBy !== "salle" && (
                   <Text
                     style={[
