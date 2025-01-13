@@ -116,14 +116,8 @@ export const etudiantSlice = createApi({
         },
         providesTags: ['Etudiant'],
       }),
-      fetchEtudiantsByIdClasse: builder.query<Etudiant[], { _id: string }>({
-        query({ _id }) {
-          return {
-            url: 'get-etudiant-by-idclasse',
-            method: 'POST',
-            body: { _id },
-          };
-        },
+      fetchEtudiantsByIdClasse: builder.query<Etudiant[], string>({
+        query: (classeId) => `get-etudiant-by-idclasse/${classeId}`,
         providesTags: ['Etudiant'],
       }),
       addEtudiant: builder.mutation<void, Etudiant>({

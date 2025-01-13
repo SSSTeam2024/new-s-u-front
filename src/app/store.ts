@@ -57,6 +57,9 @@ import { ficheVoeuxSlice } from "features/ficheVoeux/ficheVoeux";
 import { seanceSlice } from "features/seance/seance";
 import { examenSlice } from "features/examens/examenSlice";
 
+//! Notes Examen
+import { notesExamenSlice } from "features/notesExamen/notesExamenSlice";
+
 export const store = configureStore({
     reducer: { 
     [accountSlice.reducerPath]: accountSlice.reducer,
@@ -107,6 +110,9 @@ export const store = configureStore({
     [ficheVoeuxSlice.reducerPath]: ficheVoeuxSlice.reducer,
     [seanceSlice.reducerPath]: seanceSlice.reducer,
     [examenSlice.reducerPath]: examenSlice.reducer,
+
+    //! Notes Examen
+    [notesExamenSlice.reducerPath]: notesExamenSlice.reducer,
       auth: authSlice,
       Layout: LayoutReducer,
       ForgetPassword: ForgetPasswordReducer,
@@ -162,7 +168,10 @@ export const store = configureStore({
         rattrapageSlice.middleware,
         ficheVoeuxSlice.middleware,
         seanceSlice.middleware,
-        examenSlice.middleware
+        examenSlice.middleware,
+
+        //! Notes Examen
+        notesExamenSlice.middleware
       ]
         
       );

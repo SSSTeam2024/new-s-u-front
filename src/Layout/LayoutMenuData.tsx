@@ -46,6 +46,7 @@ const Navdata = () => {
   const [isEmplois, setIsEmplois] = useState(false);
   const [isRattrapage, setIsRattrapage] = useState(false);
   const [isExamen, setIsExamen] = useState(false);
+  const [isNotesExamen, setIsNotesExamen] = useState(false);
   const [isConge, setIsConge] = useState(false);
   const [isModele, setIsModele] = useState(false);
   const [isLevel1, setIsLevel1] = useState(false);
@@ -165,6 +166,9 @@ const Navdata = () => {
     if (iscurrentState !== "Examen") {
       setIsExamen(false);
     }
+    if (iscurrentState !== "NotesExamen") {
+      setIsNotesExamen(false);
+    }
   }, [
     iscurrentState,
     isEcommerce,
@@ -185,6 +189,7 @@ const Navdata = () => {
     isDeaprtement,
     isParametreEtudiant,
     isExamen,
+    isNotesExamen,
   ]);
   let routes = userPermissions
     ? userPermissions.map((permission) => permission.path)
@@ -927,6 +932,36 @@ const Navdata = () => {
           label: "Liste Des Calendrier",
           link: "/gestion-examen/liste-des-calendrier",
           parentId: "Gestion-des-examens",
+          icon: "bi bi-card-list",
+        },
+      ],
+    },
+    //! Gestion Notes Examen
+    {
+      id: "Gestion-des-Notes",
+      label: "Gestion des Notes",
+      link: "/#",
+      icon: "bi bi-calendar-event",
+      click: function (e: any) {
+        e.preventDefault();
+        setIsNotesExamen(!isNotesExamen);
+        setIscurrentState("NotesExamen");
+        updateIconSidebar(e);
+      },
+      stateVariables: isNotesExamen,
+      subItems: [
+        {
+          id: "AjouterNoteExamen",
+          label: "Ajouter Note Examen",
+          link: "/gestion-examen/ajouter-des-notes-examen",
+          parentId: "Gestion-des-Notes",
+          icon: "bi bi-calendar2-plus",
+        },
+        {
+          id: "ListeNotesExamen",
+          label: "Liste Des Notes Examen",
+          link: "/gestion-examen/liste-des-notes-examen",
+          parentId: "Gestion-des-Notes",
           icon: "bi bi-card-list",
         },
       ],

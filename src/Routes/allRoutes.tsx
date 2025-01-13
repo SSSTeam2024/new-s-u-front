@@ -186,6 +186,10 @@ import AjouterCalendrierExamen from "pages/GestionExamens/AjouterCalendrierExame
 import ListCalendrier from "pages/GestionExamens/ListCalendrier";
 import ProgrammerCalendrier from "pages/GestionExamens/ProgrammerCalendrier";
 import CalendrierDetails from "pages/GestionExamens/CalendrierDetails";
+//! Gestion des Notes Examen
+import GestionNotesExamen from "pages/GestionNotesExamen";
+import AjouterNotesExamen from "pages/GestionNotesExamen/AjouterNotesExamen";
+
 const authProtectedRoutes = [
   { path: "/dashboard", component: <Dashboard /> },
 
@@ -250,6 +254,17 @@ const authProtectedRoutes = [
     path: "/gestion-etudiant/edit-compte-etudiant",
     component: <EditProfilEtudiant />,
   },
+
+  //! Gestion des Notes Examen
+  {
+    path: "/gestion-examen/liste-des-notes-examen",
+    component: <GestionNotesExamen />,
+  },
+  {
+    path: "/gestion-examen/ajouter-des-notes-examen",
+    component: <AjouterNotesExamen />,
+  },
+
   //gestion enseignant
   {
     path: "/gestion-enseignant/ajouter-enseignant",
