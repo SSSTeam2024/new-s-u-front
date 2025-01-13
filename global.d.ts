@@ -7,4 +7,6 @@ declare module '@ckeditor/ckeditor5-build-classic';
 declare module 'js-cookie';
 declare module 'dompurify';
 declare module 'file-saver';
-declare module 'react-to-print'
+declare module 'react-to-print';
+declare module 'qrcode';
+declare module 'crypto-js';

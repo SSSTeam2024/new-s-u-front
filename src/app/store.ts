@@ -56,8 +56,16 @@ import { rattrapageSlice } from "features/rattrapage/rattrapage";
 import { ficheVoeuxSlice } from "features/ficheVoeux/ficheVoeux";
 import { seanceSlice } from "features/seance/seance";
 import { examenSlice } from "features/examens/examenSlice";
+<<<<<<< HEAD
 import { domaineClasseSlice } from "features/domaineClasse/domaineClasse";
 import { mentionClasseSlice } from "features/mentionClasse/mentionClasse";
+=======
+import { deplacementSlice } from "features/deplacement/deplacementSlice";
+import { virtualServiceSlice } from "features/virtualService/virtualServiceSlice";
+
+//! Notes Examen
+import { notesExamenSlice } from "features/notesExamen/notesExamenSlice";
+>>>>>>> e8d00dd3865198e48054ad7953b1353367708a14
 
 export const store = configureStore({
   reducer: {
@@ -112,8 +120,15 @@ export const store = configureStore({
     [ficheVoeuxSlice.reducerPath]: ficheVoeuxSlice.reducer,
     [seanceSlice.reducerPath]: seanceSlice.reducer,
     [examenSlice.reducerPath]: examenSlice.reducer,
+<<<<<<< HEAD
     [domaineClasseSlice.reducerPath]: domaineClasseSlice.reducer,
     [mentionClasseSlice.reducerPath]: mentionClasseSlice.reducer,
+=======
+    [deplacementSlice.reducerPath]: deplacementSlice.reducer,
+    [virtualServiceSlice.reducerPath]: virtualServiceSlice.reducer,
+    //! Notes Examen
+    [notesExamenSlice.reducerPath]: notesExamenSlice.reducer,
+>>>>>>> e8d00dd3865198e48054ad7953b1353367708a14
     auth: authSlice,
     Layout: LayoutReducer,
     ForgetPassword: ForgetPasswordReducer,
@@ -170,8 +185,14 @@ export const store = configureStore({
       ficheVoeuxSlice.middleware,
       seanceSlice.middleware,
       examenSlice.middleware,
+<<<<<<< HEAD
       mentionClasseSlice.middleware,
       domaineClasseSlice.middleware,
+=======
+      deplacementSlice.middleware,
+      virtualServiceSlice.middleware,
+      notesExamenSlice.middleware
+>>>>>>> e8d00dd3865198e48054ad7953b1353367708a14
     ]);
   },
 });

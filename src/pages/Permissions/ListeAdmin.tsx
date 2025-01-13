@@ -45,9 +45,7 @@ interface UserPermissionHistoryItem {
 const ListeAdmin = () => {
   document.title = "Liste des admins | ENIGA";
 
-  const { data: usersResponse } = useFetchAllUsersQuery();
-
-  const users = usersResponse?.user || [];
+  const { data: usersResponse = [] } = useFetchAllUsersQuery();
   const [deleteUser] = useDeleteUserMutation();
 
   const [modal_AddUserModals, setmodal_AddUserModals] =
@@ -140,13 +138,27 @@ const ListeAdmin = () => {
     () => [
       {
         Header: "Nom",
-        accessor: (row: any) => row.personnelId?.prenom_fr || "",
+        accessor: (row: any) =>
+          row.enseignantId?.prenom_fr || row.personnelId?.prenom_fr || row.name,
         disableFilters: true,
         filterable: true,
       },
       {
         Header: "Email",
-        accessor: "email",
+        accessor: (row: any) =>
+          row.enseignantId?.email || row.personnelId?.email,
+        disableFilters: true,
+        filterable: true,
+      },
+      {
+        Header: "Login",
+        accessor: (row: any) => row?.login!,
+        disableFilters: true,
+        filterable: true,
+      },
+      {
+        Header: "Service",
+        accessor: (row: any) => row.service?.title!,
         disableFilters: true,
         filterable: true,
       },

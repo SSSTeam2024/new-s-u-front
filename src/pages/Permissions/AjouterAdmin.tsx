@@ -1,12 +1,31 @@
 import React, { useEffect, useState } from "react";
-import { Button, Card, Col, Container, Form, Row, Spinner } from "react-bootstrap";
+import {
+  Button,
+  Card,
+  Col,
+  Container,
+  Form,
+  Row,
+  Spinner,
+} from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { useAddUserMutation, AddUser } from "features/account/accountSlice";
-import { useFetchEnseignantsQuery, Enseignant } from "features/enseignant/enseignantSlice";
-import { useFetchPersonnelsQuery, Personnel } from "features/personnel/personnelSlice";
-import { useFetchAllPermissionsQuery, useUpdateUserPermissionsMutation, useFetchUserPermissionsByUserIdQuery, useUpdateUserPermissionsHistoryMutation } from "features/userPermissions/userPermissionSlice"; // Replace with actual slice name
-
+import {
+  useFetchEnseignantsQuery,
+  Enseignant,
+} from "features/enseignant/enseignantSlice";
+import {
+  useFetchPersonnelsQuery,
+  Personnel,
+} from "features/personnel/personnelSlice";
+import {
+  useFetchAllPermissionsQuery,
+  useUpdateUserPermissionsMutation,
+  useFetchUserPermissionsByUserIdQuery,
+  useUpdateUserPermissionsHistoryMutation,
+} from "features/userPermissions/userPermissionSlice"; // Replace with actual slice name
+import { useFetchVirtualServicesQuery } from "features/virtualService/virtualServiceSlice";
 
 interface Permission {
   _id: string;
@@ -29,11 +48,10 @@ const CreateAdmin = () => {
   const { data: enseignants = [] } = useFetchEnseignantsQuery();
   const { data: personnels = [] } = useFetchPersonnelsQuery();
 
-
+  const { data: virtualServices = [] } = useFetchVirtualServicesQuery();
 
   const [formData, setFormData] = useState<Partial<AddUser>>({
-    
-    _id:"",
+    _id: "",
     personnelId: "",
     enseignantId: "",
     login: "",
@@ -41,11 +59,34 @@ const CreateAdmin = () => {
     password: "",
     app_name: "",
     status: "",
-   
   });
   const [step, setStep] = useState(1);
   const [selectUser, setSelectedUser] = useState("");
   const [userType, setUserType] = useState("");
+
+  const [service, setService] = useState("");
+
+  const [accountStatus, setAccountStatus] = useState("");
+
+  const onChangeService = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setService(e.target.value);
+
+    setFormData((prevState) => ({
+      ...prevState,
+      service: e.target.value,
+    }));
+  };
+
+  const onChangeStatus = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    console.log(e.target.value);
+
+    setAccountStatus(e.target.value);
+
+    setFormData((prevState) => ({
+      ...prevState,
+      status: e.target.value,
+    }));
+  };
 
   // Determine label based on selected value
   const getSecondLabel = () => {
@@ -59,21 +100,23 @@ const CreateAdmin = () => {
     }
   };
 
-  const handleUserTypeChange = (e: { target: { value: React.SetStateAction<string>; }; }) => {
+  const handleUserTypeChange = (e: {
+    target: { value: React.SetStateAction<string> };
+  }) => {
     setUserType(e.target.value);
     // Reset the selected user ID based on user type change
     setFormData((prevState) => ({
       ...prevState,
       personnelId: "",
-      enseignantId: ""
+      enseignantId: "",
     }));
     setSelectedUser(""); // Clear previous selection
   };
 
-  const onChangeUser = (e:any) => {
+  const onChangeUser = (e: any) => {
     const selectedId = e.target.value;
     setSelectedUser(selectedId);
-  
+
     // Update formData based on the user type
     if (userType === "enseignant") {
       setFormData((prevState) => ({
@@ -90,7 +133,9 @@ const CreateAdmin = () => {
     }
   };
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const onChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setFormData((prevState) => ({
       ...prevState,
       [e.target.id]: e.target.value,
@@ -107,8 +152,8 @@ const CreateAdmin = () => {
       service: formData.service,
       app_name: formData.app_name,
       status: formData.status,
-      
     };
+    console.log("sub", submissionData);
 
     // Add the relevant user ID based on user type
     if (userType === "enseignant" && formData.enseignantId) {
@@ -125,11 +170,11 @@ const CreateAdmin = () => {
 
     try {
       const userResponse = await addUser(submissionData).unwrap();
-     
-       setUserId(userResponse?._id!); // Store the _id of the created user for later use
+
+      setUserId(userResponse?._id!); // Store the _id of the created user for later use
       Swal.fire("Succès", "Utilisateur ajouté avec succès", "success");
       setStep(3);
-       console.log("userResponse",userResponse)
+      console.log("userResponse", userResponse);
     } catch (error) {
       Swal.fire("Erreur", "Une erreur s'est produite lors de l'ajout", "error");
     }
@@ -139,37 +184,42 @@ const CreateAdmin = () => {
 
   const handlePreviousStep = () => setStep((prevStep) => prevStep - 1);
 
+  // permissions stuff
+  const { data: allPermissions = [], isLoading: isLoadingAllPermissions } =
+    useFetchAllPermissionsQuery();
+  const { data: userPermissions = [], isLoading: isLoadingUserPermissions } =
+    useFetchUserPermissionsByUserIdQuery({ userId: "" });
 
-  // permissions stuff 
-  const { data: allPermissions = [], isLoading: isLoadingAllPermissions } = useFetchAllPermissionsQuery();
-  const { data: userPermissions = [], isLoading: isLoadingUserPermissions } = useFetchUserPermissionsByUserIdQuery({ userId: "" });
- 
   const [userId, setUserId] = useState<string | null>(null);
 
-  const [updateUserPermissions, { isLoading: isUpdatingPermissions }] = useUpdateUserPermissionsHistoryMutation();
-  const [checkedState, setCheckedState] = useState<{ [key: string]: boolean }>({});
-  
+  const [updateUserPermissions, { isLoading: isUpdatingPermissions }] =
+    useUpdateUserPermissionsHistoryMutation();
+  const [checkedState, setCheckedState] = useState<{ [key: string]: boolean }>(
+    {}
+  );
 
-  //use effect permissions 
+  //use effect permissions
 
   useEffect(() => {
     if (userPermissions.length && allPermissions.length) {
-        const initialCheckedState: { [key: string]: boolean } = {};
-        
-        // Set up initial checked state based on userPermissions and allPermissions
-        allPermissions.forEach((permission: Permission) => {
-            initialCheckedState[permission._id] = userPermissions.some(up => up._id === permission._id);
-        });
+      const initialCheckedState: { [key: string]: boolean } = {};
 
-        // Update state only if it differs from the existing state
-        setCheckedState((prevState) => {
-            if (JSON.stringify(prevState) === JSON.stringify(initialCheckedState)) {
-                return prevState; // Avoid unnecessary re-render if no changes
-            }
-            return initialCheckedState;
-        });
+      // Set up initial checked state based on userPermissions and allPermissions
+      allPermissions.forEach((permission: Permission) => {
+        initialCheckedState[permission._id] = userPermissions.some(
+          (up) => up._id === permission._id
+        );
+      });
+
+      // Update state only if it differs from the existing state
+      setCheckedState((prevState) => {
+        if (JSON.stringify(prevState) === JSON.stringify(initialCheckedState)) {
+          return prevState; // Avoid unnecessary re-render if no changes
+        }
+        return initialCheckedState;
+      });
     }
-}, [JSON.stringify(userPermissions), JSON.stringify(allPermissions)]);
+  }, [JSON.stringify(userPermissions), JSON.stringify(allPermissions)]);
 
   const handleCheckAll = (key: string) => {
     const newCheckedState: { [key: string]: boolean } = {};
@@ -186,8 +236,12 @@ const CreateAdmin = () => {
     }
   };
 
-  const groupPermissions = (permissions: Permission[]): { [section: string]: { [sub_section: string]: Permission[] } } => {
-    const grouped: { [section: string]: { [sub_section: string]: Permission[] } } = {};
+  const groupPermissions = (
+    permissions: Permission[]
+  ): { [section: string]: { [sub_section: string]: Permission[] } } => {
+    const grouped: {
+      [section: string]: { [sub_section: string]: Permission[] };
+    } = {};
 
     permissions.forEach((permission) => {
       if (!grouped[permission.section]) {
@@ -211,14 +265,21 @@ const CreateAdmin = () => {
     }));
   };
 
-  const handleSubmitPermissions = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmitPermissions = async (
+    e: React.FormEvent<HTMLFormElement>
+  ) => {
     e.preventDefault();
 
-    const permissionIds = Object.keys(checkedState).filter((key) => checkedState[key]);
+    const permissionIds = Object.keys(checkedState).filter(
+      (key) => checkedState[key]
+    );
 
     try {
       const storedUserId = userId ?? ""; // Provide a fallback if userId is null
-      await updateUserPermissions({ userId: storedUserId, permissionIds }).unwrap();
+      await updateUserPermissions({
+        userId: storedUserId,
+        permissionIds,
+      }).unwrap();
       Swal.fire("Succès", "Permissions assigned", "success");
     } catch (error) {
       Swal.fire("Erreur", "Une erreur s'est produite lors de l'ajout", "error");
@@ -227,7 +288,10 @@ const CreateAdmin = () => {
 
   if (isLoadingAllPermissions || isLoadingUserPermissions) {
     return (
-      <div className="d-flex justify-content-center align-items-center" style={{ height: "100vh" }}>
+      <div
+        className="d-flex justify-content-center align-items-center"
+        style={{ height: "100vh" }}
+      >
         <Spinner animation="border" variant="primary" />
       </div>
     );
@@ -274,16 +338,24 @@ const CreateAdmin = () => {
                             onChange={onChangeUser}
                             className="text-muted"
                           >
-                            <option value="">Sélectionner un utilisateur</option>
+                            <option value="">
+                              Sélectionner un utilisateur
+                            </option>
                             {userType === "enseignant" &&
                               enseignants.map((enseignant) => (
-                                <option key={enseignant._id} value={enseignant._id}>
+                                <option
+                                  key={enseignant._id}
+                                  value={enseignant._id}
+                                >
                                   {enseignant.prenom_fr} {enseignant.nom_fr}
                                 </option>
                               ))}
                             {userType === "personnel" &&
                               personnels.map((personnel) => (
-                                <option key={personnel._id} value={personnel._id}>
+                                <option
+                                  key={personnel._id}
+                                  value={personnel._id}
+                                >
                                   {personnel.prenom_fr} {personnel.nom_fr}
                                 </option>
                               ))}
@@ -329,12 +401,26 @@ const CreateAdmin = () => {
                       <Col lg={4}>
                         <Form.Group controlId="service">
                           <Form.Label>Service</Form.Label>
-                          <Form.Control
+                          {/* <Form.Control
                             type="text"
                             name="service"
                             value={formData.service}
                             onChange={onChange}
-                          />
+                          /> */}
+                          <Form.Select
+                            value={service}
+                            onChange={(e) => {
+                              onChangeService(e);
+                            }}
+                            className="text-muted"
+                          >
+                            <option value="">Sélectionner Service</option>
+                            {virtualServices.map((service: any) => (
+                              <option key={service?._id!} value={service?._id!}>
+                                {service?.title!}
+                              </option>
+                            ))}
+                          </Form.Select>
                         </Form.Group>
                       </Col>
                     </Row>
@@ -351,16 +437,36 @@ const CreateAdmin = () => {
                         </Form.Group>
                       </Col>
                       <Col lg={4}>
-                        <Form.Group controlId="status">
+                        {/* <Form.Group controlId="status">
                           <Form.Label>Status</Form.Label>
-                          <Form.Control
-                            type="text"
-                            name="status"
-                            value={formData.status}
-                            onChange={onChange}
-                          />
+                          <Form.Select
+                            value={accountStatus}
+                            onChange={(e) => {
+                              onChangeStatus(e);
+                            }}
+                            className="text-muted"
+                          >
+                            <option value="">Sélectionner Status</option>
+                            <option value="Active">Active</option>
+                            <option value="Inactive">Inactive</option>
+                          </Form.Select>
+                        </Form.Group> */}
+                        <Form.Group controlId="acc_status">
+                          <Form.Label>Status</Form.Label>
+                          <Form.Select
+                            value={accountStatus}
+                            onChange={(e) => {
+                              onChangeStatus(e);
+                            }}
+                            className="text-muted"
+                          >
+                            <option value="">Sélectionner Status</option>
+                            <option value="Active">Active</option>
+                            <option value="Inactive">Inactive</option>
+                          </Form.Select>
                         </Form.Group>
                       </Col>
+                      <Col lg={4}></Col>
                     </Row>
 
                     <div className="d-flex justify-content-between mt-3">
@@ -368,87 +474,130 @@ const CreateAdmin = () => {
                         Précédent
                       </Button>
                       <Button variant="primary" type="submit">
-                       Ajouter
+                        Ajouter
                       </Button>
                     </div>
                   </>
                 )}
                 {step === 3 && (
                   // Step 3: Assign Permissions
-                
-                  
-      
+
                   <Form onSubmit={handleSubmitPermissions}>
-            <Col lg={12}>
-              {/* Render grouped permissions */}
-              {Object.keys(groupedPermissions).map((section) => (
-                <Card className="mb-3" key={section}>
-                  <Card.Header className="d-flex align-items-center bg-info-subtle text-white">
-                    <Form.Check
-                      type="checkbox"
-                      id={`section-${section}`}
-                      label={section}
-                      checked={Object.values(groupedPermissions[section]).every(subSection => Object.values(subSection).every(permission => checkedState[permission._id]))}
-                      onChange={(e) => {
-                        const { checked } = e.target;
-                        const newState = { ...checkedState };
-                        Object.values(groupedPermissions[section]).forEach(subSection => {
-                          Object.values(subSection).forEach(permission => {
-                            newState[permission._id] = checked;
-                          });
-                        });
-                        setCheckedState(newState);
-                      }}
-                      className="me-2"
-                    />
-                  </Card.Header>
-                  <Card.Body>
-                    <Row>
-                      {Object.keys(groupedPermissions[section]).map((subSection, index) => (
-                        <Col lg={4} key={index} className="mb-3">
-                          <div className="border p-2 rounded">
-                            <div className="d-flex align-items-center mb-2">
-                              <Form.Check
-                                type="checkbox"
-                                id={`sub-section-${subSection}`}
-                                label={subSection}
-                                checked={Object.values(groupedPermissions[section][subSection]).every(permission => checkedState[permission._id])}
-                                onChange={(e) => {
-                                  const { checked } = e.target;
-                                  const newState = { ...checkedState };
-                                  Object.values(groupedPermissions[section][subSection]).forEach(permission => {
-                                    newState[permission._id] = checked;
-                                  });
-                                  setCheckedState(newState);
-                                }}
-                                className="me-2"
-                              />
-                            </div>
-                            <ul className="list-group">
-                              {groupedPermissions[section][subSection].map(permission => (
-                                <li key={permission._id} className="border-0 list-group-item mb-0">
-                                  <Form.Check
-                                    type="checkbox"
-                                    id={permission._id}
-                                    label={permission.name}
-                                    onChange={(e) => handleCheckboxChange(permission._id, e.target.checked)}
-                                    checked={checkedState[permission._id] || false}
-                                  />
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        </Col>
+                    <Col lg={12}>
+                      {/* Render grouped permissions */}
+                      {Object.keys(groupedPermissions).map((section) => (
+                        <Card className="mb-3" key={section}>
+                          <Card.Header className="d-flex align-items-center bg-info-subtle text-white">
+                            <Form.Check
+                              type="checkbox"
+                              id={`section-${section}`}
+                              label={section}
+                              checked={Object.values(
+                                groupedPermissions[section]
+                              ).every((subSection) =>
+                                Object.values(subSection).every(
+                                  (permission) => checkedState[permission._id]
+                                )
+                              )}
+                              onChange={(e) => {
+                                const { checked } = e.target;
+                                const newState = { ...checkedState };
+                                Object.values(
+                                  groupedPermissions[section]
+                                ).forEach((subSection) => {
+                                  Object.values(subSection).forEach(
+                                    (permission) => {
+                                      newState[permission._id] = checked;
+                                    }
+                                  );
+                                });
+                                setCheckedState(newState);
+                              }}
+                              className="me-2"
+                            />
+                          </Card.Header>
+                          <Card.Body>
+                            <Row>
+                              {Object.keys(groupedPermissions[section]).map(
+                                (subSection, index) => (
+                                  <Col lg={4} key={index} className="mb-3">
+                                    <div className="border p-2 rounded">
+                                      <div className="d-flex align-items-center mb-2">
+                                        <Form.Check
+                                          type="checkbox"
+                                          id={`sub-section-${subSection}`}
+                                          label={subSection}
+                                          checked={Object.values(
+                                            groupedPermissions[section][
+                                              subSection
+                                            ]
+                                          ).every(
+                                            (permission) =>
+                                              checkedState[permission._id]
+                                          )}
+                                          onChange={(e) => {
+                                            const { checked } = e.target;
+                                            const newState = {
+                                              ...checkedState,
+                                            };
+                                            Object.values(
+                                              groupedPermissions[section][
+                                                subSection
+                                              ]
+                                            ).forEach((permission) => {
+                                              newState[permission._id] =
+                                                checked;
+                                            });
+                                            setCheckedState(newState);
+                                          }}
+                                          className="me-2"
+                                        />
+                                      </div>
+                                      <ul className="list-group">
+                                        {groupedPermissions[section][
+                                          subSection
+                                        ].map((permission) => (
+                                          <li
+                                            key={permission._id}
+                                            className="border-0 list-group-item mb-0"
+                                          >
+                                            <Form.Check
+                                              type="checkbox"
+                                              id={permission._id}
+                                              label={permission.name}
+                                              onChange={(e) =>
+                                                handleCheckboxChange(
+                                                  permission._id,
+                                                  e.target.checked
+                                                )
+                                              }
+                                              checked={
+                                                checkedState[permission._id] ||
+                                                false
+                                              }
+                                            />
+                                          </li>
+                                        ))}
+                                      </ul>
+                                    </div>
+                                  </Col>
+                                )
+                              )}
+                            </Row>
+                          </Card.Body>
+                        </Card>
                       ))}
-                    </Row>
-                  </Card.Body>
-                </Card>
-              ))}
-            </Col>
-            <Button type="submit" variant="primary" disabled={isUpdatingPermissions}>
-              {isUpdatingPermissions ? 'Updating...' : 'Update Permissions'}
-            </Button>
-          </Form>
+                    </Col>
+                    <Button
+                      type="submit"
+                      variant="primary"
+                      disabled={isUpdatingPermissions}
+                    >
+                      {isUpdatingPermissions
+                        ? "Updating..."
+                        : "Update Permissions"}
+                    </Button>
+                  </Form>
                 )}
               </Form>
             </Card.Body>

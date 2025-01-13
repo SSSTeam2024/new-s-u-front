@@ -56,7 +56,9 @@ const Permissions = () => {
     useFetchAllUsersQuery();
   const [assignUserPermissions, { isLoading: isAssigning }] =
     useAssignUserPermissionsMutation();
-  const users: User[] = Array.isArray(usersResponse) ? usersResponse : [];
+  const users: /* User[] */ any = Array.isArray(usersResponse)
+    ? usersResponse
+    : [];
 
   useEffect(() => {
     if (permissions) {
