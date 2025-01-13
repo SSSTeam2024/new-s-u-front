@@ -24,7 +24,11 @@ const ListCalendrier = () => {
   document.title = "Liste des Calendriers | ENIGA";
 
   const [deleteCalendrier] = useDeleteExamenMutation();
+  const navigate = useNavigate();
 
+  const tog_AddCalendar = () => {
+    navigate("/gestion-examen/ajouter-calendrier-examen");
+  };
   const swalWithBootstrapButtons = Swal.mixin({
     customClass: {
       confirmButton: "btn btn-success",
@@ -218,7 +222,7 @@ const ListCalendrier = () => {
     isLoading,
     isError,
   } = useFetchExamensQuery();
-  console.log("AllCalendriers", AllCalendriers);
+
   const [show, setShow] = useState(false);
   const [selectedCalendrier, setSelectedCalendrier] = useState<any>(null);
 
@@ -232,7 +236,10 @@ const ListCalendrier = () => {
     <React.Fragment>
       <div className="page-content">
         <Container fluid={true}>
-          <Breadcrumb title="Liens utils" pageTitle="Liste des liens utils" />
+          <Breadcrumb
+            title="Liste des Calendriers"
+            pageTitle="Gestions des Examens"
+          />
 
           <Row id="sellersList">
             <Col lg={12}>
@@ -267,9 +274,9 @@ const ListCalendrier = () => {
                         <Button
                           variant="primary"
                           className="add-btn"
-                          //   onClick={() => tog_AddParametreModals()}
+                          onClick={() => tog_AddCalendar()}
                         >
-                          Ajouter un lien
+                          Ajouter un calendrier
                         </Button>
                       </div>
                     </Col>
@@ -346,48 +353,58 @@ const ListCalendrier = () => {
               <div className="acitivity-timeline acitivity-main">
                 {selectedCalendrier.group_enseignant.map(
                   (group: any, index: any) => {
-                    const dateParts = group.date.split("-");
-                    const formattedDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
-                    const date = new Date(formattedDate);
-                    if (isNaN(date.getTime())) {
-                      console.error(`Invalid date format: ${group.date}`);
-                      return (
-                        <div key={index} className="activity-item d-flex mb-3">
-                          <p className="text-danger">
-                            Invalid Date: {group.date}
-                          </p>
-                        </div>
-                      );
-                    }
-                    const dayName = date.toLocaleDateString("fr-FR", {
-                      weekday: "long",
-                    });
-
                     return (
                       <div key={index} className="activity-item d-flex mb-3">
                         <div className="flex-shrink-0 activity-avatar"></div>
                         <div className="flex-grow-1 ms-3">
-                          <h6 className="mb-0 lh-base">{dayName}</h6>
-                          {group.enseignant && group.enseignant.length > 0 ? (
-                            <p className="text-muted mb-0">
-                              <strong>{group.date}:</strong>{" "}
-                              {group.enseignant
-                                .map(
-                                  (enseignant: any) =>
-                                    `${
-                                      enseignant.prenom_fr ||
-                                      "Prenom non disponible"
-                                    } ${
-                                      enseignant.nom_fr || "Nom non disponible"
-                                    }`
-                                )
-                                .join(", ")}
-                            </p>
-                          ) : (
-                            <p className="text-muted">
-                              <strong>{group.date}:</strong> Aucun enseignant
-                              disponible.
-                            </p>
+                          {group.date.map(
+                            (dateString: string, dateIndex: number) => {
+                              const date = new Date(dateString);
+
+                              if (isNaN(date.getTime())) {
+                                console.error(
+                                  `Invalid date format: ${dateString}`
+                                );
+                                return (
+                                  <p key={dateIndex} className="text-danger">
+                                    Invalid Date: {dateString}
+                                  </p>
+                                );
+                              }
+
+                              const dayName = date.toLocaleDateString("fr-FR", {
+                                weekday: "long",
+                              });
+
+                              return (
+                                <div key={dateIndex}>
+                                  <h6 className="mb-0 lh-base">{dayName}</h6>
+                                  {group.enseignant &&
+                                  group.enseignant.length > 0 ? (
+                                    <p className="text-muted mb-0">
+                                      <strong>{dateString}:</strong>{" "}
+                                      {group.enseignant
+                                        .map(
+                                          (enseignant: any) =>
+                                            `${
+                                              enseignant.prenom_fr ||
+                                              "Prenom non disponible"
+                                            } ${
+                                              enseignant.nom_fr ||
+                                              "Nom non disponible"
+                                            }`
+                                        )
+                                        .join(", ")}
+                                    </p>
+                                  ) : (
+                                    <p className="text-muted">
+                                      <strong>{dateString}:</strong> Aucun
+                                      enseignant disponible.
+                                    </p>
+                                  )}
+                                </div>
+                              );
+                            }
                           )}
                         </div>
                       </div>

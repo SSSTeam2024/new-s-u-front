@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Card, Col, Container, Form, Row } from "react-bootstrap";
 import Breadcrumb from "Common/BreadCrumb";
 import Flatpickr from "react-flatpickr";
-import Select, { MultiValue, ActionMeta } from "react-select";
+import Select, { MultiValue } from "react-select";
 import { useFetchEnseignantsQuery } from "features/enseignant/enseignantSlice";
-import { useAddExamenMutation } from "features/examens/examenSlice";
+import { Examen, useAddExamenMutation } from "features/examens/examenSlice";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
+import { format } from "date-fns";
 
 const getDaysInRange = (startDate: Date, endDate: Date) => {
   const days = [];
@@ -157,7 +158,7 @@ const AjouterCalendrierExamen = () => {
     group_enseignant: [
       {
         enseignant: [""],
-        date: "",
+        date: [""],
       },
     ],
     epreuve: [
@@ -194,32 +195,31 @@ const AjouterCalendrierExamen = () => {
 
   const startYear = currentMonth >= 8 ? currentYear : currentYear - 1;
   const endYear = startYear + 1;
+
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const enseignantValues = finalEnseignants.map(
-      (enseignant) => enseignant.value
-    );
 
-    formData["annee_universitaire"] = startYear + "/" + endYear;
-    formData["semestre"] = semestre;
-    formData["type_examen"] = selectedTypeExamen;
-    formData["session"] = selectedSession;
-    formData["period"] = periodString;
-    if (Array.isArray(formData["group_enseignant"])) {
-      formData["group_enseignant"] = formData["group_enseignant"].map(
-        (group) => ({
-          ...group,
-          enseignant: enseignantValues,
-          date: "",
-        })
-      );
-    } else {
-      console.error("formData['group_enseignant'] is not an array!");
-    }
+    const groupEnseignantArray = rows.map((row) => ({
+      enseignant: row.selectedEnseignants.map((enseignant) => enseignant.value),
+      date: row.selectedDays.map((day) =>
+        format(new Date(day.value), "yyyy-MM-dd")
+      ),
+    }));
 
-    createNewCalendrierExamen(formData);
+    const completeFormData: Examen = {
+      _id: formData._id || "",
+      annee_universitaire: `${startYear}/${endYear}`,
+      semestre: semestre || "",
+      type_examen: selectedTypeExamen || "",
+      session: selectedSession || "",
+      period: periodString || "",
+      group_enseignant: groupEnseignantArray,
+      epreuve: formData.epreuve || [],
+    };
+
+    createNewCalendrierExamen(completeFormData);
     notify();
-    navigate("/");
+    navigate("/gestion-examen/liste-des-calendrier");
   };
 
   return (
@@ -272,7 +272,7 @@ const AjouterCalendrierExamen = () => {
                       <option value="Examens">Examens</option>
                     </select>
                   </Col>
-                  {selectedTypeExamen === "Examen" && (
+                  {selectedTypeExamen === "Examens" && (
                     <Col>
                       <Form.Label htmlFor="session">Session</Form.Label>
                       <select

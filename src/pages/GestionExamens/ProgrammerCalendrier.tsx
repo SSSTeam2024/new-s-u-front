@@ -31,6 +31,7 @@ const ProgrammerCalendrier = () => {
   const [heureDebut, setHeureDebut] = useState<string>("");
   const [heureFin, setHeureFin] = useState<string>("");
   const [availableSalles, setAvailableSalles] = useState<any[]>([]);
+  const [availableEnseignants, setAvailableEnseignants] = useState<any[]>([]);
 
   const location = useLocation();
   const calendrierState = location.state;
@@ -44,6 +45,53 @@ const ProgrammerCalendrier = () => {
       setShowAddCard(!showAddCard);
     }
   };
+
+  const filterEnseignantSurveillants = () => {
+    if (!selectedJour || !heureDebut || !heureFin) return [];
+
+    const relevantGroupEnseignants = calendrierState.group_enseignant.filter(
+      (group: any) => group.date.includes(selectedJour)
+    );
+
+    const relevantEnseignantIds = new Set(
+      relevantGroupEnseignants.flatMap((group: any) =>
+        group.enseignant.map((ens: any) => ens._id)
+      )
+    );
+
+    const usedEnseignantIds = new Set<string>();
+    AllExamens.forEach((exam) => {
+      exam.epreuve.forEach((ep) => {
+        if (
+          ep.date === selectedJour &&
+          ((ep.heure_debut <= heureFin && ep.heure_debut >= heureDebut) ||
+            (ep.heure_fin >= heureDebut && ep.heure_fin <= heureFin) ||
+            (ep.heure_debut <= heureDebut && ep.heure_fin >= heureFin))
+        ) {
+          ep.group_surveillants.forEach((surveillant: any) =>
+            usedEnseignantIds.add(surveillant._id)
+          );
+        }
+      });
+    });
+
+    return AllEnseignants.filter(
+      (enseignant) =>
+        relevantEnseignantIds.has(enseignant._id) &&
+        !usedEnseignantIds.has(enseignant._id)
+    );
+  };
+
+  useEffect(() => {
+    const filteredEnseignants = filterEnseignantSurveillants();
+    setAvailableEnseignants(filteredEnseignants);
+  }, [selectedJour, heureDebut, heureFin, calendrierState, AllExamens]);
+
+  const handleSelectClasse = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = event.target.value;
+    setSelectedClasse(value);
+  };
+
   useEffect(() => {
     if (calendrierState?.period) {
       const [startDateStr, endDateStr] = calendrierState.period.split(" / ");
@@ -83,12 +131,18 @@ const ProgrammerCalendrier = () => {
       const allDays = generateDays(startDate, endDate).map((date) => {
         const dateStr = date.toISOString().split("T")[0];
         const dayName = date.toLocaleDateString("fr-FR", { weekday: "long" });
+
         const epreuvesForDate =
           calendrierState.epreuve?.filter((epreuve: any) => {
             // Convert epreuve.date (DD-MM-YYYY) to YYYY-MM-DD
             const [day, month, year] = epreuve.date.split("-");
             const normalizedEpreuveDate = `${day}-${month}-${year}`;
-            return normalizedEpreuveDate === dateStr;
+
+            // Check if the epreuve belongs to the selected class
+            return (
+              normalizedEpreuveDate === dateStr &&
+              (selectedClasse ? epreuve.classe._id === selectedClasse : true)
+            );
           }) || [];
 
         return {
@@ -100,21 +154,28 @@ const ProgrammerCalendrier = () => {
 
       setDays(allDays);
     }
-  }, [calendrierState]);
+  }, [calendrierState, selectedClasse]);
 
   const [selectedColumnValues, setSelectedColumnValues] = useState<any[]>([]);
 
   const handleSelectValueColumnChange = (selectedOption: any) => {
-    const values = selectedOption.map((option: any) => option.value);
-    setSelectedColumnValues(values);
+    const ids = selectedOption.map((option: any) => option.value._id);
+    setSelectedColumnValues(ids);
   };
 
-  const optionColumnsTable = calendrierState
-    ?.group_enseignant!.flatMap((group: any) => group.enseignant)
-    .map((enseignantId: any) => ({
-      value: enseignantId,
-      label: `${enseignantId.prenom_fr} ${enseignantId.nom_fr}`,
-    }));
+  const [selectedEnseignantSurveillant, setSelectedEnseignantSurveillant] =
+    useState<any[]>([]);
+
+  const handleSelectEnseignantSurveillantChange = (selectedOption: any) => {
+    const ids = selectedOption.map((option: any) => option.value._id);
+    setSelectedEnseignantSurveillant(ids);
+  };
+
+  console.log("availableEnseignants", availableEnseignants);
+  const optionColumnsTable = availableEnseignants.map((enseignant: any) => ({
+    value: enseignant,
+    label: `${enseignant.prenom_fr} ${enseignant.nom_fr}`,
+  }));
 
   const optionEnseignantResponsables = AllEnseignants.map(
     (enseignant: any) => ({
@@ -125,11 +186,6 @@ const ProgrammerCalendrier = () => {
 
   const handleNombreCopie = (e: any) => {
     setNombreCopie(e.target.value);
-  };
-
-  const handleSelectClasse = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = event.target.value;
-    setSelectedClasse(value);
   };
 
   const handleSelectSalle = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -179,17 +235,15 @@ const ProgrammerCalendrier = () => {
   const handleHeureFinChange = (e: any) => {
     const selectedHeureFin = e.target.value;
 
-    // Validate that the selected heure_fin is greater than the heure_debut
     if (
       new Date(`1970-01-01T${selectedHeureFin}:00`) <=
       new Date(`1970-01-01T${heureDebut}:00`)
     ) {
       alert("Cette classe a déjà un examen prévu à l'heure sélectionnée.");
-      setHeureFin(""); // Reset the value
+      setHeureFin("");
       return;
     }
 
-    // Check for conflicts with existing exams
     const conflict = AllExamens.some((examen) =>
       examen.epreuve.some((epreuve) => {
         if (
@@ -226,6 +280,8 @@ const ProgrammerCalendrier = () => {
     const isMatchingRegimeMatiere =
       (calendrierState?.type_examen! === "EXAMEN" &&
         matiere.regime_matiere === "MX") ||
+      (calendrierState?.type_examen! === "Examens" &&
+        matiere.regime_matiere === "MX") ||
       (calendrierState?.type_examen! === "DS" &&
         matiere.regime_matiere === "CC");
     const isMatchingClasse = matiere?.classes!.some(
@@ -235,8 +291,8 @@ const ProgrammerCalendrier = () => {
     const isNotAlreadyExamined = !calendrierState.epreuve.some(
       (epreuve: any) => {
         return (
-          epreuve.matiere._id === matiere._id &&
-          epreuve.classe._id === selectedClasse
+          epreuve?.matiere?._id! === matiere?._id! &&
+          epreuve?.classe?._id! === selectedClasse
         );
       }
     );
@@ -286,8 +342,8 @@ const ProgrammerCalendrier = () => {
   const handleSubmit = async () => {
     try {
       const newEpreuve = {
-        group_surveillants: [],
-        group_responsables: [],
+        group_surveillants: selectedEnseignantSurveillant,
+        group_responsables: selectedColumnValues,
         nbr_copie: nombreCopie,
         date: selectedJour,
         heure_debut: heureDebut,
@@ -455,23 +511,25 @@ const ProgrammerCalendrier = () => {
                       />
                     </Col>
                     <Col>
-                      <Form.Label htmlFor="salle">
+                      <Form.Label htmlFor="enseignant_responsable">
                         Enseignant(s) Responsable
                       </Form.Label>
                       <Select
                         closeMenuOnSelect={false}
                         isMulti
                         options={optionEnseignantResponsables}
+                        onChange={handleSelectValueColumnChange}
                       />
                     </Col>
                     <Col>
-                      <Form.Label htmlFor="salle">
+                      <Form.Label htmlFor="enseignant_surveillant">
                         Enseignant(s) Surveillant
                       </Form.Label>
                       <Select
                         closeMenuOnSelect={false}
                         isMulti
                         options={optionColumnsTable}
+                        onChange={handleSelectEnseignantSurveillantChange}
                       />
                     </Col>
                   </Row>
@@ -490,52 +548,53 @@ const ProgrammerCalendrier = () => {
               </Card>
             )}
           </Form>
-          <Row>
-            <div style={{ overflowX: "auto", width: "100%" }}>
-              <table className="table table-bordered table-striped w-100">
-                <tbody>
-                  {days.map(({ date, day, epreuve }) => {
-                    const hasExams = epreuve.length > 0;
-                    const numberOfColumns = hasExams ? epreuve.length : 1;
+          {selectedClasse !== "" && (
+            <Row>
+              <div style={{ overflowX: "auto", width: "100%" }}>
+                <table className="table table-bordered table-striped w-100">
+                  <tbody>
+                    {days.map(({ date, day, epreuve }) => {
+                      const hasExams = epreuve.length > 0;
 
-                    return (
-                      <tr key={date}>
-                        <td
-                          className="py-3 px-4 fw-bold text-center bg-light"
-                          rowSpan={1}
-                        >
-                          {day.charAt(0).toUpperCase() + day.slice(1)} {date}
-                        </td>
-                        {hasExams ? (
-                          epreuve.map((exam: any, index: any) => (
-                            <td key={index} className="py-3 px-4 text-center">
-                              <ul className="list-unstyled mb-0">
-                                <li>
-                                  <strong>
-                                    {exam.matiere?.matiere ||
-                                      "Matière inconnue"}
-                                  </strong>
-                                  <br />
-                                  {exam.heure_debut} - {exam.heure_fin}
-                                  <br />
-                                  Salle: {exam.salle?.salle || "Non attribuée"}
-                                </li>
-                              </ul>
-                            </td>
-                          ))
-                        ) : (
-                          // No exams placeholder
-                          <td className="py-3 px-4 text-center">
-                            <em className="text-muted">Pas de séances</em>
+                      return (
+                        <tr key={date}>
+                          <td
+                            className="py-3 px-4 fw-bold text-center bg-light"
+                            rowSpan={1}
+                          >
+                            {day.charAt(0).toUpperCase() + day.slice(1)} {date}
                           </td>
-                        )}
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          </Row>
+                          {hasExams ? (
+                            epreuve.map((exam: any, index: any) => (
+                              <td key={index} className="py-3 px-4 text-center">
+                                <ul className="list-unstyled mb-0">
+                                  <li>
+                                    <strong>
+                                      {exam.matiere?.matiere ||
+                                        "Matière inconnue"}
+                                    </strong>
+                                    <br />
+                                    {exam.heure_debut} - {exam.heure_fin}
+                                    <br />
+                                    Salle:{" "}
+                                    {exam.salle?.salle || "Non attribuée"}
+                                  </li>
+                                </ul>
+                              </td>
+                            ))
+                          ) : (
+                            <td className="py-3 px-4 text-center">
+                              <em className="text-muted">Pas de épreuves</em>
+                            </td>
+                          )}
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </Row>
+          )}
         </Container>
       </div>
     </React.Fragment>
