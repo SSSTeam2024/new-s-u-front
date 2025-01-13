@@ -24,6 +24,12 @@ export const replaceShortCodes = (demandData: any, globalData: any) => {
   if (newBody?.includes("تاريخ-ولادة-الطالب")) {
     newBody = newBody?.replace("تاريخ-ولادة-الطالب", studentId.date_naissance);
   }
+  if (newBody?.includes("مكان-ولادة-الطالب")) {
+    newBody = newBody?.replace(
+      "مكان-ولادة-الطالب",
+      studentId.lieu_naissance_ar
+    );
+  }
   if (newBody?.includes("جنسية-الطالب")) {
     newBody = newBody?.replace("جنسية-الطالب", studentId.nationalite);
   }
@@ -76,6 +82,9 @@ export const replaceShortCodes = (demandData: any, globalData: any) => {
       "nom_etudiant",
       studentId.prenom_fr + " " + studentId.nom_fr
     );
+  }
+  if (newBody?.includes("sexe-etudiant")) {
+    newBody = newBody?.replace("sexe-etudiant", studentId.sexe);
   }
   if (newBody?.includes("date_naissance_etudiant")) {
     newBody = newBody?.replace(

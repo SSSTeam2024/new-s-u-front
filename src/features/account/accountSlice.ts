@@ -8,7 +8,7 @@ export interface UserResponse {
     enseignantId: string;
     login: string;
     service: string;
-    password: string; 
+    password: string;
     api_token: string;
     app_name: string;
     status: string;
@@ -16,22 +16,22 @@ export interface UserResponse {
   };
 }
 export interface AddUser {
-    _id?: string;
-    personnelId: string;
-    enseignantId: string;
-    login: string;
-    service: string;
-    password: string; 
-    app_name: string;
-    status: string;
+  _id?: string;
+  personnelId: string;
+  enseignantId: string;
+  login: string;
+  service: string;
+  password: string;
+  app_name: string;
+  status: string;
 }
 export interface LoginRequest {
-    login: string;
-     password: string;
-   }
-   export interface UserToken {
-    token: string;
-   }
+  login: string;
+  password: string;
+}
+export interface UserToken {
+  token: string;
+}
 export const accountSlice = createApi({
   reducerPath: "account",
   baseQuery: fetchBaseQuery({
@@ -75,14 +75,14 @@ export const accountSlice = createApi({
         },
         invalidatesTags: ["Account"],
       }),
-      fetchAllUsers: builder.query<UserResponse, void>({
+      fetchAllUsers: builder.query<any[], void>({
         query: () => ({
           url: `/get-all-users`,
           method: "GET",
         }),
         providesTags: ["Account"],
       }),
-      deleteUser: builder.mutation<void, string >({
+      deleteUser: builder.mutation<void, string>({
         query: (_id) => ({
           url: `delete-user/${_id}`,
           method: "DELETE",
@@ -93,4 +93,10 @@ export const accountSlice = createApi({
   },
 });
 
-export const { useLoginMutation, useAddUserMutation, useGetUserMutation, useFetchAllUsersQuery, useDeleteUserMutation } = accountSlice;
+export const {
+  useLoginMutation,
+  useAddUserMutation,
+  useGetUserMutation,
+  useFetchAllUsersQuery,
+  useDeleteUserMutation,
+} = accountSlice;

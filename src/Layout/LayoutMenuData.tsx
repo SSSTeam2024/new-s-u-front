@@ -47,6 +47,8 @@ const Navdata = () => {
   const [isRattrapage, setIsRattrapage] = useState(false);
   const [isExamen, setIsExamen] = useState(false);
   const [isConge, setIsConge] = useState(false);
+  const [isDeplacement, setIsDeplacement] = useState(false);
+  const [isNotesProfessionnelles, setIsNotesProfessionnelles] = useState(false);
   const [isModele, setIsModele] = useState(false);
   const [isLevel1, setIsLevel1] = useState(false);
   const [isLevel2, setIsLevel2] = useState(false);
@@ -140,6 +142,12 @@ const Navdata = () => {
     }
     if (iscurrentState !== "Conge") {
       setIsConge(false);
+    }
+    if (iscurrentState !== "Deplacement") {
+      setIsDeplacement(false);
+    }
+    if (iscurrentState !== "NotesProfessionelles") {
+      setIsNotesProfessionnelles(false);
     }
     if (iscurrentState !== "Modele") {
       setIsModele(false);
@@ -980,6 +988,95 @@ const Navdata = () => {
         //   parentId: "modele",
         //   icon: "bi bi-person-fill-add",
         // },
+      ],
+    },
+    // deplacement
+    {
+      id: "déplacement",
+      label: "Gestion des déplacements",
+      icon: "bi bi-car-front",
+      link: "/#",
+      click: function (e: any) {
+        e.preventDefault();
+        setIsDeplacement(!isDeplacement);
+        setIscurrentState("Deplacement");
+        updateIconSidebar(e);
+      },
+      stateVariables: isDeplacement,
+      subItems: [
+        {
+          id: "ajouter-deplacement",
+          label: "Ajouter un déplacement",
+          link: "/gestion-deplacement/Ajouter-deplacement",
+          parentId: "déplacement",
+          icon: "bi bi-clipboard2-plus",
+        },
+        // {
+        //   id: "Solde-Conge",
+        //   label: "Solde des Congés",
+        //   link: "/solde-conge/liste-solde-conge",
+        //   parentId: "congés",
+        //   icon: "bi bi-person-fill-add",
+        // },
+        // {
+        //   id: "demande-Conge",
+        //   label: "Ajouter Demande de Congé",
+        //   link: "/demande-conge/ajouter-demande-conge",
+        //   parentId: "congés",
+        //   icon: "bi bi-person-fill-add",
+        // },
+        {
+          id: "liste_deplacements",
+          label: "Liste des déplacements",
+          link: "/gestion-deplacement/Liste-deplacements",
+          parentId: "déplacement",
+          icon: "bi bi-journal-text",
+        },
+      ],
+    },
+
+    // notes pro
+    {
+      id: "notes-professionnels",
+      label: "Gestion des notes professionnelles",
+      icon: "bi bi-card-list",
+      link: "/#",
+      click: function (e: any) {
+        e.preventDefault();
+        setIsNotesProfessionnelles(!isNotesProfessionnelles);
+        setIscurrentState("NotesProfessionelles");
+        updateIconSidebar(e);
+      },
+      stateVariables: isNotesProfessionnelles,
+      subItems: [
+        {
+          id: "ajouter-notes-professionelles",
+          label: "Ajouter des notes professionelles",
+          link: "/gestion-notes-professionelles/Ajouter-notes-professionelles",
+          parentId: "notes-professionnels",
+          icon: "bi bi-clipboard2-plus",
+        },
+        // {
+        //   id: "Solde-Conge",
+        //   label: "Solde des Congés",
+        //   link: "/solde-conge/liste-solde-conge",
+        //   parentId: "congés",
+        //   icon: "bi bi-person-fill-add",
+        // },
+        // {
+        //   id: "demande-Conge",
+        //   label: "Ajouter Demande de Congé",
+        //   link: "/demande-conge/ajouter-demande-conge",
+        //   parentId: "congés",
+        //   icon: "bi bi-person-fill-add",
+        // },
+        {
+          id: "liste_notes_professionelles",
+          label: "Liste des notes professionelles",
+          link: "/gestion-notes-professionelles/Liste-notes-professionelles",
+          parentId: "notes-professionnels",
+          icon: "bi bi-journal-text",
+        },
       ],
     },
 

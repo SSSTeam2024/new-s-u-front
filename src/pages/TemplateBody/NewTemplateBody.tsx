@@ -18,6 +18,9 @@ import JoditEditor from "jodit-react";
 import { renderAsync } from "docx-preview";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
+import { useFetchVirtualServicesQuery } from "features/virtualService/virtualServiceSlice";
+import { useFetchAllUsersQuery } from "features/account/accountSlice";
+import Select from "react-select";
 
 const NewTemplateBody = () => {
   document.title = "Ajouter Corps du Modèle | Smart Institute";
@@ -26,7 +29,34 @@ const NewTemplateBody = () => {
   const [addNewTemplateBody, { isLoading }] = useAddNewTemplateBodyMutation();
   const { data: shortCodeList = [] } = useFetchShortCodeQuery();
 
+  const { data: virtualServices = [] } = useFetchVirtualServicesQuery();
+
+  const { data: admins = [] } = useFetchAllUsersQuery();
+
+  console.log(admins);
+
   //************************************************************************** */
+
+  const customStyles = {
+    multiValue: (styles: any, { data }: any) => ({
+      ...styles,
+      backgroundColor: "#4b93ff",
+    }),
+    multiValueLabel: (styles: any, { data }: any) => ({
+      ...styles,
+      backgroundColor: "#4b93ff",
+      color: "white",
+    }),
+    multiValueRemove: (styles: any, { data }: any) => ({
+      ...styles,
+      color: "white",
+      backgroundColor: "#4b93ff",
+      ":hover": {
+        backgroundColor: "#4b93ff",
+        color: "white",
+      },
+    }),
+  };
 
   const [content, setContent] = useState<any>("");
 
@@ -40,22 +70,85 @@ const NewTemplateBody = () => {
 
   const [isDocumentLoaded, setIsDocumentLoaded] = useState<boolean>(false);
 
+  // const handleFileUpload = async (event: any) => {
+  //   const file = event.target.files[0];
+  //   if (file) {
+  //     const reader = new FileReader();
+  //     reader.onload = async (e: any) => {
+  //       const arrayBuffer = e.target.result;
+  //       if (previewContainer.current) {
+  //         previewContainer.current.innerHTML = ""; // Clear existing content
+  //         await renderAsync(arrayBuffer, previewContainer.current);
+  //       }
+  //     };
+  //     reader.readAsArrayBuffer(file);
+  //   }
+  //   previewContainer.current.contentEditable = true;
+  //   setIsDocumentLoaded(true);
+  // };
+
+  /////////////////////////////////////////////////
+
   const handleFileUpload = async (event: any) => {
     const file = event.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = async (e: any) => {
         const arrayBuffer = e.target.result;
+
         if (previewContainer.current) {
-          previewContainer.current.innerHTML = ""; // Clear existing content
+          previewContainer.current.innerHTML = "";
+
           await renderAsync(arrayBuffer, previewContainer.current);
+
+          const updatedHTML = await convertImagesToBase64(
+            previewContainer.current.innerHTML
+          );
+          previewContainer.current.innerHTML = updatedHTML;
+
+          setIsDocumentLoaded(true);
         }
       };
       reader.readAsArrayBuffer(file);
     }
     previewContainer.current.contentEditable = true;
-    setIsDocumentLoaded(true);
   };
+
+  const convertImagesToBase64 = async (html: string): Promise<string> => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, "text/html");
+
+    const images: any = doc.querySelectorAll("img");
+
+    for (const img of images) {
+      const src = img.getAttribute("src");
+      if (src && src.startsWith("blob:")) {
+        try {
+          const response = await fetch(src);
+          const blob = await response.blob();
+
+          const base64 = await convertBlobToBase64(blob);
+
+          img.setAttribute("src", base64);
+        } catch (error) {
+          console.error("Error converting image to base64:", error);
+        }
+      }
+    }
+
+    return doc.documentElement.innerHTML;
+  };
+
+  const convertBlobToBase64 = (blob: Blob): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  };
+
+  ////////////////////////////////////////////////
 
   // Capture cursor position
   const captureCursorPosition = () => {
@@ -90,7 +183,7 @@ const NewTemplateBody = () => {
     if (previewContainer.current) {
       const editedContent = previewContainer.current.innerHTML;
       console.log("Edited Content:", editedContent);
-      // You can save or send this content as needed
+
       // setContent(JSON.stringify(editedContent));
       setTemplateBody((prevState) => ({
         ...prevState,
@@ -110,6 +203,15 @@ const NewTemplateBody = () => {
     intended_for: "",
     isArray: "0",
     arraysNumber: "0",
+    services: "" /* [
+      {
+        serviceData: { id: "", title: "" },
+        adminData: { id: "", login: "" },
+        pageData: { id: "", pageName: "" },
+        admins: [],
+        pages: [],
+      },
+    ], */,
   };
 
   const [templateBody, setTemplateBody] = useState(initialTemplateBody);
@@ -162,6 +264,107 @@ const NewTemplateBody = () => {
     }));
     setSelectedLangue(e.target.value);
   };
+
+  // const onChangePage = (
+  //   e: React.ChangeEvent<HTMLSelectElement>,
+  //   index: number
+  // ) => {
+  //   console.log(e.target.value);
+  //   console.log(index);
+
+  //   let servicesRef = [...templateBody.services];
+  //   let page: any = servicesRef[index].pages.filter(
+  //     (p: any) => p.id === e.target.value
+  //   );
+
+  //   console.log(page);
+
+  //   servicesRef[index].pageData.id = page[0]?.id!;
+  //   servicesRef[index].pageData.pageName = page[0]?.name!;
+
+  //   console.log(servicesRef[index]);
+
+  //   setTemplateBody((prevState) => ({
+  //     ...prevState,
+  //     services: servicesRef,
+  //   }));
+  // };
+
+  // const onChangeAdmin = (
+  //   e: React.ChangeEvent<HTMLSelectElement>,
+  //   index: number
+  // ) => {
+  //   console.log(e.target.value);
+  //   console.log(index);
+
+  //   let servicesRef = [...templateBody.services];
+  //   let admin = admins.filter((a) => a._id === e.target.value);
+
+  //   servicesRef[index].adminData.id = e.target.value;
+  //   servicesRef[index].adminData.login = admin[0].login;
+
+  //   let permissions = admin[0].permissions.filter(
+  //     (p: any) => p.documentEdition !== "no"
+  //   );
+
+  //   servicesRef[index].pages = permissions.map((p: any) => {
+  //     return { id: p._id, p_name: p.name };
+  //   });
+
+  //   console.log(servicesRef[index].pages);
+
+  //   setTemplateBody((prevState) => ({
+  //     ...prevState,
+  //     services: servicesRef,
+  //   }));
+  // };
+
+  const onChangeService = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    console.log(e.target.value);
+
+    // let servicesRef = [...templateBody.services];
+    // let service = virtualServices.filter((s) => s._id === e.target.value);
+
+    // servicesRef[index].serviceData.id = e.target.value;
+    // servicesRef[index].serviceData.title = service[0].title;
+
+    // let adminsPerService: any = admins.filter(
+    //   (a) => a.service._id === e.target.value
+    // );
+    // servicesRef[index].admins = adminsPerService;
+    // servicesRef[index].pages = [];
+
+    setTemplateBody((prevState) => ({
+      ...prevState,
+      services: e.target.value,
+    }));
+  };
+
+  // const addNewLine = () => {
+  //   let servicesRef = [...templateBody.services];
+  //   servicesRef.push({
+  //     serviceData: { id: "", title: "" },
+  //     adminData: { id: "", login: "" },
+  //     pageData: { id: "", pageName: "" },
+  //     admins: [],
+  //     pages: [],
+  //   });
+  //   setTemplateBody((prevState) => ({
+  //     ...prevState,
+  //     services: servicesRef,
+  //   }));
+  // };
+
+  // const removeLine = (index: number) => {
+  //   let servicesRef = [...templateBody.services];
+
+  //   servicesRef.splice(index, 1);
+
+  //   setTemplateBody((prevState) => ({
+  //     ...prevState,
+  //     services: servicesRef,
+  //   }));
+  // };
 
   const onChangeIntendedFor = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setTemplateBody((prevState) => ({
@@ -362,7 +565,18 @@ const NewTemplateBody = () => {
                 {step === 1 && (
                   <>
                     <Row>
-                      <Col lg={4}>
+                      <Col lg={6}>
+                        <Form.Group controlId="title">
+                          <Form.Label>Titre du modèle</Form.Label>
+                          <Form.Control
+                            type="text"
+                            placeholder="Entrer titre"
+                            value={templateBody.title}
+                            onChange={handleChange}
+                          />
+                        </Form.Group>
+                      </Col>
+                      <Col lg={3}>
                         <Form.Group controlId="langue">
                           <Form.Label>Langue du document</Form.Label>
                           <Form.Select
@@ -376,24 +590,135 @@ const NewTemplateBody = () => {
                           </Form.Select>
                         </Form.Group>
                       </Col>
-                      <Col lg={4}>
+                      <Col lg={3}>
                         <Form.Group controlId="intended_for">
-                          <Form.Label>Destiné aux</Form.Label>
+                          <Form.Label>Espace</Form.Label>
                           <Form.Select
                             value={intended_for}
                             onChange={onChangeIntendedFor}
                             className="text-muted"
                           >
                             <option value="">Sélectionner</option>
-                            <option value="enseignant">Enseignants</option>
-                            <option value="etudiant">Étudiants</option>
-                            <option value="personnel">Personnels</option>
+                            <option value="enseignant">
+                              Demande Enseignant
+                            </option>
+                            <option value="etudiant">Demande Étudiant</option>
+                            <option value="personnel">Demande Personnel</option>
+                            <option value="examen">Gestion Examen</option>
+                            <option value="stage">Gestion Stage</option>
                           </Form.Select>
                         </Form.Group>
                       </Col>
+                      <Col lg={8}>
+                        {/* {templateBody.services.map(
+                          (service: any, index: number) => ( */}
+                        <Row>
+                          {/* <Col lg={3}>
+                            <Form.Group controlId="service">
+                              <Form.Label>Espace</Form.Label>
+                              <Form.Select
+                                value={templateBody.services}
+                                onChange={(e) => {
+                                  onChangeService(e);
+                                }}
+                                className="text-muted"
+                              >
+                                <option value="">Sélectionner Espace</option>
+                                <option value="Demande_Etudiant">
+                                  Demande Etudiant
+                                </option>
+                                <option value="Demande_Enseignant">
+                                  Demande Enseignant
+                                </option>
+                                <option value="Demande_Personnel">
+                                  Demande Personnel
+                                </option>
+                                <option value="Gestion_Examen">
+                                  Gestion Examen
+                                </option>
+                                <option value="Gestion_Stage">
+                                  Gestion Stage
+                                </option>
+                              </Form.Select>
+                            </Form.Group>
+                          </Col> */}
+                          {/* <Col lg={3}>
+                                <Form.Group controlId="intended_for">
+                                  <Form.Label>
+                                    {index === 0 ? <>Admin conserné</> : <></>}
+                                  </Form.Label>
+                                  <Form.Select
+                                    value={service?.adminData?.id!}
+                                    onChange={(e) => {
+                                      onChangeAdmin(e, index);
+                                    }}
+                                    className="text-muted"
+                                  >
+                                    <option value="">Sélectionner Admin</option>
+                                    {service.admins.map((admin: any) => (
+                                      <option value={admin?._id!}>
+                                        {admin?.login!}
+                                      </option>
+                                    ))}
+                                    
+                                  </Form.Select>
+                                </Form.Group>
+                              </Col>
+                              <Col lg={4}>
+                                <Form.Group controlId="service">
+                                  <Form.Label>
+                                    {index === 0 ? <>Page conserné</> : <></>}
+                                  </Form.Label>
+                                  <Form.Select
+                                    value={service?.pageData?.id!}
+                                    onChange={(e) => {
+                                      onChangePage(e, index);
+                                    }}
+                                    className="text-muted"
+                                  >
+                                    <option value="">Sélectionner Page</option>
+                                    {service.pages.map((page: any) => (
+                                      <option value={page?.id!}>
+                                        {page?.p_name!}
+                                      </option>
+                                    ))}
+                                  </Form.Select>
+                                </Form.Group>
+                              </Col>
+                              <Col lg={2}>
+                                <Button
+                                  className="mt-4"
+                                  variant="danger"
+                                  onClick={() => removeLine(index)}
+                                >
+                                  <i className="bi bi-trash-fill"></i>
+                                </Button>
+                              </Col> */}
+                        </Row>
+                        {/* )
+                        )} */}
+                        {/* <Row className="mt-2">
+                          <Col lg={12}>
+                            <Button variant="info" onClick={addNewLine}>
+                              <i
+                                className="bi bi-plus"
+                                style={{ fontSize: "15px" }}
+                              ></i>
+                            </Button>
+                          </Col>
+                        </Row> */}
+                      </Col>
                     </Row>
                     <div className="d-flex justify-content-end mt-3">
-                      <Button variant="primary" onClick={handleNextStep}>
+                      <Button
+                        disabled={
+                          templateBody.title === "" ||
+                          templateBody.langue === "" ||
+                          templateBody.intended_for === ""
+                        }
+                        variant="primary"
+                        onClick={handleNextStep}
+                      >
                         Suivant
                       </Button>
                     </div>
@@ -402,63 +727,93 @@ const NewTemplateBody = () => {
 
                 {step === 2 && (
                   <>
-                    <Row>
-                      <Col lg={12}>
-                        <Form.Group controlId="title">
-                          <Form.Label>Titre</Form.Label>
-                          <Form.Control
-                            type="text"
-                            placeholder="Entrer titre"
-                            value={title}
-                            onChange={handleChange}
-                          />
-                        </Form.Group>
-                      </Col>
-                    </Row>
-
                     <Row className="mt-4">
-                      <Col lg={12}>
-                        <Form.Label>Corps</Form.Label>
-                        <div className="mb-3">
-                          {displayShortCodeList.map((code) => (
-                            <Button
-                              key={code._id}
-                              variant="secondary"
-                              size="sm"
-                              onClick={() =>
-                                handleShortCodeInsertion(code.body)
-                              }
-                              className="me-2 mb-2"
+                      <Col lg={3}>
+                        {/* <Form.Label>Corps</Form.Label> */}
+
+                        {/* <label
+                          htmlFor="docInput"
+                          className="m-2"
+                          data-bs-toggle="tooltip"
+                          data-bs-placement="right"
+                          title="Choisir un fichier .docx"
+                        >
+                          <span className="avatar-xs d-inline-block">
+                            <span
+                              className="avatar-title bg-light border rounded-circle text-muted cursor-pointer"
                             >
-                              {code.titre}
-                            </Button>
-                          ))}
-                        </div>
+                              <i className="ri-article-line fs-24"></i>
+                            </span>
+                          </span>
+                        </label> */}
                         <input
+                          className="d-none"
                           type="file"
                           accept=".docx"
+                          name="docInput"
+                          id="docInput"
                           onChange={handleFileUpload}
                         />
-                        <button
+                        <label
+                          htmlFor="docInput"
+                          className="btn btn-light"
+                          style={{
+                            cursor: "pointer",
+                            borderRadius: "5px",
+                          }}
+                        >
+                          <div
+                            style={{ display: "flex", alignItems: "center" }}
+                          >
+                            <i
+                              className="bi bi-cloud-arrow-up fs-20"
+                              style={{ marginRight: "3px" }}
+                            ></i>
+                            Ajouter un modèle Word
+                          </div>
+                        </label>
+                      </Col>
+                      <Col lg={5} style={{ textAlign: "end" }}>
+                        <Button
+                          variant="warning"
                           onClick={handleSaveEdited}
                           disabled={
                             canSaveTemplate === true ||
                             isDocumentLoaded === false
                           }
+                          style={{ marginRight: "5px" }}
                         >
-                          Enregistrer les modifications
-                        </button>
-
-                        <div
-                          ref={previewContainer}
-                          style={{
-                            border: "1px solid #ccc",
-                            padding: "10px",
-                            marginTop: "20px",
-                            minHeight: "300px",
-                          }}
-                          onMouseUp={captureCursorPosition}
-                        ></div>
+                          <div
+                            style={{ display: "flex", alignItems: "center" }}
+                          >
+                            <i
+                              className="bi bi-cloud-check fs-20"
+                              style={{ marginRight: "3px" }}
+                            ></i>
+                            Enregistrer les modifications
+                          </div>
+                        </Button>
+                        <Button
+                          variant="success"
+                          type="submit"
+                          disabled={isLoading || canSaveTemplate === false}
+                          onClick={handleFormSubmit}
+                        >
+                          {isLoading ? (
+                            <Spinner as="span" animation="border" size="sm" />
+                          ) : (
+                            <div
+                              style={{ display: "flex", alignItems: "center" }}
+                            >
+                              <i
+                                className="bi bi-file-earmark-plus fs-20"
+                                style={{ marginRight: "3px" }}
+                              ></i>
+                              Générer modèle
+                            </div>
+                          )}
+                        </Button>
+                        <Col lg={4}></Col>
                         {/* <div className="center">
                           <JoditEditor
                             ref={editor}
@@ -472,21 +827,100 @@ const NewTemplateBody = () => {
                       </Col>
                     </Row>
 
+                    <Row>
+                      <Col lg={8}>
+                        <div
+                          ref={previewContainer}
+                          style={{
+                            border: "1px solid #ccc",
+                            padding: "10px",
+                            marginTop: "20px",
+                            minHeight: "300px",
+                          }}
+                          onMouseUp={captureCursorPosition}
+                        ></div>
+                      </Col>
+                      <Col lg={4}>
+                        <div
+                          className="mb-3"
+                          style={{
+                            marginLeft: "5%",
+                            marginTop: "20px",
+                          }}
+                        >
+                          <Card>
+                            <Card.Header as="h5">
+                              Informations d'établissement
+                            </Card.Header>
+                            <Card.Body>
+                              {displayShortCodeList.map((code) =>
+                                code.intended_for === "global" ? (
+                                  <Button
+                                    key={code._id}
+                                    variant="secondary"
+                                    size="sm"
+                                    onClick={() =>
+                                      handleShortCodeInsertion(code.body)
+                                    }
+                                    className="me-2 mb-2"
+                                  >
+                                    {code.titre}
+                                  </Button>
+                                ) : (
+                                  <></>
+                                )
+                              )}
+                            </Card.Body>
+                          </Card>
+
+                          <Card>
+                            {selectedIntendedFor === "etudiant" && (
+                              <Card.Header as="h6">
+                                Informations étudiant
+                              </Card.Header>
+                            )}
+                            {selectedIntendedFor === "enseignant" && (
+                              <Card.Header as="h6">
+                                Informations enseignant
+                              </Card.Header>
+                            )}
+                            {selectedIntendedFor === "personnel" && (
+                              <Card.Header as="h6">
+                                Informations personnel
+                              </Card.Header>
+                            )}
+                            {selectedIntendedFor === "examen" && (
+                              <Card.Header as="h6">
+                                Informations examen
+                              </Card.Header>
+                            )}
+                            <Card.Body>
+                              {displayShortCodeList.map((code) =>
+                                code.intended_for !== "global" ? (
+                                  <Button
+                                    key={code._id}
+                                    variant="secondary"
+                                    size="sm"
+                                    onClick={() =>
+                                      handleShortCodeInsertion(code.body)
+                                    }
+                                    className="me-2 mb-2"
+                                  >
+                                    {code.titre}
+                                  </Button>
+                                ) : (
+                                  <></>
+                                )
+                              )}
+                            </Card.Body>
+                          </Card>
+                        </div>
+                      </Col>
+                    </Row>
+
                     <div className="d-flex justify-content-between mt-3">
                       <Button variant="secondary" onClick={handlePreviousStep}>
                         Précédent
-                      </Button>
-                      <Button
-                        variant="primary"
-                        type="submit"
-                        disabled={isLoading || canSaveTemplate === false}
-                        onClick={handleFormSubmit}
-                      >
-                        {isLoading ? (
-                          <Spinner as="span" animation="border" size="sm" />
-                        ) : (
-                          "Ajouter Corps"
-                        )}
                       </Button>
                     </div>
                   </>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button, Card, Col, Container, Row } from "react-bootstrap";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Breadcrumb from "Common/BreadCrumb";
 import {
   Page,
@@ -315,21 +315,22 @@ const SingleDemandePersonnel = () => {
                             code_postal={AllVariablesGlobales[2]?.code_postal!}
                             allVariables={AllVariablesGlobales[2]}
                             raison={state?.state?.description!}
-                            departement={
-                              state?.state?.studentId?.groupe_classe
-                                ?.departement!
-                            }
+                            // departement={
+                            //   state?.state?.studentId?.groupe_classe
+                            //     ?.departement!
+                            // }
                           />
                         }
                         fileName={state?.state?.piece_demande?.title!}
                       >
-                        <Button
-                          type="button"
-                          className="btn btn-primary btn-label m-1"
+                        <Link
+                          to="/demandes-personnel/generer-demande-personnel"
+                          state={state.state}
+                          className="btn btn-danger btn-label m-1"
                         >
-                          <i className="bi bi-file-earmark-arrow-down label-icon align-middle fs-16 me-2"></i>
+                          <i className="bi bi-file-earmark-pdf label-icon align-middle fs-16 me-2"></i>
                           Générer
-                        </Button>
+                        </Link>
                       </PDFDownloadLink>
                     ) : (
                       <div>No data available</div>

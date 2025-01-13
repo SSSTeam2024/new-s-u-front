@@ -16,7 +16,7 @@ interface ChildProps {
   allVariables: VaribaleGlobale;
   raison: string;
   formattedDate: string;
-  departement: Departement;
+  departement?: Departement;
 }
 Font.register({
   family: "Arial",
@@ -69,8 +69,6 @@ const BodyPDF = forwardRef<HTMLDivElement, ChildProps>((props: any, ref) => {
 
   let newBody = piece_demande?.body ?? "";
 
-  console.log(newBody);
-
   useEffect(() => {
     // STUDENT AR
     if (newBody?.includes("اسم-الطالب")) {
@@ -83,6 +81,12 @@ const BodyPDF = forwardRef<HTMLDivElement, ChildProps>((props: any, ref) => {
       newBody = newBody?.replace(
         "تاريخ-ولادة-الطالب",
         studentId.date_naissance
+      );
+    }
+    if (newBody?.includes("مكان-ولادة-الطالب")) {
+      newBody = newBody?.replace(
+        "مكان-ولادة-الطالب",
+        studentId.lieu_naissance_ar
       );
     }
     if (newBody?.includes("جنسية-الطالب")) {
@@ -137,6 +141,9 @@ const BodyPDF = forwardRef<HTMLDivElement, ChildProps>((props: any, ref) => {
         "nom_etudiant",
         studentId.prenom_fr + " " + studentId.nom_fr
       );
+    }
+    if (newBody?.includes("sexe-etudiant")) {
+      newBody = newBody?.replace("sexe-etudiant", studentId.sexe);
     }
     if (newBody?.includes("date_naissance_etudiant")) {
       newBody = newBody?.replace(
@@ -242,21 +249,25 @@ const BodyPDF = forwardRef<HTMLDivElement, ChildProps>((props: any, ref) => {
         allVariables.secretaire_fr
       );
     }
+
     if (newBody?.includes("nom-etablissement")) {
       newBody = newBody?.replace(
         "nom-etablissement",
         allVariables.etablissement_fr
       );
     }
+
     if (newBody?.includes("adresse_etablissement")) {
       newBody = newBody?.replace(
         "adresse_etablissement",
         allVariables.address_fr
       );
     }
+
     if (newBody?.includes("phone_etablissement")) {
       newBody = newBody?.replace("phone_etablissement", allVariables.phone);
     }
+
     if (newBody?.includes("fax_etablissement")) {
       newBody = newBody?.replace("fax_etablissement", allVariables.fax);
     }
@@ -264,12 +275,22 @@ const BodyPDF = forwardRef<HTMLDivElement, ChildProps>((props: any, ref) => {
     if (newBody?.includes("nom_université")) {
       newBody = newBody?.replace("nom_université", allVariables.universite_fr);
     }
+
+    if (newBody?.includes("site_web_etablissement")) {
+      newBody = newBody?.replace(
+        "site_web_etablissement",
+        allVariables.website
+      );
+    }
+
     if (newBody?.includes("année_universitaire")) {
       newBody = newBody?.replace("année_universitaire", anneeScolaire);
     }
+
     if (newBody?.includes("Ville")) {
       newBody = newBody?.replace("Ville", allVariables?.gouvernorat_fr!);
     }
+
     if (newBody?.includes("Date_d'aujourd'hui")) {
       newBody = newBody?.replace("Date_d'aujourd'hui", formattedDate);
     }
@@ -357,10 +378,10 @@ const BodyPDF = forwardRef<HTMLDivElement, ChildProps>((props: any, ref) => {
         personnelId?.job_conjoint!
       );
     }
-    if (newBody?.includes("nombre_fls_personnel")) {
+    if (newBody?.includes("nombre_fils_personnel")) {
       newBody = newBody.replace(
-        /nombre_fls_personnel/g,
-        personnelId?.job_conjoint!
+        /nombre_fils_personnel/g,
+        personnelId?.nombre_fils!
       );
     }
 
@@ -434,7 +455,7 @@ const BodyPDF = forwardRef<HTMLDivElement, ChildProps>((props: any, ref) => {
     }
 
     if (newBody?.includes("رتبة-الموظف")) {
-      newBody = newBody.replace(/رتبة-الموظف/g, personnelId.grade.grade_ar);
+      newBody = newBody.replace(/رتبة-الموظف/g, personnelId.grade?.grade_ar!);
     }
 
     if (newBody?.includes("صنف-الموظف")) {
@@ -692,7 +713,7 @@ const BodyPDF = forwardRef<HTMLDivElement, ChildProps>((props: any, ref) => {
         enseignantId.specilaite.specialite_ar
       );
     }
-    console.log(newBody);
+    // console.log(newBody);
     setNewUpdateBody(JSON.parse(newBody));
   }, [piece_demande, studentId, anneeScolaire, allVariables]);
 
