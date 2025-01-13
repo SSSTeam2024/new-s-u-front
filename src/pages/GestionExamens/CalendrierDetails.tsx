@@ -289,11 +289,8 @@ const CalendrierDetails: React.FC = () => {
   const [openViewModal, setOpenViewModal] = useState<boolean>(false);
   const [openEditModal, setOpenEditModal] = useState<boolean>(false);
   const [selectedEpreuve, setSelectedEpreuve] = useState<any>(null);
-<<<<<<< HEAD
   const [loading, setLoading] = useState(false);
-=======
   const [hashedCode, setHashedCode] = useState<string>("");
->>>>>>> e8d00dd3865198e48054ad7953b1353367708a14
 
   const tog_ViewModal = (ep?: any) => {
     setSelectedEpreuve(ep || null);
@@ -1673,7 +1670,6 @@ const CalendrierDetails: React.FC = () => {
                                 <br />
                                 {exam.salle?.salle || "Non attribuée"}
                                 <br />
-<<<<<<< HEAD
                                 {exam.classe?.nom_classe_fr || "Non attribuée"}
                               </td>
                             ))
@@ -1705,161 +1701,6 @@ const CalendrierDetails: React.FC = () => {
                           )}
                         </td>
                       )}
-=======
-                                {`${
-                                  exam.classe?.nom_classe_fr || "Non attribuée"
-                                }`}
-                              </li>
-                            ))}
-                          </ul>
-                        )}
-                      </td>
-                    )}
-                  </tr>
-                ))
-              ) : filterApplied ? (
-                <tr>
-                  <td className="text-center py-3 px-4" colSpan={2}>
-                    <em className="text-muted">
-                      Aucun jour disponible avec les filtres appliqués.
-                    </em>
-                  </td>
-                </tr>
-              ) : (
-                ""
-              )}
-            </tbody>
-          </table>
-        </Row>
-        <Row>
-          <div className="table-responsive">
-            <Table className="table-nowrap mb-0">
-              <thead>
-                <tr>
-                  <th scope="col">Date</th>
-                  <th scope="col">H. Début</th>
-                  <th scope="col">H. Fin</th>
-                  <th scope="col">Durée</th>
-                  <th scope="col">Groupe</th>
-                  <th scope="col">Epreuve</th>
-                  <th scope="col">Salle</th>
-                  <th scope="col">Responsable(s)</th>
-                  <th scope="col">Surveillant(s)</th>
-                  <th scope="col">N° Copie</th>
-                  <th scope="col">Status</th>
-                  <th scope="col">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {calendrierState.epreuve.map((ep: any) => {
-                  const startTime = new Date(`1970-01-01T${ep.heure_debut}`);
-                  const endTime = new Date(`1970-01-01T${ep.heure_fin}`);
-                  const durationMs = endTime.getTime() - startTime.getTime();
-
-                  const durationHours = Math.floor(
-                    durationMs / (1000 * 60 * 60)
-                  );
-                  const durationMinutes = Math.floor(
-                    (durationMs % (1000 * 60 * 60)) / (1000 * 60)
-                  );
-
-                  const formattedDuration = `${durationHours}h ${durationMinutes}m`;
-                  const backgroundColor = getBackgroundColor(ep.date);
-                  return (
-                    <tr
-                      key={ep.date + ep.heure_debut + ep.heure_fin}
-                      style={{ backgroundColor }}
-                    >
-                      <td>{ep.date}</td>
-                      <td>{ep.heure_debut}</td>
-                      <td>{ep.heure_fin}</td>
-                      <td>{formattedDuration}</td>
-                      <td>{ep?.classe?.nom_classe_fr!}</td>
-                      <td>
-                        {ep?.matiere?.matiere.length > 24 ? (
-                          <>
-                            <span>{ep.matiere.matiere.slice(0, 24)}</span>
-                            <br />
-                            <span>{ep.matiere.matiere.slice(24)}</span>
-                          </>
-                        ) : (
-                          ep?.matiere?.matiere
-                        )}
-                      </td>
-                      <td>{ep?.salle?.salle!}</td>
-                      <td>
-                        <ul className="list-unstyled">
-                          {ep.group_responsables.map((res: any) => (
-                            <li key={res.prenom_fr + res.nom_fr}>
-                              {res.prenom_fr} {res.nom_fr}
-                            </li>
-                          ))}
-                        </ul>
-                      </td>
-                      <td>
-                        <ul className="list-unstyled">
-                          {ep.group_surveillants.map((sur: any) => (
-                            <li key={sur.prenom_fr + sur.nom_fr}>
-                              {sur.prenom_fr} {sur.nom_fr}
-                            </li>
-                          ))}
-                        </ul>
-                      </td>
-                      <td>{ep.nbr_copie}</td>
-                      <td>{ep?.epreuveStatus!}</td>
-                      <td>
-                        <ul className="hstack gap-2 list-unstyled mb-0">
-                          <li>
-                            <button
-                              type="button"
-                              className="btn bg-info-subtle text-info view-item-btn btn-sm"
-                              onClick={() => tog_ViewModal(ep)}
-                            >
-                              <i className="ph ph-eye fs-18"></i>
-                            </button>
-                          </li>
-                          <li>
-                            <button
-                              type="button"
-                              className="btn bg-success-subtle text-success edit-item-btn btn-sm"
-                              onClick={() => tog_EditModal(ep?._id!)}
-                            >
-                              <i className="ph ph-pencil-simple-line fs-18"></i>
-                            </button>
-                          </li>
-                          <li>
-                            <button
-                              type="button"
-                              className="btn bg-warning-subtle qrcode-btn btn-sm"
-                            >
-                              <PDFDownloadLink
-                                document={<QrCodePage epreuve={ep} />}
-                                fileName={`qrcode - ${ep?.classe
-                                  ?.nom_classe_fr!}.pdf`}
-                                className="text-decoration-none"
-                              >
-                                <i className="ph ph-qr-code text-dark fs-18"></i>
-                              </PDFDownloadLink>
-                            </button>
-                          </li>
-                          <li>
-                            <button
-                              type="button"
-                              className="btn bg-primary-subtle text-primary generatefile-btn btn-sm"
-                            >
-                              <PDFDownloadLink
-                                document={<ListEmergement epreuve={ep} />}
-                                fileName={`Liste-émergement - ${ep?.classe
-                                  ?.nom_classe_fr!}.pdf`}
-                                className="text-decoration-none"
-                              >
-                                <i className="ph ph-clipboard-text fs-18"></i>{" "}
-                              </PDFDownloadLink>
-                            </button>
-                          </li>
-                        </ul>
-                      </td>
->>>>>>> e8d00dd3865198e48054ad7953b1353367708a14
                     </tr>
                   ))}
                 </tbody>
@@ -1971,7 +1812,7 @@ const CalendrierDetails: React.FC = () => {
                                   className="btn bg-warning-subtle qrcode-btn btn-sm"
                                 >
                                   <PDFDownloadLink
-                                    document={<QrCodePage />}
+                                    document={<QrCodePage epreuve={ep} />}
                                     fileName={`qrcode - ${ep?.classe
                                       ?.nom_classe_fr!}.pdf`}
                                     className="text-decoration-none"
