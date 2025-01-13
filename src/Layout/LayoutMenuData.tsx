@@ -743,6 +743,20 @@ const Navdata = () => {
               link: "/departement/gestion-classes/liste-section",
               icon: "bi bi-diagram-3-fill",
             },
+            //added liste mentions classess
+            {
+              id: 4,
+              label: "Listes des mentions",
+              link: "/departement/gestion-classes/liste-mentions",
+              icon: "bi bi-diagram-3-fill",
+            },
+            //added liste domaines classess
+            {
+              id: 5,
+              label: "Listes des domaines",
+              link: "/departement/gestion-classes/liste-domaines",
+              icon: "bi bi-diagram-3-fill",
+            },
           ],
         },
         {

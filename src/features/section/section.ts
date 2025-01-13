@@ -2,10 +2,11 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export interface Section {
   _id: string;
-  name_section_fr: string,
-  name_section_ar: string,
-  abreviation: string,
-  departements: string[]
+  name_section_fr: string;
+  name_section_ar: string;
+  abreviation: string;
+  departements: string[];
+  mention_classe: any;
 }
 export const sectionSlice = createApi({
   reducerPath: "Section",
@@ -52,8 +53,8 @@ export const sectionSlice = createApi({
 });
 
 export const {
- useAddSectionMutation,
- useDeleteSectionMutation,
- useFetchSectionsQuery,
- useUpdateSectionMutation
+  useAddSectionMutation,
+  useDeleteSectionMutation,
+  useFetchSectionsQuery,
+  useUpdateSectionMutation,
 } = sectionSlice;

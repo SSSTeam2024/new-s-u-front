@@ -12,6 +12,7 @@ interface SectionsOption {
   name_section_fr: string;
   name_section_ar: string;
   abreviation: string;
+  mention_classe: any;
 }
 
 const AddNiveau = () => {
@@ -34,6 +35,7 @@ const AddNiveau = () => {
         name_section_fr: sections.name_section_fr,
         name_section_ar: sections.name_section_ar,
         abreviation: sections.abreviation,
+        mention_classe: sections.mention_classe,
       }));
       setOptions(options);
     }
@@ -117,6 +119,7 @@ const AddNiveau = () => {
           name_section_ar: "",
           abreviation: "",
           departements: [""],
+          mention_classe: "",
         })
       );
 

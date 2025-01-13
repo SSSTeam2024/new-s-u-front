@@ -3,10 +3,9 @@ import { Badge, Button, Col, Container, Form, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import "flatpickr/dist/flatpickr.min.css";
 import Swal from "sweetalert2";
-import { useAddMatiereMutation } from "features/matiere/matiere";
-import { useAddNiveauMutation } from "features/niveau/niveau";
 import { useAddSectionMutation } from "features/section/section";
 import { useFetchDepartementsQuery } from "features/departement/departement";
+import { useFetchMentionsClasseQuery } from "features/mentionClasse/mentionClasse";
 
 const AddSection = () => {
   document.title = " Ajouter Section | Application Smart Institute";
@@ -18,6 +17,7 @@ const AddSection = () => {
 
   const [createSection] = useAddSectionMutation();
   const { data: departements = [] } = useFetchDepartementsQuery();
+  const { data: mentionsClasse = [] } = useFetchMentionsClasseQuery();
 
   const [formData, setFormData] = useState({
     _id: "",
@@ -25,6 +25,7 @@ const AddSection = () => {
     name_section_fr: "",
     abreviation: "",
     departements: [] as string[],
+    mention_classe: "",
   });
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((prevState) => ({
@@ -190,6 +191,31 @@ const AddSection = () => {
                           ) : null;
                         })}
                       </div>
+                    </div>
+                  </Col>
+
+                  <Col lg={6}>
+                    <div className="mb-3">
+                      <Form.Label htmlFor="mention_classe">
+                        Mention Classe
+                      </Form.Label>
+                      <select
+                        className="form-select text-muted"
+                        name="mention_classe"
+                        id="mention_classe"
+                        value={formData.mention_classe}
+                        onChange={handleChange}
+                      >
+                        <option value="">Sélectionner Mention Classe</option>
+                        {mentionsClasse.map((mentionClasse) => (
+                          <option
+                            key={mentionClasse._id}
+                            value={mentionClasse._id}
+                          >
+                            {mentionClasse.name_mention_fr}
+                          </option>
+                        ))}
+                      </select>
                     </div>
                   </Col>
                 </Row>

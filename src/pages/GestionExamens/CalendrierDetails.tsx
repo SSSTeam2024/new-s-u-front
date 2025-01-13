@@ -10,6 +10,7 @@ import {
   Row,
   Table,
   Modal,
+  Spinner,
 } from "react-bootstrap";
 import { Link, useLocation } from "react-router-dom";
 import { useFetchSallesQuery } from "features/salles/salles";
@@ -237,6 +238,7 @@ const CalendrierDetails: React.FC = () => {
   const [openViewModal, setOpenViewModal] = useState<boolean>(false);
   const [openEditModal, setOpenEditModal] = useState<boolean>(false);
   const [selectedEpreuve, setSelectedEpreuve] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
 
   const tog_ViewModal = (ep?: any) => {
     setSelectedEpreuve(ep || null);
@@ -400,13 +402,29 @@ const CalendrierDetails: React.FC = () => {
   const handleFilterChange = (filter: any, value: any) => {
     resetFilters();
 
-    if (filter === "classe") setSelectedClasse(value);
-    if (filter === "jour") setSelectedJour(value);
-    if (filter === "salle") setSelectedSalle(value);
-    if (filter === "teacher") setSelectedTeacher(value);
+    switch (filter) {
+      case "classe":
+        setSelectedClasse(value);
+        break;
+      case "jour":
+        setSelectedJour(value);
+        break;
+      case "salle":
+        setSelectedSalle(value);
+        break;
+      case "teacher":
+        setSelectedTeacher(value);
+        break;
+      default:
+        break;
+    }
 
     setActiveFilter(filter);
     setFilterApplied(true);
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+    }, 500);
   };
 
   const resetFilters = () => {
@@ -563,67 +581,6 @@ const CalendrierDetails: React.FC = () => {
                 Horaire
               </Text>
             </View>
-
-            {/* Data Rows */}
-            {/* {rows.map((row, idx) => (
-              <View key={idx} style={stylesCalenderFilter.row}>
-                {filterBy !== "jour" && (
-                  <Text
-                    style={[
-                      stylesCalenderFilter.cell,
-                      stylesCalenderFilter.dayCell,
-                      idx > 0 && row.day === rows[idx - 1].day
-                        ? { borderWidth: 0 }
-                        : {},
-                    ]}
-                  >
-                    {idx === 0 || row.day !== rows[idx - 1].day
-                      ? `${
-                          row.day.charAt(0).toUpperCase() + row.day.slice(1)
-                        } - ${row.date}`
-                      : ""}
-                  </Text>
-                )}
-                {filterBy !== "classe" && (
-                  <Text
-                    style={[
-                      stylesCalenderFilter.cell,
-                      stylesCalenderFilter.classeCell,
-                    ]}
-                  >
-                    {row.classe}
-                  </Text>
-                )}
-
-                {filterBy !== "salle" && (
-                  <Text
-                    style={[
-                      stylesCalenderFilter.cell,
-                      stylesCalenderFilter.salleCell,
-                    ]}
-                  >
-                    {row.salle}
-                  </Text>
-                )}
-                <Text
-                  style={[
-                    stylesCalenderFilter.cell,
-                    stylesCalenderFilter.matiereCell,
-                  ]}
-                >
-                  {row.matiere}
-                </Text>
-
-                <Text
-                  style={[
-                    stylesCalenderFilter.cell,
-                    stylesCalenderFilter.timeCell,
-                  ]}
-                >
-                  {row.heure_debut} - {row.heure_fin}
-                </Text>
-              </View>
-            ))} */}
 
             {rows.map((row, idx) => (
               <View key={idx} style={stylesCalenderFilter.row}>
@@ -1326,19 +1283,6 @@ const CalendrierDetails: React.FC = () => {
               className="me-2 p-0"
               style={{ cursor: "pointer" }}
             >
-              {/* <PDFDownloadLink
-                document={
-                  <CalendarPDF
-                    title={`Calendrier des Examens - Classe ${selectedClasse}`}
-                    filteredDays={filteredDays}
-                    filterBy={activeFilter}
-                  />
-                }
-                fileName={`Calendrier_Classe.pdf`}
-                className="text-decoration-none"
-              >
-                <i className="bi bi-printer-fill"></i>
-              </PDFDownloadLink> */}
               <PDFDownloadLink
                 document={
                   <CalendarPDF
@@ -1376,19 +1320,6 @@ const CalendrierDetails: React.FC = () => {
               className="me-2 p-0"
               style={{ cursor: "pointer" }}
             >
-              {/* <PDFDownloadLink
-                document={
-                  <CalendarPDF
-                    title={`Calendrier des Examens - Salle ${selectedSalle}`}
-                    filteredDays={filteredDays}
-                    filterBy={activeFilter}
-                  />
-                }
-                fileName={`Calendrier_Salle.pdf`}
-                className="text-decoration-none"
-              >
-                <i className="bi bi-printer-fill"></i>
-              </PDFDownloadLink> */}
               <PDFDownloadLink
                 document={
                   <CalendarPDF
@@ -1426,19 +1357,6 @@ const CalendrierDetails: React.FC = () => {
               className="me-2 p-0"
               style={{ cursor: "pointer" }}
             >
-              {/* <PDFDownloadLink
-                document={
-                  <CalendarPDF
-                    title={`Calendrier des Examens - ${selectedJour}`}
-                    filteredDays={filteredDays}
-                    filterBy={activeFilter}
-                  />
-                }
-                fileName={`Calendrier_Jour.pdf`}
-                className="text-decoration-none"
-              >
-                <i className="bi bi-printer-fill"></i>
-              </PDFDownloadLink> */}
               <PDFDownloadLink
                 document={
                   <CalendarPDF
@@ -1500,7 +1418,7 @@ const CalendrierDetails: React.FC = () => {
                   />
                 }
                 fileName="convocation.pdf"
-                className="btn btn-secondary     "
+                className="btn btn-secondary"
               >
                 Télécharger Convocation
               </PDFDownloadLink>
@@ -1508,228 +1426,217 @@ const CalendrierDetails: React.FC = () => {
           )}
         </Row>
 
-        <Row>
-          <table className="table table-bordered table-striped w-100">
-            <tbody>
-              {filterApplied && filteredDays.length > 0 ? (
-                filteredDays.map(({ date, day, epreuve }) => (
-                  <tr key={date}>
-                    <td className="py-3 px-4 fw-bold text-center bg-light">
-                      {day.charAt(0).toUpperCase() + day.slice(1)} {date}
-                    </td>
-                    {selectedClasse ? (
-                      <>
-                        {epreuve.length === 0 ? (
-                          <td className="py-3 px-4 text-center">
-                            <em className="text-muted">Pas d'examens</em>
-                          </td>
-                        ) : (
-                          epreuve.map((exam, idx) => (
-                            <td key={idx} className="py-3 px-4 text-center">
-                              <strong>
-                                {exam.matiere?.matiere || "Inconnu"}
-                              </strong>
-                              <br />
-                              {`${exam.heure_debut} - ${exam.heure_fin}`}
-                              <br />
-                              {exam.salle?.salle || "Non attribuée"}
-                              <br />
-                              {exam.classe?.nom_classe_fr || "Non attribuée"}
+        <>
+          {loading ? (
+            <div className="d-flex justify-content-center align-items-center my-5">
+              <Spinner animation="border" role="status" variant="primary">
+                <span className="visually-hidden">Loading...</span>
+              </Spinner>
+            </div>
+          ) : filterApplied && filteredDays.length > 0 ? (
+            <Row>
+              <table className="table table-bordered table-striped w-100">
+                <tbody>
+                  {filteredDays.map(({ date, day, epreuve }) => (
+                    <tr key={date}>
+                      <td className="py-3 px-4 fw-bold text-center bg-light">
+                        {day.charAt(0).toUpperCase() + day.slice(1)} {date}
+                      </td>
+                      {selectedClasse ? (
+                        <>
+                          {epreuve.length === 0 ? (
+                            <td className="py-3 px-4 text-center">
+                              <em className="text-muted">Pas d'examens</em>
                             </td>
-                          ))
-                        )}
-                      </>
-                    ) : (
-                      <td className="py-3 px-4 text-center">
-                        {epreuve.length === 0 ? (
-                          <em className="text-muted">Pas d'examens</em>
-                        ) : (
-                          <ul className="list-unstyled">
-                            {epreuve.map((exam: any, idx: number) => (
-                              <li key={idx}>
+                          ) : (
+                            epreuve.map((exam, idx) => (
+                              <td key={idx} className="py-3 px-4 text-center">
                                 <strong>
                                   {exam.matiere?.matiere || "Inconnu"}
                                 </strong>
                                 <br />
                                 {`${exam.heure_debut} - ${exam.heure_fin}`}
                                 <br />
-                                {`${exam.salle?.salle || "Non attribuée"}`}
+                                {exam.salle?.salle || "Non attribuée"}
                                 <br />
-                                {`${
-                                  exam.classe?.nom_classe_fr || "Non attribuée"
-                                }`}
-                              </li>
-                            ))}
-                          </ul>
-                        )}
-                      </td>
-                    )}
-                  </tr>
-                ))
-              ) : filterApplied ? (
-                <tr>
-                  <td className="text-center py-3 px-4" colSpan={2}>
-                    <em className="text-muted">
-                      Aucun jour disponible avec les filtres appliqués.
-                    </em>
-                  </td>
-                </tr>
-              ) : (
-                ""
-              )}
-            </tbody>
-          </table>
-        </Row>
-        <Row>
-          <div className="table-responsive">
-            <Table className="table-nowrap mb-0">
-              <thead>
-                <tr>
-                  <th scope="col">Date</th>
-                  <th scope="col">H. Début</th>
-                  <th scope="col">H. Fin</th>
-                  <th scope="col">Durée</th>
-                  <th scope="col">Groupe</th>
-                  <th scope="col">Epreuve</th>
-                  <th scope="col">Salle</th>
-                  <th scope="col">Responsable(s)</th>
-                  <th scope="col">Surveillant(s)</th>
-                  <th scope="col">N° Copie</th>
-                  <th scope="col">Status</th>
-                  <th scope="col">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {calendrierState.epreuve.map((ep: any) => {
-                  const startTime = new Date(`1970-01-01T${ep.heure_debut}`);
-                  const endTime = new Date(`1970-01-01T${ep.heure_fin}`);
-                  const durationMs = endTime.getTime() - startTime.getTime();
-
-                  const durationHours = Math.floor(
-                    durationMs / (1000 * 60 * 60)
-                  );
-                  const durationMinutes = Math.floor(
-                    (durationMs % (1000 * 60 * 60)) / (1000 * 60)
-                  );
-
-                  const formattedDuration = `${durationHours}h ${durationMinutes}m`;
-                  const backgroundColor = getBackgroundColor(ep.date);
-                  return (
-                    <tr
-                      key={ep.date + ep.heure_debut + ep.heure_fin}
-                      style={{ backgroundColor }}
-                    >
-                      <td>{ep.date}</td>
-                      <td>{ep.heure_debut}</td>
-                      <td>{ep.heure_fin}</td>
-                      <td>{formattedDuration}</td>
-                      <td>{ep?.classe?.nom_classe_fr!}</td>
-                      <td>
-                        {ep?.matiere?.matiere.length > 24 ? (
-                          <>
-                            <span>{ep.matiere.matiere.slice(0, 24)}</span>
-                            <br />
-                            <span>{ep.matiere.matiere.slice(24)}</span>
-                          </>
-                        ) : (
-                          ep?.matiere?.matiere
-                        )}
-                      </td>
-                      <td>{ep?.salle?.salle!}</td>
-                      <td>
-                        <ul className="list-unstyled">
-                          {ep.group_responsables.map((res: any) => (
-                            <li key={res.prenom_fr + res.nom_fr}>
-                              {res.prenom_fr} {res.nom_fr}
-                            </li>
-                          ))}
-                        </ul>
-                      </td>
-                      <td>
-                        <ul className="list-unstyled">
-                          {ep.group_surveillants.map((sur: any) => (
-                            <li key={sur.prenom_fr + sur.nom_fr}>
-                              {sur.prenom_fr} {sur.nom_fr}
-                            </li>
-                          ))}
-                        </ul>
-                      </td>
-                      <td>{ep.nbr_copie}</td>
-                      <td>{ep?.epreuveStatus!}</td>
-                      <td>
-                        <ul className="hstack gap-2 list-unstyled mb-0">
-                          <li>
-                            <button
-                              type="button"
-                              className="btn bg-info-subtle text-info view-item-btn btn-sm"
-                              onClick={() => tog_ViewModal(ep)}
-                            >
-                              <i className="ph ph-eye fs-18"></i>
-                            </button>
-                          </li>
-                          <li>
-                            <button
-                              type="button"
-                              className="btn bg-success-subtle text-success edit-item-btn btn-sm"
-                              onClick={() => tog_EditModal(ep?._id!)}
-                            >
-                              <i className="ph ph-pencil-simple-line fs-18"></i>
-                            </button>
-                          </li>
-                          <li>
-                            <button
-                              type="button"
-                              className="btn bg-warning-subtle qrcode-btn btn-sm"
-                            >
-                              <PDFDownloadLink
-                                document={<QrCodePage />}
-                                fileName={`qrcode - ${ep?.classe
-                                  ?.nom_classe_fr!}.pdf`}
-                                className="text-decoration-none"
-                              >
-                                <i className="ph ph-qr-code text-dark fs-18"></i>
-                              </PDFDownloadLink>
-                            </button>
-                          </li>
-                          <li>
-                            <button
-                              type="button"
-                              className="btn bg-primary-subtle text-primary generatefile-btn btn-sm"
-                            >
-                              <PDFDownloadLink
-                                document={<ListEmergement epreuve={ep} />}
-                                fileName={`Liste-émergement - ${ep?.classe
-                                  ?.nom_classe_fr!}.pdf`}
-                                className="text-decoration-none"
-                              >
-                                <i className="ph ph-clipboard-text fs-18"></i>{" "}
-                              </PDFDownloadLink>
-                            </button>
-                          </li>
-                        </ul>
-                      </td>
+                                {exam.classe?.nom_classe_fr || "Non attribuée"}
+                              </td>
+                            ))
+                          )}
+                        </>
+                      ) : (
+                        <td className="py-3 px-4 text-center">
+                          {epreuve.length === 0 ? (
+                            <em className="text-muted">Pas d'examens</em>
+                          ) : (
+                            <ul className="list-unstyled">
+                              {epreuve.map((exam, idx) => (
+                                <li key={idx}>
+                                  <strong>
+                                    {exam.matiere?.matiere || "Inconnu"}
+                                  </strong>
+                                  <br />
+                                  {`${exam.heure_debut} - ${exam.heure_fin}`}
+                                  <br />
+                                  {`${exam.salle?.salle || "Non attribuée"}`}
+                                  <br />
+                                  {`${
+                                    exam.classe?.nom_classe_fr ||
+                                    "Non attribuée"
+                                  }`}
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </td>
+                      )}
                     </tr>
-                  );
-                })}
-              </tbody>
-            </Table>
-            <div className="d-flex justify-content-end mt-3">
-              <Button
-                variant="link"
-                className="me-2 p-0 fs-22"
-                style={{ cursor: "pointer" }}
-              >
-                <PDFDownloadLink
-                  document={<GlobalCalendar />}
-                  fileName={`Calendrier_des_${calendrierState.type_examen} - ${calendrierState.period}.pdf`}
-                  className="text-decoration-none"
-                >
-                  <i className="bi bi-printer-fill text-success"></i>
-                </PDFDownloadLink>
-              </Button>
-            </div>
-          </div>
-        </Row>
+                  ))}
+                </tbody>
+              </table>
+            </Row>
+          ) : (
+            <Row>
+              <div className="table-responsive">
+                <Table className="table-nowrap mb-0">
+                  <thead>
+                    <tr>
+                      <th scope="col">Date</th>
+                      <th scope="col">H. Début</th>
+                      <th scope="col">H. Fin</th>
+                      <th scope="col">Durée</th>
+                      <th scope="col">Groupe</th>
+                      <th scope="col">Epreuve</th>
+                      <th scope="col">Salle</th>
+                      <th scope="col">Responsable(s)</th>
+                      <th scope="col">Surveillant(s)</th>
+                      <th scope="col">N° Copie</th>
+                      <th scope="col">Status</th>
+                      <th scope="col">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {calendrierState.epreuve.map((ep: any) => {
+                      const startTime = new Date(
+                        `1970-01-01T${ep.heure_debut}`
+                      );
+                      const endTime = new Date(`1970-01-01T${ep.heure_fin}`);
+                      const durationMs =
+                        endTime.getTime() - startTime.getTime();
+
+                      const durationHours = Math.floor(
+                        durationMs / (1000 * 60 * 60)
+                      );
+                      const durationMinutes = Math.floor(
+                        (durationMs % (1000 * 60 * 60)) / (1000 * 60)
+                      );
+
+                      const formattedDuration = `${durationHours}h ${durationMinutes}m`;
+                      const backgroundColor = getBackgroundColor(ep.date);
+                      return (
+                        <tr
+                          key={ep.date + ep.heure_debut + ep.heure_fin}
+                          style={{ backgroundColor }}
+                        >
+                          <td>{ep.date}</td>
+                          <td>{ep.heure_debut}</td>
+                          <td>{ep.heure_fin}</td>
+                          <td>{formattedDuration}</td>
+                          <td>{ep?.classe?.nom_classe_fr!}</td>
+                          <td>
+                            {ep?.matiere?.matiere.length > 24 ? (
+                              <>
+                                <span>{ep.matiere.matiere.slice(0, 24)}</span>
+                                <br />
+                                <span>{ep.matiere.matiere.slice(24)}</span>
+                              </>
+                            ) : (
+                              ep?.matiere?.matiere
+                            )}
+                          </td>
+                          <td>{ep?.salle?.salle!}</td>
+                          <td>
+                            <ul className="list-unstyled">
+                              {ep.group_responsables.map((res: any) => (
+                                <li key={res.prenom_fr + res.nom_fr}>
+                                  {res.prenom_fr} {res.nom_fr}
+                                </li>
+                              ))}
+                            </ul>
+                          </td>
+                          <td>
+                            <ul className="list-unstyled">
+                              {ep.group_surveillants.map((sur: any) => (
+                                <li key={sur.prenom_fr + sur.nom_fr}>
+                                  {sur.prenom_fr} {sur.nom_fr}
+                                </li>
+                              ))}
+                            </ul>
+                          </td>
+                          <td>{ep.nbr_copie}</td>
+                          <td>{ep?.epreuveStatus!}</td>
+                          <td>
+                            <ul className="hstack gap-2 list-unstyled mb-0">
+                              <li>
+                                <button
+                                  type="button"
+                                  className="btn bg-info-subtle text-info view-item-btn btn-sm"
+                                  onClick={() => tog_ViewModal(ep)}
+                                >
+                                  <i className="ph ph-eye fs-18"></i>
+                                </button>
+                              </li>
+                              <li>
+                                <button
+                                  type="button"
+                                  className="btn bg-success-subtle text-success edit-item-btn btn-sm"
+                                  onClick={() => tog_EditModal(ep?._id!)}
+                                >
+                                  <i className="ph ph-pencil-simple-line fs-18"></i>
+                                </button>
+                              </li>
+                              <li>
+                                <button
+                                  type="button"
+                                  className="btn bg-warning-subtle qrcode-btn btn-sm"
+                                >
+                                  <PDFDownloadLink
+                                    document={<QrCodePage />}
+                                    fileName={`qrcode - ${ep?.classe
+                                      ?.nom_classe_fr!}.pdf`}
+                                    className="text-decoration-none"
+                                  >
+                                    <i className="ph ph-qr-code text-dark fs-18"></i>
+                                  </PDFDownloadLink>
+                                </button>
+                              </li>
+                              <li>
+                                <button
+                                  type="button"
+                                  className="btn bg-primary-subtle text-primary generatefile-btn btn-sm"
+                                >
+                                  <PDFDownloadLink
+                                    document={<ListEmergement epreuve={ep} />}
+                                    fileName={`Liste-émergement - ${ep?.classe
+                                      ?.nom_classe_fr!}.pdf`}
+                                    className="text-decoration-none"
+                                  >
+                                    <i className="ph ph-clipboard-text fs-18"></i>{" "}
+                                  </PDFDownloadLink>
+                                </button>
+                              </li>
+                            </ul>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </Table>
+              </div>
+            </Row>
+          )}
+        </>
+
         {/* View Modal */}
         <Modal
           className="fade zoomIn"

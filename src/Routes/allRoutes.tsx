@@ -186,6 +186,8 @@ import AjouterCalendrierExamen from "pages/GestionExamens/AjouterCalendrierExame
 import ListCalendrier from "pages/GestionExamens/ListCalendrier";
 import ProgrammerCalendrier from "pages/GestionExamens/ProgrammerCalendrier";
 import CalendrierDetails from "pages/GestionExamens/CalendrierDetails";
+import ListDomaineClass from "pages/Departements/GestionClasses/DomaineClasse/ListDomaineClasse";
+import ListMentionClasse from "pages/Departements/GestionClasses/MentionClasse/ListMentionClasse";
 const authProtectedRoutes = [
   { path: "/dashboard", component: <Dashboard /> },
 
@@ -637,7 +639,19 @@ const authProtectedRoutes = [
     path: "/departement/gestion-classes/edit-section",
     component: <EditSection />,
   },
+  // domaine classe
 
+  {
+    path: "/departement/gestion-classes/liste-domaines",
+    component: <ListDomaineClass />,
+  },
+
+  // mention classe
+
+  {
+    path: "/departement/gestion-classes/liste-mentions",
+    component: <ListMentionClasse />,
+  },
   // Gestion Type seance
 
   {
