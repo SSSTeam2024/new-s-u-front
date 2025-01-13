@@ -344,13 +344,23 @@ const SingleDemandeEnseignant = () => {
                         }
                         fileName={location?.state?.piece_demande?.title!}
                       >
-                        <Button
+                        {/* <Button
                           type="button"
                           className="btn btn-primary btn-label m-1"
                         >
                           <i className="bi bi-file-earmark-arrow-down label-icon align-middle fs-16 me-2"></i>
                           Générer
-                        </Button>
+                        </Button> */}
+                        <Link
+                          to="/demandes-enseignant/generer-demande-enseignant"
+                          // onClick={()=>navigate("")}
+                          // type="button"
+                          state={location.state}
+                          className="btn btn-primary btn-label m-1"
+                        >
+                          <i className="bi bi-file-earmark-pdf label-icon align-middle fs-16 me-2"></i>
+                          Generer
+                        </Link>
                       </PDFDownloadLink>
                     ) : (
                       <div>No data available</div>

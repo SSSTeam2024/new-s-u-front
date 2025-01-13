@@ -7,8 +7,6 @@ const TemplateBodyDetail = () => {
   const location = useLocation();
   const templateBody = location.state; // Extract the template body data from location
 
-  console.log(templateBody?.body);
-
   if (!templateBody) {
     return (
       <div>

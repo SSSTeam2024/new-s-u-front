@@ -43,6 +43,7 @@ const SingleDemandeEtudiant = (props: any) => {
   document.title = "Demande Etudiant | ENIGA";
 
   const state = useLocation();
+  console.log("state data", state);
   const navigate = useNavigate();
   const { data: AllVariablesGlobales = [] } = useFetchVaribaleGlobaleQuery();
   const bodyRef = useRef(null);
@@ -239,7 +240,7 @@ const SingleDemandeEtudiant = (props: any) => {
                       className="btn btn-danger btn-label m-1"
                     >
                       <i className="bi bi-file-earmark-pdf label-icon align-middle fs-16 me-2"></i>
-                      Generer
+                      Générer
                     </Link>
                     <Button type="button" className="btn btn-success btn-label">
                       <i className="bi bi-postcard label-icon align-middle fs-16 me-2"></i>

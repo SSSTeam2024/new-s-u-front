@@ -190,6 +190,12 @@ import CalendrierDetails from "pages/GestionExamens/CalendrierDetails";
 import GestionNotesExamen from "pages/GestionNotesExamen";
 import AjouterNotesExamen from "pages/GestionNotesExamen/AjouterNotesExamen";
 
+import GenerateDemandeEnseignant from "pages/Demande-enseignant/GenerateDemandeEnseignant";
+import GenerateDemandePersonnel from "pages/Demande-personnel/GenerateDemandePersonnel";
+import AjouterDeplacement from "pages/Deplacement/AjouterDeplacement";
+import ListeDeplacements from "pages/Deplacement/ListeDeplacements";
+import AjouterNotePro from "pages/Notes-professionnels/AjouterNotePro";
+import ListeNotesPro from "pages/Notes-professionnels/ListeNotesPro";
 const authProtectedRoutes = [
   { path: "/dashboard", component: <Dashboard /> },
 
@@ -381,6 +387,10 @@ const authProtectedRoutes = [
     path: "/demandes-enseignant/ajouter-demande-enseignant",
     component: <AjouterDemandeEnseignant />,
   },
+  {
+    path: "/demandes-enseignant/generer-demande-enseignant",
+    component: <GenerateDemandeEnseignant />,
+  },
 
   //demande personnel
   {
@@ -398,6 +408,10 @@ const authProtectedRoutes = [
   {
     path: "/demandes-personnel/ajouter-demande-personnel",
     component: <AjouterDemandePersonnel />,
+  },
+  {
+    path: "/demandes-personnel/generer-demande-personnel",
+    component: <GenerateDemandePersonnel />,
   },
 
   //reclamation etudiant
@@ -744,6 +758,30 @@ const authProtectedRoutes = [
     component: <AjouterSoldeConge />,
   },
   { path: "/solde-conge/liste-solde-conge", component: <ListeSoldeConge /> },
+
+  // Gestion des deplacements
+
+  {
+    path: "/gestion-deplacement/Ajouter-deplacement",
+    component: <AjouterDeplacement />,
+  },
+
+  {
+    path: "/gestion-deplacement/Liste-deplacements",
+    component: <ListeDeplacements />,
+  },
+
+  // Gestion des notes professionelles
+
+  {
+    path: "/gestion-notes-professionelles/Ajouter-notes-professionelles",
+    component: <AjouterNotePro />,
+  },
+
+  {
+    path: "gestion-notes-professionelles/Liste-notes-professionelles",
+    component: <ListeNotesPro />,
+  },
 
   // Gestion  Des fiches des voeux
   {
