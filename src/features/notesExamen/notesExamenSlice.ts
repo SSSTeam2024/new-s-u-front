@@ -1,6 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-
 export interface NoteExamen {
   _id?: string;
   enseignant: string,
@@ -14,6 +13,7 @@ export interface NoteExamen {
   }[],
   completed: string
 }
+
 export const notesExamenSlice = createApi({
   reducerPath: "NotesExamen",
   baseQuery: fetchBaseQuery({
