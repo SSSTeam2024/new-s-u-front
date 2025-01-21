@@ -49,6 +49,7 @@ const Navdata = () => {
   const [isNotesExamen, setIsNotesExamen] = useState(false);
   const [isConge, setIsConge] = useState(false);
   const [isDeplacement, setIsDeplacement] = useState(false);
+  const [isParcours, setIsParcours] = useState(false);
   const [isNotesProfessionnelles, setIsNotesProfessionnelles] = useState(false);
   const [isModele, setIsModele] = useState(false);
   const [isLevel1, setIsLevel1] = useState(false);
@@ -177,6 +178,9 @@ const Navdata = () => {
     if (iscurrentState !== "NotesExamen") {
       setIsNotesExamen(false);
     }
+    if (iscurrentState !== "Parcours") {
+      setIsParcours(false);
+    }
   }, [
     iscurrentState,
     isEcommerce,
@@ -198,6 +202,7 @@ const Navdata = () => {
     isParametreEtudiant,
     isExamen,
     isNotesExamen,
+    isParcours,
   ]);
   let routes = userPermissions
     ? userPermissions.map((permission) => permission.path)
@@ -795,6 +800,81 @@ const Navdata = () => {
               label: "Ajouter département",
               link: "/departement/gestion-departements/departements/add-departement",
               icon: "bi bi-diagram-3-fill",
+            },
+          ],
+        },
+      ],
+    },
+
+    //gestion parcours
+    {
+      id: "parcours",
+      label: "Parcours et Modules",
+      icon: "bi bi-house-gear-fill",
+      link: "/parcours",
+      click: function (e: any) {
+        e.preventDefault();
+        setIsParcours(!isParcours);
+        setIscurrentState("Parcours");
+        updateIconSidebar(e);
+      },
+      stateVariables: isParcours,
+      subItems: [
+        {
+          id: "parcours",
+          label: "Gestion de Parcours",
+          icon: "bi bi-diagram-3",
+          link: "/parcours/gestion-parcours/liste-parcours",
+          isChildItem: true,
+          click: function (e: any) {
+            e.preventDefault();
+            setIsLevel1(!isLevel1);
+          },
+          stateVariables: isLevel1,
+          childItems: [
+            {
+              id: 1,
+              label: "Liste Des parcours",
+              link: "/parcours/gestion-parcours/liste-parcours",
+              icon: "bi bi-list",
+            },
+            {
+              id: 2,
+              label: "Ajouter parcours",
+              link: "/parcours/gestion-parcours/ajouter-parcours",
+              icon: "bi bi-plus-lg",
+            },
+            {
+              id: 3,
+              label: "Liste types des parcours",
+              link: "/parcours/gestion-parcours/liste-type-parcours",
+              icon: "bi bi-list",
+            },
+          ],
+        },
+        {
+          id: "modules",
+          label: "Gestion Modules",
+          icon: "bi bi-door-closed-fill",
+          link: "/parcours/gestion-parcours/liste-modules",
+          isChildItem: true,
+          click: function (e: any) {
+            e.preventDefault();
+            setIsLevel2(!isLevel2);
+          },
+          stateVariables: isLevel2,
+          childItems: [
+            {
+              id: 1,
+              label: "Liste Des Salles",
+              link: "/parcours/gestion-parcours/liste-modules",
+              icon: "bi bi-list",
+            },
+            {
+              id: 1,
+              label: "Ajouter module",
+              link: "/parcours/gestion-parcours/ajouter-module",
+              icon: "bi bi-plus-lg",
             },
           ],
         },

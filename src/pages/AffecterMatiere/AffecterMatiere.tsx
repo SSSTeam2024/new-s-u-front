@@ -19,6 +19,14 @@ interface MatiereOption {
   volume: string;
   nbr_elimination: string;
   regime_matiere: string;
+  classes?: any[];
+  types: {
+    type: string;
+    volume: string;
+    nbr_elimination: string;
+  }[];
+  credit_matiere: string;
+  coefficient_matiere: string;
 }
 
 const AffecterMatiere = () => {
@@ -57,18 +65,20 @@ const AffecterMatiere = () => {
       volume: option.volume,
       nbr_elimination: option.nbr_elimination,
       regime_matiere: option.regime_matiere,
+      types: option.types || [
+        { type: "TP", volume: "", nbr_elimination: "" },
+        { type: "TD", volume: "", nbr_elimination: "" },
+        { type: "C", volume: "", nbr_elimination: "" },
+        { type: "CI", volume: "", nbr_elimination: "" },
+      ],
+      credit_matiere: option.credit_matiere,
+      coefficient_matiere: option.coefficient_matiere,
     }));
 
-    const uniqueMatieres = [...selectedMatieres, ...matieres].reduce(
-      (acc, current) => {
-        const x = acc.find((item) => item._id === current._id);
-        if (!x) {
-          return acc.concat([current]);
-        } else {
-          return acc;
-        }
-      },
-      [] as Matiere[]
+    const uniqueMatieres = Array.from(
+      new Map(
+        [...selectedMatieres, ...matieres].map((m) => [m._id, m])
+      ).values()
     );
 
     setSelectedMatieres(uniqueMatieres);
@@ -111,16 +121,59 @@ const AffecterMatiere = () => {
     return <div>Error processing matieres</div>;
   }
 
-  const options: MatiereOption[] = allMatieres.map((matiere) => ({
-    value: matiere._id,
-    label: matiere.matiere + " / " + matiere.semestre,
-    type: matiere.type,
-    semestre: matiere.semestre,
-    code_matiere: matiere.code_matiere,
-    volume: matiere.volume,
-    nbr_elimination: matiere.nbr_elimination,
-    regime_matiere: matiere.regime_matiere,
-  }));
+  // const options: MatiereOption[] = allMatieres.map((matiere) => ({
+  //   value: matiere._id,
+  //   label: `${matiere.matiere}  / ${matiere.semestre}`,
+  //   type: matiere.type || "", // Default to an empty string
+  //   semestre: matiere.semestre,
+  //   code_matiere: matiere.code_matiere || "",
+  //   volume: matiere.volume || "",
+  //   nbr_elimination: matiere.nbr_elimination || "",
+  //   regime_matiere: matiere.regime_matiere || "",
+  //   types: matiere.types || [
+  //     { type: "TP", volume: "", nbr_elimination: "" },
+  //     { type: "TD", volume: "", nbr_elimination: "" },
+  //     { type: "C", volume: "", nbr_elimination: "" },
+  //     { type: "CI", volume: "", nbr_elimination: "" },
+  //   ],
+  //   credit_matiere: matiere.credit_matiere || "",
+  //   coefficient_matiere: matiere.coefficient_matiere || "",
+  // }));
+  // console.log(options);
+  const options: MatiereOption[] = allMatieres.map((matiere) => {
+    // Create a new array for types (clone the existing one)
+    const types = [
+      ...(matiere.types || [
+        { type: "TP", volume: "", nbr_elimination: "" },
+        { type: "TD", volume: "", nbr_elimination: "" },
+        { type: "C", volume: "", nbr_elimination: "" },
+        { type: "CI", volume: "", nbr_elimination: "" },
+      ]),
+    ];
+
+    // Add the type of matiere to the types array if it's not already there
+    if (matiere.type && !types.some((item) => item.type === matiere.type)) {
+      types.push({ type: matiere.type, volume: "", nbr_elimination: "" });
+    }
+
+    return {
+      value: matiere._id,
+      label: `${matiere.matiere}  / ${matiere.semestre} / ${
+        matiere?.types || ""
+      }`, // Add the type to the label
+      type: matiere.type || "",
+      semestre: matiere.semestre,
+      code_matiere: matiere.code_matiere || "",
+      volume: matiere.volume || "",
+      nbr_elimination: matiere.nbr_elimination || "",
+      regime_matiere: matiere.regime_matiere || "",
+      types: types,
+      credit_matiere: matiere.credit_matiere || "",
+      coefficient_matiere: matiere.coefficient_matiere || "",
+    };
+  });
+
+  console.log(options);
 
   const customStyles = {
     multiValue: (styles: any, { data }: any) => ({
@@ -152,9 +205,14 @@ const AffecterMatiere = () => {
     selectedMatieres.length > 0 ||
     (!isDeletingMatiere && selectedMatieres.length === 0);
 
+  // const filteredOptions = options.filter(
+  //   (option) =>
+  //     !selectedMatieres.some((matiere) => matiere._id === option.value)
+  // );
+
+  const selectedIds = new Set(selectedMatieres.map((matiere) => matiere._id));
   const filteredOptions = options.filter(
-    (option) =>
-      !selectedMatieres.some((matiere) => matiere._id === option.value)
+    (option) => !selectedIds.has(option.value)
   );
 
   return (

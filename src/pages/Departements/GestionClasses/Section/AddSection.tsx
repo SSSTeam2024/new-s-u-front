@@ -77,7 +77,9 @@ const AddSection = () => {
     });
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleDepartementsChange = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
     const { options } = e.target;
     const value: string[] = [];
     for (let i = 0; i < options.length; i++) {
@@ -88,6 +90,14 @@ const AddSection = () => {
     setFormData((prevData) => ({
       ...prevData,
       departements: value,
+    }));
+  };
+
+  const handleMentionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const { value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      mention_classe: value,
     }));
   };
 
@@ -149,7 +159,7 @@ const AddSection = () => {
                       />
                     </div>
                   </Col>
-                  <Col lg={5}>
+                  {/* <Col lg={5}>
                     <div className="mb-3">
                       <Form.Label htmlFor="departements">
                         Départements
@@ -160,7 +170,7 @@ const AddSection = () => {
                         id="departements"
                         multiple
                         value={formData.departements}
-                        onChange={handleChange}
+                        onChange={handleDepartementsChange}
                       >
                         <option value="" disabled>
                           Sélectionner Départements
@@ -192,19 +202,20 @@ const AddSection = () => {
                         })}
                       </div>
                     </div>
-                  </Col>
+                  </Col> */}
 
                   <Col lg={6}>
                     <div className="mb-3">
                       <Form.Label htmlFor="mention_classe">
                         Mention Classe
                       </Form.Label>
+
                       <select
                         className="form-select text-muted"
                         name="mention_classe"
                         id="mention_classe"
                         value={formData.mention_classe}
-                        onChange={handleChange}
+                        onChange={handleMentionChange}
                       >
                         <option value="">Sélectionner Mention Classe</option>
                         {mentionsClasse.map((mentionClasse) => (

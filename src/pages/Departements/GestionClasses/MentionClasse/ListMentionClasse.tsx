@@ -432,12 +432,12 @@ const ListMentionClasse = () => {
 
                     <Col lg={6}>
                       <div className="mb-3">
-                        <Form.Label htmlFor="name_domaine_ar">
+                        <Form.Label htmlFor="name_mention_ar">
                           Mention Classe(AR)
                         </Form.Label>
                         <Form.Control
                           type="text"
-                          id="name_domaine_ar"
+                          id="name_mention_ar"
                           placeholder=""
                           required
                           onChange={onChange}
@@ -536,12 +536,12 @@ const ListMentionClasse = () => {
 
                     <Col lg={6}>
                       <div className="mb-3">
-                        <Form.Label htmlFor="name_domaine_ar">
+                        <Form.Label htmlFor="name_mention_ar">
                           Mention Classe(AR)
                         </Form.Label>
                         <Form.Control
                           type="text"
-                          id="name_domaine_ar"
+                          id="name_mention_ar"
                           placeholder=""
                           required
                           onChange={onChange}

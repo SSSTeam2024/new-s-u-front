@@ -198,14 +198,34 @@ import AjouterDeplacement from "pages/Deplacement/AjouterDeplacement";
 import ListeDeplacements from "pages/Deplacement/ListeDeplacements";
 import AjouterNotePro from "pages/Notes-professionnels/AjouterNotePro";
 import ListeNotesPro from "pages/Notes-professionnels/ListeNotesPro";
+import ListeParcours from "pages/GestionParcours/Parcours/ListeParcours";
+import ListeModulesParcours from "pages/GestionParcours/ModulesParcours/ListeModulesParcours";
+import ListTypeParcours from "pages/GestionParcours/TypeParcours/ListTypeParcours";
+import AddPlanParcours from "pages/GestionParcours/Parcours/AddPlanParcours";
 const authProtectedRoutes = [
   { path: "/dashboard", component: <Dashboard /> },
 
-  //avis etudiant
+  //Parcours Part
+
   {
-    path: "/avis-etudiant/liste-avis-etudiant",
-    component: <ListeAvisEtudiant />,
+    path: "/parcours/gestion-parcours/liste-parcours",
+    component: <ListeParcours />,
   },
+  //ajouter parcours
+  {
+    path: "/parcours/gestion-parcours/ajouter-plan-parcours",
+    component: <AddPlanParcours />,
+  },
+
+  {
+    path: "/parcours/gestion-parcours/liste-modules",
+    component: <ListeModulesParcours />,
+  },
+  {
+    path: "/parcours/gestion-parcours/liste-type-parcours",
+    component: <ListTypeParcours />,
+  },
+  //avis etudiant
   {
     path: "/avis-etudiant/ajouter-avis-etudiant",
     component: <AjouterAvisEtudiant />,

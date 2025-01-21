@@ -63,6 +63,9 @@ import { virtualServiceSlice } from "features/virtualService/virtualServiceSlice
 
 //! Notes Examen
 import { notesExamenSlice } from "features/notesExamen/notesExamenSlice";
+import { typeParcoursSlice } from "features/TypeParcours/TypeParcours";
+import { parcoursSlice } from "features/parcours/parcours";
+import { moduleParcoursSlice } from "features/moduleParcours/moduleParcours";
 
 export const store = configureStore({
   reducer: {
@@ -121,6 +124,10 @@ export const store = configureStore({
     [mentionClasseSlice.reducerPath]: mentionClasseSlice.reducer,
     [deplacementSlice.reducerPath]: deplacementSlice.reducer,
     [virtualServiceSlice.reducerPath]: virtualServiceSlice.reducer,
+
+    [typeParcoursSlice.reducerPath]: typeParcoursSlice.reducer,
+    [parcoursSlice.reducerPath]: parcoursSlice.reducer,
+    [moduleParcoursSlice.reducerPath]: moduleParcoursSlice.reducer,
     //! Notes Examen
     [notesExamenSlice.reducerPath]: notesExamenSlice.reducer,
     auth: authSlice,
@@ -184,6 +191,9 @@ export const store = configureStore({
       deplacementSlice.middleware,
       virtualServiceSlice.middleware,
       notesExamenSlice.middleware,
+      typeParcoursSlice.middleware,
+      parcoursSlice.middleware,
+      moduleParcoursSlice.middleware,
     ]);
   },
 });

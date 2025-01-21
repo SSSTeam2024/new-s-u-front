@@ -4,24 +4,26 @@ import {
   Card,
   Col,
   Container,
-  Dropdown,
   Form,
   Modal,
   Row,
 } from "react-bootstrap";
 import Breadcrumb from "Common/BreadCrumb";
 import { Link, useNavigate } from "react-router-dom";
-import TableContainer from "Common/TableContainer";
-import { sellerList } from "Common/data";
+import * as XLSX from "xlsx";
 import Swal from "sweetalert2";
-import {
-  Section,
-  useDeleteSectionMutation,
-  useFetchSectionsQuery,
-} from "features/section/section";
 
-const ListSections = () => {
-  document.title = "Liste des sections | ENIGA";
+import { salles } from "../../../Common/data/salles";
+import TableContainer from "Common/TableContainer";
+import {
+  Salle,
+  useDeleteSalleMutation,
+  useFetchSallesQuery,
+} from "features/salles/salles";
+import { useFetchAllSessionsByRoomIdMutation } from "features/seance/seance";
+
+const ListeModulesParcours = () => {
+  document.title = "Liste des salles | ENIGA";
 
   const navigate = useNavigate();
 
@@ -30,13 +32,19 @@ const ListSections = () => {
   function tog_AddParametreModals() {
     setmodal_AddParametreModals(!modal_AddParametreModals);
   }
+  const exportToExcel = () => {
+    const worksheet = XLSX.utils.json_to_sheet(salles);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Salles");
+    XLSX.writeFile(workbook, "Salles.xlsx");
+  };
 
-  function tog_AddSection() {
-    navigate("/departement/gestion-classes/ajouter-section");
+  function tog_AddSalle() {
+    navigate("/departement/gestion-salles/ajouter-salle");
   }
-  const { data = [] } = useFetchSectionsQuery();
-  console.log(data);
-  const [deleteSection] = useDeleteSectionMutation();
+  const { data = [] } = useFetchSallesQuery();
+  const [getSessionsByRoomId] = useFetchAllSessionsByRoomIdMutation();
+  const [deleteSalle] = useDeleteSalleMutation();
 
   const swalWithBootstrapButtons = Swal.mixin({
     customClass: {
@@ -45,6 +53,33 @@ const ListSections = () => {
     },
     buttonsStyling: false,
   });
+
+  const checkRoomIsCleanAndDelete = async (_id: string) => {
+    let res = await getSessionsByRoomId(_id).unwrap();
+    console.log(res);
+    if (res.length === 0) {
+      await AlertDelete(_id);
+    } else {
+      let classNames = "";
+      for (let session of res) {
+        classNames +=
+          "\n- " +
+          session.classe.nom_classe_fr +
+          " | Semestre " +
+          session.semestre +
+          " | " +
+          session.jour +
+          " | " +
+          session.heure_debut +
+          " - " +
+          session.heure_fin;
+      }
+      alert(
+        "Cette salle est présente dans les séances suivantes: " + classNames
+      );
+    }
+  };
+
   const AlertDelete = async (_id: string) => {
     swalWithBootstrapButtons
       .fire({
@@ -52,66 +87,72 @@ const ListSections = () => {
         text: "Vous ne pourrez pas revenir en arrière!",
         icon: "warning",
         showCancelButton: true,
-        confirmButtonText: "Oui, supprimez-le!",
+        confirmButtonText: "Oui, supprimer!",
         cancelButtonText: "Non, annuler!",
         reverseButtons: true,
       })
       .then((result) => {
         if (result.isConfirmed) {
-          deleteSection(_id);
+          deleteSalle(_id);
           swalWithBootstrapButtons.fire(
-            "Supprimé!",
-            "Section a été supprimé.",
+            "Supprimée!",
+            "Salle supprimée.",
             "success"
           );
         } else if (result.dismiss === Swal.DismissReason.cancel) {
           swalWithBootstrapButtons.fire(
             "Annulé",
-            "Section est en sécurité :)",
+            "Salle est en sécurité :)",
             "error"
           );
         }
       });
   };
+
   const columns = useMemo(
     () => [
       {
-        Header: "Nom Section (FR)",
-        accessor: "name_section_fr",
+        Header: "Salle",
+        accessor: "salle",
         disableFilters: true,
         filterable: true,
       },
 
       {
-        Header: "Nom Section (AR)",
-        accessor: "name_section_ar",
+        Header: "Emplacement",
+        accessor: "emplacement",
         disableFilters: true,
         filterable: true,
       },
       {
-        Header: "Abréviation",
-        accessor: "abreviation",
+        Header: "Type Salle",
+        accessor: "type_salle",
         disableFilters: true,
         filterable: true,
       },
       {
-        Header: "Mention Classe",
-        accessor: (row: any) => row?.mention_classe?.name_mention_fr! || "",
+        Header: "Departement (FR)",
+        accessor: (row: any) => row.departement?.name_fr || "",
         disableFilters: true,
         filterable: true,
       },
-
+      {
+        Header: "Departement (AR)",
+        accessor: (row: any) => row.departement?.name_ar || "",
+        disableFilters: true,
+        filterable: true,
+      },
       {
         Header: "Action",
         disableFilters: true,
         filterable: true,
-        accessor: (section: Section) => {
+        accessor: (salle: Salle) => {
           return (
             <ul className="hstack gap-2 list-unstyled mb-0">
               <li>
                 <Link
-                  to="/departement/gestion-classes/edit-section"
-                  state={section}
+                  to="/departement/gestion-salles/edit-salle"
+                  state={salle}
                   className="badge bg-primary-subtle text-primary edit-item-btn"
                 >
                   <i
@@ -134,6 +175,7 @@ const ListSections = () => {
                 <Link
                   to="#"
                   className="badge bg-danger-subtle text-danger remove-item-btn"
+                  onClick={() => checkRoomIsCleanAndDelete(salle?._id!)}
                 >
                   <i
                     className="ph ph-trash"
@@ -148,7 +190,6 @@ const ListSections = () => {
                     onMouseLeave={(e) =>
                       (e.currentTarget.style.transform = "scale(1)")
                     }
-                    onClick={() => AlertDelete(section?._id!)}
                   ></i>
                 </Link>
               </li>
@@ -159,14 +200,13 @@ const ListSections = () => {
     ],
     []
   );
-
   return (
     <React.Fragment>
       <div className="page-content">
         <Container fluid={true}>
           <Breadcrumb
             title="Gestion des départements"
-            pageTitle="Liste des sections"
+            pageTitle="Liste des salles"
           />
 
           <Row id="sellersList">
@@ -197,13 +237,21 @@ const ListSections = () => {
                       </select>
                     </Col>
                     <Col className="col-lg-auto ms-auto">
-                      <div className="hstack gap-2">
+                      <div className="hstack gap-3">
                         <Button
                           variant="primary"
                           className="add-btn"
-                          onClick={() => tog_AddSection()}
+                          onClick={() => tog_AddSalle()}
                         >
-                          Ajouter section
+                          Ajouter salle
+                        </Button>
+                        <Button
+                          variant="primary"
+                          className="add-btn"
+                          // onClick={() => tog_ImportModals()}
+                          onClick={exportToExcel}
+                        >
+                          Importer
                         </Button>
                       </div>
                     </Col>
@@ -221,7 +269,7 @@ const ListSections = () => {
               >
                 <Modal.Header className="px-4 pt-4" closeButton>
                   <h5 className="modal-title" id="exampleModalLabel">
-                    Ajouter une section
+                    Ajouter Une Salle
                   </h5>
                 </Modal.Header>
                 <Form className="tablelist-form">
@@ -233,9 +281,7 @@ const ListSections = () => {
                     <input type="hidden" id="id-field" />
 
                     <div className="mb-3">
-                      <Form.Label htmlFor="item-stock-field">
-                        Nom section (FR)
-                      </Form.Label>
+                      <Form.Label htmlFor="item-stock-field">Salle</Form.Label>
                       <Form.Control
                         type="text"
                         id="item-stock-field"
@@ -245,7 +291,7 @@ const ListSections = () => {
                     </div>
                     <div className="mb-3">
                       <Form.Label htmlFor="item-stock-field">
-                        Nom section (AR)
+                        Emplacement
                       </Form.Label>
                       <Form.Control
                         type="text"
@@ -255,15 +301,18 @@ const ListSections = () => {
                       />
                     </div>
                     <div className="mb-3">
-                      <Form.Label htmlFor="item-stock-field">
-                        Abréviation
-                      </Form.Label>
-                      <Form.Control
-                        type="text"
-                        id="item-stock-field"
-                        placeholder=""
-                        required
-                      />
+                      <Form.Label htmlFor="civilStatus">Type Salle</Form.Label>
+                      <select
+                        className="form-select text-muted"
+                        name="civilStatus"
+                        id="civilStatus"
+                      >
+                        <option value="">Salle Cours</option>
+                        <option value="Married">Labo</option>
+                        <option value="Divorced">Salle TD</option>
+                        <option value="Widowed">Amphi</option>
+                        <option value="Widowed">Atelier</option>
+                      </select>
                     </div>
                   </Modal.Body>
                   <div className="modal-footer">
@@ -329,4 +378,4 @@ const ListSections = () => {
   );
 };
 
-export default ListSections;
+export default ListeModulesParcours;

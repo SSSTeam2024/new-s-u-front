@@ -16,36 +16,40 @@ const EditMatiere = () => {
 
   const [formData, setFormData] = useState({
     _id: "",
-    nbr_elimination: "",
-    volume: "",
-    semestre: "",
-    type: "",
-    matiere: "",
     code_matiere: "",
+    matiere: "",
+    semestre: "S1",
     regime_matiere: "",
+    credit_matiere: "",
+    coefficient_matiere: "",
+    types: [
+      { type: "TP", volume: "", nbr_elimination: "" },
+      { type: "TD", volume: "", nbr_elimination: "" },
+      { type: "C", volume: "", nbr_elimination: "" },
+      { type: "CI", volume: "", nbr_elimination: "" },
+    ],
   });
 
   useEffect(() => {
     if (matiere) {
       setFormData({
         _id: matiere._id,
-        nbr_elimination: matiere.nbr_elimination,
         semestre: matiere.semestre,
-        volume: matiere.volume,
-        type: matiere.type,
         matiere: matiere.matiere,
         code_matiere: matiere.code_matiere,
         regime_matiere: matiere.regime_matiere,
+        credit_matiere: matiere.credit_matiere,
+        coefficient_matiere: matiere.coefficient_matiere,
+        types: matiere.types || [
+          { type: "TP", volume: "", nbr_elimination: "" },
+          { type: "TD", volume: "", nbr_elimination: "" },
+          { type: "C", volume: "", nbr_elimination: "" },
+          { type: "CI", volume: "", nbr_elimination: "" },
+        ],
       });
     }
   }, [matiere]);
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData((prevState) => ({
-      ...prevState,
-      [e.target.id]: e.target.value,
-    }));
-  };
   const errorAlert = (message: string) => {
     Swal.fire({
       position: "center",
@@ -55,18 +59,47 @@ const EditMatiere = () => {
       timer: 2000,
     });
   };
+  // const onSubmitMatiere = async (e: React.FormEvent<HTMLFormElement>) => {
+  //   e.preventDefault();
+  //   try {
+  //     await editMatiere(formData).unwrap();
+  //     notify();
+  //     navigate("/departement/gestion-matieres/liste-matieres");
+  //   } catch (error: any) {
+  //     if (error.status === 400) {
+  //       errorAlert("La valeur doit être unique.");
+  //     } else {
+  //       errorAlert("La valeur doit être unique. Veuillez réessayer.");
+  //     }
+  //   }
+  // };
+
   const onSubmitMatiere = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    // Filter out types that have empty fields for 'volume' and 'nbr_elimination'
+    const filteredTypes = formData.types.filter(
+      (type) => type.volume !== "" && type.nbr_elimination !== ""
+    );
+
+    // Update formData to only include non-empty types
+    const updatedFormData = {
+      ...formData,
+      types: filteredTypes,
+    };
+
     try {
-      await editMatiere(formData).unwrap();
-      notify();
+      await editMatiere(updatedFormData).unwrap();
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: "Matière a été modifiée avec succés",
+        showConfirmButton: false,
+        timer: 2000,
+      });
       navigate("/departement/gestion-matieres/liste-matieres");
     } catch (error: any) {
-      if (error.status === 400) {
-        errorAlert("La valeur doit être unique.");
-      } else {
-        errorAlert("La valeur doit être unique. Veuillez réessayer.");
-      }
+      errorAlert(error.message || "Erreur lors de la création de la matière.");
     }
   };
 
@@ -89,6 +122,26 @@ const EditMatiere = () => {
   function tog_retourParametres() {
     navigate("/departement/gestion-matieres/liste-matieres");
   }
+  const onChange = (e: any) => {
+    const { id, value } = e.target;
+    setFormData((prevState) => ({
+      ...prevState,
+      [id]: value,
+    }));
+  };
+  const onTypeChange = (index: any, field: any, value: any) => {
+    setFormData((prevState) => {
+      const updatedTypes = [...prevState.types];
+      updatedTypes[index] = {
+        ...updatedTypes[index],
+        [field]: value,
+      };
+      return {
+        ...prevState,
+        types: updatedTypes,
+      };
+    });
+  };
   return (
     <React.Fragment>
       <div className="page-content">
@@ -125,10 +178,10 @@ const EditMatiere = () => {
                   </Col>
                 </Row>
                 <Row>
-                  <Col lg={4}>
+                  <Col lg={2}>
                     <div className="mb-3">
                       <Form.Label htmlFor="code_matiere">
-                        Code Matière
+                        Code Element d'Enseignement
                       </Form.Label>
                       <Form.Control
                         type="text"
@@ -140,9 +193,9 @@ const EditMatiere = () => {
                       />
                     </div>
                   </Col>
-                  <Col lg={4}>
+                  <Col lg={3}>
                     <div className="mb-3">
-                      <Form.Label htmlFor="matiere">Matières</Form.Label>
+                      <Form.Label htmlFor="matiere">Titre Matière</Form.Label>
                       <Form.Control
                         type="text"
                         id="matiere"
@@ -153,7 +206,7 @@ const EditMatiere = () => {
                       />
                     </div>
                   </Col>
-                  <Col lg={4}>
+                  <Col lg={2}>
                     <div className="mb-3">
                       <Form.Label htmlFor="regime_matiere">
                         Régime Matière
@@ -177,55 +230,89 @@ const EditMatiere = () => {
                       </select>
                     </div>
                   </Col>
-
-                  <Col lg={4}>
+                  <Col lg={2}>
                     <div className="mb-3">
-                      <Form.Label htmlFor="type">Type Matière</Form.Label>
-                      <select
-                        className="form-select text-muted"
-                        name="type"
-                        id="type"
-                        value={formData.type}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            type: e.target.value,
-                          })
-                        }
-                      >
-                        <option value="">Sélectionner Type Matière</option>
-                        <option value="TP">TP</option>
-                        <option value="TD">TD</option>
-                        <option value="C">C</option>
-                        <option value="CI">CI</option>
-                      </select>
-                    </div>
-                  </Col>
-
-                  <Col lg={4}>
-                    <div className="mb-3">
-                      <Form.Label htmlFor="volume">Volume</Form.Label>
-                      <Form.Control
-                        type="number"
-                        id="volume"
-                        placeholder=""
-                        onChange={onChange}
-                        value={formData.volume}
-                      />
-                    </div>
-                  </Col>
-                  <Col lg={4}>
-                    <div className="mb-3">
-                      <Form.Label htmlFor="nbr_elimination">
-                        Nombre Elimination
+                      <Form.Label htmlFor="coefficient_matiere">
+                        Coefficient Matière
                       </Form.Label>
                       <Form.Control
                         type="text"
-                        id="nbr_elimination"
+                        id="coefficient_matiere"
                         placeholder=""
+                        required
                         onChange={onChange}
-                        value={formData.nbr_elimination}
+                        value={formData.coefficient_matiere}
                       />
+                    </div>
+                  </Col>
+                  <Col lg={2}>
+                    <div className="mb-3">
+                      <Form.Label htmlFor="credit_matiere">
+                        Crédit Matière
+                      </Form.Label>
+                      <Form.Control
+                        type="text"
+                        id="credit_matiere"
+                        placeholder=""
+                        required
+                        onChange={onChange}
+                        value={formData.credit_matiere}
+                      />
+                    </div>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col lg={12}>
+                    <div className="table-responsive">
+                      <table className="table table-bordered">
+                        <thead>
+                          <tr>
+                            <th>Type Matière</th>
+                            <th>Volume Horaire</th>
+                            <th>Nombre Elimination</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {formData.types.map((typeData, index) => (
+                            <tr key={index}>
+                              <td>
+                                <Form.Control
+                                  type="text"
+                                  readOnly
+                                  value={typeData.type}
+                                  className="bg-light"
+                                />
+                              </td>
+                              <td>
+                                <Form.Control
+                                  type="number"
+                                  value={typeData.volume}
+                                  onChange={(e) =>
+                                    onTypeChange(
+                                      index,
+                                      "volume",
+                                      e.target.value
+                                    )
+                                  }
+                                />
+                              </td>
+                              <td>
+                                <Form.Control
+                                  type="number"
+                                  value={typeData.nbr_elimination}
+                                  onChange={(e) =>
+                                    onTypeChange(
+                                      index,
+                                      "nbr_elimination",
+                                      e.target.value
+                                    )
+                                  }
+                                />
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
                     </div>
                   </Col>
                 </Row>
