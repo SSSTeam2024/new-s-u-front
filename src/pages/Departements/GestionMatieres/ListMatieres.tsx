@@ -20,15 +20,23 @@ import {
   useFetchMatiereQuery,
 } from "features/matiere/matiere";
 
-interface Matiere {
+export interface Matiere {
   _id: string;
-  code_matiere: string;
-  matiere: string;
-  type: string;
+  code_matiere?: string;
+  matiere?: string;
+  type?: string;
   semestre: string;
-  volume: string;
-  nbr_elimination: string;
-  regime_matiere: string;
+  volume?: string;
+  nbr_elimination?: string;
+  regime_matiere?: string;
+  classes?: any[];
+  types?: {
+    type: string;
+    volume: string;
+    nbr_elimination: string;
+  }[];
+  credit_matiere?: string;
+  coefficient_matiere?: string;
 }
 
 const ListMatieres = () => {
@@ -57,6 +65,7 @@ const ListMatieres = () => {
     navigate("/departement/gestion-matieres/ajouter-matiere");
   }
   const { data = [] } = useFetchMatiereQuery();
+  console.log("data matiere", data);
   const [deleteMatiere] = useDeleteMatiereMutation();
 
   const swalWithBootstrapButtons = Swal.mixin({
@@ -98,33 +107,6 @@ const ListMatieres = () => {
   const columns = useMemo(
     () => [
       {
-        Header: (
-          <div className="form-check">
-            {" "}
-            <input
-              className="form-check-input"
-              type="checkbox"
-              id="checkAll"
-              value="option"
-            />{" "}
-          </div>
-        ),
-        Cell: (cellProps: any) => {
-          return (
-            <div className="form-check">
-              {" "}
-              <input
-                className="form-check-input"
-                type="checkbox"
-                name="chk_child"
-                defaultValue="option1"
-              />{" "}
-            </div>
-          );
-        },
-        id: "#",
-      },
-      {
         Header: "Code matière",
         accessor: "code_matiere",
         disableFilters: true,
@@ -136,10 +118,12 @@ const ListMatieres = () => {
         disableFilters: true,
         filterable: true,
       },
-
       {
         Header: "Type",
-        accessor: "type",
+        accessor: (row: Matiere) => {
+          const type = row.types && row.types[0] ? row.types[0].type : "---";
+          return type;
+        },
         disableFilters: true,
         filterable: true,
       },
@@ -150,22 +134,41 @@ const ListMatieres = () => {
         filterable: true,
       },
       {
+        Header: "Crédit",
+        accessor: "credit_matiere",
+        disableFilters: true,
+        filterable: true,
+      },
+      {
+        Header: "Coefficients",
+        accessor: "coefficient_matiere",
+        disableFilters: true,
+        filterable: true,
+      },
+      {
         Header: "Semestre",
         accessor: "semestre",
         disableFilters: true,
         filterable: true,
       },
-
       {
         Header: "Volume",
-        accessor: (row: Matiere) => row.volume || "---",
+        accessor: (row: Matiere) => {
+          // Accessing the first item of types and handling missing values
+          const type = row.types && row.types[0] ? row.types[0].volume : "---";
+          return type;
+        },
         disableFilters: true,
         filterable: true,
       },
-
       {
         Header: "Nbr élimination",
-        accessor: (row: Matiere) => row.nbr_elimination || "---",
+        accessor: (row: Matiere) => {
+          // Accessing the first item of types and handling missing values
+          const nbrElimination =
+            row.types && row.types[0] ? row.types[0].nbr_elimination : "---";
+          return nbrElimination;
+        },
         disableFilters: true,
         filterable: true,
       },
@@ -227,6 +230,7 @@ const ListMatieres = () => {
     ],
     []
   );
+
   const handleFileUpload = (event: any) => {
     const file = event.target.files[0];
     const reader = new FileReader();
@@ -406,19 +410,6 @@ const ListMatieres = () => {
                         </div>
                       </Col>
                     </Row>
-
-                    {/* <div className="mb-3">
-                      <Form.Label htmlFor="civilStatus">Semestre</Form.Label>
-                      <select
-                        className="form-select text-muted"
-                        name="civilStatus"
-                        id="civilStatus"
-                      >
-                        <option value="">Choisir semestre</option>
-                        <option value="Married">S1</option>
-                        <option value="Single">S2</option>
-                      </select>
-                    </div> */}
 
                     <div className="mb-3">
                       <Form.Label htmlFor="phone-field">

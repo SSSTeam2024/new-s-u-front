@@ -98,6 +98,30 @@ const EditSection = () => {
     formData.departements.includes(departement._id)
   );
 
+  const handleDepartementsChange = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const { options } = e.target;
+    const value: string[] = [];
+    for (let i = 0; i < options.length; i++) {
+      if (options[i].selected) {
+        value.push(options[i].value);
+      }
+    }
+    setFormData((prevData) => ({
+      ...prevData,
+      departements: value,
+    }));
+  };
+
+  const handleMentionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const { value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      mention_classe: value,
+    }));
+  };
+
   return (
     <React.Fragment>
       <div className="page-content">
@@ -152,7 +176,7 @@ const EditSection = () => {
                     </div>
                   </Col>
 
-                  <Col lg={5}>
+                  {/* <Col lg={5}>
                     <div className="mb-3">
                       <Form.Label htmlFor="departements">
                         Départements
@@ -163,7 +187,7 @@ const EditSection = () => {
                         id="departements"
                         multiple
                         value={formData.departements}
-                        onChange={handleChange}
+                        onChange={handleDepartementsChange}
                       >
                         <option value="" disabled>
                           Sélectionner Départements
@@ -174,7 +198,7 @@ const EditSection = () => {
                           </option>
                         ))}
                       </select>
-                      {/* Display already assigned departments */}
+                   
                       <div className="mt-3">
                         <h5>Départements Assignés</h5>
                         {existingDepartements.length > 0 ? (
@@ -192,7 +216,7 @@ const EditSection = () => {
                         )}
                       </div>
                     </div>
-                  </Col>
+                  </Col> */}
                   <Col lg={6}>
                     <div className="mb-3">
                       <Form.Label htmlFor="mention_classe">
@@ -203,7 +227,7 @@ const EditSection = () => {
                         name="mention_classe"
                         id="mention_classe"
                         value={formData.mention_classe}
-                        onChange={handleChange}
+                        onChange={handleMentionChange}
                       >
                         <option value="">Sélectionner Mention Classe</option>
                         {mentionsClasse.map((mentionClasse) => (

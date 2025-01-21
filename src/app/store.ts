@@ -59,10 +59,15 @@ import { examenSlice } from "features/examens/examenSlice";
 import { domaineClasseSlice } from "features/domaineClasse/domaineClasse";
 import { mentionClasseSlice } from "features/mentionClasse/mentionClasse";
 import { deplacementSlice } from "features/deplacement/deplacementSlice";
+import { missionSlice } from "features/mission/missionSlice";
+import { notesProSlice } from "features/notesPro/notesProSlice";
 import { virtualServiceSlice } from "features/virtualService/virtualServiceSlice";
 
 //! Notes Examen
 import { notesExamenSlice } from "features/notesExamen/notesExamenSlice";
+import { typeParcoursSlice } from "features/TypeParcours/TypeParcours";
+import { parcoursSlice } from "features/parcours/parcours";
+import { moduleParcoursSlice } from "features/moduleParcours/moduleParcours";
 
 export const store = configureStore({
   reducer: {
@@ -117,10 +122,15 @@ export const store = configureStore({
     [ficheVoeuxSlice.reducerPath]: ficheVoeuxSlice.reducer,
     [seanceSlice.reducerPath]: seanceSlice.reducer,
     [examenSlice.reducerPath]: examenSlice.reducer,
-    [domaineClasseSlice.reducerPath]: domaineClasseSlice.reducer,
-    [mentionClasseSlice.reducerPath]: mentionClasseSlice.reducer,
+    [missionSlice.reducerPath]: missionSlice.reducer,
     [deplacementSlice.reducerPath]: deplacementSlice.reducer,
     [virtualServiceSlice.reducerPath]: virtualServiceSlice.reducer,
+    [notesProSlice.reducerPath]: notesProSlice.reducer,
+    [domaineClasseSlice.reducerPath]: domaineClasseSlice.reducer,
+    [mentionClasseSlice.reducerPath]: mentionClasseSlice.reducer,
+    [typeParcoursSlice.reducerPath]: typeParcoursSlice.reducer,
+    [parcoursSlice.reducerPath]: parcoursSlice.reducer,
+    [moduleParcoursSlice.reducerPath]: moduleParcoursSlice.reducer,
     //! Notes Examen
     [notesExamenSlice.reducerPath]: notesExamenSlice.reducer,
     auth: authSlice,
@@ -182,8 +192,13 @@ export const store = configureStore({
       mentionClasseSlice.middleware,
       domaineClasseSlice.middleware,
       deplacementSlice.middleware,
+      missionSlice.middleware,
       virtualServiceSlice.middleware,
+      notesProSlice.middleware,
       notesExamenSlice.middleware,
+      typeParcoursSlice.middleware,
+      parcoursSlice.middleware,
+      moduleParcoursSlice.middleware,
     ]);
   },
 });

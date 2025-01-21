@@ -16,16 +16,16 @@ import { actionAuthorization } from "utils/pathVerification";
 import { RootState } from "app/store";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "features/account/authSlice";
+import { DomaineClasse } from "features/domaineClasse/domaineClasse";
 import {
-  DomaineClasse,
-  useAddDomaineClasseMutation,
-  useDeleteDomaineClasseMutation,
-  useFetchDomainesClasseQuery,
-  useUpdateDomaineClasseMutation,
-} from "features/domaineClasse/domaineClasse";
+  useAddTypeParcoursMutation,
+  useDeleteTypeParcoursMutation,
+  useFetchTypeParcoursQuery,
+  useUpdateTypeParcoursMutation,
+} from "features/TypeParcours/TypeParcours";
 
-const ListDomaineClass = () => {
-  document.title = "Liste domaines des classes | ENIGA";
+const ListTypeParcours = () => {
+  document.title = "Liste types parcours | ENIGA";
   const user = useSelector((state: RootState) => selectCurrentUser(state));
 
   const navigate = useNavigate();
@@ -34,15 +34,15 @@ const ListDomaineClass = () => {
     setSearchQuery(event.target.value.toLowerCase());
   };
 
-  const { data = [] } = useFetchDomainesClasseQuery();
-  const filteredDomaineClasses = useMemo(() => {
+  const { data = [] } = useFetchTypeParcoursQuery();
+  const filteredTypesParcours = useMemo(() => {
     let result = data;
     if (searchQuery) {
-      result = result.filter((domaineClasse) =>
+      result = result.filter((typeParcours) =>
         [
-          domaineClasse.name_domaine_ar,
-          domaineClasse.name_domaine_fr,
-          domaineClasse.abreviation,
+          typeParcours.name_type_parcours_ar,
+          typeParcours.name_type_parcours_fr,
+          typeParcours.abreviation,
         ].some((value) => value && value.toLowerCase().includes(searchQuery))
       );
     }
@@ -50,7 +50,7 @@ const ListDomaineClass = () => {
     return result;
   }, [data, searchQuery]);
 
-  const [deleteDomaineClasse] = useDeleteDomaineClasseMutation();
+  const [deleteTypeParcours] = useDeleteTypeParcoursMutation();
 
   const swalWithBootstrapButtons = Swal.mixin({
     customClass: {
@@ -72,16 +72,16 @@ const ListDomaineClass = () => {
       })
       .then((result) => {
         if (result.isConfirmed) {
-          deleteDomaineClasse(_id);
+          deleteTypeParcours(_id);
           swalWithBootstrapButtons.fire(
             "Supprimé!",
-            "Domaine classe a été supprimé.",
+            "Type parcours a été supprimé.",
             "success"
           );
         } else if (result.dismiss === Swal.DismissReason.cancel) {
           swalWithBootstrapButtons.fire(
             "Annulé",
-            "Domaine classe est en sécurité :)",
+            "Type parcours est en sécurité :)",
             "error"
           );
         }
@@ -91,14 +91,14 @@ const ListDomaineClass = () => {
   const columns = useMemo(
     () => [
       {
-        Header: "Domaine Classe (FR)",
-        accessor: "name_domaine_fr",
+        Header: "Type Parcours (FR)",
+        accessor: "name_type_parcours_fr",
         disableFilters: true,
         filterable: true,
       },
       {
-        Header: "Domaine Classe (AR)",
-        accessor: "name_domaine_ar",
+        Header: "Type Parcours (AR)",
+        accessor: "name_type_parcours_ar",
         disableFilters: true,
         filterable: true,
       },
@@ -117,12 +117,12 @@ const ListDomaineClass = () => {
           return (
             <ul className="hstack gap-2 list-unstyled mb-0">
               {actionAuthorization(
-                "/departement/gestion-classes/edit-domaine-classe",
+                "/parcours/gestion-parcours/edit-type-parcours",
                 user?.permissions!
               ) ? (
                 <li>
                   <Link
-                    to="/departement/gestion-classes/edit-domaine-classe"
+                    to="/parcours/gestion-parcours/edit-type-parcours"
                     state={domaineClasse}
                     className="badge bg-primary-subtle text-primary edit-item-btn"
                     onClick={(e) => {
@@ -150,7 +150,7 @@ const ListDomaineClass = () => {
                 <></>
               )}
               {actionAuthorization(
-                "/departement/gestion-classes/delete-domaine-classe",
+                "/parcours/gestion-parcours/delete-type-parcours",
                 user?.permissions!
               ) ? (
                 <li>
@@ -191,35 +191,35 @@ const ListDomaineClass = () => {
     setmodal_AddOrderModals(!modal_AddOrderModals);
   }
 
-  const [createDomaineClasse] = useAddDomaineClasseMutation();
-  const { state: domaineClasse } = useLocation();
-  const [editDomaineClasse] = useUpdateDomaineClasseMutation();
+  const [createTypeParcours] = useAddTypeParcoursMutation();
+  const { state: typeParcours } = useLocation();
+  const [editTypeParcours] = useUpdateTypeParcoursMutation();
   const [isAddModalOpen, setAddModalOpen] = useState(false);
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [formData, setFormData] = useState({
     _id: "",
-    name_domaine_fr: "",
-    name_domaine_ar: "",
+    name_type_parcours_ar: "",
+    name_type_parcours_fr: "",
     abreviation: "",
   });
 
   const handleAddClick = () => {
     setFormData({
       _id: "",
-      name_domaine_fr: "",
-      name_domaine_ar: "",
+      name_type_parcours_ar: "",
+      name_type_parcours_fr: "",
       abreviation: "",
     });
     setAddModalOpen(true);
   };
 
-  const handleEditModal = (domaineClasse: any) => {
+  const handleEditModal = (typeParcours: any) => {
     setFormData({
-      _id: domaineClasse._id,
-      name_domaine_fr: domaineClasse.name_domaine_fr,
-      name_domaine_ar: domaineClasse.name_domaine_ar,
-      abreviation: domaineClasse.abreviation,
+      _id: typeParcours._id,
+      name_type_parcours_fr: typeParcours.name_type_parcours_fr,
+      name_type_parcours_ar: typeParcours.name_type_parcours_ar,
+      abreviation: typeParcours.abreviation,
     });
     setShowEditModal(true);
   };
@@ -239,47 +239,47 @@ const ListDomaineClass = () => {
     });
   };
 
-  const onSubmitDomaineClasse = async (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmitTypeParcours = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      await createDomaineClasse(formData).unwrap();
+      await createTypeParcours(formData).unwrap();
       notify();
       setAddModalOpen(false);
-      navigate("/departement/gestion-classes/liste-domaines");
+      navigate("/parcours/gestion-parcours/liste-type-parcours");
     } catch (error: any) {
       console.log(error);
     }
   };
 
-  const onSubmitEditDomaineClasse = async (
+  const onSubmitEditTypeParcours = async (
     e: React.FormEvent<HTMLFormElement>
   ) => {
     e.preventDefault();
     try {
-      await editDomaineClasse(formData).unwrap();
+      await editTypeParcours(formData).unwrap();
       setShowEditModal(false);
       notifyEdit();
     } catch (error) {
-      errorAlert("An error occurred while editing the poste enseignant.");
+      errorAlert("An error occurred while editing the type parcours.");
     }
   };
 
   useEffect(() => {
-    if (domaineClasse && isEditModalOpen) {
+    if (typeParcours && isEditModalOpen) {
       setFormData({
-        _id: domaineClasse._id,
-        name_domaine_fr: domaineClasse.name_domaine_fr,
-        name_domaine_ar: domaineClasse.name_domaine_ar,
-        abreviation: domaineClasse.abreviation,
+        _id: typeParcours._id,
+        name_type_parcours_fr: typeParcours.name_type_parcours_fr,
+        name_type_parcours_ar: typeParcours.name_type_parcours_ar,
+        abreviation: typeParcours.abreviation,
       });
     }
-  }, [domaineClasse, isEditModalOpen]);
+  }, [typeParcours, isEditModalOpen]);
 
   const notify = () => {
     Swal.fire({
       position: "center",
       icon: "success",
-      title: "Domaine Classe a été crée avec succés",
+      title: "Type Parcours a été crée avec succés",
       showConfirmButton: false,
       timer: 2000,
     });
@@ -288,7 +288,7 @@ const ListDomaineClass = () => {
     Swal.fire({
       position: "center",
       icon: "success",
-      title: "Domaine Classe a été modifié avec succés",
+      title: "Type Parcours a été modifié avec succés",
       showConfirmButton: false,
       timer: 2000,
     });
@@ -299,8 +299,8 @@ const ListDomaineClass = () => {
       <div className="page-content">
         <Container fluid={true}>
           <Breadcrumb
-            title="Paramètres des départments"
-            pageTitle="Liste domaines Classes"
+            title="Paramètres des Parcours"
+            pageTitle="Liste types des parcours"
           />
 
           <Row id="sellersList">
@@ -323,7 +323,7 @@ const ListDomaineClass = () => {
                     <Col className="col-lg-auto ms-auto">
                       <div className="hstack gap-2">
                         {actionAuthorization(
-                          "/departement/gestion-classes/add-domaine-classe",
+                          "/parcours/gestion-parcours/ajouter-type-parcours",
                           user?.permissions!
                         ) ? (
                           <Button
@@ -331,7 +331,7 @@ const ListDomaineClass = () => {
                             className="add-btn"
                             onClick={() => handleAddClick()}
                           >
-                            Ajouter domaine classe
+                            Ajouter type parcours
                           </Button>
                         ) : (
                           <></>
@@ -350,7 +350,7 @@ const ListDomaineClass = () => {
                   >
                     <TableContainer
                       columns={columns || []}
-                      data={filteredDomaineClasses || []}
+                      data={filteredTypesParcours || []}
                       // isGlobalFilter={false}
                       iscustomPageSize={false}
                       isBordered={false}
@@ -379,7 +379,7 @@ const ListDomaineClass = () => {
                 </Card.Body>
               </Card>
             </Col>
-            {/* Add domaine classe */}
+            {/* Add type parcours */}
             <Modal
               show={isAddModalOpen}
               onHide={() => setAddModalOpen(false)}
@@ -387,40 +387,40 @@ const ListDomaineClass = () => {
             >
               <Modal.Header className="px-4 pt-4" closeButton>
                 <h5 className="modal-title" id="exampleModalLabel">
-                  Ajouter Domaine Classe
+                  Ajouter Type Parcours
                 </h5>
               </Modal.Header>
-              <Form className="tablelist-form" onSubmit={onSubmitDomaineClasse}>
+              <Form className="tablelist-form" onSubmit={onSubmitTypeParcours}>
                 <Modal.Body className="p-4">
                   <Row>
                     <Col lg={4}>
                       <div className="mb-3">
-                        <Form.Label htmlFor="name_domaine_fr">
-                          Domaine Classe(FR)
+                        <Form.Label htmlFor="name_type_parcours_fr">
+                          Type Parcours(FR)
                         </Form.Label>
                         <Form.Control
                           type="text"
-                          id="name_domaine_fr"
+                          id="name_type_parcours_fr"
                           placeholder=""
                           required
                           onChange={onChange}
-                          value={formData.name_domaine_fr}
+                          value={formData.name_type_parcours_fr}
                         />
                       </div>
                     </Col>
 
                     <Col lg={4}>
                       <div className="mb-3">
-                        <Form.Label htmlFor="name_domaine_ar">
-                          Domaine Classe(AR)
+                        <Form.Label htmlFor="name_type_parcours_ar">
+                          Type Parcours(AR)
                         </Form.Label>
                         <Form.Control
                           type="text"
-                          id="name_domaine_ar"
+                          id="name_type_parcours_ar"
                           placeholder=""
                           required
                           onChange={onChange}
-                          value={formData.name_domaine_ar}
+                          value={formData.name_type_parcours_ar}
                         />
                       </div>
                     </Col>
@@ -457,7 +457,7 @@ const ListDomaineClass = () => {
               </Form>
             </Modal>
 
-            {/*Edit domaine classe */}
+            {/*Edit Type Parcours */}
             <Modal
               show={showEditModal}
               onHide={() => setShowEditModal(false)}
@@ -465,43 +465,43 @@ const ListDomaineClass = () => {
             >
               <Modal.Header className="px-4 pt-4" closeButton>
                 <h5 className="modal-title" id="exampleModalLabel">
-                  Modifier Domaine Classe
+                  Modifier Type Parcours
                 </h5>
               </Modal.Header>
               <Form
                 className="tablelist-form"
-                onSubmit={onSubmitEditDomaineClasse}
+                onSubmit={onSubmitEditTypeParcours}
               >
                 <Modal.Body className="p-4">
                   <Row>
                     <Col lg={4}>
                       <div className="mb-3">
-                        <Form.Label htmlFor="name_domaine_fr">
-                          Domaine Classe(FR)
+                        <Form.Label htmlFor="name_type_parcours_fr">
+                          Type Parcours(FR)
                         </Form.Label>
                         <Form.Control
                           type="text"
-                          id="name_domaine_fr"
+                          id="name_type_parcours_fr"
                           placeholder=""
                           required
                           onChange={onChange}
-                          value={formData.name_domaine_fr}
+                          value={formData.name_type_parcours_fr}
                         />
                       </div>
                     </Col>
 
                     <Col lg={4}>
                       <div className="mb-3">
-                        <Form.Label htmlFor="name_domaine_ar">
-                          Domaine Classe(AR)
+                        <Form.Label htmlFor="name_type_parcours_ar">
+                          Type Parcours(AR)
                         </Form.Label>
                         <Form.Control
                           type="text"
-                          id="name_domaine_ar"
+                          id="name_type_parcours_ar"
                           placeholder=""
                           required
                           onChange={onChange}
-                          value={formData.name_domaine_ar}
+                          value={formData.name_type_parcours_ar}
                         />
                       </div>
                     </Col>
@@ -544,4 +544,4 @@ const ListDomaineClass = () => {
   );
 };
 
-export default ListDomaineClass;
+export default ListTypeParcours;

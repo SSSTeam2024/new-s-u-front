@@ -911,6 +911,7 @@ const AjouterEtudiant = () => {
     }
   };
   const [newArray, setNewArray] = useState<any[]>([]);
+
   const handleFileTypeInscriptionUpload = async (event: any, index: number) => {
     const file = event.target.files[0];
     if (file) {
@@ -939,6 +940,7 @@ const AjouterEtudiant = () => {
       files: newArray,
     });
   }, [newArray]);
+
   return (
     <React.Fragment>
       <div className="page-content">

@@ -1,24 +1,20 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Button, Container, Row } from "react-bootstrap";
 import { useLocation } from "react-router-dom";
-
 import { useFetchVaribaleGlobaleQuery } from "features/variableGlobale/variableGlobaleSlice";
-
-// import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import "jspdf-autotable";
-
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
+import { replaceShortCodes } from "helpers/GlobalFunctions/mission_file_helper";
+import { te } from "date-fns/locale";
 
-import { replaceShortCodes } from "helpers/GlobalFunctions/administrative_demand_helper";
-
-const GenerateDemande = () => {
-  document.title = "Demande Etudiant | ENIGA";
+const GenerateFicheTache = () => {
+  document.title = "Generer fiche de tache| ENIGA";
   const location = useLocation();
-  const demandeLocation = location.state;
+  const { cellProps, templateBody } = location.state || {}; // Destructure the state if it exists
 
-  console.log(demandeLocation?.piece_demande);
+  console.log("state", location.state);
 
   const [newUpdateBody, setNewUpdateBody] = useState("");
   const [hasProcessed, setHasProcessed] = useState(false);
@@ -26,44 +22,12 @@ const GenerateDemande = () => {
   const { data: AllVariablesGlobales = [] } = useFetchVaribaleGlobaleQuery();
   const bodyRef = useRef<HTMLDivElement | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
-  // const generatePDF = async () => {
-  //   try {
-  //     setIsGenerating(true);
-  //     if (!bodyRef.current) {
-  //       console.error("bodyRef is not set.");
-  //       setIsGenerating(false);
-  //       return;
-  //     }
-
-  //     const doc = new jsPDF({
-  //       orientation: "portrait",
-  //       unit: "mm",
-  //       format: "a4",
-  //     });
-
-  //     doc.setFontSize(10);
-
-  //     const options = {
-  //       // margin: [0, 0, 30, 0],
-  //       html2canvas: { scale: 0.28, useCORS: true },
-  //       callback: (pdf: any) => {
-  //         pdf.save("document.pdf");
-  //         setIsGenerating(false);
-  //       },
-  //     };
-
-  //     await doc.html(bodyRef.current, options);
-
-  //   } catch (error) {
-  //     console.error("Error generating PDF: ", error);
-  //     setIsGenerating(false);
-  //   }
-  // };
 
   useEffect(() => {
     if (!hasProcessed) {
       let generatedDocument = replaceShortCodes(
-        demandeLocation,
+        location.state.templateBody,
+        location.state.cellProps,
         AllVariablesGlobales
       );
       setNewUpdateBody(generatedDocument);
@@ -96,117 +60,11 @@ const GenerateDemande = () => {
 
     return data;
   };
-  // const generatePDF = async () => {
-  //   try {
-  //     setIsGenerating(true);
-  //     if (!bodyRef.current) {
-  //       console.error("bodyRef is not set.");
-  //       setIsGenerating(false);
-  //       return;
-  //     }
-
-  //     const doc = new jsPDF({
-  //       orientation: "portrait",
-  //       unit: "mm",
-  //       format: "a4",
-  //     });
-
-  //     // Render entire body using html2pdf to preserve image and text formatting
-  //     const html2pdfOptions = {
-  //       html2canvas: { scale: 0.28, useCORS: true },
-  //       callback: (pdf: any) => {
-  //         setIsGenerating(false);
-  //         pdf.save("document.pdf");
-  //       },
-  //     };
-
-  //     // Render the header using html2pdf (handles images automatically)
-  //     if (bodyRef.current) {
-  //       // Temporarily create a div with only the header content for rendering
-  //       const headerDiv = document.createElement("div");
-  //       headerDiv.style.padding = "10mm"; // Optional styling
-  //       headerDiv.innerHTML = `
-  //         <img src="${AllVariablesGlobales[2]?.logo_universite}" alt="Université Logo" style="width: 30mm; height: 15mm;" />
-  //         <h2 style="text-align: center;">Université XYZ</h2>
-  //         <h3 style="text-align: center;">Demande Document</h3>
-  //         <hr style="border: 1px solid #000;">
-  //       `;
-
-  //       // Add header to the PDF document using `html` method
-  //       await doc.html(headerDiv, {
-  //         x: 10,
-  //         y: 10,
-  //         html2canvas: { scale: 0.28 },
-  //       });
-  //     }
-
-  //     // Manually add tables using autoTable
-  //     const tables = bodyRef.current.querySelectorAll("table");
-  //     let startY = 50; // Adjust starting position after header
-
-  //     tables.forEach((table) => {
-  //       autoTable(doc, {
-  //         html: table,
-  //         startY: startY,
-  //         margin: { horizontal: 10 },
-  //         styles: {
-  //           lineWidth: 0.1,
-  //           lineColor: [0, 0, 0], // Black lines for borders
-  //           fillColor: [255, 255, 255], // White background for cells
-  //           textColor: [0, 0, 0],
-  //           fontSize: 10,
-  //           halign: 'center', // Align text to center
-  //           valign: 'middle', // Align text to middle
-  //         },
-  //         headStyles: {
-  //           fillColor: [200, 200, 200], // Optional: header background color
-  //           textColor: [0, 0, 0],
-  //           lineWidth: 0.1,
-  //           lineColor: [0, 0, 0],
-  //         },
-  //         bodyStyles: {
-  //           fillColor: [255, 255, 255], // Optional: body background color
-  //           textColor: [0, 0, 0],
-  //           lineWidth: 0.1,
-  //           lineColor: [0, 0, 0],
-  //         },
-  //       });
-  //       const finalY = (doc as any).autoTable.previous?.finalY || startY;
-  //       startY = finalY + 10; // Add some space between tables
-  //     });
-
-  //     // Add footer using html2pdf if needed
-  //     if (bodyRef.current) {
-  //       const footerDiv = document.createElement("div");
-  //       footerDiv.style.padding = "10mm";
-  //       footerDiv.style.position = "absolute";
-  //       footerDiv.style.bottom = "10mm";
-  //       footerDiv.style.width = "100%";
-  //       footerDiv.innerHTML = `
-  //         <hr style="border: 1px solid #000;">
-  //         <p style="font-size: 10px; text-align: center;">
-  //           Address: ${AllVariablesGlobales[2]?.address_fr} | Phone: ${AllVariablesGlobales[2]?.phone} | Website: ${AllVariablesGlobales[2]?.website}
-  //         </p>
-  //       `;
-
-  //       await doc.html(footerDiv, {
-  //         x: 0,
-  //         y: doc.internal.pageSize.height - 30, // Position footer at the bottom
-  //         html2canvas: { scale: 0.28 },
-  //       });
-  //     }
-
-  //     // Render full content with html2pdf to finalize image loading
-  //     await doc.html(bodyRef.current, html2pdfOptions);
-  //   } catch (error) {
-  //     console.error("Error generating PDF: ", error);
-  //     setIsGenerating(false);
-  //   }
-  // };
 
   const handleSaveAsPDF = async () => {
     let generatedDocument = replaceShortCodes(
-      demandeLocation,
+      location.state.templateBody,
+      location.state.cellProps,
       AllVariablesGlobales
     );
 
@@ -356,33 +214,7 @@ const GenerateDemande = () => {
               border: "1px solid #ddd",
             }}
           >
-            {/* <Row>
-              <HeaderPDF
-                logo_etablissement={
-                  AllVariablesGlobales[2]?.logo_etablissement!
-                }
-                logo_republique={AllVariablesGlobales[2]?.logo_republique!}
-                logo_universite={AllVariablesGlobales[2]?.logo_universite!}
-              />
-            </Row> */}
-            {/* <Row>
-              <TitlePDF piece_demande={demandeLocation?.piece_demande!} />
-            </Row> */}
             <Row>
-              {/* <BodyPDF
-                piece_demande={demandeLocation?.piece_demande!}
-                studentId={demandeLocation?.studentId!}
-                enseignantId={demandeLocation?.enseignantId!}
-                personnelId={demandeLocation?.personnelId!}
-                raison={demandeLocation?.raison!}
-                formattedDate={new Date(
-                  demandeLocation?.createdAt
-                ).toLocaleDateString("fr-FR")}
-                departement={
-                  demandeLocation.studentId.groupe_classe.departement
-                }
-                allVariables={AllVariablesGlobales[2]}
-              /> */}
               <div
                 style={{
                   border: "1px solid #ccc",
@@ -399,15 +231,6 @@ const GenerateDemande = () => {
                 />
               </div>
             </Row>
-            {/* <Row className="mt-auto">
-              <FooterPDF
-                address_fr={AllVariablesGlobales[2]?.address_fr!}
-                code={AllVariablesGlobales[2]?.code_postal!}
-                fax={AllVariablesGlobales[2]?.fax!}
-                phone={AllVariablesGlobales[2]?.phone!}
-                website={AllVariablesGlobales[2]?.website!}
-              />
-            </Row> */}
           </div>
           <div className="hstack gap-2 justify-content-end d-print-none mt-4">
             <Button onClick={/* generatePDF */ handleSaveAsPDF}>
@@ -420,4 +243,4 @@ const GenerateDemande = () => {
   );
 };
 
-export default GenerateDemande;
+export default GenerateFicheTache;

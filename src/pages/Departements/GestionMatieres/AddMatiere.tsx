@@ -16,28 +16,24 @@ const AddMatiere = () => {
   document.title = " Ajouter Matière | Application Smart Institute";
   const navigate = useNavigate();
 
-  function tog_retourParametres() {
-    navigate("/departement/gestion-matieres/liste-matieres");
-  }
-
   const [createMatiere] = useAddMatiereMutation();
 
   const [formData, setFormData] = useState({
     _id: "",
     code_matiere: "",
     matiere: "",
-    type: "",
     semestre: "S1",
-    volume: "",
-    nbr_elimination: "",
     regime_matiere: "",
+    credit_matiere: "",
+    coefficient_matiere: "",
+    types: [
+      { type: "TP", volume: "", nbr_elimination: "" },
+      { type: "TD", volume: "", nbr_elimination: "" },
+      { type: "C", volume: "", nbr_elimination: "" },
+      { type: "CI", volume: "", nbr_elimination: "" },
+    ],
   });
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData((prevState) => ({
-      ...prevState,
-      [e.target.id]: e.target.value,
-    }));
-  };
+
   const errorAlert = (message: string) => {
     Swal.fire({
       position: "center",
@@ -50,36 +46,31 @@ const AddMatiere = () => {
 
   const onSubmitMatiere = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    // Filter out types that have empty fields for 'volume' and 'nbr_elimination'
+    const filteredTypes = formData.types.filter(
+      (type) => type.volume !== "" && type.nbr_elimination !== ""
+    );
+
+    // Update formData to only include non-empty types
+    const updatedFormData = {
+      ...formData,
+      types: filteredTypes,
+    };
+
     try {
-      await createMatiere(formData).unwrap();
-      notify();
+      await createMatiere(updatedFormData).unwrap();
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: "Matière a été crée avec succés",
+        showConfirmButton: false,
+        timer: 2000,
+      });
       navigate("/departement/gestion-matieres/liste-matieres");
     } catch (error: any) {
-      if (error.status === 400) {
-        errorAlert("La valeur doit être unique.");
-      } else {
-        errorAlert("La valeur doit être unique. Veuillez réessayer.");
-      }
+      errorAlert(error.message || "Erreur lors de la création de la matière.");
     }
-  };
-
-  const notify = () => {
-    Swal.fire({
-      position: "center",
-      icon: "success",
-      title: "Matière a été crée avec succés",
-      showConfirmButton: false,
-      timer: 2000,
-    });
-  };
-  const error = (error: any) => {
-    Swal.fire({
-      position: "center",
-      icon: "error",
-      title: `Creation matière échoué ${error}`,
-      showConfirmButton: false,
-      timer: 2000,
-    });
   };
 
   const toggleSemestre = () => {
@@ -89,6 +80,28 @@ const AddMatiere = () => {
     }));
   };
 
+  const onChange = (e: any) => {
+    const { id, value } = e.target;
+    setFormData((prevState) => ({
+      ...prevState,
+      [id]: value,
+    }));
+  };
+
+  const onTypeChange = (index: any, field: any, value: any) => {
+    setFormData((prevState) => {
+      const updatedTypes = [...prevState.types];
+      updatedTypes[index] = {
+        ...updatedTypes[index],
+        [field]: value,
+      };
+      return {
+        ...prevState,
+        types: updatedTypes,
+      };
+    });
+  };
+
   return (
     <React.Fragment>
       <div className="page-content">
@@ -96,20 +109,14 @@ const AddMatiere = () => {
           <Row>
             <Col lg={12}>
               <Form className="tablelist-form" onSubmit={onSubmitMatiere}>
-                <div
-                  id="alert-error-msg"
-                  className="d-none alert alert-danger py-2"
-                ></div>
-                <input type="hidden" id="id-field" />
                 <Row>
                   <Col lg={3}>
                     <div className="mb-3">
                       <Form.Label htmlFor="semestre">Semestre</Form.Label>
-                      <div className="form-check form-switch form-switch-lg from-switch-info">
+                      <div className="form-check form-switch">
                         <input
                           className="form-check-input"
                           type="checkbox"
-                          role="switch"
                           id="SwitchCheck6"
                           checked={formData.semestre === "S2"}
                           onChange={toggleSemestre}
@@ -125,7 +132,7 @@ const AddMatiere = () => {
                   </Col>
                 </Row>
                 <Row>
-                  <Col lg={4}>
+                  <Col lg={2}>
                     <div className="mb-3">
                       <Form.Label htmlFor="code_matiere">
                         Code Matière
@@ -133,7 +140,6 @@ const AddMatiere = () => {
                       <Form.Control
                         type="text"
                         id="code_matiere"
-                        placeholder=""
                         required
                         onChange={onChange}
                         value={formData.code_matiere}
@@ -142,109 +148,125 @@ const AddMatiere = () => {
                   </Col>
                   <Col lg={4}>
                     <div className="mb-3">
-                      <Form.Label htmlFor="matiere">Matières</Form.Label>
+                      <Form.Label htmlFor="matiere">Titre Matière</Form.Label>
                       <Form.Control
                         type="text"
                         id="matiere"
-                        placeholder=""
                         required
                         onChange={onChange}
                         value={formData.matiere}
                       />
                     </div>
                   </Col>
-                  <Col lg={4}>
+                  <Col lg={2}>
                     <div className="mb-3">
                       <Form.Label htmlFor="regime_matiere">
                         Régime Matière
                       </Form.Label>
                       <select
-                        className="form-select text-muted"
-                        name="regime_matiere"
+                        className="form-select"
                         id="regime_matiere"
                         value={formData.regime_matiere}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            regime_matiere: e.target.value,
-                          })
-                        }
+                        onChange={onChange}
                       >
-                        <option value="">Sélectionner Régime Matière</option>
+                        <option value="">Sélectionner Régime</option>
                         <option value="TP">TP</option>
                         <option value="CC">CC</option>
                         <option value="MX">MX</option>
                       </select>
                     </div>
                   </Col>
-
-                  <Col lg={4}>
+                  <Col lg={2}>
                     <div className="mb-3">
-                      <Form.Label htmlFor="type">Type Matière</Form.Label>
-                      <select
-                        className="form-select text-muted"
-                        name="type"
-                        id="type"
-                        value={formData.type}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            type: e.target.value,
-                          })
-                        }
-                      >
-                        <option value="">Sélectionner Type Matière</option>
-                        <option value="TP">TP</option>
-                        <option value="TD">TD</option>
-                        <option value="C">C</option>
-                        <option value="CI">CI</option>
-                      </select>
-                    </div>
-                  </Col>
-
-                  <Col lg={4}>
-                    <div className="mb-3">
-                      <Form.Label htmlFor="volume">Volume</Form.Label>
-                      <Form.Control
-                        type="number"
-                        id="volume"
-                        placeholder=""
-                        onChange={onChange}
-                        value={formData.volume}
-                      />
-                    </div>
-                  </Col>
-                  <Col lg={4}>
-                    <div className="mb-3">
-                      <Form.Label htmlFor="nbr_elimination">
-                        Nombre Elimination
+                      <Form.Label htmlFor="coefficient_matiere">
+                        Coefficient
                       </Form.Label>
                       <Form.Control
                         type="text"
-                        id="nbr_elimination"
-                        placeholder=""
+                        id="coefficient_matiere"
+                        required
                         onChange={onChange}
-                        value={formData.nbr_elimination}
+                        value={formData.coefficient_matiere}
+                      />
+                    </div>
+                  </Col>
+                  <Col lg={2}>
+                    <div className="mb-3">
+                      <Form.Label htmlFor="credit_matiere">
+                        Crédit Matière
+                      </Form.Label>
+                      <Form.Control
+                        type="text"
+                        id="credit_matiere"
+                        required
+                        onChange={onChange}
+                        value={formData.credit_matiere}
                       />
                     </div>
                   </Col>
                 </Row>
-
-                <div className="modal-footer">
-                  <div className="hstack gap-2 justify-content-end">
-                    <Button
-                      className="btn-ghost-danger"
-                      onClick={() => {
-                        tog_retourParametres();
-                      }}
-                    >
-                      Retour
-                    </Button>
-                    <Button variant="success" id="add-btn" type="submit">
-                      Ajouter
-                    </Button>
-                  </div>
-                </div>
+                <Row>
+                  <Col lg={12}>
+                    <div className="table-responsive">
+                      <table className="table table-bordered">
+                        <thead>
+                          <tr>
+                            <th>Type Matière</th>
+                            <th>Volume Horaire</th>
+                            <th>Nombre Elimination</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {formData.types.map((typeData, index) => (
+                            <tr key={index}>
+                              <td>
+                                <Form.Control
+                                  type="text"
+                                  readOnly
+                                  value={typeData.type}
+                                  className="bg-light"
+                                />
+                              </td>
+                              <td>
+                                <Form.Control
+                                  type="number"
+                                  value={typeData.volume}
+                                  onChange={(e) =>
+                                    onTypeChange(
+                                      index,
+                                      "volume",
+                                      e.target.value
+                                    )
+                                  }
+                                />
+                              </td>
+                              <td>
+                                <Form.Control
+                                  type="number"
+                                  value={typeData.nbr_elimination}
+                                  onChange={(e) =>
+                                    onTypeChange(
+                                      index,
+                                      "nbr_elimination",
+                                      e.target.value
+                                    )
+                                  }
+                                />
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </Col>
+                </Row>
+                <Button
+                  type="submit"
+                  variant="success"
+                  className="btn-sm float-end"
+                >
+                  Créer Matière
+                </Button>
               </Form>
             </Col>
           </Row>

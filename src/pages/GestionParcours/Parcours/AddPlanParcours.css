@@ -1,0 +1,55 @@
+.sticky-footer {
+  position: sticky;
+  bottom: 0;
+  background-color: white;
+  padding: 1rem;
+  border-top: 1px solid #dee2e6;
+  z-index: 10;
+}
+
+.tablelist-form {
+  background-color: white;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.module-card {
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 15px;
+  background-color: #ffffff;
+}
+
+.module-card h6 {
+  color: #495057;
+}
+
+.btn-ghost-danger {
+  color: #dc3545;
+  background-color: transparent;
+  border: none;
+}
+
+.btn-ghost-danger:hover {
+  color: #c82333;
+}
+
+#add-btn {
+  background-color: #28a745;
+  border: none;
+  color: white;
+}
+
+#add-btn:hover {
+  background-color: #218838;
+}
+
+button:focus,
+input:focus,
+select:focus {
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
