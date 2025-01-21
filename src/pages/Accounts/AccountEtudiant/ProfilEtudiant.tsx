@@ -86,9 +86,12 @@ const MyAccount = () => {
   ];
 
   const groupeClasseDisplay =
-    typeof etudiant?.groupe_classe! === "object"
+    typeof etudiant?.groupe_classe! === "object" &&
+    etudiant?.groupe_classe! !== null
       ? etudiant?.groupe_classe?.nom_classe_fr!
-      : etudiant?.groupe_classe!;
+      : typeof etudiant?.groupe_classe! === "string"
+      ? etudiant?.groupe_classe!
+      : null;
 
   const niveauClasseDisplay =
     typeof etudiant?.groupe_classe?.niveau_classe! === "object"
@@ -108,14 +111,20 @@ const MyAccount = () => {
   const sectionNames = getSectionNames(etudiant);
 
   const etatCompteDisplay =
-    typeof etudiant?.etat_compte! === "object"
+    typeof etudiant?.etat_compte! === "object" &&
+    etudiant?.etat_compte! !== null
       ? etudiant?.etat_compte?.etat_fr!
-      : etudiant?.etat_compte!;
+      : typeof etudiant?.etat_compte! === "string"
+      ? etudiant?.etat_compte!
+      : null;
 
   const typeInscriptionDisplay =
-    typeof etudiant?.type_inscription! === "object"
-      ? etudiant?.type_inscription?.type_fr!
-      : etudiant?.type_inscription!;
+    typeof etudiant?.type_inscription === "object" &&
+    etudiant?.type_inscription !== null
+      ? etudiant?.type_inscription?.type_fr
+      : typeof etudiant?.type_inscription === "string"
+      ? etudiant?.type_inscription
+      : null;
 
   return (
     <React.Fragment>

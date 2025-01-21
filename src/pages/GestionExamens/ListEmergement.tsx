@@ -15,7 +15,7 @@ import { useFetchEtudiantsQuery } from "features/etudiant/etudiantSlice";
 const ListEmergement = ({ classeId }: { classeId: string }) => {
   const { data: AllEtudiants = [] } = useFetchEtudiantsQuery();
   const etudiants = AllEtudiants.filter(
-    (etudiant) => etudiant.groupe_classe._id === classeId
+    (etudiant) => etudiant?.groupe_classe?._id! === classeId
   );
 
   return (

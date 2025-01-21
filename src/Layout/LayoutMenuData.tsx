@@ -963,7 +963,7 @@ const Navdata = () => {
       id: "Gestion-des-Notes",
       label: "Gestion des Notes",
       link: "/#",
-      icon: "bi bi-calendar-event",
+      icon: "bi bi-123",
       click: function (e: any) {
         e.preventDefault();
         setIsNotesExamen(!isNotesExamen);

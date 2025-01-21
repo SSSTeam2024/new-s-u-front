@@ -5,7 +5,9 @@ import CountUp from "react-countup";
 import { Link, useNavigate } from "react-router-dom";
 import TableContainer from "Common/TableContainer";
 import {
+  EtatCompte,
   Etudiant,
+  GroupeClasse,
   useAddEtudiantMutation,
   useDeleteEtudiantMutation,
   useFetchEtudiantsQuery,
@@ -20,6 +22,12 @@ import { selectCurrentUser } from "features/account/authSlice";
 import * as XLSX from "xlsx";
 import CustomLoader from "Common/CustomLoader/CustomLoader";
 import "./listEtudiantStyle.css";
+
+const excelDateToJSDate = (excelDate: number): string => {
+  const jsDate = new Date((excelDate - 25569) * 86400 * 1000); // Convert Excel date to JS date
+  return jsDate.toLocaleDateString("fr-FR"); // Format date to dd/mm/yyyy
+};
+
 const ListEtudiants = () => {
   document.title = "Liste des étudiants | ENIGA";
   const user = useSelector((state: RootState) => selectCurrentUser(state));
@@ -80,7 +88,7 @@ const ListEtudiants = () => {
   ) => {
     const file = event.target.files?.[0];
     if (file) {
-      setIsLoading(true); // Show loader
+      setIsLoading(true);
       try {
         const reader = new FileReader();
         reader.onload = async (e) => {
@@ -89,23 +97,81 @@ const ListEtudiants = () => {
             const workbook = XLSX.read(data, { type: "array" });
             const sheetName = workbook.SheetNames[0];
             const worksheet = workbook.Sheets[sheetName];
-            const jsonData: Etudiant[] = XLSX.utils.sheet_to_json(worksheet);
+            const jsonData = XLSX.utils.sheet_to_json(worksheet);
 
-            // Use Promise.all to await all creations
+            const mappedData: Etudiant[] = jsonData.map((item: any) => ({
+              nom_fr: item.nom || "",
+              nom_ar: item.NomAr || "",
+              prenom_fr: item.Prenom || "",
+              prenom_ar: item.PrenomAr || "",
+              lieu_naissance_fr: item["Lieu de naissance"] || "",
+              lieu_naissance_ar: item["Lieu de naissance AR"] || "",
+              date_naissance: item["Date de naissance"]
+                ? excelDateToJSDate(item["Date de naissance"])
+                : "",
+              nationalite: item["Nationalité"] || "",
+              etat_civil: item.etat_civil || "",
+              sexe: item.sexe || "",
+              num_CIN: item.CIN || "",
+              face_1_CIN: "",
+              face_2_CIN: "",
+              fiche_paiement: "",
+              // etat_compte: {} as EtatCompte,
+              // groupe_classe: {} as GroupeClasse,
+              state: "",
+              dependence: "",
+              code_postale: "",
+              adress_ar: "",
+              adress_fr: "",
+              num_phone: item.tel || "",
+              email: item.email || "",
+              nom_pere: item.nom_pere || "",
+              job_pere: item.job_pere || "",
+              nom_mere: item.nom_mere || "",
+              num_phone_tuteur: item.telephone_tuteur || "",
+              moyen: "",
+              session: "",
+              filiere: "",
+              niveau_scolaire: "",
+              annee_scolaire: "",
+              Face1CINFileBase64String: "",
+              Face1CINFileExtension: "",
+              Face2CINFileBase64String: "",
+              Face2CINFileExtension: "",
+              FichePaiementFileBase64String: "",
+              FichePaiementFileExtension: "",
+              files: [],
+              photo_profil: "",
+              PhotoProfilFileExtension: "",
+              PhotoProfilFileBase64String: "",
+              //! TO Verify if we keep these fields or not !!
+              num_inscri: item["N° inscription"] || "",
+              Niveau_Fr: item["Niveau Fr"] || "",
+              DIPLOME: item.DIPLOME || "",
+              Spécialité: item["Spécialité"] || "",
+              Groupe: item.Groupe || "",
+              Cycle: item.Cycle || "",
+              Ann_Univ: item["Ann Univ"] || "",
+              Modele_Carte: item["Modele Carte"] || "",
+              NiveauAr: item.NiveauAr || "",
+              DiplomeAr: item.DiplomeAr || "",
+              SpecialiteAr: item.SpecialiteAr || "",
+            }));
+            console.log("Mapped Data:", mappedData);
             await Promise.all(
-              jsonData.map(async (etudiant) => {
+              mappedData.map(async (etudiant) => {
                 await addEtudiant(etudiant).unwrap();
               })
             );
 
-            setIsLoading(false); // Hide loader
+            setIsLoading(false);
             Swal.fire({
               icon: "success",
               title: "Succès",
               text: "Tous les étudiants ont été ajoutés avec succès!",
             });
           } catch (error) {
-            setIsLoading(false); // Hide loader
+            setIsLoading(false);
             Swal.fire({
               icon: "error",
               title: "Erreur",
@@ -115,7 +181,7 @@ const ListEtudiants = () => {
         };
         reader.readAsArrayBuffer(file);
       } catch (error) {
-        setIsLoading(false); // Hide loader
+        setIsLoading(false);
         Swal.fire({
           icon: "error",
           title: "Erreur",

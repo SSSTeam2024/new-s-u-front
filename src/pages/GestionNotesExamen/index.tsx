@@ -4,7 +4,6 @@ import {
   Card,
   Col,
   Container,
-  Dropdown,
   Form,
   Modal,
   Row,
@@ -21,18 +20,109 @@ import { useFetchEtudiantsByIdClasseQuery } from "features/etudiant/etudiantSlic
 import { useSelector } from "react-redux";
 import { RootState } from "app/store";
 import { selectCurrentUser } from "features/account/authSlice";
+import {
+  StyleSheet,
+  Document,
+  Page,
+  View,
+  Text,
+  PDFDownloadLink,
+} from "@react-pdf/renderer";
+import { useFetchVaribaleGlobaleQuery } from "features/variableGlobale/variableGlobaleSlice";
+import { useVerifyPasswordMutation } from "features/account/accountSlice";
+
+const styleGlobalCalendar = StyleSheet.create({
+  secondTitle: {
+    fontSize: 12,
+    textAlign: "center",
+  },
+  thirdTitle: {
+    fontSize: 10,
+    textAlign: "center",
+    marginTop: 20,
+  },
+});
+
+const stylesCalenderFilter = StyleSheet.create({
+  page: {
+    padding: 50,
+  },
+  header: {
+    marginBottom: 20,
+    paddingBottom: 10,
+    margin: 20,
+  },
+  title: {
+    fontSize: 16,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginBottom: 10,
+  },
+  section: {
+    marginBottom: 10,
+  },
+  text: {
+    fontSize: 10,
+    marginBottom: 2,
+  },
+  timetable: {
+    borderWidth: 1,
+    borderColor: "#000",
+    marginTop: 50,
+  },
+  row: {
+    flexDirection: "row",
+    borderBottomWidth: 1,
+    borderColor: "#000",
+  },
+  cell: {
+    padding: 5,
+    borderRightWidth: 1,
+    borderColor: "#000",
+    textAlign: "left",
+    fontSize: 10,
+  },
+  headerRow: {
+    backgroundColor: "#f0f0f0",
+    fontWeight: "bold",
+  },
+  numEtudiant: {
+    width: 60,
+    fontWeight: "bold",
+  },
+  cinEtudiant: {
+    width: 125,
+    fontWeight: "bold",
+  },
+  nomEtudiant: {
+    width: 245,
+    fontWeight: "bold",
+  },
+  entreEtudiant: {
+    width: 110,
+    fontWeight: "bold",
+  },
+  emergedTable: {
+    borderWidth: 1,
+    borderColor: "#000",
+    marginTop: 20,
+  },
+});
 
 const GestionNotesExamen = () => {
   document.title = "Liste des Notes Examen | ENIGA";
 
   const user = useSelector((state: RootState) => selectCurrentUser(state));
 
+  const { data: variableGlobales = [] } = useFetchVaribaleGlobaleQuery();
   const [open_ModalNote, setOpenModalNote] = useState<boolean>(false);
   const [open_ModalConfirm, setOpenModalConfirm] = useState<boolean>(false);
   const [showPasswordForm, setShowPasswordForm] = useState<boolean>(false);
   const [checkedItems, setCheckedItems] = useState<any>({});
   const [passwordValue, setPasswordValue] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const [verifyPassword] = useVerifyPasswordMutation();
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const location = useLocation();
   const noteState = location.state;
 
@@ -59,6 +149,15 @@ const GestionNotesExamen = () => {
   const { data: EtudiantsByClasseID = [] } = useFetchEtudiantsByIdClasseQuery(
     noteState?.groupe?._id!
   );
+
+  const initialVerifyPassword = {
+    hashedPassword: "",
+    plainPassword: "",
+  };
+
+  const [verification, setVerification] = useState(initialVerifyPassword);
+
+  const { hashedPassword, plainPassword } = verification;
 
   const hasEtudiants = noteState?.etudiants && noteState?.etudiants.length > 0;
   const filteredEtudiants = useMemo(() => {
@@ -100,17 +199,21 @@ const GestionNotesExamen = () => {
   const handleInputChange = (id: string, newValue: string) => {
     setUpdatedNotes((prev: any) => {
       const exists = prev.some((item: any) => item.etudiant === id);
-
       if (exists) {
-        // Update the existing note
         return prev.map((item: any) =>
           item.etudiant === id ? { ...item, note: newValue } : item
         );
       } else {
-        // Add a new note entry if not found
         return [...prev, { etudiant: id, note: newValue, isAbsent: false }];
       }
     });
+
+    if (newValue.trim() === "") {
+      setCheckedItems((prev: any) => ({
+        ...prev,
+        [id]: false,
+      }));
+    }
   };
 
   useEffect(() => {
@@ -147,10 +250,23 @@ const GestionNotesExamen = () => {
     }
   };
 
-  const handleSubmitPassword = () => {
-    if (passwordValue === "123456") {
-      alert("Note Examen envoyé d'une façon définitive!!");
-      tog_ModalConfirm();
+  const handleSubmitPassword = async () => {
+    verification["plainPassword"] = passwordValue;
+    verification["hashedPassword"] = user?.password!;
+    const response = await verifyPassword(verification).unwrap();
+
+    if (response.isMatch) {
+      try {
+        const updateData = { completed: "1" };
+
+        await updateNoteExamen({ id: noteState._id, updateData }).unwrap();
+
+        alert("Note Examen envoyé d'une façon définitive!!");
+        tog_ModalConfirm();
+      } catch (error) {
+        console.error("Erreur lors de l'envoi de la Note Examen:", error);
+        alert("Une erreur s'est produite. Veuillez réessayer.");
+      }
     } else {
       setErrorMessage("Veuillez vérifier le mot de passe entré!!");
       setTimeout(() => {
@@ -167,7 +283,6 @@ const GestionNotesExamen = () => {
         disableFilters: true,
         filterable: true,
       },
-
       {
         Header: "Classe",
         accessor: "groupe.nom_classe_fr",
@@ -186,7 +301,6 @@ const GestionNotesExamen = () => {
         disableFilters: true,
         filterable: true,
       },
-
       {
         Header: "Action",
         disableFilters: true,
@@ -233,7 +347,7 @@ const GestionNotesExamen = () => {
                         fontSize: "1.5em",
                       }}
                       onMouseEnter={(e) =>
-                        (e.currentTarget.style.transform = "scale(1.2)")
+                        (e.currentTarget.style.transform = "scale(1.4)")
                       }
                       onMouseLeave={(e) =>
                         (e.currentTarget.style.transform = "scale(1)")
@@ -242,27 +356,37 @@ const GestionNotesExamen = () => {
                   </Link>
                 </li>
               )}
-              {/* <li>
-                  <Link
-                    to="#"
-                    className="badge bg-danger-subtle text-danger remove-item-btn"
+              {cellProps.completed === "1" && (
+                <li>
+                  <button
+                    type="button"
+                    className="btn bg-danger-subtle btn-sm remove-item-btn"
                   >
-                    <i
-                      className="ph ph-trash"
-                      style={{
-                        transition: "transform 0.3s ease-in-out",
-                        cursor: "pointer",
-                        fontSize: "1.5em",
-                      }}
-                      onMouseEnter={(e) =>
-                        (e.currentTarget.style.transform = "scale(1.2)")
-                      }
-                      onMouseLeave={(e) =>
-                        (e.currentTarget.style.transform = "scale(1)")
-                      }
-                    ></i>
-                  </Link>
-                </li> */}
+                    <PDFDownloadLink
+                      document={<NotePaper />}
+                      fileName={`Note_${cellProps?.type_examen!}_${cellProps
+                        ?.groupe?.nom_classe_fr!}_${cellProps?.matiere
+                        ?.matiere!}_${cellProps.semestre}.pdf`}
+                      className="text-decoration-none"
+                    >
+                      <i
+                        className="ph ph-file-pdf text-danger"
+                        style={{
+                          transition: "transform 0.3s ease-in-out",
+                          cursor: "pointer",
+                          fontSize: "1.1em",
+                        }}
+                        onMouseEnter={(e) =>
+                          (e.currentTarget.style.transform = "scale(1.6)")
+                        }
+                        onMouseLeave={(e) =>
+                          (e.currentTarget.style.transform = "scale(1.1)")
+                        }
+                      ></i>
+                    </PDFDownloadLink>
+                  </button>
+                </li>
+              )}
             </ul>
           );
         },
@@ -270,6 +394,202 @@ const GestionNotesExamen = () => {
     ],
     []
   );
+
+  function getAcademicYear() {
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth() + 1;
+    const currentYear = currentDate.getFullYear();
+    let startYear, endYear;
+
+    if (currentMonth >= 1 && currentMonth <= 6) {
+      startYear = currentYear - 1;
+      endYear = currentYear;
+    } else if (currentMonth >= 9 && currentMonth <= 12) {
+      startYear = currentYear;
+      endYear = currentYear + 1;
+    } else {
+      startYear = currentYear - 1;
+      endYear = currentYear;
+    }
+
+    return `${startYear}/${endYear}`;
+  }
+
+  const NotePaper = () => {
+    return (
+      <Document>
+        <Page orientation="portrait" style={{ padding: 30 }}>
+          {/* Header */}
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              marginBottom: 10,
+            }}
+          >
+            {/* Left Section */}
+            <View style={{ flex: 1, flexWrap: "wrap", maxWidth: "20%" }}>
+              <Text
+                style={{
+                  fontSize: 10,
+                  fontWeight: "bold",
+                  textAlign: "left",
+                }}
+              >
+                {variableGlobales[2]?.universite_fr!}
+              </Text>
+              <Text
+                style={{
+                  fontSize: 10,
+                  textAlign: "left",
+                }}
+              >
+                {variableGlobales[2]?.etablissement_fr!}
+              </Text>
+            </View>
+            {/* Center Section */}
+            <View style={{ flex: 1, alignItems: "center", maxWidth: "40%" }}>
+              <Text style={{ fontSize: 14, fontWeight: "bold" }}>
+                Note: {noteState?.type_examen!}
+              </Text>
+              <Text style={styleGlobalCalendar.secondTitle}>
+                Groupe: {noteState?.groupe?.nom_classe_fr!}
+              </Text>
+              <Text style={styleGlobalCalendar.thirdTitle}>
+                Epreuve de: {noteState?.matiere?.matiere!}
+              </Text>
+            </View>
+            {/* Right Section */}
+            <View style={{ alignItems: "flex-end" }}>
+              <Text style={{ fontSize: 10 }}>A.U: {getAcademicYear()}</Text>
+              <Text style={{ fontSize: 10 }}>
+                Semestre: {noteState?.semestre!}
+              </Text>
+            </View>
+          </View>
+          {/* Table */}
+          {/* Table Header */}
+          <View style={stylesCalenderFilter.emergedTable}>
+            {/* Header */}
+            <View
+              style={[stylesCalenderFilter.row, stylesCalenderFilter.headerRow]}
+            >
+              <Text
+                style={[
+                  stylesCalenderFilter.cell,
+                  stylesCalenderFilter.numEtudiant,
+                ]}
+              >
+                N°
+              </Text>
+              <Text
+                style={[
+                  stylesCalenderFilter.cell,
+                  stylesCalenderFilter.cinEtudiant,
+                ]}
+              >
+                C.I.N
+              </Text>
+              <Text
+                style={[
+                  stylesCalenderFilter.cell,
+                  stylesCalenderFilter.nomEtudiant,
+                ]}
+              >
+                Nom et Prénom
+              </Text>
+              <Text
+                style={[
+                  stylesCalenderFilter.cell,
+                  stylesCalenderFilter.entreEtudiant,
+                ]}
+              >
+                Note
+              </Text>
+            </View>
+            {/* Body */}
+            {noteState?.etudiants?.map((etudiant: any, index: any) => {
+              return (
+                <View style={stylesCalenderFilter.row} key={index}>
+                  <Text
+                    style={[
+                      stylesCalenderFilter.cell,
+                      stylesCalenderFilter.numEtudiant,
+                    ]}
+                  >
+                    {index + 1}
+                  </Text>
+                  <Text
+                    style={[
+                      stylesCalenderFilter.cell,
+                      stylesCalenderFilter.cinEtudiant,
+                    ]}
+                  >
+                    {etudiant.etudiant.num_CIN}
+                  </Text>
+                  <Text
+                    style={[
+                      stylesCalenderFilter.cell,
+                      stylesCalenderFilter.nomEtudiant,
+                    ]}
+                  >
+                    {etudiant.etudiant.nom_fr} {etudiant.etudiant.prenom_fr}
+                  </Text>
+                  <Text
+                    style={[
+                      stylesCalenderFilter.cell,
+                      stylesCalenderFilter.entreEtudiant,
+                    ]}
+                  >
+                    {etudiant.note}
+                  </Text>
+                </View>
+              );
+            })}
+          </View>
+          {/* Footer */}
+          <View
+            style={{
+              position: "absolute",
+              bottom: 10,
+              left: 10,
+              right: 10,
+              paddingLeft: 30,
+              paddingRight: 30,
+            }}
+          >
+            <View
+              style={{
+                alignItems: "flex-end",
+                marginTop: 10,
+                padding: 10,
+              }}
+              render={({ pageNumber }) => (
+                <Text style={{ fontSize: 10 }}>Page {pageNumber}</Text>
+              )}
+            />
+          </View>
+        </Page>
+      </Document>
+    );
+  };
+
+  const validateNote = (id: string, value: string) => {
+    const numericValue = parseFloat(value);
+    if (value.trim() === "" || (numericValue >= 0 && numericValue <= 20)) {
+      setErrors((prevErrors) => ({ ...prevErrors, [id]: "" }));
+    } else {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        [id]: "La valeur saisie doit être comprise entre 0 et 20!",
+      }));
+    }
+  };
+
+  const handleChange = (id: string, value: string) => {
+    validateNote(id, value);
+    handleInputChange(id, value);
+  };
 
   return (
     <React.Fragment>
@@ -392,17 +712,21 @@ const GestionNotesExamen = () => {
                             )?.note || ""
                           }
                           onChange={(e) =>
-                            handleInputChange(
+                            handleChange(
                               existingEtudiant.etudiant._id,
                               e.target.value
                             )
                           }
                         />
+                        {errors[existingEtudiant.etudiant._id] && (
+                          <div className="text-danger small mt-1">
+                            {errors[existingEtudiant.etudiant._id]}
+                          </div>
+                        )}
                       </Col>
                     </Row>
                   ))
                 : null}
-
               {filteredEtudiants.map((etudiants) => (
                 <Row className="mb-3" key={etudiants?._id!}>
                   <Col lg={1}>
@@ -434,9 +758,14 @@ const GestionNotesExamen = () => {
                         )?.note || ""
                       }
                       onChange={(e) =>
-                        handleInputChange(etudiants?._id!, e.target.value)
+                        handleChange(etudiants?._id!, e.target.value)
                       }
                     />
+                    {errors[etudiants?._id!] && (
+                      <div className="text-danger small mt-1">
+                        {errors[etudiants?._id!]}
+                      </div>
+                    )}
                   </Col>
                 </Row>
               ))}
@@ -476,23 +805,26 @@ const GestionNotesExamen = () => {
               <Modal.Body className="p-4">
                 <Row className="mb-3">
                   <Col>
-                    <span className="fw-medium">{noteState.type_examen}</span>{" "}
+                    <span className="fw-medium">{noteState?.type_examen!}</span>{" "}
                     de{" "}
-                    <span className="fw-bold">{noteState.matiere.matiere}</span>{" "}
+                    <span className="fw-bold">
+                      {noteState?.matiere?.matiere!}
+                    </span>{" "}
                     pour{" "}
                     <span className="fw-bold">
-                      {noteState.groupe.nom_classe_fr}
+                      {noteState?.groupe?.nom_classe_fr!}
                     </span>{" "}
-                    en <span className="fw-medium">{noteState.semestre}</span>
+                    en <span className="fw-medium">{noteState?.semestre!}</span>
                   </Col>
                 </Row>
-                {noteState.etudiants.map((etudiant: any) => (
+                {noteState?.etudiants!.map((etudiant: any) => (
                   <Row key={etudiant?.etudiant?._id!} className="mb-2">
-                    <Col lg={2}>{etudiant.etudiant.num_CIN}</Col>
+                    <Col lg={2}>{etudiant?.etudiant?.num_CIN!}</Col>
                     <Col>
-                      {etudiant.etudiant.prenom_fr} {etudiant.etudiant.nom_fr}{" "}
+                      {etudiant?.etudiant?.prenom_fr!}{" "}
+                      {etudiant?.etudiant?.nom_fr!}{" "}
                     </Col>
-                    <Col>{etudiant.note}</Col>
+                    <Col>{etudiant?.note!}</Col>
                   </Row>
                 ))}
               </Modal.Body>

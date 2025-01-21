@@ -22,13 +22,20 @@ interface NiveauClasse {
   sections: Section[]; // Ensure this is defined as an array
 }
 
-interface GroupeClasse {
+export interface GroupeClasse {
   _id: string;
   nom_classe_fr: string;
   nom_classe_ar: string;
   departement: string;
   niveau_classe: NiveauClasse;
   matieres: string[];
+}
+
+export interface EtatCompte {
+  _id: string;
+    value_etat_etudiant: string;
+    etat_ar: string;
+    etat_fr: string;
 }
 
 export interface Etudiant {
@@ -47,13 +54,8 @@ export interface Etudiant {
   face_1_CIN: string;
   face_2_CIN: string;
   fiche_paiement: string;
-  etat_compte: {
-    _id: string;
-    value_etat_etudiant: string;
-    etat_ar: string;
-    etat_fr: string;
-  };
-  groupe_classe: GroupeClasse;
+  etat_compte?: EtatCompte;
+  groupe_classe?: GroupeClasse;
   state: string;
   dependence: string;
   code_postale: string;
@@ -70,7 +72,7 @@ export interface Etudiant {
   filiere: string;
   niveau_scolaire: string;
   annee_scolaire: string;
-  type_inscription: {
+  type_inscription?: {
     _id: string;
     value_type_inscription: string;
     type_ar: string;
@@ -90,6 +92,18 @@ export interface Etudiant {
   photo_profil: string;
   PhotoProfilFileExtension: string;
   PhotoProfilFileBase64String: string;
+  //! TO Verify if we keep these fields or not !!
+  num_inscri?: string,
+  Niveau_Fr?: string,
+  DIPLOME?: string,
+  Spécialité?: string,
+  Groupe?: string,
+  Cycle?: string,
+  Ann_Univ?: string,
+  Modele_Carte?: string,
+  NiveauAr?: string,
+  DiplomeAr?: string,
+  SpecialiteAr?: string,
 }
 
 export const etudiantSlice = createApi({
