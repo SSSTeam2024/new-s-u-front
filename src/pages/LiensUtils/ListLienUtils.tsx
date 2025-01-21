@@ -15,7 +15,7 @@ import TableContainer from "Common/TableContainer";
 import { LienUtils } from "Common/data/lienUtils";
 
 const ListLienUtilst = () => {
-  document.title = "Liste des liens utils |  ENIGA";
+  document.title = "Liste des liens utils | ENIGA";
 
   const navigate = useNavigate();
 

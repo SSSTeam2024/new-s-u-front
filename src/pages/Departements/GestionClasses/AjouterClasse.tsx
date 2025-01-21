@@ -17,6 +17,7 @@ interface Section {
   name_section_ar: string;
   abreviation: string;
   departements: string[];
+  mention_classe: any;
 }
 
 interface FormData {
@@ -39,8 +40,9 @@ interface FormData {
     name_niveau_ar: string;
     name_niveau_fr: string;
     abreviation: string;
-    sections: Section[];
+    sections: any[];
   };
+
   matieres: any[];
 }
 

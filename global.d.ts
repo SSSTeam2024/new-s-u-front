@@ -9,3 +9,4 @@ declare module 'dompurify';
 declare module 'file-saver';
 declare module 'react-to-print';
 declare module 'qrcode';
+declare module 'crypto-js';

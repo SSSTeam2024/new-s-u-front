@@ -186,6 +186,12 @@ import AjouterCalendrierExamen from "pages/GestionExamens/AjouterCalendrierExame
 import ListCalendrier from "pages/GestionExamens/ListCalendrier";
 import ProgrammerCalendrier from "pages/GestionExamens/ProgrammerCalendrier";
 import CalendrierDetails from "pages/GestionExamens/CalendrierDetails";
+import ListDomaineClass from "pages/Departements/GestionClasses/DomaineClasse/ListDomaineClasse";
+import ListMentionClasse from "pages/Departements/GestionClasses/MentionClasse/ListMentionClasse";
+//! Gestion des Notes Examen
+import GestionNotesExamen from "pages/GestionNotesExamen";
+import AjouterNotesExamen from "pages/GestionNotesExamen/AjouterNotesExamen";
+
 import GenerateDemandeEnseignant from "pages/Demande-enseignant/GenerateDemandeEnseignant";
 import GenerateDemandePersonnel from "pages/Demande-personnel/GenerateDemandePersonnel";
 import AjouterDeplacement from "pages/Deplacement/AjouterDeplacement";
@@ -195,14 +201,34 @@ import ListeNotesPro from "pages/Notes-professionnels/ListeNotesPro";
 import AjouterMission from "pages/Mission/AjouterMission";
 import ListeMissions from "pages/Mission/ListeMission";
 import GenerateFicheTache from "pages/Mission/GenererFichierTache";
+import ListeParcours from "pages/GestionParcours/Parcours/ListeParcours";
+import ListeModulesParcours from "pages/GestionParcours/ModulesParcours/ListeModulesParcours";
+import ListTypeParcours from "pages/GestionParcours/TypeParcours/ListTypeParcours";
+import AddPlanParcours from "pages/GestionParcours/Parcours/AddPlanParcours";
 const authProtectedRoutes = [
   { path: "/dashboard", component: <Dashboard /> },
 
-  //avis etudiant
+  //Parcours Part
+
   {
-    path: "/avis-etudiant/liste-avis-etudiant",
-    component: <ListeAvisEtudiant />,
+    path: "/parcours/gestion-parcours/liste-parcours",
+    component: <ListeParcours />,
   },
+  //ajouter parcours
+  {
+    path: "/parcours/gestion-parcours/ajouter-plan-parcours",
+    component: <AddPlanParcours />,
+  },
+
+  {
+    path: "/parcours/gestion-parcours/liste-modules",
+    component: <ListeModulesParcours />,
+  },
+  {
+    path: "/parcours/gestion-parcours/liste-type-parcours",
+    component: <ListTypeParcours />,
+  },
+  //avis etudiant
   {
     path: "/avis-etudiant/ajouter-avis-etudiant",
     component: <AjouterAvisEtudiant />,
@@ -259,6 +285,17 @@ const authProtectedRoutes = [
     path: "/gestion-etudiant/edit-compte-etudiant",
     component: <EditProfilEtudiant />,
   },
+
+  //! Gestion des Notes Examen
+  {
+    path: "/gestion-examen/liste-des-notes-examen",
+    component: <GestionNotesExamen />,
+  },
+  {
+    path: "/gestion-examen/ajouter-des-notes-examen",
+    component: <AjouterNotesExamen />,
+  },
+
   //gestion enseignant
   {
     path: "/gestion-enseignant/ajouter-enseignant",
@@ -654,7 +691,19 @@ const authProtectedRoutes = [
     path: "/departement/gestion-classes/edit-section",
     component: <EditSection />,
   },
+  // domaine classe
 
+  {
+    path: "/departement/gestion-classes/liste-domaines",
+    component: <ListDomaineClass />,
+  },
+
+  // mention classe
+
+  {
+    path: "/departement/gestion-classes/liste-mentions",
+    component: <ListMentionClasse />,
+  },
   // Gestion Type seance
 
   {

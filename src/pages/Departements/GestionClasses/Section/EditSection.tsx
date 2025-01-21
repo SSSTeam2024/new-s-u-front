@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { useUpdateSectionMutation } from "features/section/section";
 import { useFetchDepartementsQuery } from "features/departement/departement";
+import { useFetchMentionsClasseQuery } from "features/mentionClasse/mentionClasse";
 
 const EditSection = () => {
   document.title = "Modifier Section | Application Smart Institute";
@@ -12,6 +13,7 @@ const EditSection = () => {
 
   const [editSection] = useUpdateSectionMutation();
   const { data: departements = [] } = useFetchDepartementsQuery();
+  const { data: mentionsClasse = [] } = useFetchMentionsClasseQuery();
 
   const [formData, setFormData] = useState({
     _id: "",
@@ -19,6 +21,7 @@ const EditSection = () => {
     name_section_fr: "",
     abreviation: "",
     departements: [] as string[],
+    mention_classe: "",
   });
 
   useEffect(() => {
@@ -27,6 +30,7 @@ const EditSection = () => {
         _id: section._id,
         name_section_ar: section.name_section_ar,
         name_section_fr: section.name_section_fr,
+        mention_classe: section.mention_classe,
         abreviation: section.abreviation,
         departements: section.departements.map((dep: any) => dep._id) || [],
       });
@@ -94,6 +98,30 @@ const EditSection = () => {
     formData.departements.includes(departement._id)
   );
 
+  const handleDepartementsChange = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const { options } = e.target;
+    const value: string[] = [];
+    for (let i = 0; i < options.length; i++) {
+      if (options[i].selected) {
+        value.push(options[i].value);
+      }
+    }
+    setFormData((prevData) => ({
+      ...prevData,
+      departements: value,
+    }));
+  };
+
+  const handleMentionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const { value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      mention_classe: value,
+    }));
+  };
+
   return (
     <React.Fragment>
       <div className="page-content">
@@ -148,7 +176,7 @@ const EditSection = () => {
                     </div>
                   </Col>
 
-                  <Col lg={5}>
+                  {/* <Col lg={5}>
                     <div className="mb-3">
                       <Form.Label htmlFor="departements">
                         Départements
@@ -159,7 +187,7 @@ const EditSection = () => {
                         id="departements"
                         multiple
                         value={formData.departements}
-                        onChange={handleChange}
+                        onChange={handleDepartementsChange}
                       >
                         <option value="" disabled>
                           Sélectionner Départements
@@ -170,7 +198,7 @@ const EditSection = () => {
                           </option>
                         ))}
                       </select>
-                      {/* Display already assigned departments */}
+                   
                       <div className="mt-3">
                         <h5>Départements Assignés</h5>
                         {existingDepartements.length > 0 ? (
@@ -187,6 +215,30 @@ const EditSection = () => {
                           <p>Aucun département assigné</p>
                         )}
                       </div>
+                    </div>
+                  </Col> */}
+                  <Col lg={6}>
+                    <div className="mb-3">
+                      <Form.Label htmlFor="mention_classe">
+                        Mention Classe
+                      </Form.Label>
+                      <select
+                        className="form-select text-muted"
+                        name="mention_classe"
+                        id="mention_classe"
+                        value={formData.mention_classe}
+                        onChange={handleMentionChange}
+                      >
+                        <option value="">Sélectionner Mention Classe</option>
+                        {mentionsClasse.map((mentionClasse) => (
+                          <option
+                            key={mentionClasse._id}
+                            value={mentionClasse._id}
+                          >
+                            {mentionClasse.name_mention_fr}
+                          </option>
+                        ))}
+                      </select>
                     </div>
                   </Col>
                 </Row>

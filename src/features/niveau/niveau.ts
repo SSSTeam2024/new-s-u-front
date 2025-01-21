@@ -3,11 +3,10 @@ import { Section } from "features/section/section";
 
 export interface Niveau {
   _id: string;
-  name_niveau_ar: string,
-  name_niveau_fr: string,
-  abreviation: string,
+  name_niveau_ar: string;
+  name_niveau_fr: string;
+  abreviation: string;
   sections: Section[];
-  
 }
 export const niveauSlice = createApi({
   reducerPath: "Niveau",
@@ -58,13 +57,12 @@ export const niveauSlice = createApi({
       }),
     };
   },
-  
 });
 
 export const {
-   useAddNiveauMutation,
-   useDeleteNiveauMutation,
-   useFetchNiveauxQuery,
-   useUpdateNiveauMutation,
-   useFetchSectionsByNiveauIdQuery
+  useAddNiveauMutation,
+  useDeleteNiveauMutation,
+  useFetchNiveauxQuery,
+  useUpdateNiveauMutation,
+  useFetchSectionsByNiveauIdQuery,
 } = niveauSlice;

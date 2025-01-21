@@ -25,6 +25,7 @@ const ListNiveau = () => {
     navigate("/departement/gestion-classes/ajouter-niveau");
   }
   const { data = [] } = useFetchNiveauxQuery();
+  console.log("niveau data: ", data);
   const [deleteNiveau] = useDeleteNiveauMutation();
 
   const swalWithBootstrapButtons = Swal.mixin({
@@ -64,34 +65,6 @@ const ListNiveau = () => {
   };
   const columns = useMemo(
     () => [
-      {
-        Header: (
-          <div className="form-check">
-            {" "}
-            <input
-              className="form-check-input"
-              type="checkbox"
-              id="checkAll"
-              value="option"
-            />{" "}
-          </div>
-        ),
-        Cell: (cellProps: any) => {
-          return (
-            <div className="form-check">
-              {" "}
-              <input
-                className="form-check-input"
-                type="checkbox"
-                name="chk_child"
-                defaultValue="option1"
-              />{" "}
-            </div>
-          );
-        },
-        id: "#",
-      },
-
       {
         Header: "Niveau Classe",
         accessor: "name_niveau_fr",

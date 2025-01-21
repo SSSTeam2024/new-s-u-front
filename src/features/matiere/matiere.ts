@@ -2,14 +2,21 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export interface Matiere {
   _id: string;
-  code_matiere: string;
-  matiere: string;
-  type: string;
+  code_matiere?: string;
+  matiere?: string;
+  type?: string;
   semestre: string;
-  volume: string;
-  nbr_elimination: string;
-  regime_matiere: string;
-  classes?: any[]
+  volume?: string;
+  nbr_elimination?: string;
+  regime_matiere?: string;
+  classes?: any[];
+  types?: {
+    type: string;
+    volume: string;
+    nbr_elimination: string;
+  }[];
+  credit_matiere?: string;
+  coefficient_matiere?: string;
 }
 export const matiereSlice = createApi({
   reducerPath: "Matiere",
