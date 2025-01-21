@@ -25,14 +25,15 @@ import {
   useDeleteAvisEnseignantMutation,
 } from "features/avisEnseignant/avisEnseignantSlice";
 import Swal from "sweetalert2";
-import { useFetchDeplacementQuery } from "features/deplacement/deplacementSlice";
+
+import { useFetchNotesProQuery } from "features/notesPro/notesProSlice";
 
 const ListeNotesPro = () => {
   document.title = "Notes Professionnelles | ENIGA";
 
   const user = useSelector((state: RootState) => selectCurrentUser(state));
 
-  const { data: deplacements } = useFetchDeplacementQuery();
+  const { data: notesPro } = useFetchNotesProQuery();
 
   const { refetch } = useFetchAvisEnseignantQuery();
   const [deleteAvisEnseignant] = useDeleteAvisEnseignantMutation();
@@ -91,19 +92,10 @@ const ListeNotesPro = () => {
       );
       Swal.fire(
         "Erreur !",
-        "Un problème est survenu lors de la suppression de l'avis personnel.",
+        "Un problème est survenu lors de la suppression du note professionnelle.",
         "error"
       );
     }
-  };
-
-  const handleShowPdfModal = (fileName: string) => {
-    let link =
-      `${process.env.REACT_APP_API_URL}/files/avisEnseignantFiles/pdf/` +
-      fileName;
-
-    setPdfUrl(link);
-    setShowPdfModal(true);
   };
 
   const handleClosePdfModal = () => {
@@ -114,78 +106,52 @@ const ListeNotesPro = () => {
   const columns = useMemo(
     () => [
       {
-        Header: "Motif de déplacement",
-        accessor: "title",
+        Header: "Personnel",
+        accessor: (row: any) =>
+          `${row.personnel?.nom_fr || ""} ${row.personnel?.prenom_fr || ""}`,
+        disableFilters: true,
+        filterable: true,
+      },
+
+      {
+        Header: "Note 1",
+        accessor: "note1",
         disableFilters: true,
         filterable: true,
       },
       {
-        Header: "Déplacé(e)",
-        accessor: (row: any) => {
-          if (row.personnel !== null) {
-            return (
-              <>
-                {row.personnel?.nom_fr +
-                  " " +
-                  row.personnel?.prenom_fr +
-                  " | Personnel"}
-              </>
-            );
-          } else {
-            return (
-              <>
-                {row.enseignant?.nom_fr +
-                  " " +
-                  row.enseignant?.prenom_fr +
-                  " | Enseignant"}
-              </>
-            );
-          }
-        },
-        disableFilters: true,
-        filterable: true,
-      },
-      // {
-      //   Header: "PDF",
-      //   accessor: "pdf",
-      //   disableFilters: true,
-      //   filterable: true,
-      //   Cell: ({ row }: any) => (
-      //     <Button
-      //       variant="link"
-      //       onClick={() => handleShowPdfModal(row.original.pdf)}
-      //     >
-      //       Ouvrir PDF
-      //     </Button>
-      //   ),
-      // },
-      {
-        Header: "Date de départ",
-        accessor: "date_depart",
+        Header: "Note 2",
+        accessor: "note2",
         disableFilters: true,
         filterable: true,
       },
       {
-        Header: "Date de retour",
-        accessor: "date_retour",
+        Header: "Note 3",
+        accessor: "note3",
         disableFilters: true,
         filterable: true,
       },
       {
-        Header: "Lieu de départ",
-        accessor: "lieu_depart",
+        Header: "Note 4",
+        accessor: "note4",
         disableFilters: true,
         filterable: true,
       },
       {
-        Header: "Lieu d'arrivé",
-        accessor: "lieu_arrive",
+        Header: "Note 5",
+        accessor: "note5",
         disableFilters: true,
         filterable: true,
       },
       {
-        Header: "Etat",
-        accessor: "etat",
+        Header: "Note finale",
+        accessor: "note_finale",
+        disableFilters: true,
+        filterable: true,
+      },
+      {
+        Header: "Année",
+        accessor: "annee",
         disableFilters: true,
         filterable: true,
       },
@@ -299,11 +265,14 @@ const ListeNotesPro = () => {
     <React.Fragment>
       <div className="page-content">
         <Container fluid={true}>
-          <Breadcrumb title="Liste des Avis" pageTitle="Avis enseignants" />
+          <Breadcrumb
+            title="Liste des notes profesionnelles"
+            pageTitle="Note profesionnelle"
+          />
 
           <Row id="usersList">
             <Col lg={12}>
-              <Card>
+              {/* <Card>
                 <Card.Body>
                   <Row className="g-lg-2 g-4">
                     <Col lg={3}>
@@ -324,12 +293,12 @@ const ListeNotesPro = () => {
                     )}
                   </Row>
                 </Card.Body>
-              </Card>
+              </Card> */}
               <Card>
                 <Card.Body className="p-0">
                   <TableContainer
                     columns={columns || []}
-                    data={deplacements || []}
+                    data={notesPro || []}
                     // isGlobalFilter={false}
                     iscustomPageSize={false}
                     isBordered={false}
@@ -354,22 +323,6 @@ const ListeNotesPro = () => {
           </Row>
         </Container>
       </div>
-
-      {/* PDF Modal */}
-      <Modal show={showPdfModal} onHide={handleClosePdfModal} size="lg">
-        <Modal.Header closeButton>
-          <Modal.Title>PDF Viewer</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <iframe
-            src={pdfUrl}
-            width="100%"
-            height="600px"
-            style={{ border: "none" }}
-            title="PDF Viewer"
-          ></iframe>
-        </Modal.Body>
-      </Modal>
     </React.Fragment>
   );
 };

@@ -57,6 +57,8 @@ import { ficheVoeuxSlice } from "features/ficheVoeux/ficheVoeux";
 import { seanceSlice } from "features/seance/seance";
 import { examenSlice } from "features/examens/examenSlice";
 import { deplacementSlice } from "features/deplacement/deplacementSlice";
+import { missionSlice } from "features/mission/missionSlice";
+import { notesProSlice } from "features/notesPro/notesProSlice";
 import { virtualServiceSlice } from "features/virtualService/virtualServiceSlice";
 
 export const store = configureStore({
@@ -112,8 +114,10 @@ export const store = configureStore({
     [ficheVoeuxSlice.reducerPath]: ficheVoeuxSlice.reducer,
     [seanceSlice.reducerPath]: seanceSlice.reducer,
     [examenSlice.reducerPath]: examenSlice.reducer,
+    [missionSlice.reducerPath]: missionSlice.reducer,
     [deplacementSlice.reducerPath]: deplacementSlice.reducer,
     [virtualServiceSlice.reducerPath]: virtualServiceSlice.reducer,
+    [notesProSlice.reducerPath]: notesProSlice.reducer,
     auth: authSlice,
     Layout: LayoutReducer,
     ForgetPassword: ForgetPasswordReducer,
@@ -171,7 +175,9 @@ export const store = configureStore({
       seanceSlice.middleware,
       examenSlice.middleware,
       deplacementSlice.middleware,
+      missionSlice.middleware,
       virtualServiceSlice.middleware,
+      notesProSlice.middleware,
     ]);
   },
 });

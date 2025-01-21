@@ -192,6 +192,9 @@ import AjouterDeplacement from "pages/Deplacement/AjouterDeplacement";
 import ListeDeplacements from "pages/Deplacement/ListeDeplacements";
 import AjouterNotePro from "pages/Notes-professionnels/AjouterNotePro";
 import ListeNotesPro from "pages/Notes-professionnels/ListeNotesPro";
+import AjouterMission from "pages/Mission/AjouterMission";
+import ListeMissions from "pages/Mission/ListeMission";
+import GenerateFicheTache from "pages/Mission/GenererFichierTache";
 const authProtectedRoutes = [
   { path: "/dashboard", component: <Dashboard /> },
 
@@ -755,7 +758,21 @@ const authProtectedRoutes = [
     path: "/gestion-deplacement/Liste-deplacements",
     component: <ListeDeplacements />,
   },
+  // Gestion des missions
 
+  {
+    path: "/gestion-mission/ajouter-mission",
+    component: <AjouterMission />,
+  },
+
+  {
+    path: "/gestion-mission/liste-mission",
+    component: <ListeMissions />,
+  },
+  {
+    path: "/gestion-mission/generer-fiche",
+    component: <GenerateFicheTache />,
+  },
   // Gestion des notes professionelles
 
   {

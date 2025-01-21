@@ -239,7 +239,7 @@ const NewTemplateBody = () => {
     );
 
   // Combine global shortcodes based on the selected language
-  let displayShortCodeList = [];
+  let displayShortCodeList: any = [];
   if (selectedLangue === "arabic") {
     displayShortCodeList = [
       ...globalShortCodesAr,
@@ -492,7 +492,9 @@ const NewTemplateBody = () => {
       // }
     };
 
-  const handleNextStep = () => setStep((prevStep) => prevStep + 1);
+  const handleNextStep = () => {
+    setStep((prevStep) => prevStep + 1);
+  };
 
   const handlePreviousStep = () => {
     if (body.trim()) {
@@ -606,6 +608,7 @@ const NewTemplateBody = () => {
                             <option value="personnel">Demande Personnel</option>
                             <option value="examen">Gestion Examen</option>
                             <option value="stage">Gestion Stage</option>
+                            <option value="mission">Gestion des tâches</option>
                           </Form.Select>
                         </Form.Group>
                       </Col>
@@ -853,7 +856,7 @@ const NewTemplateBody = () => {
                               Informations d'établissement
                             </Card.Header>
                             <Card.Body>
-                              {displayShortCodeList.map((code) =>
+                              {displayShortCodeList.map((code: any) =>
                                 code.intended_for === "global" ? (
                                   <Button
                                     key={code._id}
@@ -894,8 +897,13 @@ const NewTemplateBody = () => {
                                 Informations examen
                               </Card.Header>
                             )}
+                            {selectedIntendedFor === "mission" && (
+                              <Card.Header as="h6">
+                                Informations de tâche
+                              </Card.Header>
+                            )}
                             <Card.Body>
-                              {displayShortCodeList.map((code) =>
+                              {displayShortCodeList.map((code: any) =>
                                 code.intended_for !== "global" ? (
                                   <Button
                                     key={code._id}

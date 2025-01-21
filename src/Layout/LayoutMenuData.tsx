@@ -49,6 +49,7 @@ const Navdata = () => {
   const [isConge, setIsConge] = useState(false);
   const [isDeplacement, setIsDeplacement] = useState(false);
   const [isNotesProfessionnelles, setIsNotesProfessionnelles] = useState(false);
+  const [isMission, setIsMission] = useState(false);
   const [isModele, setIsModele] = useState(false);
   const [isLevel1, setIsLevel1] = useState(false);
   const [isLevel2, setIsLevel2] = useState(false);
@@ -146,6 +147,9 @@ const Navdata = () => {
     if (iscurrentState !== "Deplacement") {
       setIsDeplacement(false);
     }
+    if (iscurrentState !== "Mission") {
+      setIsMission(false);
+    }
     if (iscurrentState !== "NotesProfessionelles") {
       setIsNotesProfessionnelles(false);
     }
@@ -191,6 +195,7 @@ const Navdata = () => {
     isEnseignant,
     isPersonnel,
     isDeaprtement,
+    isMission,
     isParametreEtudiant,
     isExamen,
   ]);
@@ -1011,20 +1016,6 @@ const Navdata = () => {
           parentId: "déplacement",
           icon: "bi bi-clipboard2-plus",
         },
-        // {
-        //   id: "Solde-Conge",
-        //   label: "Solde des Congés",
-        //   link: "/solde-conge/liste-solde-conge",
-        //   parentId: "congés",
-        //   icon: "bi bi-person-fill-add",
-        // },
-        // {
-        //   id: "demande-Conge",
-        //   label: "Ajouter Demande de Congé",
-        //   link: "/demande-conge/ajouter-demande-conge",
-        //   parentId: "congés",
-        //   icon: "bi bi-person-fill-add",
-        // },
         {
           id: "liste_deplacements",
           label: "Liste des déplacements",
@@ -1034,7 +1025,36 @@ const Navdata = () => {
         },
       ],
     },
-
+    // Mission
+    {
+      id: "Mission",
+      label: "Gestion des taches",
+      icon: "bi bi-car-front",
+      link: "/#",
+      click: function (e: any) {
+        e.preventDefault();
+        setIsMission(!isMission);
+        setIscurrentState("Mission");
+        updateIconSidebar(e);
+      },
+      stateVariables: isMission,
+      subItems: [
+        {
+          id: "ajouter-mission",
+          label: "Ajouter une tâche",
+          link: "/gestion-mission/ajouter-mission",
+          parentId: "Mission",
+          icon: "bi bi-clipboard2-plus",
+        },
+        {
+          id: "liste_deplacements",
+          label: "Liste des tâches",
+          link: "/gestion-mission/liste-mission",
+          parentId: "Mission",
+          icon: "bi bi-journal-text",
+        },
+      ],
+    },
     // notes pro
     {
       id: "notes-professionnels",
