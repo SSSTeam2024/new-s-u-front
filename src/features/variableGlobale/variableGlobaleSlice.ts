@@ -1,10 +1,13 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export interface VaribaleGlobale {
+  _id?: string;
   directeur_ar: string;
   directeur_fr: string;
   secretaire_ar: string;
   secretaire_fr: string;
+  abreviation: string;
+  annee_universitaire: string;
   signature_directeur_base64: string;
   signature_directeur_extension: string;
   signature_secretaire_base64: string;
@@ -32,6 +35,8 @@ export interface VaribaleGlobale {
   logo_etablissement: string;
   logo_universite: string;
   logo_republique: string;
+  [key: string]: string | undefined; // Allow dynamic properties
+
 }
   export const varibaleGlobaleSlice = createApi({
     reducerPath: 'varibaleGlobale',

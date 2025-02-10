@@ -46,6 +46,7 @@ const Navdata = () => {
   const [isEmplois, setIsEmplois] = useState(false);
   const [isRattrapage, setIsRattrapage] = useState(false);
   const [isExamen, setIsExamen] = useState(false);
+  const [isVariable, setIsVariable] = useState(false);
   const [isNotesExamen, setIsNotesExamen] = useState(false);
   const [isConge, setIsConge] = useState(false);
   const [isDeplacement, setIsDeplacement] = useState(false);
@@ -185,6 +186,9 @@ const Navdata = () => {
     if (iscurrentState !== "Parcours") {
       setIsParcours(false);
     }
+    if (iscurrentState !== "Variable") {
+      setIsVariable(false);
+    }
   }, [
     iscurrentState,
     isEcommerce,
@@ -208,6 +212,7 @@ const Navdata = () => {
     isExamen,
     isNotesExamen,
     isParcours,
+    isVariable
   ]);
   let routes = userPermissions
     ? userPermissions.map((permission) => permission.path)
@@ -1283,7 +1288,31 @@ const Navdata = () => {
       id: "variable-globales",
       label: "Variables Globales",
       icon: "bi bi-cloud-arrow-down-fill",
-      link: "/variable/ajouter-variables-globales",
+      link: "/#",
+      click: function (e: any) {
+        e.preventDefault();
+        setIsVariable(!isVariable);
+        setIscurrentState("Variable");
+        updateIconSidebar(e);
+      },
+      stateVariables: isVariable,
+      subItems: [
+        {
+          id: "AjouterVariable",
+          label: "Ajouter variable globale",
+          link: "/variable/ajouter-variables-globales",
+          parentId: "variable-globales",
+          icon: "bi bi-person-fill-add",
+        },
+        {
+          id: "AjouterPermission",
+          label: "Liste des variables globales",
+          link: "/variable/liste-variables-globales",
+          parentId: "variable-globales",
+          icon: "bi bi-person-lines-fill",
+        },
+       
+      ],
     },
     // gestion des admins
     {
