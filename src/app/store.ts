@@ -66,6 +66,7 @@ import { notesExamenSlice } from "features/notesExamen/notesExamenSlice";
 import { typeParcoursSlice } from "features/TypeParcours/TypeParcours";
 import { parcoursSlice } from "features/parcours/parcours";
 import { moduleParcoursSlice } from "features/moduleParcours/moduleParcours";
+import { cycleSlice } from "features/cycle/cycle";
 
 export const store = configureStore({
   reducer: {
@@ -128,6 +129,7 @@ export const store = configureStore({
     [typeParcoursSlice.reducerPath]: typeParcoursSlice.reducer,
     [parcoursSlice.reducerPath]: parcoursSlice.reducer,
     [moduleParcoursSlice.reducerPath]: moduleParcoursSlice.reducer,
+    [cycleSlice.reducerPath]: cycleSlice.reducer,
     //! Notes Examen
     [notesExamenSlice.reducerPath]: notesExamenSlice.reducer,
     auth: authSlice,
@@ -194,6 +196,7 @@ export const store = configureStore({
       typeParcoursSlice.middleware,
       parcoursSlice.middleware,
       moduleParcoursSlice.middleware,
+      cycleSlice.middleware,
     ]);
   },
 });

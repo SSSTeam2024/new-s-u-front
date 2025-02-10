@@ -1729,16 +1729,16 @@ const EditProfilEnseignant = () => {
                                       >
                                         <option value="">إخترالمعتمدية</option>
                                         {selectedWilaya &&
-                                          delegationOptions[selectedWilaya].map(
-                                            (delegation, index) => (
-                                              <option
-                                                key={index}
-                                                value={delegation}
-                                              >
-                                                {delegation}
-                                              </option>
-                                            )
-                                          )}
+                                          delegationOptions[
+                                            selectedWilaya
+                                          ]?.map((delegation, index) => (
+                                            <option
+                                              key={index}
+                                              value={delegation}
+                                            >
+                                              {delegation}
+                                            </option>
+                                          ))}
                                       </select>
                                     </div>
                                   </Col>
@@ -1764,7 +1764,7 @@ const EditProfilEnseignant = () => {
                                         onChange={handleSelectChange}
                                       >
                                         <option value="">إخترالولاية</option>
-                                        {wilayaOptions.map((wilaya, index) => (
+                                        {wilayaOptions?.map((wilaya, index) => (
                                           <option key={index} value={wilaya}>
                                             {wilaya}
                                           </option>

@@ -38,7 +38,7 @@ const AjouterReclamationEtudiant = () => {
   // Filter students based on selected class
   const filteredEtudiants = selectedClasse
     ? etudiant.filter(
-        (etudiant) => etudiant.groupe_classe._id === selectedClasse
+        (etudiant) => etudiant?.groupe_classe?._id! === selectedClasse
       )
     : etudiant; // Show all students if no class is selected
 

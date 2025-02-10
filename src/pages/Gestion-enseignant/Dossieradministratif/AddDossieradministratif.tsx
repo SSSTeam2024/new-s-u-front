@@ -107,14 +107,37 @@ const AddDossieradministratif = () => {
     }
   };
 
+  // const handleTeacherChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  //   console.log("handle change teachers functions all teachers", allTeachers);
+  //   const selectedTeacherId = event.target.value;
+  //   allTeachers.forEach((teacher: any, index: any) => {
+  //     console.log(`Teacher ${index}:`, teacher);
+  //   });
+  //   const selectedTeacher = allTeachers.find(
+  //     (teacher: any) =>
+  //       teacher._id.trim().toLowerCase() ===
+  //       selectedTeacherId.trim().toLowerCase()
+  //   ) || {
+  //     _id: "",
+  //     nom_fr: "",
+  //     nom_ar: "",
+  //     prenom_fr: "",
+  //     prenom_ar: "",
+  //   };
+  //   setFormData((prevData) => {
+  //     return {
+  //       ...prevData,
+  //       enseignant: selectedTeacher,
+  //     };
+  //   });
+  // };
+
   const handleTeacherChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    console.log("handle change teachers functions all teachers",allTeachers)
     const selectedTeacherId = event.target.value;
-    allTeachers.forEach((teacher:any, index:any) => {
-      console.log(`Teacher ${index}:`, teacher);
-    });
+
+    // Find the selected teacher or use a default fallback
     const selectedTeacher = allTeachers.find(
-      (teacher:any) =>
+      (teacher: any) =>
         teacher._id.trim().toLowerCase() ===
         selectedTeacherId.trim().toLowerCase()
     ) || {
@@ -124,12 +147,21 @@ const AddDossieradministratif = () => {
       prenom_fr: "",
       prenom_ar: "",
     };
-    setFormData((prevData) => {
-      return {
-        ...prevData,
-        enseignant: selectedTeacher,
-      };
-    });
+
+    // Extract only the relevant fields for `enseignant`
+    const enseignant = {
+      _id: selectedTeacher._id,
+      nom_fr: selectedTeacher.nom_fr || "",
+      nom_ar: selectedTeacher.nom_ar || "",
+      prenom_fr: selectedTeacher.prenom_fr || "",
+      prenom_ar: selectedTeacher.prenom_ar || "",
+    };
+
+    // Update the `formData` state
+    setFormData((prevData) => ({
+      ...prevData,
+      enseignant,
+    }));
   };
 
   const handleDateChange = (selectedDates: Date[], index: number) => {
@@ -202,7 +234,10 @@ const AddDossieradministratif = () => {
   const onSubmitDossier = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!formData.enseignant?._id || !isValidObjectId(formData?.enseignant?._id)) {
+    if (
+      !formData.enseignant?._id ||
+      !isValidObjectId(formData?.enseignant?._id)
+    ) {
       console.error("Enseignant ID is missing or invalid.");
       return;
     }
@@ -229,7 +264,7 @@ const AddDossieradministratif = () => {
       await createDossierAdministratif(preparedData).unwrap();
       notify();
       refetchTeachers();
-      navigate("/listeDossierAdministartif");
+      navigate("/gestion-enseignant/liste-dossier-administartif");
     } catch (error: any) {
       console.log("Error submitting form:", error);
     }
@@ -239,7 +274,7 @@ const AddDossieradministratif = () => {
     Swal.fire({
       position: "center",
       icon: "success",
-      title: "Fiche de voeux a été crée avec succés",
+      title: "Dossier administratif a été crée avec succés",
       showConfirmButton: false,
       timer: 2000,
     });
@@ -300,9 +335,10 @@ const AddDossieradministratif = () => {
                         <option value="">Sélectionner Enseignant</option>
                         {allTeachers
                           .filter(
-                            (enseignant:any) => enseignant?.papers?.length === 0
+                            (enseignant: any) =>
+                              enseignant?.papers?.length === 0
                           )
-                          .map((enseignant:any) => (
+                          .map((enseignant: any) => (
                             <option key={enseignant._id} value={enseignant._id}>
                               {`${enseignant.prenom_fr} ${enseignant.nom_fr}`}
                             </option>

@@ -110,20 +110,20 @@ const ListGradeEnseignants = () => {
       },
       {
         Header: "Heure d'enseignement",
-        accessor: (row: any) => `${row.charge_horaire.annualMaxHE}`,
+        accessor: (row: any) => `${row?.charge_horaire?.annualMaxHE!}`,
         disableFilters: true,
         filterable: true,
       },
       {
         Header: "Plafond Heure Supplémentaires",
-        accessor: (row: any) => `${row.charge_horaire.annualMaxHS}`,
+        accessor: (row: any) => `${row?.charge_horaire?.annualMaxHS!}`,
         disableFilters: true,
         filterable: true,
       },
 
       {
         Header: "Plafond Heure Extras",
-        accessor: (row: any) => `${row.charge_horaire.annualMaxHX} `,
+        accessor: (row: any) => `${row?.charge_horaire?.annualMaxHX!} `,
         disableFilters: true,
         filterable: true,
       },

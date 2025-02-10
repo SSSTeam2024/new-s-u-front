@@ -17,6 +17,7 @@ import Swal from "sweetalert2";
 import "flatpickr/dist/flatpickr.min.css";
 import {
   Personnel,
+  PersonnelEXCEL,
   useAddPersonnelMutation,
 } from "features/personnel/personnelSlice";
 import { useFetchEtatsPersonnelQuery } from "features/etatPersonnel/etatPersonnelSlice";
@@ -413,7 +414,7 @@ const AjouterPersonnels = () => {
   const { data: categorie = [] } = useFetchCategoriesPersonnelQuery();
   const { data: service = [] } = useFetchServicesPersonnelQuery();
 
-  const [formData, setFormData] = useState<Personnel>({
+  const [formData, setFormData] = useState<any>({
     _id: "",
     nom_fr: "",
     nom_ar: "",
@@ -428,36 +429,11 @@ const AjouterPersonnels = () => {
     nationalite: "",
     etat_civil: "",
     sexe: "",
-    etat_compte: {
-      _id: "",
-      value: "",
-      etat_fr: "",
-      etat_ar: "",
-    },
-    poste: {
-      _id: "",
-      value: "",
-      poste_fr: "",
-      poste_ar: "",
-    },
-    grade: {
-      _id: "",
-      value_grade_personnel: "",
-      grade_fr: "",
-      grade_ar: "",
-    },
-    categorie: {
-      _id: "",
-      value: "",
-      categorie_fr: "",
-      categorie_ar: "",
-    },
-    service: {
-      _id: "",
-      value: "",
-      service_fr: "",
-      service_ar: "",
-    },
+    etat_compte: "",
+    poste: "",
+    grade: "",
+    categorie: "",
+    service: "",
 
     date_affectation: "",
     compte_courant: "",
@@ -481,7 +457,7 @@ const AjouterPersonnels = () => {
   });
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData((prevState) => ({
+    setFormData((prevState: any) => ({
       ...prevState,
       [e.target.id]: e.target.value,
     }));
@@ -489,7 +465,7 @@ const AjouterPersonnels = () => {
 
   const handleChange = (e: any) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
+    setFormData((prevData: any) => ({
       ...prevData,
       [name]: value,
     }));
@@ -523,12 +499,12 @@ const AjouterPersonnels = () => {
     setSelectedDate(selectedDate);
     if (selectedDate) {
       const formattedDate = format(selectedDate, "yyyy-MM-dd");
-      setFormData((prevState) => ({
+      setFormData((prevState: any) => ({
         ...prevState,
         date_affectation: formattedDate,
       }));
     } else {
-      setFormData((prevState) => ({
+      setFormData((prevState: any) => ({
         ...prevState,
         date_affectation: "",
       }));
@@ -541,12 +517,12 @@ const AjouterPersonnels = () => {
     setSelectedDate(selectedDate);
     if (selectedDate) {
       const formattedDate = format(selectedDate, "yyyy-MM-dd");
-      setFormData((prevState) => ({
+      setFormData((prevState: any) => ({
         ...prevState,
         date_naissance: formattedDate,
       }));
     } else {
-      setFormData((prevState) => ({
+      setFormData((prevState: any) => ({
         ...prevState,
         date_naissance: "",
       }));
@@ -558,12 +534,12 @@ const AjouterPersonnels = () => {
     setSelectedDate(selectedDate);
     if (selectedDate) {
       const formattedDate = format(selectedDate, "yyyy-MM-dd");
-      setFormData((prevState) => ({
+      setFormData((prevState: any) => ({
         ...prevState,
         date_delivrance: formattedDate,
       }));
     } else {
-      setFormData((prevState) => ({
+      setFormData((prevState: any) => ({
         ...prevState,
         date_delivrance: "",
       }));
@@ -576,12 +552,12 @@ const AjouterPersonnels = () => {
     setSelectedDate(selectedDate);
     if (selectedDate) {
       const formattedDate = format(selectedDate, "yyyy-MM-dd");
-      setFormData((prevState) => ({
+      setFormData((prevState: any) => ({
         ...prevState,
         date_designation: formattedDate,
       }));
     } else {
-      setFormData((prevState) => ({
+      setFormData((prevState: any) => ({
         ...prevState,
         date_designation: "",
       }));
@@ -591,7 +567,7 @@ const AjouterPersonnels = () => {
 
   const selectChangeStatus = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const value = event.target.value;
-    setFormData((prevState) => ({
+    setFormData((prevState: any) => ({
       ...prevState,
       etat_civil: value,
     }));
@@ -601,7 +577,7 @@ const AjouterPersonnels = () => {
   //change gender
   const selectChangeGender = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const value = event.target.value;
-    setFormData((prevState) => ({
+    setFormData((prevState: any) => ({
       ...prevState,
       sexe: value,
     }));
@@ -610,7 +586,7 @@ const AjouterPersonnels = () => {
   // changer nationalite
   const handleCountrySelect = (country: any) => {
     setSelectedCountry1(country);
-    setFormData((prevData) => ({
+    setFormData((prevData: any) => ({
       ...prevData,
       nationalite: country.countryName,
     }));

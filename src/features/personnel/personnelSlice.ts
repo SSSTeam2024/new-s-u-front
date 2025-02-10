@@ -5,43 +5,43 @@ export interface Personnel {
   dossier?: DossierAdministratif;
   _id: string;
   nom_fr: string;
-  nom_ar: string;
-  mat_cnrps:string;
-  matricule:string;
+  nom_ar?: string;
+  mat_cnrps: string;
+  matricule: string;
   prenom_fr: string;
-  prenom_ar: string;
+  prenom_ar?: string;
   lieu_naissance_fr: string;
-  lieu_naissance_ar: string;
+  lieu_naissance_ar?: string;
   date_naissance: string;
-  date_designation:string;
+  date_designation: string;
   nationalite: string;
   etat_civil: string;
   sexe: string;
-  etat_compte: {
-    _id:string,
-    value:string,
-    etat_fr: string,
-  etat_ar: string,
+  etat_compte?: {
+    _id: string;
+    value: string;
+    etat_fr: string;
+    etat_ar: string;
   };
-  poste: {
+  poste?: {
     _id: string;
     value: string;
     poste_fr: string;
     poste_ar: string;
   };
-  grade: {
+  grade?: {
     _id: string;
     value_grade_personnel: string;
     grade_fr: string;
     grade_ar: string;
   };
-  categorie: {
+  categorie?: {
     _id: string;
     value: string;
     categorie_fr: string;
     categorie_ar: string;
   };
-  service: {
+  service?: {
     _id: string;
     value: string;
     service_fr: string;
@@ -56,7 +56,7 @@ export interface Personnel {
   state: string;
   dependence: string;
   code_postale: string;
-  adress_ar: string;
+  adress_ar?: string;
   adress_fr: string;
   email: string;
   num_phone1: string;
@@ -64,11 +64,54 @@ export interface Personnel {
   nom_conjoint: string;
   job_conjoint: string;
   nombre_fils: string;
-  photo_profil: string;
-  PhotoProfilFileExtension: string;
-  PhotoProfilFileBase64String: string;
-  papers?:string[]
-  
+  photo_profil?: string;
+  PhotoProfilFileExtension?: string;
+  PhotoProfilFileBase64String?: string;
+  papers?: string[];
+}
+
+export interface PersonnelEXCEL {
+  dossier?: DossierAdministratif;
+  _id?: string;
+  nom_fr: string;
+  nom_ar?: string;
+  mat_cnrps: string;
+  matricule: string;
+  prenom_fr: string;
+  prenom_ar?: string;
+  lieu_naissance_fr: string;
+  lieu_naissance_ar?: string;
+  date_naissance: string;
+  date_designation: string;
+  nationalite: string;
+  etat_civil: string;
+  sexe: string;
+  etat_compte?: string;
+  poste?: string;
+  grade?: string;
+  categorie?: string;
+  service?: string;
+
+  date_affectation: string;
+  compte_courant: string;
+  identifinat_unique: string;
+  num_cin: string;
+  date_delivrance: string;
+  state: string;
+  dependence: string;
+  code_postale: string;
+  adress_ar?: string;
+  adress_fr: string;
+  email: string;
+  num_phone1: string;
+  num_phone2: string;
+  nom_conjoint: string;
+  job_conjoint: string;
+  nombre_fils: string;
+  photo_profil?: string;
+  PhotoProfilFileExtension?: string;
+  PhotoProfilFileBase64String?: string;
+  papers?: string[];
 }
 export const personnelSlice = createApi({
   reducerPath: "Personnel",
@@ -85,7 +128,7 @@ export const personnelSlice = createApi({
         providesTags: ["Personnel"],
       }),
 
-      addPersonnel: builder.mutation<void, Personnel>({
+      addPersonnel: builder.mutation<void, PersonnelEXCEL>({
         query(payload) {
           return {
             url: "/create-personnel",
@@ -103,31 +146,30 @@ export const personnelSlice = createApi({
         }),
         invalidatesTags: ["Personnel"],
       }),
-      
-        deletePersonnel: builder.mutation<void, string>({
-          query: (_id) => ({
-            url: `delete-personnel/${_id}`,
-            method: "DELETE",
-          }),
-          invalidatesTags: ["Personnel"],
+
+      deletePersonnel: builder.mutation<void, string>({
+        query: (_id) => ({
+          url: `delete-personnel/${_id}`,
+          method: "DELETE",
         }),
-        getPersonnelById: builder.query<Personnel, string>({
-          query: (id) => ({
-            url: `get-personnel`,
-            method: "POST",
-            body: { personnelId: id }, // Adjust this to match your backend requirement
-          }),
-          providesTags: ["Personnel"],
+        invalidatesTags: ["Personnel"],
+      }),
+      getPersonnelById: builder.query<Personnel, string>({
+        query: (id) => ({
+          url: `get-personnel`,
+          method: "POST",
+          body: { personnelId: id }, // Adjust this to match your backend requirement
         }),
-        
+        providesTags: ["Personnel"],
+      }),
     };
   },
 });
 
 export const {
-useAddPersonnelMutation,
-useFetchPersonnelsQuery,
-useDeletePersonnelMutation,
-useUpdatePersonnelMutation,
-useGetPersonnelByIdQuery
+  useAddPersonnelMutation,
+  useFetchPersonnelsQuery,
+  useDeletePersonnelMutation,
+  useUpdatePersonnelMutation,
+  useGetPersonnelByIdQuery,
 } = personnelSlice;

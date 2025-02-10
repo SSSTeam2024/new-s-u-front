@@ -106,7 +106,7 @@ const AjouterNotesExamen = () => {
   }, [selectedEnseignant, selectedValue, getClassesByTeacherId]);
 
   const filteredMatieres = matieres.filter((matiere) =>
-    matiere.semestre.toLowerCase().includes(selectedValue.toLowerCase())
+    matiere?.semestre?.toLowerCase().includes(selectedValue.toLowerCase())
   );
 
   const initialNoteExamen = {

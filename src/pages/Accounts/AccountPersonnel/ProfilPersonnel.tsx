@@ -27,6 +27,7 @@ const ProfilPersonnel = () => {
   const [clickedImage, setClickedImage] = useState(null);
   const location = useLocation();
   const personnelDetails = location.state;
+  console.log("personnelDetails", personnelDetails);
   const handleImageClick = (imageSrc: any) => {
     setClickedImage(imageSrc);
     setShowModal(true);
@@ -36,8 +37,8 @@ const ProfilPersonnel = () => {
     setShowModal(false);
     setClickedImage(null);
   };
-  //Poste enseignant
-  const posteEnseignantFR =
+  //Poste personnel
+  const postePersonnelFR =
     typeof personnelDetails?.poste! === "object"
       ? personnelDetails?.poste?.poste_fr!
       : personnelDetails?.poste!;
@@ -56,15 +57,15 @@ const ProfilPersonnel = () => {
     typeof personnelDetails?.etat_compte! === "object"
       ? personnelDetails?.etat_compte?.etat_ar!
       : personnelDetails?.etat_compte!;
-  //specialite enseignant
-  const specialiteEnseignantFR =
-    typeof personnelDetails?.specilaite! === "object"
-      ? personnelDetails?.specilaite?.specialite_fr!
-      : personnelDetails?.specilaite!;
-  const specialiteEnseignantAR =
-    typeof personnelDetails?.specilaite! === "object"
-      ? personnelDetails?.specilaite?.specialite_ar!
-      : personnelDetails?.specilaite!;
+  // //specialite enseignant
+  const categoriePersonnelFR =
+    typeof personnelDetails?.categorie! === "object"
+      ? personnelDetails?.categorie?.categorie_fr!
+      : personnelDetails?.categorie!;
+  const categoriePersonnelAR =
+    typeof personnelDetails?.categorie! === "object"
+      ? personnelDetails?.categorie?.categorie_ar!
+      : personnelDetails?.categorie!;
 
   //grade enseignant
   const gradeEnseignantFR =
@@ -76,15 +77,15 @@ const ProfilPersonnel = () => {
       ? personnelDetails?.grade?.grade_ar!
       : personnelDetails?.grade!;
 
-  //departement enseignant
-  const departementEnseignantFR =
-    typeof personnelDetails?.departements! === "object"
-      ? personnelDetails?.departements?.name_fr!
-      : personnelDetails?.departements!;
-  const departementEnseignantAR =
-    typeof personnelDetails?.departements! === "object"
-      ? personnelDetails?.departements?.name_ar!
-      : personnelDetails?.departements!;
+  //service personnel
+  const servicePersonnelFR =
+    typeof personnelDetails?.service! === "object"
+      ? personnelDetails?.service?.service_fr!
+      : personnelDetails?.service!;
+  const servicePersonnelAR =
+    typeof personnelDetails?.service! === "object"
+      ? personnelDetails?.service?.service_ar!
+      : personnelDetails?.service!;
   return (
     <React.Fragment>
       <Tab.Container defaultActiveKey="Profil">
@@ -145,7 +146,7 @@ const ProfilPersonnel = () => {
                               <tr>
                                 <td>Poste</td>
                                 <td className="fw-medium">
-                                  {posteEnseignantFR} / {posteEnseignantAR}
+                                  {postePersonnelFR} / {posteEnseignantAR}
                                 </td>
                               </tr>
                               <tr>
@@ -275,9 +276,9 @@ const ProfilPersonnel = () => {
                     <Table className="table-borderless table-sm m-0 p-0 ">
                       <tbody>
                         <tr>
-                          <td>Spécialité: </td>
+                          <td>Catégorie: </td>
                           <td className="fw-medium">
-                            {specialiteEnseignantFR} / {specialiteEnseignantAR}
+                            {categoriePersonnelFR} / {categoriePersonnelAR}
                           </td>
                         </tr>
                         <tr>
@@ -299,10 +300,15 @@ const ProfilPersonnel = () => {
                           </td>
                         </tr>
                         <tr>
-                          <td>Département:</td>
+                          <td>Date de désignation: </td>
                           <td className="fw-medium">
-                            {departementEnseignantFR} /{" "}
-                            {departementEnseignantAR}{" "}
+                            {personnelDetails.date_designation}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>Service:</td>
+                          <td className="fw-medium">
+                            {servicePersonnelFR} / {servicePersonnelAR}{" "}
                           </td>
                         </tr>
                         {/* Diplome 1 */}

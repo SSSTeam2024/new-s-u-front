@@ -86,14 +86,24 @@ const MyAccount = () => {
   ];
 
   const groupeClasseDisplay =
-    typeof etudiant?.groupe_classe! === "object"
-      ? etudiant?.groupe_classe?.nom_classe_fr!
-      : etudiant?.groupe_classe!;
+    typeof etudiant?.groupe_classe === "object"
+      ? etudiant?.groupe_classe?.nom_classe_fr || ""
+      : etudiant?.groupe_classe || "";
 
   const niveauClasseDisplay =
-    typeof etudiant?.groupe_classe?.niveau_classe! === "object"
-      ? etudiant?.groupe_classe?.niveau_classe?.name_niveau_fr!
-      : etudiant?.groupe_classe?.niveau_classe!;
+    typeof etudiant?.groupe_classe?.niveau_classe === "object"
+      ? etudiant?.groupe_classe?.niveau_classe?.name_niveau_fr || ""
+      : etudiant?.groupe_classe?.niveau_classe || "";
+
+  const etatCompteDisplay =
+    typeof etudiant?.etat_compte === "object"
+      ? etudiant?.etat_compte?.etat_fr || ""
+      : etudiant?.etat_compte || "";
+
+  const typeInscriptionDisplay =
+    typeof etudiant?.type_inscription === "object"
+      ? etudiant?.type_inscription?.type_fr || ""
+      : etudiant?.type_inscription || "";
 
   const getSectionNames = (etudiant: any) => {
     if (Array.isArray(etudiant?.groupe_classe?.niveau_classe?.sections!)) {
@@ -107,15 +117,15 @@ const MyAccount = () => {
 
   const sectionNames = getSectionNames(etudiant);
 
-  const etatCompteDisplay =
-    typeof etudiant?.etat_compte! === "object"
-      ? etudiant?.etat_compte?.etat_fr!
-      : etudiant?.etat_compte!;
+  // const etatCompteDisplay =
+  //   typeof etudiant?.etat_compte! === "object"
+  //     ? etudiant?.etat_compte?.etat_fr!
+  //     : etudiant?.etat_compte!;
 
-  const typeInscriptionDisplay =
-    typeof etudiant?.type_inscription! === "object"
-      ? etudiant?.type_inscription?.type_fr!
-      : etudiant?.type_inscription!;
+  // const typeInscriptionDisplay =
+  //   typeof etudiant?.type_inscription! === "object"
+  //     ? etudiant?.type_inscription?.type_fr!
+  //     : etudiant?.type_inscription!;
 
   return (
     <React.Fragment>

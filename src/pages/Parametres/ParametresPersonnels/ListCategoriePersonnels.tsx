@@ -117,7 +117,7 @@ const ListCategoriePersonnels = () => {
 
   const handleEditModal = (categoriePersonnel: CategoriePersonnel) => {
     setFormData({
-      _id: categoriePersonnel._id,
+      _id: categoriePersonnel?._id!,
       categorie_ar: categoriePersonnel.categorie_ar,
       categorie_fr: categoriePersonnel.categorie_fr,
     });

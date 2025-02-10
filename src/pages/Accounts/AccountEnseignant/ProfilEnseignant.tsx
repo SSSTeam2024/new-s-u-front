@@ -85,52 +85,52 @@ const ProfilEnseignant = () => {
   //Poste enseignant
   const posteEnseignantFR =
     typeof enseignantDetails?.poste! === "object"
-      ? enseignantDetails?.poste?.poste_fr!
-      : enseignantDetails?.poste!;
+      ? enseignantDetails?.poste?.poste_fr! || ""
+      : enseignantDetails?.poste! || "";
 
   const posteEnseignantAR =
     typeof enseignantDetails?.poste! === "object"
-      ? enseignantDetails?.poste?.poste_ar!
-      : enseignantDetails?.poste!;
+      ? enseignantDetails?.poste?.poste_ar! || ""
+      : enseignantDetails?.poste! || "";
   // etat compte enseignant
   const etatCompteDisplayFR =
     typeof enseignantDetails?.etat_compte! === "object"
-      ? enseignantDetails?.etat_compte?.etat_fr!
-      : enseignantDetails?.etat_compte!;
+      ? enseignantDetails?.etat_compte?.etat_fr! || ""
+      : enseignantDetails?.etat_compte! || "";
 
   const etatCompteDisplayAR =
     typeof enseignantDetails?.etat_compte! === "object"
-      ? enseignantDetails?.etat_compte?.etat_ar!
-      : enseignantDetails?.etat_compte!;
+      ? enseignantDetails?.etat_compte?.etat_ar! || ""
+      : enseignantDetails?.etat_compte! || "";
   //specialite enseignant
   const specialiteEnseignantFR =
     typeof enseignantDetails?.specilaite! === "object"
-      ? enseignantDetails?.specilaite?.specialite_fr!
-      : enseignantDetails?.specilaite!;
+      ? enseignantDetails?.specilaite?.specialite_fr! || ""
+      : enseignantDetails?.specilaite! || "";
   const specialiteEnseignantAR =
     typeof enseignantDetails?.specilaite! === "object"
-      ? enseignantDetails?.specilaite?.specialite_ar!
-      : enseignantDetails?.specilaite!;
+      ? enseignantDetails?.specilaite?.specialite_ar! || ""
+      : enseignantDetails?.specilaite! || "";
 
   //grade enseignant
   const gradeEnseignantFR =
     typeof enseignantDetails?.grade! === "object"
-      ? enseignantDetails?.grade?.grade_fr!
-      : enseignantDetails?.grade!;
+      ? enseignantDetails?.grade?.grade_fr! || ""
+      : enseignantDetails?.grade! || "";
   const gradeEnseignantAR =
     typeof enseignantDetails?.grade! === "object"
-      ? enseignantDetails?.grade?.grade_ar!
-      : enseignantDetails?.grade!;
+      ? enseignantDetails?.grade?.grade_ar! || ""
+      : enseignantDetails?.grade! || "";
 
   //departement enseignant
   const departementEnseignantFR =
     typeof enseignantDetails?.departements! === "object"
-      ? enseignantDetails?.departements?.name_fr!
-      : enseignantDetails?.departements!;
+      ? enseignantDetails?.departements?.name_fr! || ""
+      : enseignantDetails?.departements! || "";
   const departementEnseignantAR =
     typeof enseignantDetails?.departements! === "object"
-      ? enseignantDetails?.departements?.name_ar!
-      : enseignantDetails?.departements!;
+      ? enseignantDetails?.departements?.name_ar! || ""
+      : enseignantDetails?.departements! || "";
   return (
     <React.Fragment>
       <Tab.Container defaultActiveKey="Profil">
@@ -194,7 +194,9 @@ const ProfilEnseignant = () => {
                               <tr>
                                 <td>Poste</td>
                                 <td className="fw-medium">
-                                  {posteEnseignantFR} / {posteEnseignantAR}
+                                  <>
+                                    {posteEnseignantFR} / {posteEnseignantAR}
+                                  </>
                                 </td>
                               </tr>
                               <tr>
@@ -225,7 +227,7 @@ const ProfilEnseignant = () => {
                                 <td className="fw-medium">
                                   <span className="badge badge-label bg-warning">
                                     <i className="mdi mdi-circle-medium"></i>{" "}
-                                    {enseignantDetails.etat_compte?.etat_fr!}
+                                    {enseignantDetails?.etat_compte?.etat_fr!}
                                   </span>
                                 </td>
                               </tr>
@@ -327,13 +329,18 @@ const ProfilEnseignant = () => {
                         <tr>
                           <td>Spécialité: </td>
                           <td className="fw-medium">
-                            {specialiteEnseignantFR} / {specialiteEnseignantAR}
+                            <>
+                              {specialiteEnseignantFR} /{" "}
+                              {specialiteEnseignantAR}
+                            </>
                           </td>
                         </tr>
                         <tr>
                           <td>Grade: </td>
                           <td className="fw-medium">
-                            {gradeEnseignantFR} / {gradeEnseignantAR}
+                            <>
+                              {gradeEnseignantFR} / {gradeEnseignantAR}
+                            </>
                           </td>
                         </tr>
                         <tr>
@@ -351,8 +358,10 @@ const ProfilEnseignant = () => {
                         <tr>
                           <td>Département:</td>
                           <td className="fw-medium">
-                            {departementEnseignantFR} /{" "}
-                            {departementEnseignantAR}{" "}
+                            <>
+                              {departementEnseignantFR} /{" "}
+                              {departementEnseignantAR}{" "}
+                            </>
                           </td>
                         </tr>
                         {/* Diplome 1 */}

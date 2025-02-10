@@ -28,7 +28,7 @@ export interface Paper {
 export interface DossierAdministratif {
   _id?: string;
   papers: Paper[];
-  personnel?: {
+  personnel: {
     _id: string;
     nom_fr: string;
     nom_ar: string;
@@ -158,14 +158,6 @@ const EditDossierAdministratifPersonnels = () => {
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
     const selectedPersonnelId = event.target.value;
-    const doesSelectedPersonnelExist = allPersonnels.some(
-      (personnel) =>
-        personnel._id.trim().toLowerCase() ===
-        selectedPersonnelId.trim().toLowerCase()
-    );
-    allPersonnels.forEach((personnel, index) => {
-      console.log(`Personnel ${index}:`, personnel);
-    });
     const selectedPersonnel = allPersonnels.find(
       (personnel) =>
         personnel._id.trim().toLowerCase() ===
@@ -173,15 +165,22 @@ const EditDossierAdministratifPersonnels = () => {
     ) || {
       _id: "",
       nom_fr: "",
-      nom_ar: "",
+      nom_ar: "", // Default to empty string if undefined
       prenom_fr: "",
-      prenom_ar: "",
+      prenom_ar: "", // Default to empty string if undefined
     };
+
     setFormData((prevData) => {
       console.log("Previous Form Data:", prevData);
       return {
         ...prevData,
-        personnel: selectedPersonnel,
+        personnel: {
+          _id: selectedPersonnel._id,
+          nom_fr: selectedPersonnel.nom_fr,
+          nom_ar: selectedPersonnel.nom_ar || "", // Ensure nom_ar is a string, fallback to "" if undefined
+          prenom_fr: selectedPersonnel.prenom_fr,
+          prenom_ar: selectedPersonnel.prenom_ar || "", // Ensure prenom_ar is a string, fallback to "" if undefined
+        },
       };
     });
   };

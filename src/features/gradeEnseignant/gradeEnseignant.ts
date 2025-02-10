@@ -5,7 +5,7 @@ export interface GradeEnseignant {
   //value_grade_enseignant: string;
   grade_fr: string;
   grade_ar: string;
-  charge_horaire: {
+  charge_horaire?: {
     annualMinHE: string;
     annualMaxHE: string;
 
@@ -77,6 +77,19 @@ export const gradeEnseignantSlice = createApi({
         }),
         invalidatesTags: ["GradeEnseignant"],
       }),
+      getGradeEnseignantValue: builder.mutation<
+        { id: string; grade_fr: string; grade_ar: string },
+        GradeEnseignant
+      >({
+        query(payload) {
+          return {
+            url: "/get-grade-by-value",
+            method: "POST",
+            body: payload,
+          };
+        },
+        invalidatesTags: ["GradeEnseignant"],
+      }),
       deleteGradeEnseignant: builder.mutation<void, string>({
         query: (_id) => ({
           url: `delete-grade-enseignant/${_id}`,
@@ -93,4 +106,5 @@ export const {
   useDeleteGradeEnseignantMutation,
   useFetchGradesEnseignantQuery,
   useUpdateGradeEnseignantMutation,
+  useGetGradeEnseignantValueMutation,
 } = gradeEnseignantSlice;

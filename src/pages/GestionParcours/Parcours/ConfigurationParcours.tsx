@@ -17,71 +17,44 @@ import { actionAuthorization } from "utils/pathVerification";
 import { RootState } from "app/store";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "features/account/authSlice";
-import {
-  useAddDomaineClasseMutation,
-  useFetchDomainesClasseQuery,
-  useGetDomaineByValueMutation,
-} from "features/domaineClasse/domaineClasse";
+import { useFetchDomainesClasseQuery } from "features/domaineClasse/domaineClasse";
 import {
   Parcours,
   useAddParcoursMutation,
   useDeleteParcoursMutation,
   useFetchParcoursQuery,
-  useGetParcoursByValueMutation,
   useUpdateParcoursMutation,
 } from "features/parcours/parcours";
-import {
-  useAddMentionsClasseMutation,
-  useFetchMentionsClasseQuery,
-  useGetMentionByValueMutation,
-} from "features/mentionClasse/mentionClasse";
-import {
-  useAddTypeParcoursMutation,
-  useFetchTypeParcoursQuery,
-  useGetTypeParcoursByValueMutation,
-} from "features/TypeParcours/TypeParcours";
+import { useFetchMentionsClasseQuery } from "features/mentionClasse/mentionClasse";
+import { useFetchTypeParcoursQuery } from "features/TypeParcours/TypeParcours";
 import * as XLSX from "xlsx";
 import FileSaver from "file-saver";
-import {
-  useAddModuleParcoursMutation,
-  useGetModuleParcoursByCodeMutation,
-} from "features/moduleParcours/moduleParcours";
-import {
-  useAddMatiereMutation,
-  useGetMatiereByCodeMutation,
-} from "features/matiere/matiere";
+import { useAddModuleParcoursMutation } from "features/moduleParcours/moduleParcours";
+import { useAddMatiereMutation } from "features/matiere/matiere";
 export interface ParcoursFileEXEL {
   _id: string;
-  Type_Parcours_AR: string;
-  Type_Parcours_FR: string;
-  Domaine_FR: string;
-  Domaine_AR: string;
-  Mention_FR: string;
-  Mention_AR: string;
-  codeParcours: string;
-  NomParcours: string;
-  codeUE: string;
-  Semestre: string;
-  NomUE: string;
-  CreditUE: string;
-  CoefUE: string;
-  NatureUE: string;
-  RegimeUE: string;
-  codeMatiere: string;
-  NomMatiere: string;
-  RegimeMatiere: string;
-  CreditMatiere: string;
-  coefficientMatiere: string;
-  TypeMatiere: string;
-  VolumeHoraire: string;
-  NomreElimination: string;
-  Abreviation_Domaine: any;
-  Abreviation_Mention: any;
-  Abreviation_Type_Parcours: any;
+  type_parcours: any;
+  nom_parcours: string;
+  code_parcours: string;
+  semestre: string;
+  code_Ue: string;
+  libelle: string;
+  credit: string;
+  coef: string;
+  nature: string;
+  regime: string;
+  code_matiere?: string;
+  matiere?: string;
+  type?: string;
+  volume?: string;
+  nbr_elimination?: string;
+  regime_matiere?: string;
+  credit_matiere?: string;
+  coefficient_matiere?: string;
 }
 
-const ListParcours = () => {
-  document.title = "Liste parcours | ENIGA";
+const ConfigurationParcours = () => {
+  document.title = "Configurartion parcours | ENIGA";
   const user = useSelector((state: RootState) => selectCurrentUser(state));
 
   const navigate = useNavigate();
@@ -481,32 +454,6 @@ const ListParcours = () => {
   function tog_ImportModals() {
     setmodal_ImportModals(!modal_ImportModals);
   }
-
-  const [addTypeParcours] = useAddTypeParcoursMutation();
-  const [addMention] = useAddMentionsClasseMutation();
-  const [addDomaine] = useAddDomaineClasseMutation();
-
-  const [getMatiereCode] = useGetMatiereByCodeMutation();
-  const [getParcoursValue] = useGetParcoursByValueMutation();
-  const [getModuleParcoursCode] = useGetModuleParcoursByCodeMutation();
-
-  const [getDomaineValue] = useGetDomaineByValueMutation();
-  const [getTypeParcoursValue] = useGetTypeParcoursByValueMutation();
-  const [getMentionValue] = useGetMentionByValueMutation();
-
-  const getOrCreate = async (map: any, getFunc: any, addFunc: any) => {
-    for (const [key, value] of map.entries()) {
-      const existingValue = await getFunc(value).unwrap();
-      if (existingValue !== null) {
-        map.set(key, { ...value, id: existingValue.id });
-      } else {
-        const createdValue = await addFunc(value).unwrap();
-
-        map.set(key, { ...value, id: createdValue?._id! });
-      }
-    }
-  };
-
   // const handleFileUpload = (event: any) => {
   //   const file = event.target.files[0];
   //   if (!file) {
@@ -516,6 +463,168 @@ const ListParcours = () => {
 
   //   const reader = new FileReader();
   //   reader.onload = async (e) => {
+  //     console.log("File read successfully.");
+  //     try {
+  //       const data = new Uint8Array(e.target!.result as ArrayBuffer);
+  //       const workbook = XLSX.read(data, { type: "array" });
+  //       const sheetName = workbook.SheetNames[0];
+  //       const worksheet = workbook.Sheets[sheetName];
+  //       const jsonData: ParcoursFileEXEL[] = XLSX.utils.sheet_to_json(
+  //         worksheet
+  //       ) as ParcoursFileEXEL[];
+
+  //       console.log("Excel Data:", jsonData);
+
+  //       const mappedData: any[] = jsonData.map((item: any) => ({
+  //         nom_parcours: item.NomParcours || "",
+  //         code_parcours: item.codeParcours || "",
+  //         semestre: item.Semestre,
+  //         code_Ue: item.codeUE,
+  //         libelle: item.NomUE,
+  //         credit: item.CreditUE,
+  //         coef: item.CoefUE,
+  //         nature: item.NatureUE,
+  //         regime: item.RegimeUE,
+  //       }));
+
+  //       const parcoursToCreate = mappedData.slice(0, 1)[0];
+  //       try {
+  //         const createdParcours = await createParcours(
+  //           parcoursToCreate
+  //         ).unwrap();
+
+  //         const modulesToCreate = mappedData.map((module) => ({
+  //           ...module,
+  //           parcours: createdParcours?._id!,
+  //         }));
+
+  //         await Promise.all(
+  //           modulesToCreate.map(async (module) => {
+  //             try {
+  //               await createModule(module).unwrap();
+  //               console.log("Module created:", module);
+  //             } catch (error) {
+  //               console.error("Error creating module:", error);
+  //             }
+  //           })
+  //         );
+  //       } catch (error) {
+  //         console.error("Error creating parcours:", error);
+  //       }
+
+  //       setParcoursFile(jsonData);
+  //       setFilePath(file.name);
+  //       console.log("File and state updated successfully.");
+  //     } catch (error) {
+  //       console.error("Error processing file:", error);
+  //     }
+  //   };
+
+  //   reader.onerror = () => {
+  //     console.error("File could not be read.");
+  //   };
+
+  //   reader.readAsArrayBuffer(file);
+  // };
+  // const handleFileUpload = (event: any) => {
+  //   const file = event.target.files[0];
+  //   if (!file) {
+  //     console.error("No file selected.");
+  //     return;
+  //   }
+
+  //   const reader = new FileReader();
+  //   reader.onload = async (e) => {
+  //     console.log("File read successfully.");
+  //     try {
+  //       const data = new Uint8Array(e.target!.result as ArrayBuffer);
+  //       const workbook = XLSX.read(data, { type: "array" });
+  //       const sheetName = workbook.SheetNames[0];
+  //       const worksheet = workbook.Sheets[sheetName];
+  //       const jsonData: ParcoursFileEXEL[] = XLSX.utils.sheet_to_json(
+  //         worksheet
+  //       ) as ParcoursFileEXEL[];
+
+  //       console.log("Excel Data:", jsonData);
+
+  //       // Group data by NomParcours to ensure modules are linked to their parcours
+  //       const groupedData = jsonData.reduce((acc, item: any) => {
+  //         const key = item.NomParcours || "";
+  //         if (!acc[key]) {
+  //           acc[key] = [];
+  //         }
+  //         acc[key].push(item);
+  //         return acc;
+  //       }, {} as Record<string, any[]>);
+
+  //       for (const [nom_parcours, items] of Object.entries(groupedData)) {
+  //         const parcoursData = {
+  //           nom_parcours: items[0].NomParcours || "",
+  //           code_parcours: items[0].codeParcours || "",
+  //           semestre: items[0].Semestre,
+  //         };
+
+  //         try {
+  //           const createdParcours = await createParcours(parcoursData).unwrap();
+  //           console.log("Parcours created:", createdParcours);
+
+  //           const modulesToCreate = items.map((module) => ({
+  //             code_Ue: module.codeUE,
+  //             libelle: module.NomUE,
+  //             credit: module.CreditUE,
+  //             coef: module.CoefUE,
+  //             nature: module.NatureUE,
+  //             regime: module.RegimeUE,
+  //             code_matiere: module.codeMatiere,
+  //             nom_matiere: module.NomMatiere,
+  //             type_matiere: module.TypeMatiere,
+  //             volume_horaire: module.VolumeHoraire,
+  //             nomre_elimination: module.NomreElimination,
+  //             regime_matiere: module.RegimeMatiere,
+  //             credit_matiere: module.CreditMatiere,
+  //             coefficient_matiere: module.coefficientMatiere,
+  //             parcours: createdParcours?._id!, // Associate with the created parcours
+  //           }));
+
+  //           await Promise.all(
+  //             modulesToCreate.map(async (module: any) => {
+  //               try {
+  //                 await createModule(module).unwrap();
+  //                 console.log("Module created:", module);
+  //               } catch (error) {
+  //                 console.error("Error creating module:", error);
+  //               }
+  //             })
+  //           );
+  //         } catch (error) {
+  //           console.error("Error creating parcours:", error);
+  //         }
+  //       }
+
+  //       setParcoursFile(jsonData);
+  //       setFilePath(file.name);
+  //       console.log("File and state updated successfully.");
+  //     } catch (error) {
+  //       console.error("Error processing file:", error);
+  //     }
+  //   };
+
+  //   reader.onerror = () => {
+  //     console.error("File could not be read.");
+  //   };
+
+  //   reader.readAsArrayBuffer(file);
+  // };
+  // const handleFileUpload = (event: any) => {
+  //   const file = event.target.files[0];
+  //   if (!file) {
+  //     console.error("No file selected.");
+  //     return;
+  //   }
+
+  //   const reader = new FileReader();
+  //   reader.onload = async (e) => {
+  //     console.log("File read successfully.");
   //     setIsLoading(true);
   //     try {
   //       const data = new Uint8Array(e.target!.result as ArrayBuffer);
@@ -526,117 +635,88 @@ const ListParcours = () => {
   //         worksheet
   //       ) as ParcoursFileEXEL[];
 
-  //       const uniqueMatiere = new Map<
-  //         string,
-  //         {
-  //           id: string;
-  //           code_matiere: string;
-  //           matiere?: string;
-  //           type?: string;
-  //           semestre?: string;
-  //           volume?: string;
-  //           nbr_elimination?: string;
-  //           regime_matiere?: string;
-  //           types?: {
-  //             type: string;
-  //             volume: string;
-  //             nbr_elimination: string;
-  //           }[];
-  //           credit_matiere?: string;
-  //           coefficient_matiere?: string;
+  //       console.log("Excel Data:", jsonData);
+
+  //       // Group data by NomParcours to ensure modules are linked to their parcours
+  //       const groupedData = jsonData.reduce((acc, item: any) => {
+  //         const key = item.NomParcours || "";
+  //         if (!acc[key]) {
+  //           acc[key] = [];
   //         }
-  //       >();
+  //         acc[key].push(item);
+  //         return acc;
+  //       }, {} as Record<string, any[]>);
 
-  //       const uniqueModuleParcours = new Map<
-  //         string,
-  //         {
-  //           id: string;
-  //           code_Ue: string;
-  //           semestre: string;
-  //           libelle: string;
-  //           credit: string;
-  //           coef: string;
-  //           nature: string;
-  //           regime: string;
-  //           parcours?: string;
-  //           matiere?: string[];
+  //       for (const [nom_parcours, items] of Object.entries(groupedData)) {
+  //         const parcoursData = {
+  //           nom_parcours: items[0].NomParcours || "",
+  //           code_parcours: items[0].codeParcours || "",
+  //           semestre: items[0].Semestre,
+  //         };
+
+  //         try {
+  //           const createdParcours = await createParcours(parcoursData).unwrap();
+  //           console.log("Parcours created:", createdParcours);
+
+  //           const modulesToCreate = items.map((module) => ({
+  //             code_Ue: module.codeUE,
+  //             libelle: module.NomUE,
+  //             credit: module.CreditUE,
+  //             coef: module.CoefUE,
+  //             nature: module.NatureUE,
+  //             regime: module.RegimeUE,
+  //             parcours: createdParcours?._id!, // Associate with the created parcours
+  //           }));
+
+  //           await Promise.all(
+  //             modulesToCreate.map(async (module: any) => {
+  //               try {
+  //                 const createdModule = await createModule(module).unwrap();
+  //                 console.log("Module created:", createdModule);
+
+  //                 const matieresToCreate = items
+  //                   .filter((item) => item.codeUE === module.code_Ue) // Ensure matieres belong to this module
+  //                   .map((matiere) => ({
+  //                     code_matiere: matiere.codeMatiere,
+  //                     matiere: matiere.NomMatiere,
+  //                     types: [
+  //                       {
+  //                         type: matiere.TypeMatiere,
+  //                         volume: matiere.VolumeHoraire,
+  //                         nbr_elimination: matiere.NomreElimination,
+  //                       },
+  //                     ],
+  //                     regime_matiere: matiere.RegimeMatiere,
+  //                     credit_matiere: matiere.CreditMatiere,
+  //                     coefficient_matiere: matiere.coefficientMatiere,
+  //                     module: createdModule?._id!, // Associate with the created module
+  //                   }));
+
+  //                 await Promise.all(
+  //                   matieresToCreate.map(async (matiere) => {
+  //                     try {
+  //                       await createMatiere(matiere).unwrap();
+  //                       console.log("Matiere created:", matiere);
+  //                     } catch (error) {
+  //                       console.error("Error creating matiere:", error);
+  //                     }
+  //                   })
+  //                 );
+  //               } catch (error) {
+  //                 console.error("Error creating module:", error);
+  //               }
+  //             })
+  //           );
+  //         } catch (error) {
+  //           console.error("Error creating parcours:", error);
   //         }
-  //       >();
+  //       }
 
-  //       const uniqueParcours = new Map<
-  //         string,
-  //         {
-  //           id: string;
-  //           code_parcours: string;
-  //           nom_parcours: string;
-  //         }
-  //       >();
-
-  //       jsonData.forEach(async (item: any) => {
-  //         const parcoursKey = `${item["NomParcours"]}-${item["codeParcours"]}`;
-  //         if (!uniqueParcours.has(parcoursKey)) {
-  //           uniqueParcours.set(parcoursKey, {
-  //             id: "",
-  //             code_parcours: item["codeParcours"],
-  //             nom_parcours: item["NomParcours"],
-  //           });
-  //         }
-
-  //         const matiereKey = `${item["codeMatiere"]}`;
-  //         if (!uniqueMatiere.has(matiereKey)) {
-  //           uniqueMatiere.set(matiereKey, {
-  //             id: "",
-  //             code_matiere: item["codeMatiere"],
-  //             matiere: item["NomMatiere"],
-  //             regime_matiere: item["RegimeMatiere"],
-  //             credit_matiere: item["CreditMatiere"],
-  //             coefficient_matiere: item["coefficientMatiere"],
-  //             types: [
-  //               {
-  //                 type: item["TypeMatiere"],
-  //                 volume: item["VolumeHoraire"],
-  //                 nbr_elimination: item["NomreElimination"],
-  //               },
-  //             ],
-  //           });
-  //         }
-
-  //         const moduleKey = `${item["codeUE"]}`;
-  //         if (!uniqueModuleParcours.has(moduleKey)) {
-  //           uniqueModuleParcours.set(moduleKey, {
-  //             id: "",
-  //             code_Ue: item["codeUE"],
-  //             semestre: item["Semestre"],
-  //             libelle: item["NomUE"],
-  //             credit: item["CreditUE"],
-  //             coef: item["CoefUE"],
-  //             nature: item["NatureUE"],
-  //             regime: item["RegimeUE"],
-  //             parcours:
-  //               uniqueParcours.get(
-  //                 `${item["NomParcours"]}-${item["codeParcours"]}`
-  //               )?.id || "",
-  //             matiere: [uniqueMatiere.get(`${item["codeMatiere"]}`)?.id!],
-  //           });
-  //         }
-  //       });
-  //       console.log("uniqueModuleParcours", uniqueModuleParcours);
-  //       await getOrCreate(uniqueParcours, getParcoursValue, createParcours);
-
-  //       await getOrCreate(uniqueMatiere, getMatiereCode, createMatiere);
-
-  //       await getOrCreate(
-  //         uniqueModuleParcours,
-  //         getModuleParcoursCode,
-  //         createModule
-  //       );
   //       setParcoursFile(jsonData);
   //       setFilePath(file.name);
+  //       console.log("File and state updated successfully.");
   //     } catch (error) {
   //       console.error("Error processing file:", error);
-  //     } finally {
-  //       setIsLoading(false);
-  //       setmodal_ImportModals(false);
   //     }
   //   };
 
@@ -647,8 +727,7 @@ const ListParcours = () => {
 
   //   reader.readAsArrayBuffer(file);
   // };
-
-  const handleFileUpload = async (event: any) => {
+  const handleFileUpload = (event: any) => {
     const file = event.target.files[0];
     if (!file) {
       console.error("No file selected.");
@@ -657,6 +736,7 @@ const ListParcours = () => {
 
     const reader = new FileReader();
     reader.onload = async (e) => {
+      console.log("File read successfully.");
       setIsLoading(true);
       try {
         const data = new Uint8Array(e.target!.result as ArrayBuffer);
@@ -667,81 +747,93 @@ const ListParcours = () => {
           worksheet
         ) as ParcoursFileEXEL[];
 
-        const uniqueMatiere = new Map<string, any>();
-        const uniqueModuleParcours = new Map<string, any>();
-        const uniqueParcours = new Map<string, any>();
+        console.log("Excel Data:", jsonData);
 
-        // Populate uniqueParcours and uniqueMatiere maps
-        for (const item of jsonData) {
-          const parcoursKey = `${item["NomParcours"]}-${item["codeParcours"]}`;
-          if (!uniqueParcours.has(parcoursKey)) {
-            uniqueParcours.set(parcoursKey, {
-              id: "",
-              code_parcours: item["codeParcours"],
-              nom_parcours: item["NomParcours"],
-            });
+        const groupedData = jsonData.reduce((acc, item: any) => {
+          const key = item.NomParcours || "";
+          if (!acc[key]) {
+            acc[key] = [];
           }
+          acc[key].push(item);
+          return acc;
+        }, {} as Record<string, any[]>);
 
-          const matiereKey = `${item["codeMatiere"]}`;
-          if (!uniqueMatiere.has(matiereKey)) {
-            uniqueMatiere.set(matiereKey, {
-              id: "",
-              code_matiere: item["codeMatiere"],
-              matiere: item["NomMatiere"],
-              regime_matiere: item["RegimeMatiere"],
-              credit_matiere: item["CreditMatiere"],
-              coefficient_matiere: item["coefficientMatiere"],
-              types: [
-                {
-                  type: item["TypeMatiere"],
-                  volume: item["VolumeHoraire"],
-                  nbr_elimination: item["NomreElimination"],
-                },
-              ],
-            });
+        const parcoursPromises = Object.entries(groupedData).map(
+          async ([nom_parcours, items]) => {
+            const parcoursData = {
+              nom_parcours: items[0].NomParcours || "",
+              code_parcours: items[0].codeParcours || "",
+              semestre: items[0].Semestre,
+            };
+
+            try {
+              const createdParcours = await createParcours(
+                parcoursData
+              ).unwrap();
+              console.log("Parcours created:", createdParcours);
+
+              const modulesToCreate = items.map((module) => ({
+                code_Ue: module.codeUE,
+                libelle: module.NomUE,
+                credit: module.CreditUE,
+                coef: module.CoefUE,
+                nature: module.NatureUE,
+                regime: module.RegimeUE,
+                parcours: createdParcours?._id!,
+              }));
+
+              const modulePromises = modulesToCreate.map(
+                async (module: any) => {
+                  try {
+                    const createdModule = await createModule(module).unwrap();
+                    console.log("Module created:", createdModule);
+
+                    const matieresToCreate = items
+                      .filter((item) => item.codeUE === module.code_Ue)
+                      .map((matiere) => ({
+                        code_matiere: matiere.codeMatiere,
+                        matiere: matiere.NomMatiere,
+                        types: [
+                          {
+                            type: matiere.TypeMatiere,
+                            volume: matiere.VolumeHoraire,
+                            nbr_elimination: matiere.NomreElimination,
+                          },
+                        ],
+                        regime_matiere: matiere.RegimeMatiere,
+                        credit_matiere: matiere.CreditMatiere,
+                        coefficient_matiere: matiere.coefficientMatiere,
+                        module: createdModule?._id!,
+                      }));
+
+                    await Promise.all(
+                      matieresToCreate.map(async (matiere) => {
+                        try {
+                          await createMatiere(matiere).unwrap();
+                          console.log("Matiere created:", matiere);
+                        } catch (error) {
+                          console.error("Error creating matiere:", error);
+                        }
+                      })
+                    );
+                  } catch (error) {
+                    console.error("Error creating module:", error);
+                  }
+                }
+              );
+
+              await Promise.all(modulePromises);
+            } catch (error) {
+              console.error("Error creating parcours:", error);
+            }
           }
-        }
-
-        // Await the creation of parcours and matiere
-        await getOrCreate(uniqueParcours, getParcoursValue, createParcours);
-        await getOrCreate(uniqueMatiere, getMatiereCode, createMatiere);
-        // console.log("uniqueMatiere", uniqueMatiere);
-        // let tabMat = [];
-        // for (const umatiere of Array.from(uniqueMatiere.entries())) {
-        //   tabMat.push(umatiere[1].id);
-        // }
-        // console.log("tabMat", tabMat);
-        // // Now, create module entries with the correct IDs
-        for (const item of jsonData) {
-          const moduleKey = `${item["codeUE"]}`;
-          if (!uniqueModuleParcours.has(moduleKey)) {
-            const parcoursKey = `${item["NomParcours"]}-${item["codeParcours"]}`;
-            const matiereKey = `${item["codeMatiere"]}`;
-
-            uniqueModuleParcours.set(moduleKey, {
-              id: "",
-              code_Ue: item["codeUE"],
-              semestre: item["Semestre"],
-              libelle: item["NomUE"],
-              credit: item["CreditUE"],
-              coef: item["CoefUE"],
-              nature: item["NatureUE"],
-              regime: item["RegimeUE"],
-              parcours: uniqueParcours.get(parcoursKey)?.id || "",
-              matiere: [uniqueMatiere.get(matiereKey)?.id || ""],
-            });
-          }
-        }
-
-        // Await the creation of modules
-        await getOrCreate(
-          uniqueModuleParcours,
-          getModuleParcoursCode,
-          createModule
         );
+
+        await Promise.all(parcoursPromises);
 
         setParcoursFile(jsonData);
         setFilePath(file.name);
+        console.log("File and state updated successfully.");
       } catch (error) {
         console.error("Error processing file:", error);
       } finally {
@@ -765,6 +857,7 @@ const ListParcours = () => {
         "NomParcours",
         "codeParcours",
         "Semestre",
+        "codeUE",
         "NomUE",
         "CreditUE",
         "CoefUE",
@@ -772,11 +865,12 @@ const ListParcours = () => {
         "RegimeUE",
         "codeMatiere",
         "NomMatiere",
-        "CreditMatiere",
-        "coefficientMatiere",
         "TypeMatiere",
         "VolumeHoraire",
         "NomreElimination",
+        "RegimeMatiere",
+        "CreditMatiere",
+        "coefficientMatiere",
       ],
     ]);
     const wb = XLSX.utils.book_new();
@@ -800,6 +894,7 @@ const ListParcours = () => {
     const value = e.target.value;
     setSelectedMention(value);
   };
+  console.log("selectDomain", selectedDoamin);
   return (
     <React.Fragment>
       <div className="page-content">
@@ -1231,4 +1326,4 @@ const ListParcours = () => {
   );
 };
 
-export default ListParcours;
+export default ConfigurationParcours;

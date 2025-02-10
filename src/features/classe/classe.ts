@@ -51,6 +51,19 @@ export const classeSlice = createApi({
         },
         invalidatesTags: ["Classe"],
       }),
+      getClasseValue: builder.mutation<
+        { id: string; nom_classe_fr: string; nom_classe_ar: string },
+        Classe
+      >({
+        query(payload) {
+          return {
+            url: "/get-classe-by-value",
+            method: "POST",
+            body: payload,
+          };
+        },
+        invalidatesTags: ["Classe"],
+      }),
 
       fetchClassesByTeacher: builder.mutation<Classe[], any>({
         query(payload) {
@@ -126,5 +139,6 @@ export const {
   useDeleteAssignedMatiereFromClasseMutation,
   useGetAssignedMatieresQuery,
   useFetchClassesByTeacherMutation,
-  useGetMatieresByClasseIdQuery
+  useGetMatieresByClasseIdQuery,
+  useGetClasseValueMutation,
 } = classeSlice;

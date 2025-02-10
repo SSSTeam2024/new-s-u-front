@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export interface EtatPersonnel {
-  _id: string;
+  _id?: string;
   //value:string,
   etat_fr: string;
   etat_ar: string;
@@ -21,10 +21,23 @@ export const etatPersonnelSlice = createApi({
         providesTags: ["EtatPersonnel"],
       }),
 
-      addEtatPersonnel: builder.mutation<void, EtatPersonnel>({
+      addEtatPersonnel: builder.mutation<EtatPersonnel, EtatPersonnel>({
         query(payload) {
           return {
             url: "/create-etat-personnel",
+            method: "POST",
+            body: payload,
+          };
+        },
+        invalidatesTags: ["EtatPersonnel"],
+      }),
+      getEtatPersonnelValue: builder.mutation<
+        { id: string; etat_fr: string; etat_ar: string },
+        EtatPersonnel
+      >({
+        query(payload) {
+          return {
+            url: "/get-etat-by-value",
             method: "POST",
             body: payload,
           };
@@ -55,4 +68,5 @@ export const {
   useFetchEtatsPersonnelQuery,
   useDeleteEtatPersonnelMutation,
   useUpdateEtatPersonnelMutation,
+  useGetEtatPersonnelValueMutation,
 } = etatPersonnelSlice;

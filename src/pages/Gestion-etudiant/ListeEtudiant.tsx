@@ -1,11 +1,24 @@
 import React, { useEffect, useMemo, useState, useRef } from "react";
-import { Button, Card, Col, Container, Row } from "react-bootstrap";
+import {
+  Button,
+  Card,
+  Col,
+  Container,
+  Form,
+  Modal,
+  Row,
+  Spinner,
+} from "react-bootstrap";
 import Breadcrumb from "Common/BreadCrumb";
 import CountUp from "react-countup";
 import { Link, useNavigate } from "react-router-dom";
 import TableContainer from "Common/TableContainer";
 import {
+  EtatCompte,
   Etudiant,
+  EtudiantExcel,
+  FileDetail,
+  GroupeClasse,
   useAddEtudiantMutation,
   useDeleteEtudiantMutation,
   useFetchEtudiantsQuery,
@@ -17,9 +30,100 @@ import { actionAuthorization } from "utils/pathVerification";
 import { RootState } from "app/store";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "features/account/authSlice";
-import * as XLSX from "xlsx";
 import CustomLoader from "Common/CustomLoader/CustomLoader";
 import "./listEtudiantStyle.css";
+import FileSaver from "file-saver";
+import * as XLSX from "xlsx";
+import {
+  useAddTypeInscriptionEtudiantMutation,
+  useGetTypeInscriptionValueMutation,
+} from "features/typeInscriptionEtudiant/typeInscriptionEtudiant";
+import {
+  useAddClasseMutation,
+  useGetClasseValueMutation,
+} from "features/classe/classe";
+import {
+  useAddEtatEtudiantMutation,
+  useGetEtatEtudiantValueMutation,
+} from "features/etatEtudiants/etatEtudiants";
+import {
+  useAddCycleMutation,
+  useGetCycleByValueMutation,
+} from "features/cycle/cycle";
+
+const excelDateToJSDate = (excelDate: number): string => {
+  const jsDate = new Date((excelDate - 25569) * 86400 * 1000); // Convert Excel date to JS date
+  return jsDate.toLocaleDateString("fr-FR"); // Format date to dd/mm/yyyy
+};
+
+export interface EtudiantFileEXEL {
+  _id?: string;
+  nom_fr: string;
+  nom_ar: string;
+  prenom_fr: string;
+  prenom_ar: string;
+  lieu_naissance_fr: string;
+  lieu_naissance_ar: string;
+  date_naissance: string;
+  nationalite: string;
+  etat_civil: string;
+  sexe: string;
+  num_CIN: string;
+  face_1_CIN: string;
+  face_2_CIN: string;
+  fiche_paiement: string;
+  etat_compte?: any;
+  groupe_classe?: any;
+  state: string;
+  dependence: string;
+  code_postale: string;
+  adress_ar: string;
+  adress_fr: string;
+  num_phone: string;
+  email: string;
+  nom_pere: string;
+  job_pere: string;
+  nom_mere: string;
+  num_phone_tuteur: string;
+  moyen: string;
+  session: string;
+  filiere: string;
+  niveau_scolaire: string;
+  annee_scolaire: string;
+  type_inscription?: {
+    _id: string;
+    value_type_inscription: string;
+    type_ar: string;
+    type_fr: string;
+    files_type_inscription: {
+      name_ar: string;
+      name_fr: string;
+    }[];
+  };
+  Face1CINFileBase64String: string;
+  Face1CINFileExtension: string;
+  Face2CINFileBase64String: string;
+  Face2CINFileExtension: string;
+  FichePaiementFileBase64String: string;
+  FichePaiementFileExtension: string;
+  files: FileDetail[];
+  photo_profil: string;
+  PhotoProfilFileExtension: string;
+  PhotoProfilFileBase64String: string;
+
+  num_inscri?: string;
+  Niveau_Fr?: string;
+  DIPLOME?: string;
+  Spécialité?: string;
+  Groupe?: string;
+  Cycle?: string;
+  Ann_Univ?: string;
+  Modele_Carte?: string;
+  NiveauAr?: string;
+  DiplomeAr?: string;
+  SpecialiteAr?: string;
+}
+
 const ListEtudiants = () => {
   document.title = "Liste des étudiants | ENIGA";
   const user = useSelector((state: RootState) => selectCurrentUser(state));
@@ -75,55 +179,113 @@ const ListEtudiants = () => {
     (student) => student.etat_compte?.etat_fr === "Désactivé"
   ).length;
 
-  const handleFileChange = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      setIsLoading(true); // Show loader
-      try {
-        const reader = new FileReader();
-        reader.onload = async (e) => {
-          try {
-            const data = new Uint8Array(e.target?.result as ArrayBuffer);
-            const workbook = XLSX.read(data, { type: "array" });
-            const sheetName = workbook.SheetNames[0];
-            const worksheet = workbook.Sheets[sheetName];
-            const jsonData: Etudiant[] = XLSX.utils.sheet_to_json(worksheet);
+  // const handleFileChange = async (
+  //   event: React.ChangeEvent<HTMLInputElement>
+  // ) => {
+  //   const file = event.target.files?.[0];
+  //   if (file) {
+  //     setIsLoading(true);
+  //     try {
+  //       const reader = new FileReader();
+  //       reader.onload = async (e) => {
+  //         try {
+  //           const data = new Uint8Array(e.target?.result as ArrayBuffer);
+  //           const workbook = XLSX.read(data, { type: "array" });
+  //           const sheetName = workbook.SheetNames[0];
+  //           const worksheet = workbook.Sheets[sheetName];
+  //           const jsonData = XLSX.utils.sheet_to_json(worksheet);
 
-            // Use Promise.all to await all creations
-            await Promise.all(
-              jsonData.map(async (etudiant) => {
-                await addEtudiant(etudiant).unwrap();
-              })
-            );
+  //           const mappedData: Etudiant[] = jsonData.map((item: any) => ({
+  //             nom_fr: item.nom || "",
+  //             nom_ar: item.NomAr || "",
+  //             prenom_fr: item.Prenom || "",
+  //             prenom_ar: item.PrenomAr || "",
+  //             lieu_naissance_fr: item["Lieu de naissance"] || "",
+  //             lieu_naissance_ar: item["Lieu de naissance AR"] || "",
+  //             date_naissance: item["Date de naissance"]
+  //               ? excelDateToJSDate(item["Date de naissance"])
+  //               : "",
+  //             nationalite: item["Nationalité"] || "",
+  //             etat_civil: item.etat_civil || "",
+  //             sexe: item.sexe || "",
+  //             num_CIN: item.CIN || "",
+  //             face_1_CIN: "",
+  //             face_2_CIN: "",
+  //             fiche_paiement: "",
+  //             // etat_compte: {} as EtatCompte,
+  //             // groupe_classe: {} as GroupeClasse,
+  //             state: "",
+  //             dependence: "",
+  //             code_postale: "",
+  //             adress_ar: "",
+  //             adress_fr: "",
+  //             num_phone: item.tel || "",
+  //             email: item.email || "",
+  //             nom_pere: item.nom_pere || "",
+  //             job_pere: item.job_pere || "",
+  //             nom_mere: item.nom_mere || "",
+  //             num_phone_tuteur: item.telephone_tuteur || "",
+  //             moyen: "",
+  //             session: "",
+  //             filiere: "",
+  //             niveau_scolaire: "",
+  //             annee_scolaire: "",
+  //             Face1CINFileBase64String: "",
+  //             Face1CINFileExtension: "",
+  //             Face2CINFileBase64String: "",
+  //             Face2CINFileExtension: "",
+  //             FichePaiementFileBase64String: "",
+  //             FichePaiementFileExtension: "",
+  //             files: [],
+  //             photo_profil: "",
+  //             PhotoProfilFileExtension: "",
+  //             PhotoProfilFileBase64String: "",
+  //             //! TO Verify if we keep these fields or not !!
+  //             num_inscri: item["N° inscription"] || "",
+  //             Niveau_Fr: item["Niveau Fr"] || "",
+  //             DIPLOME: item.DIPLOME || "",
+  //             Spécialité: item["Spécialité"] || "",
+  //             Groupe: item.Groupe || "",
+  //             Cycle: item.Cycle || "",
+  //             Ann_Univ: item["Ann Univ"] || "",
+  //             Modele_Carte: item["Modele Carte"] || "",
+  //             NiveauAr: item.NiveauAr || "",
+  //             DiplomeAr: item.DiplomeAr || "",
+  //             SpecialiteAr: item.SpecialiteAr || "",
+  //           }));
+  //           console.log("Mapped Data:", mappedData);
+  //           await Promise.all(
+  //             mappedData.map(async (etudiant) => {
+  //               await addEtudiant(etudiant).unwrap();
+  //             })
+  //           );
 
-            setIsLoading(false); // Hide loader
-            Swal.fire({
-              icon: "success",
-              title: "Succès",
-              text: "Tous les étudiants ont été ajoutés avec succès!",
-            });
-          } catch (error) {
-            setIsLoading(false); // Hide loader
-            Swal.fire({
-              icon: "error",
-              title: "Erreur",
-              text: "Une erreur s'est produite lors de l'ajout des étudiants.",
-            });
-          }
-        };
-        reader.readAsArrayBuffer(file);
-      } catch (error) {
-        setIsLoading(false); // Hide loader
-        Swal.fire({
-          icon: "error",
-          title: "Erreur",
-          text: "Une erreur inattendue s'est produite.",
-        });
-      }
-    }
-  };
+  //           setIsLoading(false);
+  //           Swal.fire({
+  //             icon: "success",
+  //             title: "Succès",
+  //             text: "Tous les étudiants ont été ajoutés avec succès!",
+  //           });
+  //         } catch (error) {
+  //           setIsLoading(false);
+  //           Swal.fire({
+  //             icon: "error",
+  //             title: "Erreur",
+  //             text: "Une erreur s'est produite lors de l'ajout des étudiants.",
+  //           });
+  //         }
+  //       };
+  //       reader.readAsArrayBuffer(file);
+  //     } catch (error) {
+  //       setIsLoading(false);
+  //       Swal.fire({
+  //         icon: "error",
+  //         title: "Erreur",
+  //         text: "Une erreur inattendue s'est produite.",
+  //       });
+  //     }
+  //   }
+  // };
 
   const columns = useMemo(
     () => [
@@ -166,7 +328,7 @@ const ListEtudiants = () => {
       },
       {
         Header: "Groupe Classe",
-        accessor: (row: any) => row?.groupe_classe?.nom_classe_fr || "",
+        accessor: (row: any) => row?.Groupe! || "",
         disableFilters: true,
         filterable: true,
       },
@@ -313,6 +475,339 @@ const ListEtudiants = () => {
     ],
     []
   );
+  const [addTypeInscription] = useAddTypeInscriptionEtudiantMutation();
+  const [addClasse] = useAddClasseMutation();
+  const [addEtatCompte] = useAddEtatEtudiantMutation();
+  const [addCycle] = useAddCycleMutation();
+
+  const [getEtatCompteValue] = useGetEtatEtudiantValueMutation();
+  const [getCycleValue] = useGetCycleByValueMutation();
+  const [getClasseValue] = useGetClasseValueMutation();
+  const [getTypeInscriptionValue] = useGetTypeInscriptionValueMutation();
+
+  const [filePath, setFilePath] = useState<string | null>(null);
+  const [modal_ImportModals, setmodal_ImportModals] = useState<boolean>(false);
+  const [etudiantFile, setEtudiantFile] = useState<EtudiantFileEXEL[]>([]);
+
+  function tog_ImportModals() {
+    setmodal_ImportModals(!modal_ImportModals);
+  }
+
+  const handleFileUpload = (event: any) => {
+    const file = event.target.files[0];
+    if (!file) {
+      console.error("No file selected.");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      console.log("File read successfully.");
+      setIsLoading(true);
+      try {
+        const data = new Uint8Array(e.target!.result as ArrayBuffer);
+        const workbook = XLSX.read(data, { type: "array" });
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        const jsonData: EtudiantFileEXEL[] = XLSX.utils.sheet_to_json(
+          worksheet
+        ) as EtudiantFileEXEL[];
+
+        // Step 1: Extract unique services, grades, etc.
+        const uniqueTypeIscription = new Map<
+          string,
+          { id: string; type_ar: string; type_fr: string }
+        >();
+        const uniqueClasse = new Map<
+          string,
+          { id: string; nom_classe_fr: string; nom_classe_ar: string }
+        >();
+
+        const uniqueEtatComptes = new Map<
+          string,
+          { id: string; etat_ar: string; etat_fr: string }
+        >();
+
+        const uniqueCycle = new Map<
+          string,
+          { id: string; cycle_ar: string; cycle_fr: string }
+        >();
+
+        console.log("Excel Data:", jsonData);
+
+        jsonData.forEach((item: any) => {
+          const typeInscriptionKey = `${item["Type_inscription_Ar"]}-${item["Type_inscription"]}`;
+          if (!uniqueTypeIscription.has(typeInscriptionKey)) {
+            uniqueTypeIscription.set(typeInscriptionKey, {
+              id: "",
+              type_ar: item["Type_inscription_Ar"],
+              type_fr: item["Type_inscription"],
+            });
+          }
+
+          const classeKey = `${item["Groupe AR"]}-${item["Groupe FR"]}`;
+          if (!uniqueClasse.has(classeKey)) {
+            uniqueClasse.set(classeKey, {
+              id: "",
+              nom_classe_ar:
+                item["Niveau"] === "Première année"
+                  ? `1-${item["Specialite_Ar"]}-${item["Groupe"]}`
+                  : item["Niveau"] === "Deuxième année"
+                  ? `2-${item["Specialite_Ar"]}-${item["Groupe"]}`
+                  : `3-${item["Specialite_Ar"]}-${item["Groupe"]}`,
+              nom_classe_fr:
+                item["Niveau"] === "Première année"
+                  ? `1-${item["Abbreviation"]}-${item["Groupe"]}`
+                  : item["Niveau"] === "Deuxième année"
+                  ? `2-${item["Abbreviation"]}-${item["Groupe"]}`
+                  : `3-${item["Abbreviation"]}-${item["Groupe"]}`,
+            });
+          }
+          const cycleKey = `${item["Cycle_Ar"]}-${item["Cycle"]}`;
+          if (!uniqueCycle.has(cycleKey)) {
+            uniqueCycle.set(cycleKey, {
+              id: "",
+              cycle_ar: item["Cycle_Ar"],
+              cycle_fr: item["Cycle"],
+            });
+          }
+          const etatKey = `${item["Etat_compte_Ar"]}-${item["Etat_compte"]}`;
+          if (!uniqueEtatComptes.has(etatKey)) {
+            uniqueEtatComptes.set(etatKey, {
+              id: "",
+              etat_ar: item["Etat_compte_Ar"],
+              etat_fr: item["Etat_compte"],
+            });
+          }
+        });
+
+        // Step 2: Process existing values first
+        const map = new Map<string, number>();
+        const getOrCreate = async (map: any, getFunc: any, addFunc: any) => {
+          for (const [key, value] of map.entries()) {
+            const existingValue = await getFunc(value).unwrap();
+            if (existingValue !== null) {
+              map.set(key, { ...value, id: existingValue.id });
+            } else {
+              const createdValue = await addFunc(value).unwrap();
+              map.set(key, { ...value, id: createdValue._id });
+            }
+          }
+        };
+
+        await getOrCreate(uniqueCycle, getCycleValue, addCycle);
+        await getOrCreate(uniqueClasse, getClasseValue, addClasse);
+        await getOrCreate(uniqueEtatComptes, getEtatCompteValue, addEtatCompte);
+        await getOrCreate(
+          uniqueTypeIscription,
+          getTypeInscriptionValue,
+          addTypeInscription
+        );
+
+        const etudiantPromises = jsonData.map(async (items: any) => {
+          const etudiantData: EtudiantExcel = {
+            _id: "",
+            prenom_fr: items.Prénom || "",
+            nom_fr: items.Nom || "",
+            cnss_number: items.CNSS,
+            passeport_number: items.Passeport,
+            matricule_number: items.Matricule,
+            lieu_naissance_fr: items.Lieu_de_naissance || "",
+            date_naissance: items.Date_de_naissance
+              ? excelDateToJSDate(items.Date_de_naissance)
+              : "",
+            adress_fr: items.Adresse || "",
+            gouvernorat: items.Gouvernorat || "",
+            pays: items.Pays || "",
+            adress_ar: items.Adresse_Ar || "",
+            state: items.Gouvernorat || "",
+            dependence: items.Delegation || "",
+            code_postale: items.Code_Postal || "",
+            nationalite: items.Nationalite || "",
+            etat_civil: items.Etat_civil || "",
+            sexe: items.Sexe || "",
+            num_CIN: items.cin || "",
+            email: items.Email || "",
+            lieu_naissance_ar: items.Lieu_de_naissance_Ar || "",
+            prenom_ar: items.Prénom_Ar || "",
+            nom_ar: items.Nom_Ar || "",
+            num_phone: items.Téléphone || "",
+            nom_pere: items.Nom_père || "",
+            prenom_pere: items.Prénom_père || "",
+            job_pere: items.Profession_père || "",
+            etat_pere: items.Etat_père || "",
+            nom_mere: items.Nom_mère || "",
+            prenom_mere: items.Prénom_mère || "",
+            profession_mere: items.Profession_mère || "",
+            etablissement_mere: items.Etablissement_mère || "",
+            etat_mere: items.Etat_mère || "",
+            adresse_parents: items.Adresse_parents || "",
+            code_postale_parents: items.Code_Postal_parents || "",
+            gouvernorat_parents: items.Gouvernorat_parents || "",
+            pays_parents: items.Pays_parents || "",
+            tel_parents: items.Tél_parents || "",
+            situation_militaire: items.Situation_militaire || "",
+            moyen: items.Moyenne_Bac || "",
+            ville: items.Ville || "",
+            pays_bac: items.Pays_Bac || "",
+            mention: items.Mention_Bac || "",
+            session: items.Session_Bac || "",
+            filiere: items.Section_Bac || "",
+            annee_scolaire: items["Année_ Bac"]
+              ? excelDateToJSDate(items["Année_ Bac"])
+              : "",
+            num_inscri: items.NumInscription || "",
+            prenom_conjoint: items.Prénom_Conjoint || "",
+            profesion_Conjoint: items.Profesion_Conjoint || "",
+            etablissement_conjoint: items.Etablissement_Conjoint || "",
+            nbre_enfants: items.Nbre_enfants || "",
+            // type_inscription: items.Type_inscription || "",
+            type_inscription_ar: items.Type_inscription_Ar || "",
+            // etat_compte: items.Etat_compte || "",
+            etat_compte_Ar: items.Etat_compte_Ar || "",
+            Niveau_Fr: items.Niveau || "",
+            DIPLOME: items.Diplôme || "",
+            DiplomeAr: items.Diplôme_Ar || "",
+            Spécialité: items.Specialite || "",
+            SpecialiteAr: items.Specialite_Ar || "",
+            //Groupe: items.Groupe || "",
+            Cycle: items.Cycle || "",
+            Cycle_Ar: items.Cycle_Ar || "",
+            Ann_Univ: items.AnneeUniversitaire
+              ? excelDateToJSDate(items.AnneeUniversitaire)
+              : "",
+            Modele_Carte: items.ModeleCarte || "",
+            NiveauAr: items.Niveau_Ar || "",
+            etat_compte:
+              uniqueEtatComptes.get(
+                `${items["Etat_compte_Ar"]}-${items["Etat_compte"]}`
+              )?.id || "",
+            Groupe:
+              // uniqueClasse.get(`${items["Abbreviation"]}-${items["Groupe"]}`)
+              //   ?.id || "",
+              items["Niveau"] === "Première année"
+                ? `1-${items["Abbreviation"]}-${items["Groupe"]}`
+                : items["Niveau"] === "Deuxième année"
+                ? `2-${items["Abbreviation"]}-${items["Groupe"]}`
+                : `3-${items["Abbreviation"]}-${items["Groupe"]}`,
+            type_inscription:
+              uniqueTypeIscription.get(
+                `${items["Type_inscription_Ar"]}-${items["Type_inscription"]}`
+              )?.id || "",
+          };
+
+          try {
+            const createdEtudiant = await addEtudiant(etudiantData).unwrap();
+            console.log("createdEtudiant", createdEtudiant);
+            console.log("Etudiant created:", createdEtudiant);
+          } catch (error) {
+            console.error("Error adding Etudiant:", error);
+          }
+        });
+
+        await Promise.all(etudiantPromises);
+
+        setEtudiantFile(jsonData);
+        setFilePath(file.name);
+        console.log("File and state updated successfully.");
+        tog_ImportModals();
+      } catch (error) {
+        console.error("Error processing file:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    reader.onerror = () => {
+      console.error("File could not be read.");
+      setIsLoading(false);
+    };
+
+    reader.readAsArrayBuffer(file);
+  };
+
+  const createAndDownloadExcel = () => {
+    const ws = XLSX.utils.json_to_sheet([]);
+    XLSX.utils.sheet_add_aoa(ws, [
+      [
+        "cin", //done
+        "Passeport", //done
+        "Matricule", //done
+        "Nom", //done
+        "Prénom", //done
+        "Nom_Ar", //done
+        "Prénom_Ar", //done
+        "Nom_Jeune_Fille",
+        "Date_de_naissance", //done
+        "Lieu_de_naissance", //done
+        "Gouvernorat", //done
+        "Pays", //done
+        "Sexe", //done
+        "Nationalite", //done
+        "CNSS", //done
+        "Etat_civil", //done
+        "Situation_militaire", //done
+        "Année_ Bac", //done
+        "Session_Bac", //done
+        "Section_Bac", //done
+        "Mention_Bac", //done
+        "Pays_Bac", //done
+        "Adresse", //done
+        "Code_Postal", //done
+        "Ville", //done
+        "Gouvernorat", //done
+        "Téléphone", //done
+        "Profession",
+        "Etablissement",
+        "Email", //done
+        "Compte_Office",
+        "Nom_père", //done
+        "Prénom_père", //done
+        "Profession_père", //done
+        "Etablissement_père",
+        "Etat_père", //done
+        "Nom_mère", //done
+
+        "Prénom_mère", //done
+        "Profession_mère", //done
+        "Etablissement_mère", //done
+        "Etat_mère", //done
+        "Adresse_parents", //done
+
+        "Code_Postal_parents", //done
+        "Gouvernorat_parents", //done
+        "Pays_parents", //done
+        "Tél_parents", //done
+        "Nom_conjoint", //done
+        "Prénom_Conjoint", //done
+        "Profesion_Conjoint", //done
+        "Etablissement_Conjoint", //done
+        "Nbre_enfants", //done
+
+        "Adresse_Ar", //done
+        "Lieu_de_naissance_Ar", //done
+        "Moyenne_Bac", //done
+        "Type_inscription", //done
+        "Type_inscription_Ar",
+        "Etat_compte", //done
+        "Etat_compte_Ar", //done
+        "Niveau", //done
+        "Niveau_Ar", //done
+        "Cycle", //done
+        "Cycle_Ar", //done
+        "Groupe", //done
+        "Specialite", //done
+        "Specialite_Ar", //done
+        "Diplôme", //done
+        "Diplôme_Ar", //done
+      ],
+    ]);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Etudiant");
+    const wbout = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+    const blob = new Blob([wbout], { type: "application/octet-stream" });
+    FileSaver.saveAs(blob, "template_etudiants.xlsx");
+  };
 
   return (
     <React.Fragment>
@@ -830,17 +1325,17 @@ const ListEtudiants = () => {
                             <Button
                               variant="success"
                               className="add-btn"
-                              onClick={() => fileInputRef.current?.click()}
+                              onClick={() => tog_ImportModals()}
                             >
                               Ajouter Depuis Excel
                             </Button>
-                            <input
+                            {/* <input
                               type="file"
                               accept=".xlsx, .xls"
                               ref={fileInputRef}
                               style={{ display: "none" }}
                               onChange={handleFileChange}
-                            />
+                            /> */}
                             <Button
                               variant="primary"
                               className="add-btn"
@@ -891,6 +1386,48 @@ const ListEtudiants = () => {
           )}
         </Container>
       </div>
+
+      {/* Importing etudiant */}
+      <Modal
+        className="fade modal-fullscreen"
+        show={modal_ImportModals}
+        onHide={tog_ImportModals}
+        centered
+      >
+        <Modal.Header className="px-4 pt-4" closeButton>
+          <h5 className="modal-title" id="exampleModalLabel">
+            Importer etudiants
+          </h5>
+        </Modal.Header>
+        <Form className="tablelist-form">
+          <Modal.Body className="p-4">
+            {isLoading ? (
+              <div className="d-flex justify-content-center align-items-center">
+                <Spinner animation="border" role="status">
+                  <span className="visually-hidden">Téléchargement...</span>
+                </Spinner>
+              </div>
+            ) : (
+              <>
+                Vous pouvez importer plusieurs etudiants à partir de ce template{" "}
+                <a href="#" onClick={createAndDownloadExcel}>
+                  Cliquer ici pour télécharger
+                </a>
+                <Form.Group controlId="formFile" className="mt-3">
+                  <Form.Label>Upload Excel File</Form.Label>
+                  <Form.Control
+                    type="file"
+                    accept=".xlsx, .xls"
+                    onChange={handleFileUpload}
+                    disabled={isLoading} // Disable input during loading
+                  />
+                </Form.Group>
+                {filePath && <p>File Path: {filePath}</p>}
+              </>
+            )}
+          </Modal.Body>
+        </Form>
+      </Modal>
     </React.Fragment>
   );
 };

@@ -31,6 +31,19 @@ export const etatEtudiantSlice = createApi({
         },
         invalidatesTags: ["EtatEtudiant"],
       }),
+      getEtatEtudiantValue: builder.mutation<
+        { id: string; etat_fr: string; etat_ar: string },
+        EtatEtudiant
+      >({
+        query(payload) {
+          return {
+            url: "/get-etat-by-value",
+            method: "POST",
+            body: payload,
+          };
+        },
+        invalidatesTags: ["EtatEtudiant"],
+      }),
       updateEtatEtudiant: builder.mutation<void, EtatEtudiant>({
         query: ({ _id, ...rest }) => ({
           url: `/update-etat-etudiant/${_id}`,
@@ -51,8 +64,9 @@ export const etatEtudiantSlice = createApi({
 });
 
 export const {
-useAddEtatEtudiantMutation,
-useDeleteEtatEtudiantMutation,
-useFetchEtatsEtudiantQuery,
-useUpdateEtatEtudiantMutation
+  useAddEtatEtudiantMutation,
+  useDeleteEtatEtudiantMutation,
+  useFetchEtatsEtudiantQuery,
+  useUpdateEtatEtudiantMutation,
+  useGetEtatEtudiantValueMutation,
 } = etatEtudiantSlice;

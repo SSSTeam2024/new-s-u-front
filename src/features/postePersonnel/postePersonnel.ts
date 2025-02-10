@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export interface PostePersonnel {
-  _id: string;
+  _id?: string;
   // value: string;
   poste_fr: string;
   poste_ar: string;
@@ -21,10 +21,23 @@ export const postePersonnelSlice = createApi({
         providesTags: ["PostePersonnel"],
       }),
 
-      addPostePersonnel: builder.mutation<void, PostePersonnel>({
+      addPostePersonnel: builder.mutation<PostePersonnel, PostePersonnel>({
         query(payload) {
           return {
             url: "/create-poste-personnel",
+            method: "POST",
+            body: payload,
+          };
+        },
+        invalidatesTags: ["PostePersonnel"],
+      }),
+      getPostePersonnelValue: builder.mutation<
+        { id: string; poste_fr: string; poste_ar: string },
+        PostePersonnel
+      >({
+        query(payload) {
+          return {
+            url: "/get-poste-by-value",
             method: "POST",
             body: payload,
           };
@@ -55,4 +68,5 @@ export const {
   useFetchPostesPersonnelQuery,
   useDeletePostePersonnelMutation,
   useUpdatePostePersonnelMutation,
+  useGetPostePersonnelValueMutation,
 } = postePersonnelSlice;

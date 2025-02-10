@@ -33,6 +33,19 @@ export const specialiteEnseignantSlice = createApi({
         },
         invalidatesTags: ["SpecialiteEnseignant"],
       }),
+      getSpecialiteEnseignantValue: builder.mutation<
+        { id: string; specialite_fr: string; specialite_ar: string },
+        SpecialiteEnseignant
+      >({
+        query(payload) {
+          return {
+            url: "/get-specialite-by-value",
+            method: "POST",
+            body: payload,
+          };
+        },
+        invalidatesTags: ["SpecialiteEnseignant"],
+      }),
       updateSpecialiteEnseignant: builder.mutation<void, SpecialiteEnseignant>({
         query: ({ _id, ...rest }) => ({
           url: `/update-specialite-enseignant/${_id}`,
@@ -57,4 +70,5 @@ export const {
   useAddSpecialiteEnseignantMutation,
   useDeleteSpecialiteEnseignantMutation,
   useUpdateSpecialiteEnseignantMutation,
+  useGetSpecialiteEnseignantValueMutation,
 } = specialiteEnseignantSlice;
