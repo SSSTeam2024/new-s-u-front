@@ -127,6 +127,7 @@ import NewTemplateBody from "pages/TemplateBody/NewTemplateBody";
 import ShortCode from "pages/ShortCode";
 import NewShortCode from "pages/ShortCode/NewShortCode";
 import AjouterVariablesGlobales from "pages/VariableGlobal/AjouterVariableGlobale";
+import ListeVariablesGlobales from "pages/VariableGlobal/ListeVariableGlobale";
 import EditActualite from "pages/actualite/EditActualite";
 import ProfilEnseignant from "pages/Accounts/AccountEnseignant/ProfilEnseignant";
 import EditAvisEtudiant from "pages/avis-etudiant/EditAvisEtudiant";
@@ -198,10 +199,14 @@ import AjouterDeplacement from "pages/Deplacement/AjouterDeplacement";
 import ListeDeplacements from "pages/Deplacement/ListeDeplacements";
 import AjouterNotePro from "pages/Notes-professionnels/AjouterNotePro";
 import ListeNotesPro from "pages/Notes-professionnels/ListeNotesPro";
+import AjouterMission from "pages/Mission/AjouterMission";
+import ListeMissions from "pages/Mission/ListeMission";
+import GenerateFicheTache from "pages/Mission/GenererFichierTache";
 import ListeParcours from "pages/GestionParcours/Parcours/ListeParcours";
 import ListeModulesParcours from "pages/GestionParcours/ModulesParcours/ListeModulesParcours";
 import ListTypeParcours from "pages/GestionParcours/TypeParcours/ListTypeParcours";
 import AddPlanParcours from "pages/GestionParcours/Parcours/AddPlanParcours";
+import AjouterAbsencePersonnel from "pages/AbsencePersonnel/AjouterAbsencePersonnel";
 const authProtectedRoutes = [
   { path: "/dashboard", component: <Dashboard /> },
 
@@ -229,6 +234,10 @@ const authProtectedRoutes = [
   {
     path: "/avis-etudiant/ajouter-avis-etudiant",
     component: <AjouterAvisEtudiant />,
+  },
+  {
+    path: "/avis-etudiant/liste-avis-etudiant",
+    component: <ListeAvisEtudiant />,
   },
   {
     path: "/avis-etudiant/single-avis-etudiant",
@@ -750,6 +759,10 @@ const authProtectedRoutes = [
     path: "/variable/ajouter-variables-globales",
     component: <AjouterVariablesGlobales />,
   },
+  {
+    path: "/variable/liste-variables-globales",
+    component: <ListeVariablesGlobales />,
+  },
 
   // Papier administratif
   {
@@ -804,7 +817,21 @@ const authProtectedRoutes = [
     path: "/gestion-deplacement/Liste-deplacements",
     component: <ListeDeplacements />,
   },
+  // Gestion des missions
 
+  {
+    path: "/gestion-mission/ajouter-mission",
+    component: <AjouterMission />,
+  },
+
+  {
+    path: "/gestion-mission/liste-mission",
+    component: <ListeMissions />,
+  },
+  {
+    path: "/gestion-mission/generer-fiche",
+    component: <GenerateFicheTache />,
+  },
   // Gestion des notes professionelles
 
   {
@@ -897,6 +924,14 @@ const authProtectedRoutes = [
     path: "/gestion-emplois/emlpoi-enseignant/liste-charges-grade",
     component: <EquilibreHorairesGrade />,
   },
+
+  // absence personnel 
+
+  {
+    path: "/absence-personnel/ajouter-absence-personnel",
+    component: <AjouterAbsencePersonnel />,
+  },
+
 
   // Accounts
   { path: "/account", component: <MyAccount /> },

@@ -28,7 +28,7 @@ import Swal from "sweetalert2";
 import { useFetchDeplacementQuery } from "features/deplacement/deplacementSlice";
 
 const ListeDeplacements = () => {
-  document.title = "Avis Enseignant | ENIGA";
+  document.title = "Liste des déplacements| ENIGA";
 
   const user = useSelector((state: RootState) => selectCurrentUser(state));
 

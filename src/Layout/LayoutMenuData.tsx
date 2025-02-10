@@ -46,11 +46,13 @@ const Navdata = () => {
   const [isEmplois, setIsEmplois] = useState(false);
   const [isRattrapage, setIsRattrapage] = useState(false);
   const [isExamen, setIsExamen] = useState(false);
+  const [isVariable, setIsVariable] = useState(false);
   const [isNotesExamen, setIsNotesExamen] = useState(false);
   const [isConge, setIsConge] = useState(false);
   const [isDeplacement, setIsDeplacement] = useState(false);
   const [isParcours, setIsParcours] = useState(false);
   const [isNotesProfessionnelles, setIsNotesProfessionnelles] = useState(false);
+  const [isMission, setIsMission] = useState(false);
   const [isModele, setIsModele] = useState(false);
   const [isLevel1, setIsLevel1] = useState(false);
   const [isLevel2, setIsLevel2] = useState(false);
@@ -148,6 +150,9 @@ const Navdata = () => {
     if (iscurrentState !== "Deplacement") {
       setIsDeplacement(false);
     }
+    if (iscurrentState !== "Mission") {
+      setIsMission(false);
+    }
     if (iscurrentState !== "NotesProfessionelles") {
       setIsNotesProfessionnelles(false);
     }
@@ -181,6 +186,9 @@ const Navdata = () => {
     if (iscurrentState !== "Parcours") {
       setIsParcours(false);
     }
+    if (iscurrentState !== "Variable") {
+      setIsVariable(false);
+    }
   }, [
     iscurrentState,
     isEcommerce,
@@ -199,10 +207,12 @@ const Navdata = () => {
     isEnseignant,
     isPersonnel,
     isDeaprtement,
+    isMission,
     isParametreEtudiant,
     isExamen,
     isNotesExamen,
     isParcours,
+    isVariable
   ]);
   let routes = userPermissions
     ? userPermissions.map((permission) => permission.path)
@@ -1043,7 +1053,7 @@ const Navdata = () => {
       id: "Gestion-des-Notes",
       label: "Gestion des Notes",
       link: "/#",
-      icon: "bi bi-calendar-event",
+      icon: "bi bi-123",
       click: function (e: any) {
         e.preventDefault();
         setIsNotesExamen(!isNotesExamen);
@@ -1140,20 +1150,6 @@ const Navdata = () => {
           parentId: "déplacement",
           icon: "bi bi-clipboard2-plus",
         },
-        // {
-        //   id: "Solde-Conge",
-        //   label: "Solde des Congés",
-        //   link: "/solde-conge/liste-solde-conge",
-        //   parentId: "congés",
-        //   icon: "bi bi-person-fill-add",
-        // },
-        // {
-        //   id: "demande-Conge",
-        //   label: "Ajouter Demande de Congé",
-        //   link: "/demande-conge/ajouter-demande-conge",
-        //   parentId: "congés",
-        //   icon: "bi bi-person-fill-add",
-        // },
         {
           id: "liste_deplacements",
           label: "Liste des déplacements",
@@ -1163,7 +1159,36 @@ const Navdata = () => {
         },
       ],
     },
-
+    // Mission
+    {
+      id: "Mission",
+      label: "Gestion des taches",
+      icon: "bi bi-car-front",
+      link: "/#",
+      click: function (e: any) {
+        e.preventDefault();
+        setIsMission(!isMission);
+        setIscurrentState("Mission");
+        updateIconSidebar(e);
+      },
+      stateVariables: isMission,
+      subItems: [
+        {
+          id: "ajouter-mission",
+          label: "Ajouter une tâche",
+          link: "/gestion-mission/ajouter-mission",
+          parentId: "Mission",
+          icon: "bi bi-clipboard2-plus",
+        },
+        {
+          id: "liste_deplacements",
+          label: "Liste des tâches",
+          link: "/gestion-mission/liste-mission",
+          parentId: "Mission",
+          icon: "bi bi-journal-text",
+        },
+      ],
+    },
     // notes pro
     {
       id: "notes-professionnels",
@@ -1263,7 +1288,31 @@ const Navdata = () => {
       id: "variable-globales",
       label: "Variables Globales",
       icon: "bi bi-cloud-arrow-down-fill",
-      link: "/variable/ajouter-variables-globales",
+      link: "/#",
+      click: function (e: any) {
+        e.preventDefault();
+        setIsVariable(!isVariable);
+        setIscurrentState("Variable");
+        updateIconSidebar(e);
+      },
+      stateVariables: isVariable,
+      subItems: [
+        {
+          id: "AjouterVariable",
+          label: "Ajouter variable globale",
+          link: "/variable/ajouter-variables-globales",
+          parentId: "variable-globales",
+          icon: "bi bi-person-fill-add",
+        },
+        {
+          id: "AjouterPermission",
+          label: "Liste des variables globales",
+          link: "/variable/liste-variables-globales",
+          parentId: "variable-globales",
+          icon: "bi bi-person-lines-fill",
+        },
+       
+      ],
     },
     // gestion des admins
     {

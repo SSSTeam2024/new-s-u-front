@@ -32,6 +32,12 @@ export interface LoginRequest {
 export interface UserToken {
   token: string;
 }
+
+export interface PasswordVerification {
+  hashedPassword: string;
+  plainPassword: string;
+}
+
 export const accountSlice = createApi({
   reducerPath: "account",
   baseQuery: fetchBaseQuery({
@@ -75,6 +81,16 @@ export const accountSlice = createApi({
         },
         invalidatesTags: ["Account"],
       }),
+      verifyPassword: builder.mutation<{isMatch: boolean}, PasswordVerification>({
+        query(payload) {
+          return {
+            url: "/verify-password",
+            method: "POST",
+            body: payload,
+          };
+        },
+        invalidatesTags: ["Account"],
+      }),
       fetchAllUsers: builder.query<any[], void>({
         query: () => ({
           url: `/get-all-users`,
@@ -99,4 +115,5 @@ export const {
   useGetUserMutation,
   useFetchAllUsersQuery,
   useDeleteUserMutation,
+  useVerifyPasswordMutation
 } = accountSlice;

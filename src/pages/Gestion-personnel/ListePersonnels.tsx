@@ -1307,6 +1307,20 @@ const ListePersonnels = () => {
                     <Col className="col-lg-auto ms-auto">
                       <div className="hstack gap-2">
                         <Button
+                          variant="success"
+                          className="add-btn"
+                          // onClick={() => fileInputRef.current?.click()}
+                        >
+                          Ajouter Depuis Excel
+                        </Button>
+                        <input
+                          type="file"
+                          accept=".xlsx, .xls"
+                          // ref={fileInputRef}
+                          style={{ display: "none" }}
+                          // onChange={handleFileChange}
+                        />
+                        <Button
                           variant="primary"
                           className="add-btn"
                           onClick={() => tog_AddPersonnel()}

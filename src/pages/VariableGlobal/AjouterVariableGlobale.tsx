@@ -1,11 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Card, Col, Container, Form, Row } from "react-bootstrap";
-
 import { useNavigate } from "react-router-dom";
-
 import Swal from "sweetalert2";
 import "flatpickr/dist/flatpickr.min.css";
-import { useAddNewVaribaleGlobaleMutation } from "features/variableGlobale/variableGlobaleSlice";
+import { useAddNewVaribaleGlobaleMutation, useFetchVaribaleGlobaleQuery, VaribaleGlobale } from "features/variableGlobale/variableGlobaleSlice";
 
 function convertToBase64(
   file: File
@@ -26,14 +24,24 @@ function convertToBase64(
 }
 
 const AjouterVariablesGlobales = () => {
-  document.title = "Variables Globales | Smart Institute";
+  document.title = " Variables Globales | ENIGA";
   const navigate = useNavigate();
   const [newVariableGlobale] = useAddNewVaribaleGlobaleMutation();
+
+  const {data: globalVars} = useFetchVaribaleGlobaleQuery();
+  console.log(globalVars);
+// Function to get the last object
+
+
+
   const initialVariableGlobale = {
+    
     directeur_ar: "",
     directeur_fr: "",
     secretaire_ar: "",
     secretaire_fr: "",
+    abreviation: "",
+    annee_universitaire: "",
     signature_directeur_base64: "",
     signature_directeur_extension: "",
     signature_secretaire_base64: "",
@@ -62,43 +70,18 @@ const AjouterVariablesGlobales = () => {
     logo_universite: "",
     logo_republique: "",
   };
-
+  const lastVariableGlobale = globalVars?.length ? globalVars[globalVars.length - 1] : initialVariableGlobale;
   const [variableGlobale, setVariableGlobale] = useState(
     initialVariableGlobale
   );
-  const {
-    directeur_ar,
-    directeur_fr,
-    secretaire_ar,
-    secretaire_fr,
-    signature_directeur_base64,
-    signature_directeur_extension,
-    signature_secretaire_base64,
-    signature_secretaire_extension,
-    etablissement_ar,
-    etablissement_fr,
-    logo_etablissement_base64,
-    logo_etablissement_extension,
-    logo_universite_base64,
-    logo_universite_extension,
-    logo_republique_base64,
-    logo_republique_extension,
-    universite_ar,
-    universite_fr,
-    address_ar,
-    address_fr,
-    gouvernorat_ar,
-    gouvernorat_fr,
-    code_postal,
-    phone,
-    fax,
-    website,
-    signature_directeur,
-    signature_secretaire,
-    logo_etablissement,
-    logo_universite,
-    logo_republique,
-  } = variableGlobale;
+  
+console.log("last",lastVariableGlobale)
+
+  useEffect(() => {
+    if (lastVariableGlobale) {
+      setVariableGlobale(lastVariableGlobale);
+    }
+  }, [globalVars]);
 
   const onChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -117,7 +100,7 @@ const AjouterVariablesGlobales = () => {
     ).files[0];
     if (file) {
       const { base64Data, extension } = await convertToBase64(file);
-      const profileImage = base64Data + "." + extension;
+      const profileImage = `data:image/${extension};base64,${base64Data}`;
       setVariableGlobale({
         ...variableGlobale,
         signature_directeur: profileImage,
@@ -135,7 +118,7 @@ const AjouterVariablesGlobales = () => {
     ).files[0];
     if (file) {
       const { base64Data, extension } = await convertToBase64(file);
-      const profileImage = base64Data + "." + extension;
+      const profileImage = `data:image/${extension};base64,${base64Data}`;
       setVariableGlobale({
         ...variableGlobale,
         signature_secretaire: profileImage,
@@ -153,7 +136,7 @@ const AjouterVariablesGlobales = () => {
     ).files[0];
     if (file) {
       const { base64Data, extension } = await convertToBase64(file);
-      const profileImage = base64Data + "." + extension;
+      const profileImage = `data:image/${extension};base64,${base64Data}`;
       setVariableGlobale({
         ...variableGlobale,
         logo_etablissement: profileImage,
@@ -171,7 +154,7 @@ const AjouterVariablesGlobales = () => {
     ).files[0];
     if (file) {
       const { base64Data, extension } = await convertToBase64(file);
-      const profileImage = base64Data + "." + extension;
+      const profileImage = `data:image/${extension};base64,${base64Data}`;
       setVariableGlobale({
         ...variableGlobale,
         logo_universite: profileImage,
@@ -189,7 +172,8 @@ const AjouterVariablesGlobales = () => {
     ).files[0];
     if (file) {
       const { base64Data, extension } = await convertToBase64(file);
-      const profileImage = base64Data + "." + extension;
+      const profileImage = `data:image/${extension};base64,${base64Data}`;
+      console.log(profileImage.includes('data:image'))
       setVariableGlobale({
         ...variableGlobale,
         logo_republique: profileImage,
@@ -201,11 +185,23 @@ const AjouterVariablesGlobales = () => {
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    newVariableGlobale(variableGlobale).then(() =>
-      setVariableGlobale(initialVariableGlobale)
-    );
+    // newVariableGlobale(variableGlobale).then(() =>
+    //   setVariableGlobale(initialVariableGlobale)
+    // );
+
+     // Compare the current form state with the last object
+  const isModified = JSON.stringify(variableGlobale) !== JSON.stringify(lastVariableGlobale);
+
+  // If no modifications, use the last object to create a new one
+  const newObject = isModified ? variableGlobale : lastVariableGlobale;
+
+  console.log(newObject);
+
+  newVariableGlobale({ ...newObject, _id: undefined }).then(() =>
+    setVariableGlobale(initialVariableGlobale)
+  );
     notify();
-    navigate("/template/liste-template-body");
+    navigate("/variable/liste-variables-globales");
   };
 
   const notify = () => {
@@ -292,13 +288,14 @@ const AjouterVariablesGlobales = () => {
                             />
                           </div>
                         </Col>
-                        <Col lg={4}>
+                        <Col lg={2}>
                           <div className="mb-3">
                             <Form.Label htmlFor="signature_directeur_base64">
                               <h4 className="card-title mb-0">
                                 Signature du directeur
                               </h4>
                             </Form.Label>
+
                             <Form.Control
                               name="signature_directeur_base64"
                               type="file"
@@ -308,8 +305,27 @@ const AjouterVariablesGlobales = () => {
                               className="text-muted"
                               onChange={handleFileUploadSignatureDirecteur}
                             />
+                   
                           </div>
                         </Col>
+                        <Col lg={2}>
+                        <div>
+                        {
+                            variableGlobale.signature_directeur.includes('data:image')? (
+                              <img
+                                src={`${variableGlobale.signature_directeur}`}
+                                alt="signature_directeur-img"
+                                id="signature_directeur"
+                                className="avatar-lg d-block mx-auto"
+                              />
+                            ): (<img
+                              src={`${process.env.REACT_APP_API_URL}/files/variableGlobaleFiles/signatureDirecteurFiles/${variableGlobale.signature_directeur}`}
+                              alt="signature_directeur-img"
+                              id="signature_directeur"
+                              className="avatar-lg d-block mx-auto"
+                            />)
+                          }
+                      </div></Col>
                       </Row>
                       <Row>
                         <Card.Header className="mb-3">
@@ -362,7 +378,7 @@ const AjouterVariablesGlobales = () => {
                             />
                           </div>
                         </Col>
-                        <Col lg={4}>
+                        <Col lg={2}>
                           <div className="mb-3">
                             <Form.Label htmlFor="signature_secretaire_base64">
                               <h4 className="card-title mb-0">
@@ -380,6 +396,25 @@ const AjouterVariablesGlobales = () => {
                             />
                           </div>
                         </Col>
+                        <Col lg={2}>
+                        <div>
+                        {
+                            variableGlobale.signature_secretaire.includes('data:image')? (
+                              <img
+                                src={`${variableGlobale.signature_secretaire}`}
+                                alt="signature_secretaire-img"
+                                id="signature_secretaire"
+                                className="avatar-lg d-block mx-auto"
+                              />
+                            ): (<img
+                              src={`${process.env.REACT_APP_API_URL}/files/variableGlobaleFiles/signatureSecretaireFiles/${variableGlobale.signature_secretaire}`}
+                              alt="signature_secretaire-img"
+                              id="signature_secretaire"
+                              className="avatar-lg d-block mx-auto"
+                            />)
+                          }
+
+  </div></Col>
                       </Row>
 
                       <Row>
@@ -672,7 +707,7 @@ const AjouterVariablesGlobales = () => {
                             </div>
                           </div>
                         </Card.Header>
-                        <Col lg={4}>
+                        <Col lg={2}>
                           <div className="mb-3">
                             <Form.Label htmlFor="logo_etablissement_base64">
                               <h4 className="card-title mb-0">
@@ -690,7 +725,25 @@ const AjouterVariablesGlobales = () => {
                             />
                           </div>
                         </Col>
-                        <Col lg={4}>
+                        <Col lg={2}>
+                        <div>
+                        {
+                            variableGlobale.logo_etablissement.includes('data:image')? (
+                              <img
+                                src={`${variableGlobale.logo_etablissement}`}
+                                alt="logo_etablissement-img"
+                                id="logo_etablissement"
+                                className="avatar-lg d-block mx-auto"
+                              />
+                            ): (<img
+                              src={`${process.env.REACT_APP_API_URL}/files/variableGlobaleFiles/logoEtablissementFiles/${variableGlobale.logo_etablissement}`}
+                              alt="logo_etablissement-img"
+                              id="logo_etablissement"
+                              className="avatar-lg d-block mx-auto"
+                            />)
+                          }
+  </div></Col>
+                        <Col lg={2}>
                           <div className="mb-3">
                             <Form.Label htmlFor="logo_universite_base64">
                               <h4 className="card-title mb-0">
@@ -708,7 +761,25 @@ const AjouterVariablesGlobales = () => {
                             />
                           </div>
                         </Col>
-                        <Col lg={4}>
+                        <Col lg={2}>
+                        <div>
+                          {
+                            variableGlobale.logo_universite.includes('data:image')? (
+                              <img
+                                src={`${variableGlobale.logo_universite}`}
+                                alt="logo_universite-img"
+                                id="logo_universite"
+                                className="avatar-lg d-block mx-auto"
+                              />
+                            ): (<img
+                              src={`${process.env.REACT_APP_API_URL}/files/variableGlobaleFiles/logoUniversiteFiles/${variableGlobale.logo_universite}`}
+                              alt="logo_universite-img"
+                              id="logo_universite"
+                              className="avatar-lg d-block mx-auto"
+                            />)
+                          }
+  </div></Col>
+                        <Col lg={2}>
                           <div className="mb-3">
                             <Form.Label htmlFor="logo_republique_base64">
                               <h4 className="card-title mb-0">
@@ -726,6 +797,23 @@ const AjouterVariablesGlobales = () => {
                             />
                           </div>
                         </Col>
+                        <Col lg={2}>
+                        <div>
+                          {variableGlobale.logo_republique.includes('data:image')? (
+                            <img
+                            src={`${variableGlobale.logo_republique}`}
+                            alt="logo_republique-img"
+                            id="logo_republique"
+                            className="avatar-lg d-block mx-auto"
+                          />
+                          ): (<img
+                            src={`${process.env.REACT_APP_API_URL}/files/variableGlobaleFiles/logoRepubliqueFiles/${variableGlobale.logo_republique}`}
+                            alt="logo_republique-img"
+                            id="logo_republique"
+                            className="avatar-lg d-block mx-auto"
+                          />)}
+    
+  </div></Col>
                       </Row>
                       <Col lg={12}>
                         <div className="hstack gap-2 justify-content-end">

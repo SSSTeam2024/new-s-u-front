@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export interface NotesPro {
-  _id: string;
+  _id?: string;
   personnel: any;
   note1: string;
   note2: string;
@@ -36,22 +36,32 @@ export const notesProSlice = createApi({
         },
         providesTags: ["NotesPro"],
       }),
-      addNotesPro: builder.mutation<void, Partial<NotesPro>>({
-        query(deplacement) {
+      getNotesProByYear: builder.mutation<void, any>({
+        query(reqBody) {
+          return {
+            url: "get-note-pro-by-year",
+            method: "POST",
+            body: reqBody,
+          };
+        },
+        invalidatesTags: ["NotesPro"],
+      }),
+      addNotesPro: builder.mutation<void, any>({
+        query(notesProArray) {
           return {
             url: "add-note-pro",
             method: "POST",
-            body: deplacement,
+            body: notesProArray,
           };
         },
         invalidatesTags: ["NotesPro"],
       }),
       updateNotesPro: builder.mutation<void, NotesPro>({
-        query(deplacement) {
+        query(notesProArray) {
           return {
             url: `edit-note-pro`,
             method: "PUT",
-            body: deplacement,
+            body: notesProArray,
           };
         },
         invalidatesTags: ["NotesPro"],
@@ -76,4 +86,5 @@ export const {
   useAddNotesProMutation,
   useUpdateNotesProMutation,
   useDeleteNotesProMutation,
+  useGetNotesProByYearMutation,
 } = notesProSlice;
