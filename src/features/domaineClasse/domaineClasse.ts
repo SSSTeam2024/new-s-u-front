@@ -20,6 +20,24 @@ export const domaineClasseSlice = createApi({
         },
         providesTags: ["DomaineClasse"],
       }),
+      getDomaineByValue: builder.mutation<
+        {
+          id: string;
+          name_domaine_fr: string;
+          name_domaine_ar: string;
+          abreviation: string;
+        },
+        DomaineClasse
+      >({
+        query(payload) {
+          return {
+            url: "/get-domaine-by-value",
+            method: "POST",
+            body: payload,
+          };
+        },
+        invalidatesTags: ["DomaineClasse"],
+      }),
 
       addDomaineClasse: builder.mutation<void, DomaineClasse>({
         query(payload) {
@@ -55,4 +73,5 @@ export const {
   useDeleteDomaineClasseMutation,
   useFetchDomainesClasseQuery,
   useUpdateDomaineClasseMutation,
+  useGetDomaineByValueMutation,
 } = domaineClasseSlice;

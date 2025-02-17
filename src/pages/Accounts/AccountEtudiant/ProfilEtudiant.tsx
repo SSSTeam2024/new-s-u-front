@@ -86,17 +86,24 @@ const MyAccount = () => {
   ];
 
   const groupeClasseDisplay =
-    typeof etudiant?.groupe_classe! === "object" &&
-    etudiant?.groupe_classe! !== null
-      ? etudiant?.groupe_classe?.nom_classe_fr!
-      : typeof etudiant?.groupe_classe! === "string"
-      ? etudiant?.groupe_classe!
-      : null;
+    typeof etudiant?.groupe_classe === "object"
+      ? etudiant?.groupe_classe?.nom_classe_fr || ""
+      : etudiant?.groupe_classe || "";
 
   const niveauClasseDisplay =
-    typeof etudiant?.groupe_classe?.niveau_classe! === "object"
-      ? etudiant?.groupe_classe?.niveau_classe?.name_niveau_fr!
-      : etudiant?.groupe_classe?.niveau_classe!;
+    typeof etudiant?.groupe_classe?.niveau_classe === "object"
+      ? etudiant?.groupe_classe?.niveau_classe?.name_niveau_fr || ""
+      : etudiant?.groupe_classe?.niveau_classe || "";
+
+  const etatCompteDisplay =
+    typeof etudiant?.etat_compte === "object"
+      ? etudiant?.etat_compte?.etat_fr || ""
+      : etudiant?.etat_compte || "";
+
+  const typeInscriptionDisplay =
+    typeof etudiant?.type_inscription === "object"
+      ? etudiant?.type_inscription?.type_fr || ""
+      : etudiant?.type_inscription || "";
 
   const getSectionNames = (etudiant: any) => {
     if (Array.isArray(etudiant?.groupe_classe?.niveau_classe?.sections!)) {
@@ -110,21 +117,15 @@ const MyAccount = () => {
 
   const sectionNames = getSectionNames(etudiant);
 
-  const etatCompteDisplay =
-    typeof etudiant?.etat_compte! === "object" &&
-    etudiant?.etat_compte! !== null
-      ? etudiant?.etat_compte?.etat_fr!
-      : typeof etudiant?.etat_compte! === "string"
-      ? etudiant?.etat_compte!
-      : null;
+  // const etatCompteDisplay =
+  //   typeof etudiant?.etat_compte! === "object"
+  //     ? etudiant?.etat_compte?.etat_fr!
+  //     : etudiant?.etat_compte!;
 
-  const typeInscriptionDisplay =
-    typeof etudiant?.type_inscription === "object" &&
-    etudiant?.type_inscription !== null
-      ? etudiant?.type_inscription?.type_fr
-      : typeof etudiant?.type_inscription === "string"
-      ? etudiant?.type_inscription
-      : null;
+  // const typeInscriptionDisplay =
+  //   typeof etudiant?.type_inscription! === "object"
+  //     ? etudiant?.type_inscription?.type_fr!
+  //     : etudiant?.type_inscription!;
 
   return (
     <React.Fragment>

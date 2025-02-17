@@ -33,9 +33,9 @@ export interface GroupeClasse {
 
 export interface EtatCompte {
   _id: string;
-    value_etat_etudiant: string;
-    etat_ar: string;
-    etat_fr: string;
+  value_etat_etudiant: string;
+  etat_ar: string;
+  etat_fr: string;
 }
 
 export interface Etudiant {
@@ -51,9 +51,9 @@ export interface Etudiant {
   etat_civil: string;
   sexe: string;
   num_CIN: string;
-  face_1_CIN: string;
-  face_2_CIN: string;
-  fiche_paiement: string;
+  face_1_CIN?: string;
+  face_2_CIN?: string;
+  fiche_paiement?: string;
   etat_compte?: EtatCompte;
   groupe_classe?: GroupeClasse;
   state: string;
@@ -66,11 +66,11 @@ export interface Etudiant {
   nom_pere: string;
   job_pere: string;
   nom_mere: string;
-  num_phone_tuteur: string;
+  num_phone_tuteur?: string;
   moyen: string;
   session: string;
   filiere: string;
-  niveau_scolaire: string;
+  niveau_scolaire?: string;
   annee_scolaire: string;
   type_inscription?: {
     _id: string;
@@ -82,30 +82,141 @@ export interface Etudiant {
       name_fr: string;
     }[];
   };
-  Face1CINFileBase64String: string;
-  Face1CINFileExtension: string;
-  Face2CINFileBase64String: string;
-  Face2CINFileExtension: string;
-  FichePaiementFileBase64String: string;
-  FichePaiementFileExtension: string;
-  files: FileDetail[];
-  photo_profil: string;
-  PhotoProfilFileExtension: string;
-  PhotoProfilFileBase64String: string;
+  Face1CINFileBase64String?: string;
+  Face1CINFileExtension?: string;
+  Face2CINFileBase64String?: string;
+  Face2CINFileExtension?: string;
+  FichePaiementFileBase64String?: string;
+  FichePaiementFileExtension?: string;
+  files?: FileDetail[];
+  photo_profil?: string;
+  PhotoProfilFileExtension?: string;
+  PhotoProfilFileBase64String?: string;
   //! TO Verify if we keep these fields or not !!
-  num_inscri?: string,
-  Niveau_Fr?: string,
-  DIPLOME?: string,
-  Spécialité?: string,
-  Groupe?: string,
-  Cycle?: string,
-  Ann_Univ?: string,
-  Modele_Carte?: string,
-  NiveauAr?: string,
-  DiplomeAr?: string,
-  SpecialiteAr?: string,
+  num_inscri?: string;
+  Niveau_Fr?: string;
+  DIPLOME?: string;
+  Spécialité?: string;
+  Groupe?: string;
+  Cycle?: string;
+  Ann_Univ?: string;
+  Modele_Carte?: string;
+  NiveauAr?: string;
+  DiplomeAr?: string;
+  SpecialiteAr?: string;
+  // etat_compte_Ar: string;
+  // type_inscription_ar: string;
+  // nbre_enfants: string;
+  // etablissement_conjoint: string;
+  // profesion_Conjoint: string;
+  // prenom_conjoint: string;
+  // Cycle_Ar: string;
+  // ville: string;
+  // pays_bac: string;
+  // mention: string;
+  // situation_militaire: string;
+  // tel_parents: string;
+  // pays_parents: string;
+  // gouvernorat_parents: string;
+  // code_postale_parents: string;
+  // adresse_parents: string;
+  // etat_mere: string;
+  // etablissement_mere: string;
+  // profession_mere: string;
+  // prenom_mere: string;
+  // etat_pere: string;
+  // prenom_pere: string;
+  // pays: string;
+  // gouvernorat: string;
+  // matricule_number: string;
+  // passeport_number: string;
+  // cnss_number: string;
 }
-
+export interface EtudiantExcel {
+  _id?: string;
+  nom_fr: string;
+  nom_ar: string;
+  prenom_fr: string;
+  prenom_ar: string;
+  lieu_naissance_fr: string;
+  lieu_naissance_ar: string;
+  date_naissance: string;
+  nationalite: string;
+  etat_civil: string;
+  sexe: string;
+  num_CIN: string;
+  face_1_CIN?: string;
+  face_2_CIN?: string;
+  fiche_paiement?: string;
+  etat_compte?: string;
+  groupe_classe?: GroupeClasse;
+  state: string;
+  dependence: string;
+  code_postale: string;
+  adress_ar: string;
+  adress_fr: string;
+  num_phone: string;
+  email: string;
+  nom_pere: string;
+  job_pere: string;
+  nom_mere: string;
+  num_phone_tuteur?: string;
+  moyen: string;
+  session: string;
+  filiere: string;
+  niveau_scolaire?: string;
+  annee_scolaire: string;
+  type_inscription?: string;
+  Face1CINFileBase64String?: string;
+  Face1CINFileExtension?: string;
+  Face2CINFileBase64String?: string;
+  Face2CINFileExtension?: string;
+  FichePaiementFileBase64String?: string;
+  FichePaiementFileExtension?: string;
+  files?: FileDetail[];
+  photo_profil?: string;
+  PhotoProfilFileExtension?: string;
+  PhotoProfilFileBase64String?: string;
+  //! TO Verify if we keep these fields or not !!
+  num_inscri?: string;
+  Niveau_Fr?: string;
+  DIPLOME?: string;
+  Spécialité?: string;
+  Groupe?: string;
+  Cycle?: string;
+  Ann_Univ?: string;
+  Modele_Carte?: string;
+  NiveauAr?: string;
+  DiplomeAr?: string;
+  SpecialiteAr?: string;
+  etat_compte_Ar: string;
+  type_inscription_ar: string;
+  nbre_enfants: string;
+  etablissement_conjoint: string;
+  profesion_Conjoint: string;
+  prenom_conjoint: string;
+  Cycle_Ar: string;
+  ville: string;
+  pays_bac: string;
+  mention: string;
+  situation_militaire: string;
+  tel_parents: string;
+  pays_parents: string;
+  gouvernorat_parents: string;
+  code_postale_parents: string;
+  adresse_parents: string;
+  etat_mere: string;
+  etablissement_mere: string;
+  profession_mere: string;
+  prenom_mere: string;
+  etat_pere: string;
+  prenom_pere: string;
+  pays: string;
+  gouvernorat: string;
+  matricule_number: string;
+  passeport_number: string;
+  cnss_number: string;
+}
 export const etudiantSlice = createApi({
   reducerPath: "Etudiant",
   baseQuery: fetchBaseQuery({
@@ -123,18 +234,18 @@ export const etudiantSlice = createApi({
       fetchEtudiantById: builder.query<Etudiant, { _id: string }>({
         query({ _id }) {
           return {
-            url: 'get-etudiant',
-            method: 'POST',
+            url: "get-etudiant",
+            method: "POST",
             body: { _id },
           };
         },
-        providesTags: ['Etudiant'],
+        providesTags: ["Etudiant"],
       }),
       fetchEtudiantsByIdClasse: builder.query<Etudiant[], string>({
         query: (classeId) => `get-etudiant-by-idclasse/${classeId}`,
-        providesTags: ['Etudiant'],
+        providesTags: ["Etudiant"],
       }),
-      addEtudiant: builder.mutation<void, Etudiant>({
+      addEtudiant: builder.mutation<void, EtudiantExcel>({
         query(payload) {
           return {
             url: "/create-etudiant",
@@ -158,23 +269,26 @@ export const etudiantSlice = createApi({
         },
         invalidatesTags: ["Etudiant"],
       }),
-        deleteEtudiant: builder.mutation<Etudiant, {_id: string}>({
-          query: (_id) => ({
-            url: `/delete-etudiant`,
-            method: "DELETE",
-            body:{ _id }
-          }),
-          invalidatesTags: ["Etudiant"],
+      deleteEtudiant: builder.mutation<Etudiant, { _id: string }>({
+        query: (_id) => ({
+          url: `/delete-etudiant`,
+          method: "DELETE",
+          body: { _id },
         }),
-        getTypeInscriptionByIdStudent: builder.mutation<any, { studentId: string }>({
-          query: ({ studentId }) => ({
-            url: `/type-inscription`,
-            method: "POST",
-            body: { studentId },
-          }),
-          invalidatesTags: ["Etudiant"],
+        invalidatesTags: ["Etudiant"],
+      }),
+      getTypeInscriptionByIdStudent: builder.mutation<
+        any,
+        { studentId: string }
+      >({
+        query: ({ studentId }) => ({
+          url: `/type-inscription`,
+          method: "POST",
+          body: { studentId },
         }),
-        updateGroupeClasse: builder.mutation<
+        invalidatesTags: ["Etudiant"],
+      }),
+      updateGroupeClasse: builder.mutation<
         { message: string; result: any },
         { studentIds: string[]; groupeClasseId: string }
       >({
@@ -189,4 +303,13 @@ export const etudiantSlice = createApi({
   },
 });
 
-export const { useAddEtudiantMutation, useFetchEtudiantsQuery, useFetchEtudiantByIdQuery, useDeleteEtudiantMutation, useUpdateEtudiantMutation, useGetTypeInscriptionByIdStudentMutation, useUpdateGroupeClasseMutation, useFetchEtudiantsByIdClasseQuery } = etudiantSlice;
+export const {
+  useAddEtudiantMutation,
+  useFetchEtudiantsQuery,
+  useFetchEtudiantByIdQuery,
+  useDeleteEtudiantMutation,
+  useUpdateEtudiantMutation,
+  useGetTypeInscriptionByIdStudentMutation,
+  useUpdateGroupeClasseMutation,
+  useFetchEtudiantsByIdClasseQuery,
+} = etudiantSlice;

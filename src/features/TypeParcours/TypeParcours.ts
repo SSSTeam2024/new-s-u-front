@@ -32,6 +32,23 @@ export const typeParcoursSlice = createApi({
         },
         invalidatesTags: ["TypeParcours"],
       }),
+      getTypeParcoursByValue: builder.mutation<
+        {
+          id: string;
+          name_type_parcours_ar: string;
+          name_type_parcours_fr: string;
+        },
+        TypeParcours
+      >({
+        query(payload) {
+          return {
+            url: "/get-type-parcours-by-value",
+            method: "POST",
+            body: payload,
+          };
+        },
+        invalidatesTags: ["TypeParcours"],
+      }),
       updateTypeParcours: builder.mutation<void, TypeParcours>({
         query: ({ _id, ...rest }) => ({
           url: `/update-type-parcours/${_id}`,
@@ -56,4 +73,5 @@ export const {
   useDeleteTypeParcoursMutation,
   useFetchTypeParcoursQuery,
   useUpdateTypeParcoursMutation,
+  useGetTypeParcoursByValueMutation,
 } = typeParcoursSlice;

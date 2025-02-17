@@ -848,12 +848,12 @@ const Navdata = () => {
               link: "/parcours/gestion-parcours/liste-parcours",
               icon: "bi bi-list",
             },
-            {
-              id: 2,
-              label: "Ajouter parcours",
-              link: "/parcours/gestion-parcours/ajouter-parcours",
-              icon: "bi bi-plus-lg",
-            },
+            // {
+            //   id: 2,
+            //   label: "Ajouter parcours",
+            //   link: "/parcours/gestion-parcours/ajouter-parcours",
+            //   icon: "bi bi-plus-lg",
+            // },
             {
               id: 3,
               label: "Liste types des parcours",
@@ -862,32 +862,32 @@ const Navdata = () => {
             },
           ],
         },
-        {
-          id: "modules",
-          label: "Gestion Modules",
-          icon: "bi bi-door-closed-fill",
-          link: "/parcours/gestion-parcours/liste-modules",
-          isChildItem: true,
-          click: function (e: any) {
-            e.preventDefault();
-            setIsLevel2(!isLevel2);
-          },
-          stateVariables: isLevel2,
-          childItems: [
-            {
-              id: 1,
-              label: "Liste Des Salles",
-              link: "/parcours/gestion-parcours/liste-modules",
-              icon: "bi bi-list",
-            },
-            {
-              id: 1,
-              label: "Ajouter module",
-              link: "/parcours/gestion-parcours/ajouter-module",
-              icon: "bi bi-plus-lg",
-            },
-          ],
-        },
+        // {
+        //   id: "modules",
+        //   label: "Gestion Modules",
+        //   icon: "bi bi-door-closed-fill",
+        //   link: "/parcours/gestion-parcours/liste-modules",
+        //   isChildItem: true,
+        //   click: function (e: any) {
+        //     e.preventDefault();
+        //     setIsLevel2(!isLevel2);
+        //   },
+        //   stateVariables: isLevel2,
+        //   childItems: [
+        //     {
+        //       id: 1,
+        //       label: "Liste Des Modules",
+        //       link: "/parcours/gestion-parcours/liste-modules",
+        //       icon: "bi bi-list",
+        //     },
+        //     // {
+        //     //   id: 1,
+        //     //   label: "Ajouter module",
+        //     //   link: "/parcours/gestion-parcours/ajouter-module",
+        //     //   icon: "bi bi-plus-lg",
+        //     // },
+        //   ],
+        // },
       ],
     },
 

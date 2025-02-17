@@ -1,10 +1,10 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export interface MentionsClasse {
-  _id: string;
+  _id?: string;
   name_mention_ar: string;
   name_mention_fr: string;
-  abreviation: string;
+  abreviation?: string;
   domaine: any;
 }
 export const mentionClasseSlice = createApi({
@@ -21,8 +21,20 @@ export const mentionClasseSlice = createApi({
         },
         providesTags: ["MentionsClasse"],
       }),
-
-      addMentionsClasse: builder.mutation<void, MentionsClasse>({
+      getMentionByValue: builder.mutation<
+        { id: string; name_mention_ar: string; name_mention_fr: string },
+        MentionsClasse
+      >({
+        query(payload) {
+          return {
+            url: "/get-mention-by-value",
+            method: "POST",
+            body: payload,
+          };
+        },
+        invalidatesTags: ["MentionsClasse"],
+      }),
+      addMentionsClasse: builder.mutation<MentionsClasse, MentionsClasse>({
         query(payload) {
           return {
             url: "/create-mention-classe",
@@ -56,4 +68,5 @@ export const {
   useDeleteMentionsClasseMutation,
   useFetchMentionsClasseQuery,
   useUpdateMentionsClasseMutation,
+  useGetMentionByValueMutation,
 } = mentionClasseSlice;

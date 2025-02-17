@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export interface CategoriePersonnel {
-  _id: string;
+  _id?: string;
   // value: string;
   categorie_fr: string;
   categorie_ar: string;
@@ -24,10 +24,26 @@ export const categoriePersonnelSlice = createApi({
         providesTags: ["CategoriePersonnel"],
       }),
 
-      addCategoriePersonnel: builder.mutation<void, CategoriePersonnel>({
+      addCategoriePersonnel: builder.mutation<
+        CategoriePersonnel,
+        CategoriePersonnel
+      >({
         query(payload) {
           return {
             url: "/create-categorie-personnel",
+            method: "POST",
+            body: payload,
+          };
+        },
+        invalidatesTags: ["CategoriePersonnel"],
+      }),
+      getCategoryPersonnelValue: builder.mutation<
+        { id: string; categorie_fr: string; categorie_ar: string },
+        CategoriePersonnel
+      >({
+        query(payload) {
+          return {
+            url: "/get-category-by-value",
             method: "POST",
             body: payload,
           };
@@ -58,4 +74,5 @@ export const {
   useAddCategoriePersonnelMutation,
   useUpdateCategoriePersonnelMutation,
   useDeleteCategoriePersonnelMutation,
+  useGetCategoryPersonnelValueMutation,
 } = categoriePersonnelSlice;

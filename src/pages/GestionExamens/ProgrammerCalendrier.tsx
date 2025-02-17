@@ -77,8 +77,8 @@ const ProgrammerCalendrier = () => {
 
     return AllEnseignants.filter(
       (enseignant) =>
-        relevantEnseignantIds.has(enseignant._id) &&
-        !usedEnseignantIds.has(enseignant._id)
+        relevantEnseignantIds.has(enseignant?._id!) &&
+        !usedEnseignantIds.has(enseignant?._id!)
     );
   };
 

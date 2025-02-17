@@ -1,11 +1,11 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export interface Matiere {
-  _id: string;
+  _id?: string;
   code_matiere?: string;
   matiere?: string;
   type?: string;
-  semestre: string;
+  semestre?: string;
   volume?: string;
   nbr_elimination?: string;
   regime_matiere?: string;
@@ -51,6 +51,19 @@ export const matiereSlice = createApi({
         }),
         invalidatesTags: ["Matiere"],
       }),
+      getMatiereByCode: builder.mutation<
+        { id: string; code_matiere: string },
+        Matiere
+      >({
+        query(payload) {
+          return {
+            url: "/get-matiere-by-code",
+            method: "POST",
+            body: payload,
+          };
+        },
+        invalidatesTags: ["Matiere"],
+      }),
       deleteMatiere: builder.mutation<void, string>({
         query: (_id) => ({
           url: `delete-matiere/${_id}`,
@@ -67,4 +80,5 @@ export const {
   useDeleteMatiereMutation,
   useFetchMatiereQuery,
   useUpdateMatiereMutation,
+  useGetMatiereByCodeMutation,
 } = matiereSlice;

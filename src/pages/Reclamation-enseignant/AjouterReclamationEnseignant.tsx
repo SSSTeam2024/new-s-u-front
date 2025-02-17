@@ -225,8 +225,8 @@ const AjouterReclamationEnseignant = () => {
                       <Form.Group className="mb-3">
                         <Form.Label>Enseignant</Form.Label>
                         <Select
-                          options={enseignant.map((c) => ({
-                            value: c._id,
+                          options={enseignant?.map((c) => ({
+                            value: c?._id!,
                             label: c.nom_fr,
                           }))}
                           onChange={onSelectChange}

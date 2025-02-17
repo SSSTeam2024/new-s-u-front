@@ -31,6 +31,19 @@ export const posteEnseignantSlice = createApi({
         },
         invalidatesTags: ["PosteEnseignant"],
       }),
+      getPosteEnseignantValue: builder.mutation<
+        { id: string; poste_fr: string; poste_ar: string },
+        PosteEnseignant
+      >({
+        query(payload) {
+          return {
+            url: "/get-poste-by-value",
+            method: "POST",
+            body: payload,
+          };
+        },
+        invalidatesTags: ["PosteEnseignant"],
+      }),
       updatePosteEnseignant: builder.mutation<void, PosteEnseignant>({
         query: ({ _id, ...rest }) => ({
           url: `/update-poste-enseignant/${_id}`,
@@ -55,4 +68,5 @@ export const {
   useDeletePosteEnseignantMutation,
   useFetchPostesEnseignantQuery,
   useUpdatePosteEnseignantMutation,
+  useGetPosteEnseignantValueMutation,
 } = posteEnseignantSlice;

@@ -31,6 +31,19 @@ export const etatEnseignantSlice = createApi({
         },
         invalidatesTags: ["EtatEnseignant"],
       }),
+      getEtatEnseignantValue: builder.mutation<
+        { id: string; etat_fr: string; etat_ar: string },
+        EtatEnseignant
+      >({
+        query(payload) {
+          return {
+            url: "/get-etat-by-value",
+            method: "POST",
+            body: payload,
+          };
+        },
+        invalidatesTags: ["EtatEnseignant"],
+      }),
       updateEtatEnseignant: builder.mutation<void, EtatEnseignant>({
         query: ({ _id, ...rest }) => ({
           url: `/update-etat-enseignant/${_id}`,
@@ -55,4 +68,5 @@ export const {
   useFetchEtatsEnseignantQuery,
   useDeleteEtatEnseignantMutation,
   useUpdateEtatEnseignantMutation,
+  useGetEtatEnseignantValueMutation,
 } = etatEnseignantSlice;

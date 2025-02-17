@@ -15,7 +15,10 @@ import SimpleBar from "simplebar-react";
 import country from "Common/country";
 import Swal from "sweetalert2";
 import "flatpickr/dist/flatpickr.min.css";
-import { useAddEtudiantMutation } from "features/etudiant/etudiantSlice";
+import {
+  EtudiantExcel,
+  useAddEtudiantMutation,
+} from "features/etudiant/etudiantSlice";
 import { useFetchEtatsEtudiantQuery } from "features/etatEtudiants/etatEtudiants";
 import {
   TypeInscriptionEtudiant,
@@ -520,7 +523,7 @@ const AjouterEtudiant = () => {
     setselectedFiles(formattedFiles.map((file) => file.name_fr));
 
     // Update formData with correctly formatted files
-    setFormData((prevData: Etudiant) => ({
+    setFormData((prevData: any) => ({
       ...prevData,
       type_inscription: {
         _id: selectedInscription._id,
@@ -603,7 +606,7 @@ const AjouterEtudiant = () => {
     useFetchTypeInscriptionsEtudiantQuery();
   const { data: groupe_classe = [] } = useFetchClassesQuery();
 
-  const [formData, setFormData] = useState<Etudiant>({
+  const [formData, setFormData] = useState<EtudiantExcel>({
     _id: "",
     nom_fr: "",
     nom_ar: "",
@@ -619,12 +622,7 @@ const AjouterEtudiant = () => {
     face_1_CIN: "",
     face_2_CIN: "",
     fiche_paiement: "",
-    etat_compte: {
-      _id: "",
-      value_etat_etudiant: "",
-      etat_ar: "",
-      etat_fr: "",
-    },
+    etat_compte: "",
     groupe_classe: {
       _id: "",
       nom_classe_fr: "",
@@ -655,18 +653,7 @@ const AjouterEtudiant = () => {
     filiere: "",
     niveau_scolaire: "",
     annee_scolaire: "",
-    type_inscription: {
-      _id: "",
-      value_type_inscription: "",
-      type_ar: "",
-      type_fr: "",
-      files_type_inscription: [
-        {
-          name_ar: "",
-          name_fr: "",
-        },
-      ],
-    },
+    type_inscription: "",
     Face1CINFileBase64String: "",
     Face1CINFileExtension: "",
     Face2CINFileBase64String: "",
@@ -679,6 +666,33 @@ const AjouterEtudiant = () => {
     photo_profil: "",
     PhotoProfilFileExtension: "",
     PhotoProfilFileBase64String: "",
+    etat_compte_Ar: "",
+    type_inscription_ar: "",
+    nbre_enfants: "",
+    etablissement_conjoint: "",
+    profesion_Conjoint: "",
+    prenom_conjoint: "",
+    Cycle_Ar: "",
+    ville: "",
+    pays_bac: "",
+    mention: "",
+    situation_militaire: "",
+    tel_parents: "",
+    pays_parents: "",
+    gouvernorat_parents: "",
+    code_postale_parents: "",
+    adresse_parents: "",
+    etat_mere: "",
+    etablissement_mere: "",
+    profession_mere: "",
+    prenom_mere: "",
+    etat_pere: "",
+    prenom_pere: "",
+    pays: "",
+    gouvernorat: "",
+    matricule_number: "",
+    passeport_number: "",
+    cnss_number: "",
   });
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -714,7 +728,8 @@ const AjouterEtudiant = () => {
               sections: selectedClass.niveau_classe.sections, // Array of sections as expected
             },
             matieres: selectedClass.matieres.map(
-              (matiere) => (typeof matiere === "string" ? matiere : matiere._id) // Ensure matieres are strings
+              (matiere) =>
+                typeof matiere === "string" ? matiere : matiere?._id! // Ensure matieres are strings
             ),
           },
         }));
@@ -1999,7 +2014,7 @@ const AjouterEtudiant = () => {
                                     className="form-select text-muted"
                                     name="etat_compte"
                                     id="etat_compte"
-                                    value={formData?.etat_compte?.etat_fr}
+                                    value={formData?.etat_compte}
                                     onChange={handleChange}
                                   >
                                     <option value="">Sélectionner Etat</option>
@@ -2036,7 +2051,7 @@ const AjouterEtudiant = () => {
                           </Card.Header>
                           <Card.Body>
                             <Row>
-                              {formData.groupe_classe.niveau_classe && (
+                              {formData?.groupe_classe?.niveau_classe! && (
                                 <Col lg={4}>
                                   <div className="mb-3">
                                     <Form.Label htmlFor="niveau_classe">
@@ -2046,14 +2061,14 @@ const AjouterEtudiant = () => {
                                       className="form-control-plaintext"
                                       id="niveau_classe"
                                     >
-                                      {formData.groupe_classe.niveau_classe
-                                        .name_niveau_fr || ""}{" "}
+                                      {formData?.groupe_classe?.niveau_classe
+                                        ?.name_niveau_fr! || ""}{" "}
                                     </p>
                                   </div>
                                 </Col>
                               )}
-                              {formData.groupe_classe.niveau_classe
-                                .sections && (
+                              {formData?.groupe_classe?.niveau_classe
+                                ?.sections! && (
                                 <Col lg={4}>
                                   <div className="mb-3">
                                     <Form.Label htmlFor="section_classe">
@@ -2063,7 +2078,7 @@ const AjouterEtudiant = () => {
                                       className="form-control-plaintext"
                                       id="section_classe"
                                     >
-                                      {formData.groupe_classe.niveau_classe.sections.map(
+                                      {formData?.groupe_classe?.niveau_classe?.sections?.map(
                                         (section) => (
                                           <span key={section._id}>
                                             {section.name_section_fr} <br />
