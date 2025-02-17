@@ -485,6 +485,15 @@ const ListEtudiants = () => {
   const [getClasseValue] = useGetClasseValueMutation();
   const [getTypeInscriptionValue] = useGetTypeInscriptionValueMutation();
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10; // Number of items per page
+
+  // Calculate paginated data
+  const paginatedData = data.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
+
   const [filePath, setFilePath] = useState<string | null>(null);
   const [modal_ImportModals, setmodal_ImportModals] = useState<boolean>(false);
   const [etudiantFile, setEtudiantFile] = useState<EtudiantFileEXEL[]>([]);
@@ -603,8 +612,9 @@ const ListEtudiants = () => {
           getTypeInscriptionValue,
           addTypeInscription
         );
-
+        let testEmails: any[] = [];
         const etudiantPromises = jsonData.map(async (items: any) => {
+          testEmails.push(items.Email);
           const etudiantData: EtudiantExcel = {
             _id: "",
             prenom_fr: items.Prénom || "",
@@ -623,7 +633,7 @@ const ListEtudiants = () => {
             state: items.Gouvernorat || "",
             dependence: items.Delegation || "",
             code_postale: items.Code_Postal || "",
-            nationalite: items.Nationalite || "",
+            nationalite: items.Nationalité || "",
             etat_civil: items.Etat_civil || "",
             sexe: items.Sexe || "",
             num_CIN: items.cin || "",
@@ -678,6 +688,7 @@ const ListEtudiants = () => {
               : "",
             Modele_Carte: items.ModeleCarte || "",
             NiveauAr: items.Niveau_Ar || "",
+            emails: testEmails,
             etat_compte:
               uniqueEtatComptes.get(
                 `${items["Etat_compte_Ar"]}-${items["Etat_compte"]}`
@@ -743,7 +754,7 @@ const ListEtudiants = () => {
         "Gouvernorat", //done
         "Pays", //done
         "Sexe", //done
-        "Nationalite", //done
+        "Nationalité", //done
         "CNSS", //done
         "Etat_civil", //done
         "Situation_militaire", //done
@@ -800,6 +811,7 @@ const ListEtudiants = () => {
         "Specialite_Ar", //done
         "Diplôme", //done
         "Diplôme_Ar", //done
+        "Abbreviation",
       ],
     ]);
     const wb = XLSX.utils.book_new();
@@ -1352,7 +1364,7 @@ const ListEtudiants = () => {
                         className="table align-middle table-nowrap"
                         id="customerTable"
                       >
-                        <TableContainer
+                        {/* <TableContainer
                           columns={columns || []}
                           data={data || []}
                           iscustomPageSize={false}
@@ -1362,7 +1374,42 @@ const ListEtudiants = () => {
                           tableClass="table-centered align-middle table-nowrap mb-0"
                           theadClass="text-muted fs-17 text-start"
                           SearchPlaceholder="Search Products..."
+                        /> */}
+                        <TableContainer
+                          columns={columns || []}
+                          data={paginatedData} // Use paginated data here
+                          iscustomPageSize={false}
+                          isBordered={false}
+                          isPagination={false}
+                          customPageSize={10}
+                          className="custom-header-css table align-middle table-nowrap"
+                          tableClass="table-centered align-middle table-nowrap mb-0"
+                          theadClass="text-muted fs-17 text-start"
+                          SearchPlaceholder="Search Students..."
                         />
+                        <div className="pagination">
+                          <Button
+                            className="btn btn-danger m-2"
+                            onClick={() =>
+                              setCurrentPage((prev) => Math.max(prev - 1, 1))
+                            }
+                            disabled={currentPage === 1}
+                          >
+                            Previous
+                          </Button>
+                          <span className="mt-3"> Page {currentPage} </span>
+                          <Button
+                            className="btn btn-success m-2"
+                            onClick={() =>
+                              setCurrentPage((prev) =>
+                                prev * pageSize < data.length ? prev + 1 : prev
+                              )
+                            }
+                            disabled={currentPage * pageSize >= data.length}
+                          >
+                            Next
+                          </Button>
+                        </div>
                       </table>
                       <div className="noresult" style={{ display: "none" }}>
                         <div className="text-center py-4">

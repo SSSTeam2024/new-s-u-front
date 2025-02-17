@@ -6,6 +6,7 @@ import Swal from "sweetalert2";
 import { Niveau, useAddNiveauMutation } from "features/niveau/niveau";
 import { Section, useFetchSectionsQuery } from "features/section/section";
 import Select, { MultiValue } from "react-select";
+import { Cycle, useFetchAllCycleQuery } from "features/cycle/cycle";
 
 interface SectionsOption {
   _id: string;
@@ -27,6 +28,7 @@ const AddNiveau = () => {
 
   const [createNiveau] = useAddNiveauMutation();
   const { data: sections = [] } = useFetchSectionsQuery();
+  const { data: cycles = [] } = useFetchAllCycleQuery();
 
   useEffect(() => {
     if (sections.length > 0) {
@@ -82,6 +84,7 @@ const AddNiveau = () => {
     name_niveau_fr: "",
     abreviation: "",
     sections: [] as Section[],
+    cycles: [] as Cycle[],
   });
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -105,6 +108,14 @@ const AddNiveau = () => {
     setFormData({
       ...formData,
       [name]: value,
+    });
+  };
+  const handleChangeCycle = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedCycle = cycles.find((cycle) => cycle._id === e.target.value);
+
+    setFormData({
+      ...formData,
+      cycles: selectedCycle ? [selectedCycle] : [], // ✅ Always store as an array
     });
   };
 
@@ -222,34 +233,9 @@ const AddNiveau = () => {
                       />
                     </div>
                   </Col>
-
-                  {/* <Col lg={4}>
-                                <div className="mb-3">
-                                  <Form.Label htmlFor="section">
-                                    
-                                  </Form.Label>
-                                  <select
-                                    className="form-select text-muted"
-                                    name="section"
-                                    id="section"
-                                    
-                                    multiple
-                                    onChange={handleChange}
-                                  >
-                                    <option value="">Sélectionner Section</option>
-                                    {section.map((section) => (
-                                      <option
-                                        key={section._id}
-                                        value={section._id}
-                                      >
-                                        {section.name_section_fr}
-                                      </option>
-                                    ))}
-                                  </select>
-                                </div>
-                              </Col>  */}
-                  <Col lg={6} style={{ maxHeight: "calc(100vh - 150px)" }}>
-                    <Col lg={6}>
+                  <Row className="d-flex align-items-start gap-3">
+                    {/* Left Column (Sections Select) */}
+                    <Col lg={6} style={{ maxHeight: "calc(100vh - 150px)" }}>
                       <div className="mb-3">
                         <Form.Label
                           htmlFor="choices-multiple-remove-button"
@@ -266,10 +252,39 @@ const AddNiveau = () => {
                           onChange={handleSelectChange}
                           getOptionLabel={getOptionLabel}
                           getOptionValue={(option) => option._id}
+                          className="w-100" // Ensures full width
                         />
                       </div>
                     </Col>
-                  </Col>
+
+                    {/* Right Column (Cycle Dropdown) */}
+                    {/* <Col lg={5}>
+                      <Form.Label htmlFor="nom_parcours">Cycle</Form.Label>
+                      <select
+                        className="form-select text-muted"
+                        name="cycles"
+                        id="cycles"
+                        value={
+                          formData.cycles.length > 0
+                            ? formData.cycles[0]._id
+                            : ""
+                        }
+                        onChange={handleChangeCycle}
+                        disabled={!cycles || cycles.length === 0}
+                      >
+                        <option value="">Sélectionner Cycle</option>
+                        {cycles.length > 0 ? (
+                          cycles.map((cycle) => (
+                            <option key={cycle._id} value={cycle._id}>
+                              {cycle.cycle_fr}
+                            </option>
+                          ))
+                        ) : (
+                          <option value="">No cycles available</option>
+                        )}
+                      </select>
+                    </Col> */}
+                  </Row>
                 </Row>
 
                 <div className="modal-footer">

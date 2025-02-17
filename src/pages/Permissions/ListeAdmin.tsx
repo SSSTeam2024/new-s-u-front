@@ -330,6 +330,7 @@ const ListeAdmin = () => {
                     data={usersResponse || []}
                     iscustomPageSize={false}
                     isBordered={false}
+                    isPagination={true}
                     customPageSize={10}
                     className="custom-header-css"
                     tableClass="align-middle table-nowrap mb-0"

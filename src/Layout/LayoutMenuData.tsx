@@ -212,7 +212,7 @@ const Navdata = () => {
     isExamen,
     isNotesExamen,
     isParcours,
-    isVariable
+    isVariable,
   ]);
   let routes = userPermissions
     ? userPermissions.map((permission) => permission.path)
@@ -690,32 +690,6 @@ const Navdata = () => {
       stateVariables: isDeaprtement,
       subItems: [
         {
-          id: "matieres",
-          label: "Matières",
-          icon: "bi bi-journals",
-          link: "/departement/gestion-matieres/liste-matieres",
-          isChildItem: true,
-          click: function (e: any) {
-            e.preventDefault();
-            setIsLevel1(!isLevel1);
-          },
-          stateVariables: isLevel1,
-          childItems: [
-            {
-              id: 1,
-              label: "Liste Des matières",
-              link: "/departement/gestion-matieres/liste-matieres",
-              icon: "bi bi-journal-text",
-            },
-            {
-              id: 1,
-              label: "Ajouter matière",
-              link: "/departement/gestion-matieres/ajouter-matiere",
-              icon: "bi bi-journal-text",
-            },
-          ],
-        },
-        {
           id: "salles",
           label: "Salles",
           icon: "bi bi-door-closed-fill",
@@ -743,7 +717,7 @@ const Navdata = () => {
         },
         {
           id: "classes",
-          label: "Classes",
+          label: "Groupes",
           icon: "bi bi-people-fill",
           link: "/departement/gestion-classes/liste-classes",
           isChildItem: true,
@@ -755,35 +729,9 @@ const Navdata = () => {
           childItems: [
             {
               id: 1,
-              label: "Liste des classes",
+              label: "Liste des groupes",
               link: "/departement/gestion-classes/liste-classes",
               icon: "bi bi-people-fill",
-            },
-            {
-              id: 2,
-              label: "Listes des niveaux",
-              link: "/departement/gestion-classes/liste-niveau",
-              icon: "bi bi-sliders2-vertical",
-            },
-            {
-              id: 3,
-              label: "Listes des séctions",
-              link: "/departement/gestion-classes/liste-section",
-              icon: "bi bi-diagram-3-fill",
-            },
-            //added liste mentions classess
-            {
-              id: 4,
-              label: "Listes des mentions",
-              link: "/departement/gestion-classes/liste-mentions",
-              icon: "bi bi-diagram-3-fill",
-            },
-            //added liste domaines classess
-            {
-              id: 5,
-              label: "Listes des domaines",
-              link: "/departement/gestion-classes/liste-domaines",
-              icon: "bi bi-diagram-3-fill",
             },
           ],
         },
@@ -819,7 +767,7 @@ const Navdata = () => {
     //gestion parcours
     {
       id: "parcours",
-      label: "Parcours et Modules",
+      label: "Plan d'études",
       icon: "bi bi-house-gear-fill",
       link: "/parcours",
       click: function (e: any) {
@@ -831,63 +779,58 @@ const Navdata = () => {
       stateVariables: isParcours,
       subItems: [
         {
-          id: "parcours",
-          label: "Gestion de Parcours",
-          icon: "bi bi-diagram-3",
-          link: "/parcours/gestion-parcours/liste-parcours",
-          isChildItem: true,
-          click: function (e: any) {
-            e.preventDefault();
-            setIsLevel1(!isLevel1);
-          },
-          stateVariables: isLevel1,
-          childItems: [
-            {
-              id: 1,
-              label: "Liste Des parcours",
-              link: "/parcours/gestion-parcours/liste-parcours",
-              icon: "bi bi-list",
-            },
-            // {
-            //   id: 2,
-            //   label: "Ajouter parcours",
-            //   link: "/parcours/gestion-parcours/ajouter-parcours",
-            //   icon: "bi bi-plus-lg",
-            // },
-            {
-              id: 3,
-              label: "Liste types des parcours",
-              link: "/parcours/gestion-parcours/liste-type-parcours",
-              icon: "bi bi-list",
-            },
-          ],
+          id: "matieres",
+          label: "Matières",
+          icon: "bi bi-journals",
+          link: "/departement/gestion-matieres/liste-matieres",
+          parentId: "matiere",
         },
-        // {
-        //   id: "modules",
-        //   label: "Gestion Modules",
-        //   icon: "bi bi-door-closed-fill",
-        //   link: "/parcours/gestion-parcours/liste-modules",
-        //   isChildItem: true,
-        //   click: function (e: any) {
-        //     e.preventDefault();
-        //     setIsLevel2(!isLevel2);
-        //   },
-        //   stateVariables: isLevel2,
-        //   childItems: [
-        //     {
-        //       id: 1,
-        //       label: "Liste Des Modules",
-        //       link: "/parcours/gestion-parcours/liste-modules",
-        //       icon: "bi bi-list",
-        //     },
-        //     // {
-        //     //   id: 1,
-        //     //   label: "Ajouter module",
-        //     //   link: "/parcours/gestion-parcours/ajouter-module",
-        //     //   icon: "bi bi-plus-lg",
-        //     // },
-        //   ],
-        // },
+
+        {
+          id: 1,
+          label: "Liste Des parcours",
+          link: "/parcours/gestion-parcours/liste-parcours",
+          icon: "bi bi-list",
+        },
+        {
+          id: 3,
+          label: "Liste types des parcours",
+          link: "/parcours/gestion-parcours/liste-type-parcours",
+          icon: "bi bi-list",
+        },
+
+        {
+          id: 2,
+          label: "Listes des niveaux",
+          link: "/departement/gestion-classes/liste-niveau",
+          icon: "bi bi-sliders2-vertical",
+        },
+        {
+          id: 2,
+          label: "Listes des cycles",
+          link: "/parcours/gestion-parcours/liste-cycle",
+          icon: "bi bi-bar-chart-step",
+        },
+        {
+          id: 3,
+          label: "Listes des spécialités",
+          link: "/departement/gestion-classes/liste-section",
+          icon: "bi bi-diagram-3-fill",
+        },
+        //added liste mentions classess
+        {
+          id: 4,
+          label: "Listes des mentions",
+          link: "/departement/gestion-classes/liste-mentions",
+          icon: "bi bi-trophy-fill",
+        },
+        //added liste domaines classess
+        {
+          id: 5,
+          label: "Listes des domaines",
+          link: "/departement/gestion-classes/liste-domaines",
+          icon: "bi bi-globe2",
+        },
       ],
     },
 
@@ -1311,7 +1254,6 @@ const Navdata = () => {
           parentId: "variable-globales",
           icon: "bi bi-person-lines-fill",
         },
-       
       ],
     },
     // gestion des admins

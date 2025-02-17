@@ -17,16 +17,16 @@ import { RootState } from "app/store";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "features/account/authSlice";
 import {
-  MentionsClasse,
-  useAddMentionsClasseMutation,
-  useDeleteMentionsClasseMutation,
-  useFetchMentionsClasseQuery,
-  useUpdateMentionsClasseMutation,
-} from "features/mentionClasse/mentionClasse";
-import { useFetchDomainesClasseQuery } from "features/domaineClasse/domaineClasse";
+  Cycle,
+  useAddCycleMutation,
+  useDeleteCycleMutation,
+  useFetchAllCycleQuery,
+  useUpdateCycleMutation,
+} from "features/cycle/cycle";
+import { useFetchSectionsQuery } from "features/section/section";
 
-const ListMentionClasse = () => {
-  document.title = "Liste mentions des classes | ENIGA";
+const ListeCycle = () => {
+  document.title = "Liste des cycles | ENIGA";
   const user = useSelector((state: RootState) => selectCurrentUser(state));
 
   const navigate = useNavigate();
@@ -35,23 +35,21 @@ const ListMentionClasse = () => {
     setSearchQuery(event.target.value.toLowerCase());
   };
 
-  const { data = [] } = useFetchMentionsClasseQuery();
-  const filteredMentionsClasses = useMemo(() => {
+  const { data = [] } = useFetchAllCycleQuery();
+  const filteredCycles = useMemo(() => {
     let result = data;
     if (searchQuery) {
-      result = result.filter((mentionClasse) =>
-        [
-          mentionClasse.name_mention_ar,
-          mentionClasse.name_mention_fr,
-          mentionClasse.abreviation,
-        ].some((value) => value && value.toLowerCase().includes(searchQuery))
+      result = result.filter((cycle) =>
+        [cycle.cycle_ar, cycle.cycle_ar].some(
+          (value) => value && value.toLowerCase().includes(searchQuery)
+        )
       );
     }
 
     return result;
   }, [data, searchQuery]);
 
-  const [deleteMentionClasse] = useDeleteMentionsClasseMutation();
+  const [deleteCycle] = useDeleteCycleMutation();
 
   const swalWithBootstrapButtons = Swal.mixin({
     customClass: {
@@ -73,16 +71,16 @@ const ListMentionClasse = () => {
       })
       .then((result) => {
         if (result.isConfirmed) {
-          deleteMentionClasse(_id);
+          deleteCycle(_id);
           swalWithBootstrapButtons.fire(
             "Supprimé!",
-            "Mention classe a été supprimé.",
+            "Cycle a été supprimé.",
             "success"
           );
         } else if (result.dismiss === Swal.DismissReason.cancel) {
           swalWithBootstrapButtons.fire(
             "Annulé",
-            "Mention classe est en sécurité :)",
+            "Cycle est en sécurité :)",
             "error"
           );
         }
@@ -92,49 +90,36 @@ const ListMentionClasse = () => {
   const columns = useMemo(
     () => [
       {
-        Header: "Mention Classe (FR)",
-        accessor: "name_mention_fr",
+        Header: "Cycle (FR)",
+        accessor: "cycle_fr",
         disableFilters: true,
         filterable: true,
       },
       {
-        Header: "Mention Classe (AR)",
-        accessor: "name_mention_ar",
+        Header: "Cycle (AR)",
+        accessor: "cycle_ar",
         disableFilters: true,
         filterable: true,
       },
-      {
-        Header: "Domaine",
-        accessor: (row: any) => row?.domaine?.name_domaine_fr! || "",
-        disableFilters: true,
-        filterable: true,
-      },
-      {
-        Header: "Abréviation",
-        accessor: "abreviation",
-        disableFilters: true,
-        filterable: true,
-      },
-
       {
         Header: "Action",
         disableFilters: true,
         filterable: true,
-        accessor: (mentionClasse: MentionsClasse) => {
+        accessor: (cycle: Cycle) => {
           return (
             <ul className="hstack gap-2 list-unstyled mb-0">
               {actionAuthorization(
-                "/departement/gestion-classes/edit-mention-classe",
+                "/parcours/gestion-parcours/edit-cycle",
                 user?.permissions!
               ) ? (
                 <li>
                   <Link
-                    to="/departement/gestion-classes/edit-mention-classe"
-                    state={mentionClasse}
+                    to="/parcours/gestion-cycle/edit-cycle"
+                    state={cycle}
                     className="badge bg-primary-subtle text-primary edit-item-btn"
                     onClick={(e) => {
                       e.preventDefault();
-                      handleEditModal(mentionClasse);
+                      handleEditModal(cycle);
                     }}
                   >
                     <i
@@ -157,7 +142,7 @@ const ListMentionClasse = () => {
                 <></>
               )}
               {actionAuthorization(
-                "/departement/gestion-classes/delete-mention-classe",
+                "/parcours/gestion-parcours/delete-cycle",
                 user?.permissions!
               ) ? (
                 <li>
@@ -178,7 +163,7 @@ const ListMentionClasse = () => {
                       onMouseLeave={(e) =>
                         (e.currentTarget.style.transform = "scale(1)")
                       }
-                      onClick={() => AlertDelete(mentionClasse?._id!)}
+                      onClick={() => AlertDelete(cycle?._id!)}
                     ></i>
                   </Link>
                 </li>
@@ -197,39 +182,32 @@ const ListMentionClasse = () => {
   function tog_AddOrderModals() {
     setmodal_AddOrderModals(!modal_AddOrderModals);
   }
-
-  const [createMentionClasse] = useAddMentionsClasseMutation();
-  const { state: mentionClasse } = useLocation();
-  const [editMentionClasse] = useUpdateMentionsClasseMutation();
+  const [createCycle] = useAddCycleMutation();
+  const { state: cycle } = useLocation();
+  const [editCycle] = useUpdateCycleMutation();
   const [isAddModalOpen, setAddModalOpen] = useState(false);
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [formData, setFormData] = useState({
     _id: "",
-    name_mention_ar: "",
-    name_mention_fr: "",
-    abreviation: "",
-    domaine: "",
+    cycle_ar: "",
+    cycle_fr: "",
   });
 
   const handleAddClick = () => {
     setFormData({
       _id: "",
-      name_mention_ar: "",
-      name_mention_fr: "",
-      abreviation: "",
-      domaine: "",
+      cycle_ar: "",
+      cycle_fr: "",
     });
     setAddModalOpen(true);
   };
 
-  const handleEditModal = (mentionClasse: any) => {
+  const handleEditModal = (cycle: any) => {
     setFormData({
-      _id: mentionClasse._id,
-      name_mention_ar: mentionClasse.name_mention_ar,
-      name_mention_fr: mentionClasse.name_mention_fr,
-      abreviation: mentionClasse.abreviation,
-      domaine: mentionClasse.domaine,
+      _id: cycle._id,
+      cycle_ar: cycle.cycle_ar,
+      cycle_fr: cycle.cycle_fr,
     });
     setShowEditModal(true);
   };
@@ -249,79 +227,65 @@ const ListMentionClasse = () => {
     });
   };
 
-  const onSubmitMentionClasse = async (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmitCycle = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      await createMentionClasse(formData).unwrap();
+      await createCycle(formData).unwrap();
       notify();
       setAddModalOpen(false);
-      navigate("/departement/gestion-classes/liste-mentions");
+      navigate("/parcours/gestion-parcours/liste-cycle");
     } catch (error: any) {
       console.log(error);
     }
   };
 
-  const onSubmitEditMentionClasse = async (
-    e: React.FormEvent<HTMLFormElement>
-  ) => {
+  const onSubmitEditCycle = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      await editMentionClasse(formData).unwrap();
+      await editCycle(formData).unwrap();
       setShowEditModal(false);
       notifyEdit();
     } catch (error) {
-      errorAlert("An error occurred while editing the mention classe .");
+      errorAlert("An error occurred while editing the cycle.");
     }
   };
 
   useEffect(() => {
-    if (mentionClasse && isEditModalOpen) {
+    if (cycle && isEditModalOpen) {
       setFormData({
-        _id: mentionClasse._id,
-        name_mention_ar: mentionClasse.name_mention_ar,
-        name_mention_fr: mentionClasse.name_mention_fr,
-        abreviation: mentionClasse.abreviation,
-        domaine: mentionClasse.domaine,
+        _id: cycle._id,
+        cycle_ar: cycle.cycle_ar,
+        cycle_fr: cycle.cycle_fr,
       });
     }
-  }, [mentionClasse, isEditModalOpen]);
+  }, [cycle, isEditModalOpen]);
 
-  const { data: domaines = [] } = useFetchDomainesClasseQuery();
-
-  const handleChange = (e: any) => {
-    const { name, value } = e.target;
-    console.log("name", name, "value", value);
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
-
-  const notifyEdit = () => {
-    Swal.fire({
-      position: "center",
-      icon: "success",
-      title: "Mention Classe a été modifié avec succés",
-      showConfirmButton: false,
-      timer: 2000,
-    });
-  };
   const notify = () => {
     Swal.fire({
       position: "center",
       icon: "success",
-      title: "Mention Classe a été crée avec succés",
+      title: "Cycle a été crée avec succés",
       showConfirmButton: false,
       timer: 2000,
     });
   };
+  const notifyEdit = () => {
+    Swal.fire({
+      position: "center",
+      icon: "success",
+      title: "Cycle a été modifié avec succés",
+      showConfirmButton: false,
+      timer: 2000,
+    });
+  };
+
   return (
     <React.Fragment>
       <div className="page-content">
         <Container fluid={true}>
           <Breadcrumb
-            title="Paramètres des départments"
-            pageTitle="Liste mentions Classes"
+            title="Paramètres des Parcours"
+            pageTitle="Liste des cycles"
           />
 
           <Row id="sellersList">
@@ -344,7 +308,7 @@ const ListMentionClasse = () => {
                     <Col className="col-lg-auto ms-auto">
                       <div className="hstack gap-2">
                         {actionAuthorization(
-                          "/departement/gestion-classes/add-mention-classe",
+                          "/parcours/gestion-parcours/ajouter-cycle",
                           user?.permissions!
                         ) ? (
                           <Button
@@ -352,7 +316,7 @@ const ListMentionClasse = () => {
                             className="add-btn"
                             onClick={() => handleAddClick()}
                           >
-                            Ajouter mention classe
+                            Ajouter cycle
                           </Button>
                         ) : (
                           <></>
@@ -371,7 +335,7 @@ const ListMentionClasse = () => {
                   >
                     <TableContainer
                       columns={columns || []}
-                      data={filteredMentionsClasses || []}
+                      data={filteredCycles || []}
                       // isGlobalFilter={false}
                       iscustomPageSize={false}
                       isBordered={false}
@@ -401,7 +365,7 @@ const ListMentionClasse = () => {
                 </Card.Body>
               </Card>
             </Col>
-            {/* Add mention classe */}
+            {/* Add cycle */}
             <Modal
               show={isAddModalOpen}
               onHide={() => setAddModalOpen(false)}
@@ -409,81 +373,40 @@ const ListMentionClasse = () => {
             >
               <Modal.Header className="px-4 pt-4" closeButton>
                 <h5 className="modal-title" id="exampleModalLabel">
-                  Ajouter Mention Classe
+                  Ajouter Cycle
                 </h5>
               </Modal.Header>
-              <Form className="tablelist-form" onSubmit={onSubmitMentionClasse}>
+              <Form className="tablelist-form" onSubmit={onSubmitCycle}>
                 <Modal.Body className="p-4">
                   <Row>
-                    <Col lg={6}>
+                    <Col lg={12}>
                       <div className="mb-3">
-                        <Form.Label htmlFor="name_mention_fr">
-                          Mention Classe(FR)
-                        </Form.Label>
+                        <Form.Label htmlFor="cycle_fr">Cycle (FR)</Form.Label>
                         <Form.Control
                           type="text"
-                          id="name_mention_fr"
+                          id="cycle_fr"
                           placeholder=""
                           required
                           onChange={onChange}
-                          value={formData.name_mention_fr}
+                          value={formData.cycle_fr}
                         />
                       </div>
                     </Col>
-
-                    <Col lg={6}>
-                      <div className="mb-3">
-                        <Form.Label htmlFor="name_mention_ar">
-                          Mention Classe(AR)
-                        </Form.Label>
-                        <Form.Control
-                          type="text"
-                          id="name_mention_ar"
-                          placeholder=""
-                          required
-                          onChange={onChange}
-                          value={formData.name_mention_ar}
-                        />
-                      </div>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col lg={6}>
-                      <div className="mb-3">
-                        <Form.Label htmlFor="abreviation">
-                          Abréviation
-                        </Form.Label>
-                        <Form.Control
-                          type="text"
-                          id="abreviation"
-                          placeholder=""
-                          required
-                          onChange={onChange}
-                          value={formData.abreviation}
-                        />
-                      </div>
-                    </Col>
-                    <Col lg={6}>
-                      <div className="mb-3">
-                        <Form.Label htmlFor="domaine">
-                          Domaine Classe
-                        </Form.Label>
-                        <select
-                          className="form-select text-muted"
-                          name="domaine"
-                          id="domaine"
-                          value={formData.domaine}
-                          onChange={handleChange}
-                        >
-                          <option value="">Sélectionner Domaine Classe</option>
-                          {domaines.map((domaine) => (
-                            <option key={domaine._id} value={domaine._id}>
-                              {domaine.name_domaine_fr}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                    </Col>
+                    <Row>
+                      <Col lg={12}>
+                        <div className="mb-3">
+                          <Form.Label htmlFor="cycle_ar">Cycle (AR)</Form.Label>
+                          <Form.Control
+                            type="text"
+                            id="cycle_ar"
+                            placeholder=""
+                            required
+                            onChange={onChange}
+                            value={formData.cycle_ar}
+                          />
+                        </div>
+                      </Col>
+                    </Row>
                   </Row>
                 </Modal.Body>
                 <div className="modal-footer">
@@ -502,7 +425,7 @@ const ListMentionClasse = () => {
               </Form>
             </Modal>
 
-            {/*Edit domaine classe */}
+            {/*Edit cycle */}
             <Modal
               show={showEditModal}
               onHide={() => setShowEditModal(false)}
@@ -510,84 +433,40 @@ const ListMentionClasse = () => {
             >
               <Modal.Header className="px-4 pt-4" closeButton>
                 <h5 className="modal-title" id="exampleModalLabel">
-                  Modifier Mention Classe
+                  Modifier Cycle
                 </h5>
               </Modal.Header>
-              <Form
-                className="tablelist-form"
-                onSubmit={onSubmitEditMentionClasse}
-              >
+              <Form className="tablelist-form" onSubmit={onSubmitEditCycle}>
                 <Modal.Body className="p-4">
                   <Row>
-                    <Col lg={6}>
+                    <Col lg={12}>
                       <div className="mb-3">
-                        <Form.Label htmlFor="name_mention_fr">
-                          Mention Classe(FR)
-                        </Form.Label>
+                        <Form.Label htmlFor="cycle_fr">Cycle (FR)</Form.Label>
                         <Form.Control
                           type="text"
-                          id="name_mention_fr"
+                          id="cycle_fr"
                           placeholder=""
                           required
                           onChange={onChange}
-                          value={formData.name_mention_fr}
+                          value={formData.cycle_fr}
                         />
                       </div>
                     </Col>
-
-                    <Col lg={6}>
-                      <div className="mb-3">
-                        <Form.Label htmlFor="name_mention_ar">
-                          Mention Classe(AR)
-                        </Form.Label>
-                        <Form.Control
-                          type="text"
-                          id="name_mention_ar"
-                          placeholder=""
-                          required
-                          onChange={onChange}
-                          value={formData.name_mention_ar}
-                        />
-                      </div>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col lg={6}>
-                      <div className="mb-3">
-                        <Form.Label htmlFor="abreviation">
-                          Abréviation
-                        </Form.Label>
-                        <Form.Control
-                          type="text"
-                          id="abreviation"
-                          placeholder=""
-                          required
-                          onChange={onChange}
-                          value={formData.abreviation}
-                        />
-                      </div>
-                    </Col>
-                    <Col lg={6}>
-                      <div className="mb-3">
-                        <Form.Label htmlFor="domaine">
-                          Domaine Classe
-                        </Form.Label>
-                        <select
-                          className="form-select text-muted"
-                          name="domaine"
-                          id="domaine"
-                          value={formData.domaine}
-                          onChange={handleChange}
-                        >
-                          <option value="">Sélectionner Domaine Classe</option>
-                          {domaines.map((domaine) => (
-                            <option key={domaine._id} value={domaine._id}>
-                              {domaine.name_domaine_fr}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                    </Col>
+                    <Row>
+                      <Col lg={12}>
+                        <div className="mb-3">
+                          <Form.Label htmlFor="cycle_ar">Cycle (AR)</Form.Label>
+                          <Form.Control
+                            type="text"
+                            id="cycle_ar"
+                            placeholder=""
+                            required
+                            onChange={onChange}
+                            value={formData.cycle_ar}
+                          />
+                        </div>
+                      </Col>
+                    </Row>
                   </Row>
                 </Modal.Body>
                 <div className="modal-footer">
@@ -612,4 +491,4 @@ const ListMentionClasse = () => {
   );
 };
 
-export default ListMentionClasse;
+export default ListeCycle;

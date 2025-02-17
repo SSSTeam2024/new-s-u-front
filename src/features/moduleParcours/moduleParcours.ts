@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export interface ModuleParcours {
   _id?: string;
-  semestre: string;
+  semestre_module: string;
   code_Ue: string;
   libelle: string;
   credit: string;

@@ -7,7 +7,7 @@ export interface Parcours {
   domaine?: any;
   nom_parcours: string;
   code_parcours: string;
-  semestre?: string;
+  semestre_parcours?: string;
 }
 
 export const parcoursSlice = createApi({
