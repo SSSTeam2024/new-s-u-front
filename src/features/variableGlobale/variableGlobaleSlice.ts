@@ -1,5 +1,14 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
+
+export interface Place {
+  _id?: string;
+  longitude: string;
+  latitude: string;
+  placeName: string;
+  rayon: string
+}
+
 export interface VaribaleGlobale {
   _id?: string;
   directeur_ar: string;
@@ -35,7 +44,9 @@ export interface VaribaleGlobale {
   logo_etablissement: string;
   logo_universite: string;
   logo_republique: string;
-  [key: string]: string | undefined; // Allow dynamic properties
+  places: Place[];
+  createdAt: string;
+  [key: string]: string | Place[] | undefined; // Allow dynamic properties
 
 }
   export const varibaleGlobaleSlice = createApi({

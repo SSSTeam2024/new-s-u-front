@@ -1,4 +1,7 @@
-export const replaceShortCodes = (demandData: any, globalData: any) => {
+import CryptoJS from "crypto-js";
+
+
+export const replaceShortCodes = (demandData: any, globalData: any, docNumber?: string, generatedQrCode?: string) => {
   let piece_demande = demandData?.piece_demande;
   let studentId = demandData?.studentId;
   let enseignantId = demandData?.enseignantId;
@@ -7,13 +10,43 @@ export const replaceShortCodes = (demandData: any, globalData: any) => {
   let formattedDate = new Date(demandData?.createdAt).toLocaleDateString(
     "fr-FR"
   );
-  let departement = demandData.studentId.groupe_classe.departement;
-  let allVariables = globalData[2];
+  // let departement = demandData.studentId.groupe_classe.departement;
+  let allVariables = globalData[globalData.length - 1];
+
+  console.log(allVariables);
+
+  const [an1, an2] = allVariables.annee_universitaire.split('/');
+
+  console.log(an1, an2); 
+
+  const [part1an1, part2an1] = an1.split('0');
+  const [part1an2, part2an2] = an2.split('0');
+
+  console.log(part2an1, part2an2); 
 
   let anneeScolaire = "";
-  let newUpdateBody = piece_demande?.body ?? "";
+  let newUpdateBody = piece_demande?.body!;
 
-  let newBody = piece_demande?.body ?? "";
+  let newBody = piece_demande?.body!;
+  
+  
+  if(piece_demande.has_number === '1'){
+    if(newBody?.includes("N° num/annee")){
+      newBody = newBody?.replace(
+        "N° num/annee",
+        "N° " + docNumber + "/" + part2an1 + part2an2
+      );
+    }
+  }
+
+  if(piece_demande.has_code === '1'){
+    console.log(generatedQrCode);
+    let qrData = `https://verify.eniga.tn/id=${generatedQrCode}`
+    newBody = newBody?.replace(
+      "https://qrcg-free-editor.qr-code-generator.com/latest/assets/images/websiteQRCode_noFrame.png",
+      `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${qrData}`
+    );
+  }
 
   if (newBody?.includes("اسم-الطالب")) {
     newBody = newBody?.replace(
@@ -622,8 +655,14 @@ export const replaceShortCodes = (demandData: any, globalData: any) => {
       enseignantId.specilaite.specialite_ar
     );
   }
-  console.log(newBody);
+  // console.log(newBody);
   newUpdateBody = JSON.parse(newBody);
 
   return newUpdateBody;
+};
+
+export const generateQRCode = (demandId: string, docNumber: any) => {
+      const qrData = `${demandId}-${docNumber}`;
+      const hashedData = CryptoJS.SHA256(qrData).toString(CryptoJS.enc.Hex);
+      return String(hashedData);
 };

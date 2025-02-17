@@ -6,8 +6,8 @@ export interface TemplateBody {
   body: string;
   langue: string;
   intended_for: string;
-  isArray: string;
-  arraysNumber: string;
+  has_code: string;
+  has_number: string;
 }
   export const templateBodySlice = createApi({
     reducerPath: 'templateBody',

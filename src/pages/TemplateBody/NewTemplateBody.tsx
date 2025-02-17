@@ -23,7 +23,7 @@ import { useFetchAllUsersQuery } from "features/account/accountSlice";
 import Select from "react-select";
 
 const NewTemplateBody = () => {
-  document.title = "Ajouter Corps du Modèle | Smart Institute";
+  document.title = "Ajouter un Modèle | ENIGA";
 
   const navigate = useNavigate();
   const [addNewTemplateBody, { isLoading }] = useAddNewTemplateBodyMutation();
@@ -69,6 +69,10 @@ const NewTemplateBody = () => {
   const [canSaveTemplate, setCanSaveTemplate] = useState<boolean>(false);
 
   const [isDocumentLoaded, setIsDocumentLoaded] = useState<boolean>(false);
+
+  const [withQrCode, setWithQrCode] = useState<boolean>(false);
+
+  const [withNumber, setWithOrderNumber] = useState<boolean>(false);
 
   // const handleFileUpload = async (event: any) => {
   //   const file = event.target.files[0];
@@ -179,6 +183,116 @@ const NewTemplateBody = () => {
     }
   };
 
+  const handleQrCodeInsertion = () => {
+    setCanSaveTemplate(false);
+    
+    if (rangeRef.current) {
+      const img = document.createElement("img");
+      
+      img.src = "https://qrcg-free-editor.qr-code-generator.com/latest/assets/images/websiteQRCode_noFrame.png"; // Fake QR code image
+      img.alt = "QR Code";
+      img.style.width = "100px";
+      img.style.height = "100px";
+      img.style.margin = "5px";
+  
+      const paragraph = document.createElement("p");
+      const paragraph2 = document.createElement("p");
+      if(selectedLangue === 'arabic'){
+        paragraph.textContent = "امسح هذا الرمز للتحقق من صحة المستند عبر الإنترنت";
+         paragraph.style.marginTop = "5px";
+      paragraph.style.fontSize = "11px";
+      paragraph.style.fontStyle = "italic";
+
+      paragraph2.textContent = "https://verify.eniga.tn/id=*******";
+      paragraph2.style.marginTop = "5px";
+   paragraph2.style.fontSize = "11px";
+   paragraph2.style.fontStyle = "italic";
+
+      const container = document.createElement("div");
+      container.className = 'qr-container';
+      container.appendChild(img);
+      container.appendChild(paragraph);
+      container.appendChild(paragraph2);
+      rangeRef.current.insertNode(container);
+      }else{
+        paragraph.style.marginTop = "5px";
+      paragraph.style.fontSize = "11px";
+      paragraph.style.fontStyle = "italic";
+
+      const container = document.createElement("div");
+      container.className = 'qr-container';
+      container.appendChild(img);
+      container.appendChild(paragraph);
+        paragraph.textContent = "Scanner ce code pour vérifier l’intégrité de ce document en ligne https://verify.eniga.tn/id=******";
+        rangeRef.current.insertNode(container);
+      }
+     
+
+      
+      rangeRef.current.collapse(false); // Move cursor to the end
+      rangeRef.current = null; // Clear the range
+
+      setTemplateBody((prevState) => ({
+        ...prevState,
+        has_code: '1'
+      }));
+
+      setWithQrCode(true);
+    }
+  };
+
+  const removeQrContainer = () => {
+    const qrContainer = document.querySelector(".qr-container");
+    if (qrContainer) {
+      qrContainer.remove();
+    }
+    setTemplateBody((prevState) => ({
+        ...prevState,
+        has_code: '0'
+      }));
+    setWithQrCode(false);
+  };
+
+  const handleOrderNumberInsertion = () => {
+    setCanSaveTemplate(false);
+    
+    if (rangeRef.current) {
+  
+      const span = document.createElement("span");
+      if(selectedLangue === 'arabic'){
+        span.textContent = "عدد الرقم/السنة";
+      }else{
+        span.textContent = "N° num/annee";
+      }
+      span.style.fontSize = "14px";
+      span.className = 'order-number';
+
+      rangeRef.current.insertNode(span);
+      rangeRef.current.collapse(false); // Move cursor to the end
+      rangeRef.current = null; // Clear the range
+
+      setTemplateBody((prevState) => ({
+        ...prevState,
+        has_number: '1'
+      }));
+
+      setWithOrderNumber(true);
+    }
+  };
+
+  const removeOrderNumber = () => {
+    const qrContainer = document.querySelector(".order-number");
+    if (qrContainer) {
+      qrContainer.remove();
+    }
+    setTemplateBody((prevState) => ({
+      ...prevState,
+      has_number: '0'
+    }));
+
+    setWithOrderNumber(false);
+  };
+
   const handleSaveEdited = () => {
     if (previewContainer.current) {
       const editedContent = previewContainer.current.innerHTML;
@@ -201,17 +315,8 @@ const NewTemplateBody = () => {
     body: "",
     langue: "",
     intended_for: "",
-    isArray: "0",
-    arraysNumber: "0",
-    services: "" /* [
-      {
-        serviceData: { id: "", title: "" },
-        adminData: { id: "", login: "" },
-        pageData: { id: "", pageName: "" },
-        admins: [],
-        pages: [],
-      },
-    ], */,
+    has_code: "0",
+    has_number: "0",
   };
 
   const [templateBody, setTemplateBody] = useState(initialTemplateBody);
@@ -219,7 +324,7 @@ const NewTemplateBody = () => {
   const [selectedLangue, setSelectedLangue] = useState("");
   const [selectedIntendedFor, setSelectedIntendedFor] = useState("");
 
-  const { title, body, langue, intended_for, isArray, arraysNumber } =
+  const { title, body, langue, intended_for, has_code, has_number } =
     templateBody;
 
   const globalShortCodesAr = shortCodeList.filter(
@@ -472,6 +577,7 @@ const NewTemplateBody = () => {
     async (/* e: React.FormEvent<HTMLFormElement> */) => {
       // e.preventDefault();
       try {
+        console.log(templateBody);
         await addNewTemplateBody(templateBody).unwrap();
         Swal.fire({
           position: "center",
@@ -559,7 +665,7 @@ const NewTemplateBody = () => {
                   <i className="bi bi-person-lines-fill"></i>
                 </div>
               </div>
-              <h5 className="card-title mb-0">Nouveau Corps du Modèle</h5>
+              <h5 className="card-title mb-0">Nouveau Modèle</h5>
             </Card.Header>
 
             <Card.Body>
@@ -775,6 +881,7 @@ const NewTemplateBody = () => {
                             Ajouter un modèle Word
                           </div>
                         </label>
+                        
                       </Col>
                       <Col lg={5} style={{ textAlign: "end" }}>
                         <Button
@@ -798,7 +905,7 @@ const NewTemplateBody = () => {
                         </Button>
                         <Button
                           variant="success"
-                          type="submit"
+                          // type="submit"
                           disabled={isLoading || canSaveTemplate === false}
                           onClick={handleFormSubmit}
                         >
@@ -851,6 +958,41 @@ const NewTemplateBody = () => {
                             marginTop: "20px",
                           }}
                         >
+                          <Card>
+                            <Card.Body className="d-flex">
+                                  {
+                                    withQrCode === false ? (<Button
+                                      variant="info"
+                                      size="sm"
+                                      onClick={handleQrCodeInsertion}
+                                      className="me-2 mb-2"
+                                    >Insérer un code QR
+                                    </Button>) : (<Button
+                                    variant="danger"
+                                    size="sm"
+                                    onClick={removeQrContainer}
+                                    className="me-2 mb-2"
+                                  >Supprimez le code QR
+                                  </Button>)
+                                  }
+                                  
+                                  {
+                                    withNumber === false ? (<Button
+                                      variant="info"
+                                      size="sm"
+                                      onClick={handleOrderNumberInsertion}
+                                      className="me-2 mb-2"
+                                    >Insérer un numéro d'ordre
+                                    </Button>) : (<Button
+                                    variant="danger"
+                                    size="sm"
+                                    onClick={removeOrderNumber}
+                                    className="me-2 mb-2"
+                                  >Supprimez le numéro d'ordre
+                                  </Button>)
+                                  }
+                            </Card.Body>
+                          </Card>
                           <Card>
                             <Card.Header as="h5">
                               Informations d'établissement

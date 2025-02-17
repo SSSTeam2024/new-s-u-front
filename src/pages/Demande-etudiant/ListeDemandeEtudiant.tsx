@@ -207,7 +207,7 @@ const ListeDemandeEtudiant = () => {
                     to="/demandes-etudiant/Single-demande-etudiant"
                     state={cellProps}
                     className="badge bg-info-subtle text-info view-item-btn"
-                    data-bs-toggle="offcanvas"
+                    
                   >
                     <i
                       className="ph ph-eye"
