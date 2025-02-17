@@ -42,6 +42,10 @@ const ListeVariablesGlobales = () => {
   const { data: Variables = []  } = useFetchVaribaleGlobaleQuery();
   console.log("variables",Variables)
 
+// Get the last variable
+  const lastVariable = Variables.length > 0 ? Variables[Variables.length - 1] : null;
+
+
   const { refetch } = useFetchAvisEnseignantQuery();
   const [deleteAvisEnseignant] = useDeleteAvisEnseignantMutation();
   const [modal_AddUserModals, setmodal_AddUserModals] =
@@ -101,16 +105,17 @@ const ListeVariablesGlobales = () => {
       );
     }
   };
-
   const [showModal, setShowModal] = useState(false);
-  const [selectedRow, setSelectedRow] = useState<VaribaleGlobale | null>(null);
-
-  const tog_standardd = (rowData:any) => {
-    setSelectedRow(rowData);
-    setShowModal(true);
-  };
-
+  const handleShow = () => setShowModal(true);
   const handleClose = () => setShowModal(false);
+  //const [selectedRow, setSelectedRow] = useState<VaribaleGlobale | null>(null);
+
+  // const tog_standardd = (rowData:any) => {
+  //   setSelectedRow(rowData);
+  //   setShowModal(true);
+  // };
+
+  
 
 
   const columns = useMemo(
@@ -178,7 +183,7 @@ const ListeVariablesGlobales = () => {
                 <li>
                   <Link
                     to="/#"
-                    onClick={() => tog_standardd(cellProps)}
+                    // onClick={() => tog_standardd(cellProps)}
                     state={cellProps}
                     className="badge bg-info-subtle text-info view-item-btn"
                     data-bs-toggle="offcanvas"
@@ -269,36 +274,30 @@ const navigate = useNavigate();
           <Row id="usersList">
             <Col lg={12}>
               <Card>
-                <Card.Body>
-                  <Row className="g-lg-2 g-4">
-                    <Col lg={3}>
-                      <div className="search-box">
-                        <input
-                          type="text"
-                          className="form-control search"
-                          placeholder="Chercher un avis..."
-                        />
-                        <i className="ri-search-line search-icon"></i>
-                      </div>
-                    </Col>
-
-                    {isMultiDeleteButton && (
-                      <Button variant="danger" className="btn-icon">
-                        <i className="ri-delete-bin-2-line"></i>
-                      </Button>
-                    )}
-                     <Col sm={3} className="col-lg-auto ms-auto">
-                                <Button
-                                  onClick={handleNavigate}
-                                  variant="primary"
-                                  type="button"
-                                  className="w-100 add-btn"
-                                >
-                                  Modifier
-                                </Button>
-                              </Col>
-                  </Row>
-                </Card.Body>
+              <Card.Body>
+  <Row className="g-lg-2 g-4">
+    <Col className="d-flex justify-content-end">
+      <Button
+        onClick={handleNavigate}
+        variant="primary"
+        type="button"
+        className="add-btn me-2"
+      >
+        Apporter une mise à jour
+      </Button>
+      <Button
+        onClick={handleShow}
+        variant="success"
+        type="button"
+        className="add-btn"
+        disabled={!lastVariable} // Disable button if no data
+      >
+        Afficher la configuration actuelle
+       {/* {lastVariable ? `Afficher ${lastVariable.nom}` : "Afficher la configuration actuelle"} */}
+      </Button>
+    </Col>
+  </Row>  
+</Card.Body>
               </Card>
             
             </Col>
@@ -377,13 +376,12 @@ const navigate = useNavigate();
   {modifications.slice().reverse().map(({ index, changes }, i) => {
     // Get creation dates of the current and previous version
     const currentCreatedAt = Variables[index]?.createdAt
-    ? new Date(Variables[index]?.createdAt || "").toLocaleString()
-    : "N/A";
-  
-  const previousCreatedAt = Variables[index - 1]?.createdAt
-    ? new Date(Variables[index - 1]?.createdAt || "").toLocaleString()
-    : "N/A";
-  
+      ? new Date(Variables[index]?.createdAt || "").toLocaleString()
+      : "N/A";
+
+    const previousCreatedAt = Variables[index - 1]?.createdAt
+      ? new Date(Variables[index - 1]?.createdAt || "").toLocaleString()
+      : "N/A";
 
     return (
       <div key={index} className="card shadow-sm p-3 border border-warning">
@@ -403,7 +401,7 @@ const navigate = useNavigate();
           </thead>
           <tbody>
             {Object.entries(changes)
-              .filter(([key]) => key !== "_id"&& key !== "createdAt" && key !== "updatedAt") // Exclude createdAt and updatedAt
+              .filter(([key]) => key !== "_id" && key !== "createdAt" && key !== "updatedAt") // Exclude createdAt and updatedAt
               .map(([key, newValue]) => {
                 const previousValue = (Variables[index - 1] as Record<string, unknown>)?.[key] ?? "N/A";
                 let previousImage = String(previousValue);
@@ -421,11 +419,29 @@ const navigate = useNavigate();
                 // Check if the field is an image field
                 const isImageField = imagePaths.hasOwnProperty(key);
 
+                // Check if the field is a 'places' object
+                const isPlacesField = key === "places";
+
                 return (
                   <tr key={key}>
                     <td className="fw-bold">{key}</td>
                     <td className="text-muted">
-                      {isImageField ? (
+                      {isPlacesField ? (
+                        <div>
+                          {Array.isArray(previousValue) ? (
+                            previousValue.map((place, idx) => (
+                              <div key={idx}>
+                                <p><strong>Nom:</strong> {place.placeName}</p>
+                                <p><strong>Latitude:</strong> {place.latitude}</p>
+                                <p><strong>Longitude:</strong> {place.longitude}</p>
+                                <p><strong>Rayon:</strong> {place.rayon} m</p>
+                              </div>
+                            ))
+                          ) : (
+                            <span>N/A</span>
+                          )}
+                        </div>
+                      ) : isImageField ? (
                         <img
                           src={`${process.env.REACT_APP_API_URL}/files/variableGlobaleFiles/${imagePaths[key]}/${previousImage}`}
                           alt={key}
@@ -436,7 +452,22 @@ const navigate = useNavigate();
                       )}
                     </td>
                     <td className="text-danger fw-bold">
-                      {isImageField ? (
+                      {isPlacesField ? (
+                        <div>
+                          {Array.isArray(newValue) ? (
+                            newValue.map((place, idx) => (
+                              <div key={idx}>
+                                <p><strong>Nom:</strong> {place.placeName}</p>
+                                <p><strong>Latitude:</strong> {place.latitude}</p>
+                                <p><strong>Longitude:</strong> {place.longitude}</p>
+                                <p><strong>Rayon:</strong> {place.rayon} m</p>
+                              </div>
+                            ))
+                          ) : (
+                            <span>N/A</span>
+                          )}
+                        </div>
+                      ) : isImageField ? (
                         <img
                           src={`${process.env.REACT_APP_API_URL}/files/variableGlobaleFiles/${imagePaths[key]}/${newImage}`}
                           alt={key}
@@ -455,6 +486,7 @@ const navigate = useNavigate();
     );
   })}
 </div>
+
 
 
 {/* // otther display */}
@@ -525,103 +557,141 @@ const navigate = useNavigate();
 </table> */}
 
     
-      {/* Modal for Viewing Row Details */}
-      <Modal  size="xl" show={showModal} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Variable Globale</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {selectedRow && (
-            <div>
-             <div className="container">
-      <div className="row">
-        {/* French Column */}
-        <div className="col-md-6">
-          <h5 className="text-primary mb-3">Informations en Français</h5>
-          <table className="table table-bordered">
-            <tbody>
-              <tr><td><strong>Établissement</strong></td><td>{selectedRow.etablissement_fr}</td></tr>
-              <tr><td><strong>Université</strong></td><td>{selectedRow.universite_fr}</td></tr>
-              <tr><td><strong>Directeur</strong></td><td>{selectedRow.directeur_fr}</td></tr>
-              <tr><td><strong>Secrétaire général</strong></td><td>{selectedRow.secretaire_fr}</td></tr>
-              <tr><td><strong>Gouvernorat</strong></td><td>{selectedRow.gouvernorat_fr}</td></tr>
-              <tr><td><strong>Adresse</strong></td><td>{selectedRow.address_fr}</td></tr>
-              <tr><td><strong>Code Postal</strong></td><td>{selectedRow.code_postal}</td></tr>
-              <tr><td><strong>Téléphone</strong></td><td>{selectedRow.phone}</td></tr>
-              <tr><td><strong>Fax</strong></td><td>{selectedRow.fax}</td></tr>
-              <tr><td><strong>Site Web</strong></td><td><a href={selectedRow.website} target="_blank" rel="noopener noreferrer">{selectedRow.website}</a></td></tr>
-            </tbody>
-          </table>
-        </div>
-
-        {/* Arabic Column */}
-        <div className="col-md-6 text-end">
-          <h5 className="text-success mb-3">المعلومات بالعربية</h5>
-          <table className="table table-bordered">
-            <tbody>
-              <tr><td>{selectedRow.etablissement_ar}</td><td><strong>المؤسسة</strong></td></tr>
-              <tr><td>{selectedRow.universite_ar}</td><td><strong>الجامعة</strong></td></tr>
-              <tr><td>{selectedRow.directeur_ar}</td><td><strong>المدير</strong></td></tr>
-              <tr><td>{selectedRow.secretaire_ar}</td><td><strong>الكاتب العام</strong></td></tr>
-              <tr><td>{selectedRow.gouvernorat_ar}</td><td><strong>الولاية</strong></td></tr>
-              <tr><td>{selectedRow.address_ar}</td><td><strong>العنوان</strong></td></tr>
-              <tr><td>{selectedRow.code_postal}</td><td><strong>الرمز البريدي</strong></td></tr>
-              <tr><td>{selectedRow.phone}</td><td><strong>الهاتف</strong></td></tr>
-              <tr><td>{selectedRow.fax}</td><td><strong>الفاكس</strong></td></tr>
-              <tr><td><a href={selectedRow.website} target="_blank" rel="noopener noreferrer">{selectedRow.website}</a></td><td><strong>الموقع الإلكتروني</strong></td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-<div className="d-flex justify-content-around align-items-center text-center">
-  {/* Logo Etablissement */}
-  <div>
-    <img
-      src={`${process.env.REACT_APP_API_URL}/files/variableGlobaleFiles/logoEtablissementFiles/${selectedRow.logo_etablissement}`}
-      alt="logo_etablissement-img"
-      id="logo_etablissement"
-      className="avatar-lg d-block mx-auto"
-    />
-    <p className="mt-2 fw-bold">Logo Établissement</p>
-  </div>
-
-  {/* Logo Université */}
-  <div>
-    <img
-      src={`${process.env.REACT_APP_API_URL}/files/variableGlobaleFiles/logoUniversiteFiles/${selectedRow.logo_universite}`}
-      alt="logo_universite-img"
-      id="logo_universite"
-      className="avatar-lg d-block mx-auto"
-    />
-    <p className="mt-2 fw-bold">Logo Université</p>
-  </div>
-
-  {/* Logo République */}
-  <div>
-    <img
-      src={`${process.env.REACT_APP_API_URL}/files/variableGlobaleFiles/logoRepubliqueFiles/${selectedRow.logo_republique}`}
-      alt="logo_republique-img"
-      id="logo_republique"
-      className="avatar-lg d-block mx-auto"
-    />
-    <p className="mt-2 fw-bold">Logo République</p>
-  </div>
-</div>
-
-
-
+<Modal size="xl" show={showModal} onHide={handleClose}>
+  <Modal.Header closeButton>
+    <Modal.Title>Variable Globale</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>
+    {lastVariable && (
+      <div>
+        <div className="container">
+          <div className="row">
+            {/* French Column */}
+            <div className="col-md-6">
+              <h5 className="text-primary mb-3">Informations en Français</h5>
+              <table className="table table-bordered">
+                <tbody>
+                  <tr><td><strong>Établissement</strong></td><td>{lastVariable.etablissement_fr}</td></tr>
+                  <tr><td><strong>Université</strong></td><td>{lastVariable.universite_fr}</td></tr>
+                  <tr><td><strong>Directeur</strong></td><td>{lastVariable.directeur_fr}</td></tr>
+                  <tr><td><strong>Secrétaire général</strong></td><td>{lastVariable.secretaire_fr}</td></tr>
+                  <tr><td><strong>Gouvernorat</strong></td><td>{lastVariable.gouvernorat_fr}</td></tr>
+                  <tr><td><strong>Adresse</strong></td><td>{lastVariable.address_fr}</td></tr>
+                  <tr><td><strong>Code Postal</strong></td><td>{lastVariable.code_postal}</td></tr>
+                  <tr><td><strong>Téléphone</strong></td><td>{lastVariable.phone}</td></tr>
+                  <tr><td><strong>Fax</strong></td><td>{lastVariable.fax}</td></tr>
+                  <tr>
+                    <td><strong>Site Web</strong></td>
+                    <td><a href={lastVariable.website} target="_blank" rel="noopener noreferrer">{lastVariable.website}</a></td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
-          )}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    
+
+            {/* Arabic Column */}
+            <div className="col-md-6 text-end">
+              <h5 className="text-success mb-3">المعلومات بالعربية</h5>
+              <table className="table table-bordered">
+                <tbody>
+                  <tr><td>{lastVariable.etablissement_ar}</td><td><strong>المؤسسة</strong></td></tr>
+                  <tr><td>{lastVariable.universite_ar}</td><td><strong>الجامعة</strong></td></tr>
+                  <tr><td>{lastVariable.directeur_ar}</td><td><strong>المدير</strong></td></tr>
+                  <tr><td>{lastVariable.secretaire_ar}</td><td><strong>الكاتب العام</strong></td></tr>
+                  <tr><td>{lastVariable.gouvernorat_ar}</td><td><strong>الولاية</strong></td></tr>
+                  <tr><td>{lastVariable.address_ar}</td><td><strong>العنوان</strong></td></tr>
+                  <tr><td>{lastVariable.code_postal}</td><td><strong>الرمز البريدي</strong></td></tr>
+                  <tr><td>{lastVariable.phone}</td><td><strong>الهاتف</strong></td></tr>
+                  <tr><td>{lastVariable.fax}</td><td><strong>الفاكس</strong></td></tr>
+                  <tr>
+                    <td><a href={lastVariable.website} target="_blank" rel="noopener noreferrer">{lastVariable.website}</a></td>
+                    <td><strong>الموقع الإلكتروني</strong></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        {/* Images Section */}
+        <div className="d-flex justify-content-around align-items-center text-center mt-3">
+          <div>
+            <img
+              src={`${process.env.REACT_APP_API_URL}/files/variableGlobaleFiles/logoEtablissementFiles/${lastVariable.logo_etablissement}`}
+              alt="logo_etablissement-img"
+              className="avatar-lg d-block mx-auto"
+            />
+            <p className="mt-2 fw-bold">Logo Établissement</p>
+          </div>
+          <div>
+            <img
+              src={`${process.env.REACT_APP_API_URL}/files/variableGlobaleFiles/logoUniversiteFiles/${lastVariable.logo_universite}`}
+              alt="logo_universite-img"
+              className="avatar-lg d-block mx-auto"
+            />
+            <p className="mt-2 fw-bold">Logo Université</p>
+          </div>
+          <div>
+            <img
+              src={`${process.env.REACT_APP_API_URL}/files/variableGlobaleFiles/logoRepubliqueFiles/${lastVariable.logo_republique}`}
+              alt="logo_republique-img"
+              className="avatar-lg d-block mx-auto"
+            />
+            <p className="mt-2 fw-bold">Logo République</p>
+          </div>
+          <div>
+            <img
+              src={`${process.env.REACT_APP_API_URL}/files/variableGlobaleFiles/signatureDirecteurFiles/${lastVariable.signature_directeur}`}
+              alt="logo_republique-img"
+              className="avatar-lg d-block mx-auto"
+            />
+            <p className="mt-2 fw-bold">Signature Directeur</p>
+          </div>
+          <div>
+            <img
+              src={`${process.env.REACT_APP_API_URL}/files/variableGlobaleFiles/signatureSecretaireFiles/${lastVariable.signature_secretaire}`}
+              alt="logo_republique-img"
+              className="avatar-lg d-block mx-auto"
+            />
+            <p className="mt-2 fw-bold">Signature Secretaire</p>
+          </div>
+        </div>
+
+        {/* 📌 Places Section */}
+        {lastVariable.places && lastVariable.places.length > 0 && (
+          <div className="mt-4">
+            <h5 className="text-primary">Lieux enregistrés</h5>
+            <table className="table table-striped">
+              <thead>
+                <tr>
+                  <th>Nom du lieu</th>
+                  <th>Latitude</th>
+                  <th>Longitude</th>
+                  <th>Rayon (m)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {lastVariable.places.map((place, index) => (
+                  <tr key={place._id || index}>
+                    <td>{place.placeName}</td>
+                    <td>{place.latitude}</td>
+                    <td>{place.longitude}</td>
+                    <td>{place.rayon}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+    )}
+  </Modal.Body>
+  <Modal.Footer>
+    <Button variant="secondary" onClick={handleClose}>
+      Fermer
+    </Button>
+  </Modal.Footer>
+</Modal>
+
     </React.Fragment>
   );
 };
