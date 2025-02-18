@@ -25,7 +25,10 @@ import {
   useUpdateGroupeClasseMutation,
 } from "features/etudiant/etudiantSlice";
 import { useFetchAllCycleQuery } from "features/cycle/cycle";
-import { useFetchParcoursQuery } from "features/parcours/parcours";
+import {
+  useFetchParcoursQuery,
+  useGetSemestreByIdParcoursMutation,
+} from "features/parcours/parcours";
 
 const ListClasses = () => {
   document.title = "Liste des groupes | ENIGA";
@@ -199,9 +202,11 @@ const ListClasses = () => {
   };
   const [selectedParcours, setSelectedParcours] = useState<string | null>(null);
   const [selectedSemesters, setSelectedSemesters] = useState<string[]>([]);
+  const [semesters, setSemesters] = useState<string[]>([]);
   const [selectedClasse, setSelectedClasse] = useState<Classe | null>(null);
   const { data: AllParcours = [] } = useFetchParcoursQuery();
   const [assignParcours] = useAssignParcoursToClasseMutation();
+  const [getSemestreByIdParcours] = useGetSemestreByIdParcoursMutation();
   const [modal_AddOrderModals, setmodal_AddOrderModals] =
     useState<boolean>(false);
   function tog_AddOrderModals() {
@@ -210,9 +215,32 @@ const ListClasses = () => {
   const [isAssignParcoursModalOpen, setIsAssignParccoursModalOpen] =
     useState(false);
 
-  const handleParcoursChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedParcours(e.target.value);
+  const handleGetSemestreByParcoursId = async (
+    id: string
+  ): Promise<string[]> => {
+    try {
+      const data = await getSemestreByIdParcours(id).unwrap();
+      return data; // ✅ Return the fetched data (string[])
+    } catch (error) {
+      console.error("Error fetching semestres:", error);
+      return []; // ✅ Return an empty array in case of error
+    }
   };
+
+  // const handleParcoursChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  //   setSelectedParcours(e.target.value);
+  //   setSemesters(handleGetSemestreByParcoursId(e.target.value));
+  // };
+
+  const handleParcoursChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedId = e.target.value;
+    setSelectedParcours(selectedId);
+
+    handleGetSemestreByParcoursId(selectedId)
+      .then((semestersData) => setSemesters(semestersData)) // ✅ Now this works
+      .catch((error) => console.error("Error fetching semestres:", error));
+  };
+  console.log(semesters);
   const handleSemesterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, checked } = e.target;
     setSelectedSemesters((prev) =>
@@ -290,13 +318,13 @@ const ListClasses = () => {
         disableFilters: true,
         filterable: true,
       },
-      {
-        Header: "Matieres",
-        accessor: (row: any) =>
-          row?.parcours?.modules[0]?.matiere[0]?.matiere?.length!,
-        disableFilters: true,
-        filterable: true,
-      },
+      // {
+      //   Header: "Matieres",
+      //   accessor: (row: any) =>
+      //     row?.parcours?.modules[0]?.matiere[0]?.matiere?.length!,
+      //   disableFilters: true,
+      //   filterable: true,
+      // },
       {
         Header: "Affecter Parcours",
         disableFilters: true,
@@ -440,7 +468,8 @@ const ListClasses = () => {
         parcoursIds: [selectedParcours],
         semestres: selectedSemesters, // ✅ Check if this is correctly populated
       }).unwrap();
-
+      setSelectedSemesters([]);
+      setSemesters([]);
       notify();
       setIsAssignParccoursModalOpen(false);
     } catch (error: any) {
@@ -855,7 +884,7 @@ const ListClasses = () => {
                 <Form.Group className="mb-3">
                   <Form.Label>Sélectionnez les Semestres</Form.Label>
                   <div>
-                    {["S1", "S2", "S3", "S4", "S5", "S6"].map((semestre) => (
+                    {semesters.map((semestre) => (
                       <Form.Check
                         key={semestre}
                         type="checkbox"

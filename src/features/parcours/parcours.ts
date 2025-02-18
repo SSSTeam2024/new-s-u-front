@@ -7,7 +7,7 @@ export interface Parcours {
   domaine?: any;
   nom_parcours: string;
   code_parcours: string;
-  semestre_parcours?: string;
+  semestre_parcours?: string[];
 }
 
 export const parcoursSlice = createApi({
@@ -37,6 +37,17 @@ export const parcoursSlice = createApi({
         },
         invalidatesTags: ["Parcours"],
       }),
+      getSemestreByIdParcours: builder.mutation<string[], string>({
+        query(id) {
+          return {
+            url: `/get-semestre-by-parcours-id`,
+            method: "POST",
+            body: { id }, // Send id in the body
+          };
+        },
+        invalidatesTags: ["Parcours"],
+      }),
+
       addParcours: builder.mutation<Parcours, Parcours>({
         query(payload) {
           return {
@@ -72,4 +83,5 @@ export const {
   useFetchParcoursQuery,
   useUpdateParcoursMutation,
   useGetParcoursByValueMutation,
+  useGetSemestreByIdParcoursMutation,
 } = parcoursSlice;

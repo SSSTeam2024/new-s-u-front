@@ -93,7 +93,7 @@ const ListParcours = () => {
   };
 
   const { data = [] } = useFetchParcoursQuery();
-  console.log("parcours data", data);
+  // console.log("parcours data", data);
   const { data: allDomaines = [] } = useFetchDomainesClasseQuery();
   const { data: allMentions = [] } = useFetchMentionsClasseQuery();
   const { data: allTypesParcours = [] } = useFetchTypeParcoursQuery();
@@ -169,8 +169,11 @@ const ListParcours = () => {
         filterable: true,
       },
       {
-        Header: "Semestre",
-        accessor: "semestre_parcours",
+        Header: "Semestres",
+        accessor: (row: any) =>
+          row?.semestre_parcours && row.semestre_parcours.length > 0
+            ? row.semestre_parcours.join(", ")
+            : "Aucun semestre assigné",
         disableFilters: true,
         filterable: true,
       },
@@ -405,7 +408,7 @@ const ListParcours = () => {
     domaine: "",
     nom_parcours: "",
     code_parcours: "",
-    semestre_parcours: "",
+    // semestre_parcours: [],
   });
 
   const handleAddClick = () => {
@@ -416,7 +419,7 @@ const ListParcours = () => {
       domaine: "",
       nom_parcours: "",
       code_parcours: "",
-      semestre_parcours: "",
+      //semestre_parcours: [],
     });
     setAddModalOpen(true);
   };
@@ -429,7 +432,7 @@ const ListParcours = () => {
       domaine: parcours.domaine || { name_domaine_fr: "" },
       nom_parcours: parcours.nom_parcours || "",
       code_parcours: parcours.code_parcours || "",
-      semestre_parcours: parcours.semestre_parcours || "",
+      //semestre_parcours: parcours.semestre_parcours || [],
     });
     setShowEditModal(true);
   };
@@ -485,7 +488,7 @@ const ListParcours = () => {
         domaine: parcours.domaine || { name_domaine_fr: "" },
         type_parcours: parcours.type_parcours || { name_type_parcours_fr: "" },
         mention: parcours.mention || { name_mention_fr: "" },
-        semestre_parcours: parcours.semestre_parcours || "",
+        //semestre_parcours: parcours.semestre_parcours || "",
       });
     }
   }, [parcours, isEditModalOpen]);
@@ -546,19 +549,19 @@ const ListParcours = () => {
     for (const [key, value] of map.entries()) {
       const existingValue = await getFunc(value).unwrap();
       if (existingValue !== null) {
-        console.log(`existing Value ${key}:`, existingValue);
+        //console.log(`existing Value ${key}:`, existingValue);
         map.set(key, { ...value, id: existingValue.id });
       } else {
         if (isMatiere) {
           const createdValue = await addFunc(value).unwrap();
-          console.log(`Created new ${key}:`, createdValue);
+          //console.log(`Created new ${key}:`, createdValue);
           map.set(key, { ...value, id: createdValue[0]?._id! });
-          console.log("map", map);
+          //console.log("map", map);
         } else {
           const createdValue = await addFunc(value).unwrap();
-          console.log(`Created new ${key}:`, createdValue);
+          //console.log(`Created new ${key}:`, createdValue);
           map.set(key, { ...value, id: createdValue?._id! });
-          console.log("map", map);
+          //console.log("map", map);
         }
       }
     }
@@ -731,35 +734,68 @@ const ListParcours = () => {
         for (const item of jsonData) {
           const parcoursKey = `${item["NomParcours"]}-${item["codeParcours"]}`;
           if (!uniqueParcours.has(parcoursKey)) {
+            let tab = [];
+            tab.push(item["Semestre_Parcours"]);
+
             uniqueParcours.set(parcoursKey, {
               id: "",
               code_parcours: item["codeParcours"],
               nom_parcours: item["NomParcours"],
-              // semestre_parcours: item["Semestre_Parcours"],
+              semestre_parcours: tab,
+            });
+          } else {
+            let s = uniqueParcours.get(parcoursKey)?.semestre_parcours;
+            s.push(item["Semestre_Parcours"]);
+            uniqueParcours.set(parcoursKey, {
+              id: "",
+              code_parcours: item["codeParcours"],
+              nom_parcours: item["NomParcours"],
+              semestre_parcours: s,
             });
           }
 
           const matiereKey = `${item["codeMatiere"]}`;
-          if (!uniqueMatiere.has(matiereKey)) {
-            uniqueMatiere.set(matiereKey, {
-              id: "",
-              code_matiere: item["codeMatiere"],
-              semestre: item["Semestre_Matiere"],
-              matiere: item["NomMatiere"],
-              regime_matiere: item["RegimeMatiere"],
-              credit_matiere: item["CreditMatiere"],
-              coefficient_matiere: item["coefficientMatiere"],
-              types: [
-                {
-                  type: item["TypeMatiere"],
-                  volume: item["VolumeHoraire"],
-                  nbr_elimination: item["NomreElimination"],
-                },
-              ],
-            });
+          if (Number(item["Semestre_Parcours"].slice(1, 2)) % 2 === 0) {
+            if (!uniqueMatiere.has(matiereKey)) {
+              uniqueMatiere.set(matiereKey, {
+                id: "",
+                code_matiere: item["codeMatiere"],
+                semestre: "S2",
+                matiere: item["NomMatiere"],
+                regime_matiere: item["RegimeMatiere"],
+                credit_matiere: item["CreditMatiere"],
+                coefficient_matiere: item["coefficientMatiere"],
+                types: [
+                  {
+                    type: item["TypeMatiere"],
+                    volume: item["VolumeHoraire"],
+                    nbr_elimination: item["NomreElimination"],
+                  },
+                ],
+              });
+            }
+          } else {
+            if (!uniqueMatiere.has(matiereKey)) {
+              uniqueMatiere.set(matiereKey, {
+                id: "",
+                code_matiere: item["codeMatiere"],
+                semestre: "S1",
+                matiere: item["NomMatiere"],
+                regime_matiere: item["RegimeMatiere"],
+                credit_matiere: item["CreditMatiere"],
+                coefficient_matiere: item["coefficientMatiere"],
+                types: [
+                  {
+                    type: item["TypeMatiere"],
+                    volume: item["VolumeHoraire"],
+                    nbr_elimination: item["NomreElimination"],
+                  },
+                ],
+              });
+            }
           }
         }
-
+        console.log("unique parcours", uniqueParcours);
         await getOrCreate(uniqueParcours, getParcoursValue, createParcours);
 
         await getOrCreate(uniqueMatiere, getMatiereCode, createMatiere, true);
@@ -786,29 +822,57 @@ const ListParcours = () => {
         // }
         for (const item of jsonData) {
           const moduleKey = `${item["codeUE"]}`;
-          if (!uniqueModuleParcours.has(moduleKey)) {
-            const parcoursKey = `${item["NomParcours"]}-${item["codeParcours"]}`;
-            const matiereKey = `${item["codeMatiere"]}`;
+          if (Number(item["Semestre_Parcours"].slice(1, 2)) % 2 === 0) {
+            if (!uniqueModuleParcours.has(moduleKey)) {
+              const parcoursKey = `${item["NomParcours"]}-${item["codeParcours"]}`;
+              const matiereKey = `${item["codeMatiere"]}`;
 
-            const matiereId = uniqueMatiere.has(matiereKey)
-              ? uniqueMatiere.get(matiereKey)?.id
-              : null;
-            console.log("matiereId", uniqueMatiere.get(matiereKey)?.id!);
-            if (matiereId) {
-              uniqueModuleParcours.set(moduleKey, {
-                id: "",
-                code_Ue: item["codeUE"],
-                semestre_module: item["Semestre_Module"],
-                libelle: item["NomUE"],
-                credit: item["CreditUE"],
-                coef: item["CoefUE"],
-                nature: item["NatureUE"],
-                regime: item["RegimeUE"],
-                parcours: uniqueParcours.get(parcoursKey)?.id || "",
-                matiere: [matiereId],
-              });
-            } else {
-              console.error(`Matiere ID for ${matiereKey} not found.`);
+              const matiereId = uniqueMatiere.has(matiereKey)
+                ? uniqueMatiere.get(matiereKey)?.id
+                : null;
+              //console.log("matiereId", uniqueMatiere.get(matiereKey)?.id!);
+              if (matiereId) {
+                uniqueModuleParcours.set(moduleKey, {
+                  id: "",
+                  code_Ue: item["codeUE"],
+                  semestre_module: "S2",
+                  libelle: item["NomUE"],
+                  credit: item["CreditUE"],
+                  coef: item["CoefUE"],
+                  nature: item["NatureUE"],
+                  regime: item["RegimeUE"],
+                  parcours: uniqueParcours.get(parcoursKey)?.id || "",
+                  matiere: [matiereId],
+                });
+              } else {
+                console.error(`Matiere ID for ${matiereKey} not found.`);
+              }
+            }
+          } else {
+            if (!uniqueModuleParcours.has(moduleKey)) {
+              const parcoursKey = `${item["NomParcours"]}-${item["codeParcours"]}`;
+              const matiereKey = `${item["codeMatiere"]}`;
+
+              const matiereId = uniqueMatiere.has(matiereKey)
+                ? uniqueMatiere.get(matiereKey)?.id
+                : null;
+              //console.log("matiereId", uniqueMatiere.get(matiereKey)?.id!);
+              if (matiereId) {
+                uniqueModuleParcours.set(moduleKey, {
+                  id: "",
+                  code_Ue: item["codeUE"],
+                  semestre_module: "S1",
+                  libelle: item["NomUE"],
+                  credit: item["CreditUE"],
+                  coef: item["CoefUE"],
+                  nature: item["NatureUE"],
+                  regime: item["RegimeUE"],
+                  parcours: uniqueParcours.get(parcoursKey)?.id || "",
+                  matiere: [matiereId],
+                });
+              } else {
+                console.error(`Matiere ID for ${matiereKey} not found.`);
+              }
             }
           }
         }
@@ -1109,7 +1173,7 @@ const ListParcours = () => {
               <Form className="tablelist-form" onSubmit={onSubmitParcours}>
                 <Modal.Body className="p-4">
                   <Row>
-                    <Col lg={12}>
+                    {/* <Col lg={12}>
                       <div className="mb-3">
                         <Form.Label htmlFor="semestre_parcours">
                           Semestre
@@ -1136,7 +1200,7 @@ const ListParcours = () => {
                           ))}
                         </select>
                       </div>
-                    </Col>
+                    </Col> */}
                   </Row>
                   <Row>
                     <Col lg={12}>
