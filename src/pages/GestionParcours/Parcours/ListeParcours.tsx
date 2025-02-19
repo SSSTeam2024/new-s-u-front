@@ -1133,7 +1133,7 @@ const ListParcours = () => {
       <div className="page-content">
         <Container fluid={true}>
           <Breadcrumb
-            title="Paramètres des Parcours"
+            title="Liste des parcours"
             pageTitle="Liste des parcours"
           />
 

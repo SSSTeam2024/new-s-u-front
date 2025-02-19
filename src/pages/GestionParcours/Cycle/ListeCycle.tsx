@@ -284,7 +284,7 @@ const ListeCycle = () => {
       <div className="page-content">
         <Container fluid={true}>
           <Breadcrumb
-            title="Paramètres des Parcours"
+            title="Liste des cycles"
             pageTitle="Liste des cycles"
           />
 

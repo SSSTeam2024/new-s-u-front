@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Button, Container, Row } from "react-bootstrap";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import { useFetchVaribaleGlobaleQuery } from "features/variableGlobale/variableGlobaleSlice";
 
@@ -13,17 +13,22 @@ import html2canvas from "html2canvas";
 
 import { replaceShortCodes } from "helpers/GlobalFunctions/administrative_demand_helper";
 import { generateQRCode } from "helpers/GlobalFunctions/administrative_demand_helper";
-import { useGetGeneratedDocNextNumberByModelIdQuery } from "features/generatedDoc/generatedDocSlice";
+import { useGetGeneratedDocNextNumberByModelIdQuery, useSaveGeneratedDocMutation } from "features/generatedDoc/generatedDocSlice";
+import { useUpdateDemandeEtudiantMutation } from "features/demandeEtudiant/demandeEtudiantSlice";
+import Swal from "sweetalert2";
 
 const GenerateDemande = () => {
   document.title = "Demande Etudiant | ENIGA";
   const location = useLocation();
   const demandeLocation = location.state;
 
-  console.log(demandeLocation?.piece_demande);
+  // console.log(demandeLocation?.piece_demande);
+  console.log(demandeLocation);
 
   const [newUpdateBody, setNewUpdateBody] = useState("");
   const [hasProcessed, setHasProcessed] = useState(false);
+
+  const navigate = useNavigate();
 
   const { data: AllVariablesGlobales = [] } = useFetchVaribaleGlobaleQuery();
   const bodyRef = useRef<HTMLDivElement | null>(null);
@@ -31,6 +36,19 @@ const GenerateDemande = () => {
   const { data: number, isSuccess: nextNumberLoaded } = useGetGeneratedDocNextNumberByModelIdQuery(
       demandeLocation?.piece_demande?._id!
       );
+
+  const [saveGeneratedDoc] = useSaveGeneratedDocMutation();
+
+  const [updateDemande] = useUpdateDemandeEtudiantMutation();
+
+  const [generatedDocData, setGeneratedDocData] = useState({
+    etudiant: "",
+    model: "",
+    body: "",
+    date_generation: "",
+    num_ordre: "",
+    num_qr_code: ""
+  })
 
   // const generatePDF = async () => {
   //   try {
@@ -68,18 +86,77 @@ const GenerateDemande = () => {
 
   useEffect(() => {
     if (!hasProcessed && nextNumberLoaded) {
-      const cryptedDataCode = generateQRCode(demandeLocation._id, number.value);
+      const qrCodeQndOrderNumber = getCryptedQrCodeAndOrderNumber();
+      console.log(qrCodeQndOrderNumber);
       let generatedDocument = replaceShortCodes(
         demandeLocation,
         AllVariablesGlobales,
-        number.value,
-          cryptedDataCode
+        qrCodeQndOrderNumber.orderNumber,
+        qrCodeQndOrderNumber.cryptedQrCode
       );
       setNewUpdateBody(generatedDocument);
+
+      let allVariables = AllVariablesGlobales[AllVariablesGlobales.length - 1];
+
+      const [an1, an2] = allVariables?.annee_universitaire!.split('/');
+
+      const [part1an1, part2an1] = an1.split('0');
+      const [part1an2, part2an2] = an2.split('0');
+
+      let qr = "";
+      let num = "";
+
+      const d = new Date();
+      const formattedDate =
+        d.getDate().toString().padStart(2, "0") +
+        "-" +
+        (d.getMonth() + 1).toString().padStart(2, "0") +
+        "-" +
+        d.getFullYear().toString();
+
+      if(demandeLocation?.piece_demande?.has_number! === '1'){
+        num = number.value + "/" + part2an1 + part2an2;
+      }
+
+      if(demandeLocation?.piece_demande?.has_code! === '1'){
+        qr = qrCodeQndOrderNumber.cryptedQrCode;
+      }
+      //TODO : CODE YABDA 8ALET KEN FI AWEL TELECHARGEMENT
+      setGeneratedDocData((prevState) => ({
+        ...prevState,
+        etudiant: demandeLocation?.studentId?._id!,
+        model: demandeLocation?.piece_demande?._id!,
+        date_generation: formattedDate,
+        num_ordre: num,
+        num_qr_code: qr
+      }));
 
       setHasProcessed(true);
     }
   }, [newUpdateBody, hasProcessed, nextNumberLoaded]);
+
+  const getCryptedQrCodeAndOrderNumber = () => {
+    let cryptedCode = "";
+    let order_number = "";
+    if(demandeLocation?.status! !== 'traité' && demandeLocation?.generated_doc === null){
+      let allVariables = AllVariablesGlobales[AllVariablesGlobales.length - 1];
+
+      const [an1, an2] = allVariables?.annee_universitaire!.split('/');
+
+      const [part1an1, part2an1] = an1.split('0');
+      const [part1an2, part2an2] = an2.split('0');
+      order_number = number.value + "/" + part2an1 + part2an2;
+      cryptedCode = generateQRCode(demandeLocation._id, order_number);
+    }else{
+      console.log(demandeLocation?.generated_doc);
+      cryptedCode = demandeLocation?.generated_doc?.num_qr_code!;
+      order_number = demandeLocation?.generated_doc?.num_ordre!;
+    }
+    return {
+      cryptedQrCode: cryptedCode,
+      orderNumber: order_number
+    }
+  }
 
   const extractTableData = (tableElement: any) => {
     if (!tableElement) {
@@ -214,8 +291,8 @@ const GenerateDemande = () => {
   // };
 
   const handleSaveAsPDF = async () => {
-    const cryptedDataCode = generateQRCode(demandeLocation._id, number.value)
-  let generatedDocument = replaceShortCodes(demandeLocation, AllVariablesGlobales, number.value, cryptedDataCode);
+    const qrCodeQndOrderNumber = getCryptedQrCodeAndOrderNumber();
+  let generatedDocument = replaceShortCodes(demandeLocation, AllVariablesGlobales, qrCodeQndOrderNumber.orderNumber, qrCodeQndOrderNumber.cryptedQrCode);
 
   if (generatedDocument) {
     // Create a temporary DOM element to manipulate styles safely
@@ -264,6 +341,16 @@ const GenerateDemande = () => {
     pdf.save("document.pdf");
 
     document.body.removeChild(tempContainer);
+
+    if(demandeLocation?.status! !== 'traité' && demandeLocation?.generated_doc === null){
+      let generatedDocDataRef = {...generatedDocData};
+
+      generatedDocDataRef.body = generatedDocument;
+
+      console.log(generatedDocDataRef);
+      await saveDocmentAndUpdateDemand(generatedDocDataRef);
+    }
+
   } else {
     alert("No content available to save as PDF.");
   }
@@ -356,6 +443,31 @@ const GenerateDemande = () => {
   // } finally {
   //   document.body.removeChild(tempContainer); // Clean up after rendering
   // }
+  };
+
+  const saveDocmentAndUpdateDemand = async (generatedDocData: any) => {
+    let savedDocument = await saveGeneratedDoc(generatedDocData).unwrap();
+
+    await updateDemande({
+      _id: demandeLocation._id,
+      generated_doc: savedDocument._id,
+      status: "traité"
+    }).unwrap();
+
+    notify();
+    
+  }
+
+  const notify = () => {
+    Swal.fire({
+      position: "center",
+      icon: "success",
+      title: "Document généré avec succès",
+      showConfirmButton: false,
+      timer: 2000,
+    }).then(()=>{
+      navigate("/demandes-etudiant/Liste-demandes-etudiant");
+    });
   };
 
   const generatePDF = async () => {
@@ -457,6 +569,11 @@ const GenerateDemande = () => {
     <React.Fragment>
       <div className="page-content">
         <Container fluid={true}>
+        <div className="hstack gap-2 justify-content-end d-print-none mt-4 mb-4">
+            <Button onClick={handleSaveAsPDF}>
+            {demandeLocation.status === 'traité' && demandeLocation.generated_doc !== null ? (<>Télécharger</>) : (<>Enregistrer et Télécharger</>)}
+            </Button>
+          </div>
           {/* <div
             ref={bodyRef}
             style={{
@@ -524,11 +641,6 @@ const GenerateDemande = () => {
               />
             </Row> */}
           {/* </div> */}
-          <div className="hstack gap-2 justify-content-end d-print-none mt-4">
-            <Button onClick={/* generatePDF */ handleSaveAsPDF}>
-              Télécharger
-            </Button>
-          </div>
         </Container>
       </div>
     </React.Fragment>

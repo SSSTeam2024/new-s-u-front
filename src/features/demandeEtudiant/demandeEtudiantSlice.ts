@@ -1,9 +1,11 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { GeneratedDoc } from "features/generatedDoc/generatedDocSlice";
 
 export interface Demande {
 
     _id:string,
     studentId: string,
+    generated_doc?: string | GeneratedDoc;
     title:  string,
     description: string,
     piece_demande: string,

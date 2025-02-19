@@ -190,7 +190,7 @@ const ListNiveau = () => {
       <div className="page-content">
         <Container fluid={true}>
           <Breadcrumb
-            title="Gestion des départements"
+            title="Liste des niveaux"
             pageTitle="Liste des niveaux"
           />
 

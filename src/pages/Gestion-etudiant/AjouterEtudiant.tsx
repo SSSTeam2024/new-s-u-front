@@ -706,26 +706,26 @@ const AjouterEtudiant = () => {
     const { name, value } = e.target;
 
     if (name === "groupe_classe") {
-      const selectedClass = groupe_classe.find((cls) => cls._id === value);
+      const selectedClass = groupe_classe.find((cls) => cls?._id! === value);
 
       if (selectedClass) {
         setFormData((prev) => ({
           ...prev,
           groupe_classe: {
-            _id: selectedClass._id,
-            nom_classe_fr: selectedClass.nom_classe_fr,
-            nom_classe_ar: selectedClass.nom_classe_ar,
+            _id: selectedClass._id!,
+            nom_classe_fr: selectedClass.nom_classe_fr!,
+            nom_classe_ar: selectedClass.nom_classe_ar!,
             // Ensure 'departement' is set as a string, e.g., its '_id' or 'name_fr'
             departement:
               typeof selectedClass.departement === "string"
                 ? selectedClass.departement
-                : selectedClass.departement._id, // or selectedClass.departement.name_fr based on your structure
+                : selectedClass.departement?._id!, // or selectedClass.departement.name_fr based on your structure
             niveau_classe: {
-              _id: selectedClass.niveau_classe._id,
-              name_niveau_ar: selectedClass.niveau_classe.name_niveau_ar,
-              name_niveau_fr: selectedClass.niveau_classe.name_niveau_fr,
-              abreviation: selectedClass.niveau_classe.abreviation,
-              sections: selectedClass.niveau_classe.sections, // Array of sections as expected
+              _id: selectedClass.niveau_classe?._id!,
+              name_niveau_ar: selectedClass.niveau_classe?.name_niveau_ar!,
+              name_niveau_fr: selectedClass.niveau_classe?.name_niveau_fr!,
+              abreviation: selectedClass.niveau_classe?.abreviation!,
+              sections: selectedClass.niveau_classe?.sections!, // Array of sections as expected
             },
             matieres: selectedClass.matieres.map(
               (matiere) =>

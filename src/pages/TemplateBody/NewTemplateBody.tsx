@@ -196,39 +196,23 @@ const NewTemplateBody = () => {
       img.style.margin = "5px";
   
       const paragraph = document.createElement("p");
-      const paragraph2 = document.createElement("p");
+      paragraph.style.marginTop = "5px";
+      paragraph.style.fontSize = "11px";
+      paragraph.style.fontStyle = "italic";
+      paragraph.style.color = "#0d87b5";
+
       if(selectedLangue === 'arabic'){
         paragraph.textContent = "امسح هذا الرمز للتحقق من صحة المستند عبر الإنترنت";
-         paragraph.style.marginTop = "5px";
-      paragraph.style.fontSize = "11px";
-      paragraph.style.fontStyle = "italic";
-
-      paragraph2.textContent = "https://verify.eniga.tn/id=*******";
-      paragraph2.style.marginTop = "5px";
-   paragraph2.style.fontSize = "11px";
-   paragraph2.style.fontStyle = "italic";
-
-      const container = document.createElement("div");
-      container.className = 'qr-container';
-      container.appendChild(img);
-      container.appendChild(paragraph);
-      container.appendChild(paragraph2);
-      rangeRef.current.insertNode(container);
       }else{
-        paragraph.style.marginTop = "5px";
-      paragraph.style.fontSize = "11px";
-      paragraph.style.fontStyle = "italic";
-
-      const container = document.createElement("div");
-      container.className = 'qr-container';
-      container.appendChild(img);
-      container.appendChild(paragraph);
-        paragraph.textContent = "Scanner ce code pour vérifier l’intégrité de ce document en ligne https://verify.eniga.tn/id=******";
-        rangeRef.current.insertNode(container);
+        paragraph.textContent = "Scanner ce code pour vérifier l’intégrité de ce document en ligne";
       }
      
+      const container = document.createElement("div");
+      container.className = 'qr-container';
+      container.appendChild(img);
+      container.appendChild(paragraph);
 
-      
+      rangeRef.current.insertNode(container);
       rangeRef.current.collapse(false); // Move cursor to the end
       rangeRef.current = null; // Clear the range
 

@@ -272,7 +272,7 @@ const ListMatieres = () => {
       <div className="page-content">
         <Container fluid={true}>
           <Breadcrumb
-            title="Gestion des départements"
+            title="Liste des matiéres"
             pageTitle="Liste des matiéres"
           />
 

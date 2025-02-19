@@ -50,24 +50,24 @@ const ListeDemandeEtudiant = () => {
     try {
       await MySwal.fire({
         title: "Êtes-vous sûr ?",
-        text: "Vous ne pourrez pas annuler cela !",
+        text: "Vous ne pourrez pas annuler la suppression !",
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
         cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, delete it!",
+        confirmButtonText: "Oui, Supprimer!",
       }).then(async (result) => {
         if (result.isConfirmed) {
           await deleteDemandeEtudiant(id).unwrap();
           MySwal.fire(
-            "Deleted!",
-            "The reclamation has been deleted.",
+            "Supprimée!",
+            "Demande supprimée avec succès",
             "success"
           );
         }
       });
     } catch (error) {
-      console.error("Failed to delete reclamation:", error);
+      console.error("Erreur lors de suppression du demande:", error);
       MySwal.fire(
         "Error!",
         "There was an error deleting the reclamation.",

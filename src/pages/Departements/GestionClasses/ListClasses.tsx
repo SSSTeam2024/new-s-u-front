@@ -503,7 +503,7 @@ const ListClasses = () => {
       <div className="page-content">
         <Container fluid={true}>
           <Breadcrumb
-            title="Gestion des départements"
+            title="Gestion des groupes"
             pageTitle="Liste des groupes"
           />
 
