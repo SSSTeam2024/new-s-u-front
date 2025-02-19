@@ -232,14 +232,42 @@ const ListClasses = () => {
   //   setSemesters(handleGetSemestreByParcoursId(e.target.value));
   // };
 
+  // const handleParcoursChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  //   const selectedId = e.target.value;
+  //   setSelectedParcours(selectedId);
+
+  //   handleGetSemestreByParcoursId(selectedId)
+  //     .then((semestersData) => setSemesters(semestersData)) // ✅ Now this works
+  //     .catch((error) => console.error("Error fetching semestres:", error));
+  // };
   const handleParcoursChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedId = e.target.value;
     setSelectedParcours(selectedId);
 
     handleGetSemestreByParcoursId(selectedId)
-      .then((semestersData) => setSemesters(semestersData)) // ✅ Now this works
+      .then((semestersData) => {
+        console.log("Fetched semesters:", semestersData); // Debugging log
+
+        if (!Array.isArray(semestersData)) {
+          console.error("Invalid data format:", semestersData);
+          return;
+        }
+
+        // Ensure each semester has an `_id`
+        const uniqueSemesters = Array.from(
+          new Map(
+            semestersData.map((s: any) => [
+              s && typeof s === "object" ? s._id : s,
+              s,
+            ])
+          ).values()
+        );
+
+        setSemesters(uniqueSemesters);
+      })
       .catch((error) => console.error("Error fetching semestres:", error));
   };
+
   console.log(semesters);
   const handleSemesterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, checked } = e.target;
@@ -247,6 +275,7 @@ const ListClasses = () => {
       checked ? [...prev, value] : prev.filter((s) => s !== value)
     );
   };
+
   const classeId = selectedClasse?._id;
 
   const [showOffcanvas, setShowOffcanvas] = useState(false);
@@ -454,19 +483,11 @@ const ListClasses = () => {
       alert("Classe ID not found!");
       return;
     }
-
-    // ✅ Debugging output
-    console.log("Sending Data:", {
-      _id: classeId,
-      parcoursIds: [selectedParcours],
-      semestres: selectedSemesters,
-    });
-
     try {
       await assignParcours({
         _id: classeId,
         parcoursIds: [selectedParcours],
-        semestres: selectedSemesters, // ✅ Check if this is correctly populated
+        semestres: selectedSemesters,
       }).unwrap();
       setSelectedSemesters([]);
       setSemesters([]);
