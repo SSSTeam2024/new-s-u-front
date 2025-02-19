@@ -170,13 +170,19 @@ const ListParcours = () => {
       },
       {
         Header: "Semestres",
-        accessor: (row: any) =>
-          row?.semestre_parcours && row.semestre_parcours.length > 0
-            ? row.semestre_parcours.join(", ")
-            : "Aucun semestre assigné",
+        accessor: (row: any) => {
+          // Remove duplicates using Set and convert back to an array
+          const uniqueSemesters = Array.from(new Set(row.semestre_parcours));
+
+          // Join unique semesters into a single string
+          return uniqueSemesters.length > 0
+            ? uniqueSemesters.join(", ")
+            : "Aucun semestre assigné";
+        },
         disableFilters: true,
         filterable: true,
       },
+
       {
         Header: "Domaine",
         accessor: (row: any) => row.domaine?.name_domaine_fr! || "",
@@ -820,60 +826,122 @@ const ListParcours = () => {
         //     });
         //   }
         // }
+        // for (const item of jsonData) {
+        //   const moduleKey = `${item["codeUE"]}`;
+        //   if (Number(item["Semestre_Parcours"].slice(1, 2)) % 2 === 0) {
+        //     if (!uniqueModuleParcours.has(moduleKey)) {
+        //       const parcoursKey = `${item["NomParcours"]}-${item["codeParcours"]}`;
+        //       const matiereKey = `${item["codeMatiere"]}`;
+
+        //       const matiereId = uniqueMatiere.has(matiereKey)
+        //         ? uniqueMatiere.get(matiereKey)?.id
+        //         : null;
+        //       if (matiereId) {
+        //         uniqueModuleParcours.set(moduleKey, {
+        //           id: "",
+        //           code_Ue: item["codeUE"],
+        //           semestre_module: "S2",
+        //           libelle: item["NomUE"],
+        //           credit: item["CreditUE"],
+        //           coef: item["CoefUE"],
+        //           nature: item["NatureUE"],
+        //           regime: item["RegimeUE"],
+        //           parcours: uniqueParcours.get(parcoursKey)?.id || "",
+        //           matiere: [matiereId],
+        //         });
+        //       } else {
+        //         console.error(`Matiere ID for ${matiereKey} not found.`);
+        //       }
+        //     }
+        //   } else {
+        //     if (!uniqueModuleParcours.has(moduleKey)) {
+        //       const parcoursKey = `${item["NomParcours"]}-${item["codeParcours"]}`;
+        //       const matiereKey = `${item["codeMatiere"]}`;
+
+        //       const matiereId = uniqueMatiere.has(matiereKey)
+        //         ? uniqueMatiere.get(matiereKey)?.id
+        //         : null;
+        //       //console.log("matiereId", uniqueMatiere.get(matiereKey)?.id!);
+        //       if (matiereId) {
+        //         uniqueModuleParcours.set(moduleKey, {
+        //           id: "",
+        //           code_Ue: item["codeUE"],
+        //           semestre_module: "S1",
+        //           libelle: item["NomUE"],
+        //           credit: item["CreditUE"],
+        //           coef: item["CoefUE"],
+        //           nature: item["NatureUE"],
+        //           regime: item["RegimeUE"],
+        //           parcours: uniqueParcours.get(parcoursKey)?.id || "",
+        //           matiere: [matiereId],
+        //         });
+        //       } else {
+        //         console.error(`Matiere ID for ${matiereKey} not found.`);
+        //       }
+        //     }
+        //   }
+        // }
+
         for (const item of jsonData) {
           const moduleKey = `${item["codeUE"]}`;
-          if (Number(item["Semestre_Parcours"].slice(1, 2)) % 2 === 0) {
-            if (!uniqueModuleParcours.has(moduleKey)) {
-              const parcoursKey = `${item["NomParcours"]}-${item["codeParcours"]}`;
-              const matiereKey = `${item["codeMatiere"]}`;
+          const parcoursKey = `${item["NomParcours"]}-${item["codeParcours"]}`;
+          const matiereKey = `${item["codeMatiere"]}`;
+          const semestre_module =
+            Number(item["Semestre_Parcours"].slice(1, 2)) % 2 === 0
+              ? "S2"
+              : "S1";
 
-              const matiereId = uniqueMatiere.has(matiereKey)
-                ? uniqueMatiere.get(matiereKey)?.id
-                : null;
-              //console.log("matiereId", uniqueMatiere.get(matiereKey)?.id!);
-              if (matiereId) {
-                uniqueModuleParcours.set(moduleKey, {
-                  id: "",
-                  code_Ue: item["codeUE"],
-                  semestre_module: "S2",
-                  libelle: item["NomUE"],
-                  credit: item["CreditUE"],
-                  coef: item["CoefUE"],
-                  nature: item["NatureUE"],
-                  regime: item["RegimeUE"],
-                  parcours: uniqueParcours.get(parcoursKey)?.id || "",
-                  matiere: [matiereId],
-                });
-              } else {
-                console.error(`Matiere ID for ${matiereKey} not found.`);
+          const matiereId = uniqueMatiere.has(matiereKey)
+            ? uniqueMatiere.get(matiereKey)?.id
+            : null;
+
+          if (matiereId) {
+            if (!uniqueModuleParcours.has(moduleKey)) {
+              uniqueModuleParcours.set(moduleKey, {
+                id: "",
+                code_Ue: item["codeUE"],
+                semestre_module,
+                libelle: item["NomUE"],
+                credit: item["CreditUE"],
+                coef: item["CoefUE"],
+                nature: item["NatureUE"],
+                regime: item["RegimeUE"],
+                parcours: uniqueParcours.get(parcoursKey)?.id || "",
+                matiere: [matiereId],
+              });
+
+              // Update the parcours object to include the new module
+              const parcours = uniqueParcours.get(parcoursKey);
+              if (parcours) {
+                if (!parcours.modules) {
+                  parcours.modules = [];
+                }
+                if (!parcours.modules.includes(moduleKey)) {
+                  parcours.modules.push(moduleKey);
+                  uniqueParcours.set(parcoursKey, parcours);
+                }
+              }
+            } else {
+              const existingModule = uniqueModuleParcours.get(moduleKey);
+              if (!existingModule.matiere.includes(matiereId)) {
+                existingModule.matiere.push(matiereId);
+                uniqueModuleParcours.set(moduleKey, existingModule);
+
+                // Update the parcours object to include the new matiere in the module
+                const parcours = uniqueParcours.get(parcoursKey);
+                if (parcours) {
+                  if (!parcours.modules) {
+                    parcours.modules = [];
+                  }
+                  if (!parcours.modules.includes(moduleKey)) {
+                    parcours.modules.push(moduleKey);
+                    uniqueParcours.set(parcoursKey, parcours);
+                  }
+                }
               }
             }
           } else {
-            if (!uniqueModuleParcours.has(moduleKey)) {
-              const parcoursKey = `${item["NomParcours"]}-${item["codeParcours"]}`;
-              const matiereKey = `${item["codeMatiere"]}`;
-
-              const matiereId = uniqueMatiere.has(matiereKey)
-                ? uniqueMatiere.get(matiereKey)?.id
-                : null;
-              //console.log("matiereId", uniqueMatiere.get(matiereKey)?.id!);
-              if (matiereId) {
-                uniqueModuleParcours.set(moduleKey, {
-                  id: "",
-                  code_Ue: item["codeUE"],
-                  semestre_module: "S1",
-                  libelle: item["NomUE"],
-                  credit: item["CreditUE"],
-                  coef: item["CoefUE"],
-                  nature: item["NatureUE"],
-                  regime: item["RegimeUE"],
-                  parcours: uniqueParcours.get(parcoursKey)?.id || "",
-                  matiere: [matiereId],
-                });
-              } else {
-                console.error(`Matiere ID for ${matiereKey} not found.`);
-              }
-            }
+            console.error(`Matiere ID for ${matiereKey} not found.`);
           }
         }
 
@@ -1026,7 +1094,7 @@ const ListParcours = () => {
         "CoefUE",
         "NatureUE",
         "RegimeUE",
-        "Semestre_Module",
+        // "Semestre_Module",
         "codeMatiere",
         "NomMatiere",
         "RegimeMatiere",
@@ -1035,7 +1103,7 @@ const ListParcours = () => {
         "TypeMatiere",
         "VolumeHoraire",
         "NomreElimination",
-        "Semestre_Matiere",
+        // "Semestre_Matiere",
       ],
     ]);
     const wb = XLSX.utils.book_new();
@@ -1060,8 +1128,6 @@ const ListParcours = () => {
     setSelectedMention(value);
   };
 
-  const [selectedSemestre, setSelectedSemestre] = useState<string | null>(null);
-  const semestres = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]; // Example groupe numbers
   return (
     <React.Fragment>
       <div className="page-content">
