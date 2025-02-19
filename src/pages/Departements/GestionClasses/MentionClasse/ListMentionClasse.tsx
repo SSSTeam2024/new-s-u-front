@@ -320,8 +320,8 @@ const ListMentionClasse = () => {
       <div className="page-content">
         <Container fluid={true}>
           <Breadcrumb
-            title="Paramètres des départments"
-            pageTitle="Liste mentions Classes"
+            title="Liste des mentions"
+            pageTitle="Liste des mentions"
           />
 
           <Row id="sellersList">

@@ -299,8 +299,8 @@ const ListDomaineClass = () => {
       <div className="page-content">
         <Container fluid={true}>
           <Breadcrumb
-            title="Paramètres des départments"
-            pageTitle="Liste domaines Classes"
+            title="Liste des domaines"
+            pageTitle="Liste des domaines"
           />
 
           <Row id="sellersList">

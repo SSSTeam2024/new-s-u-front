@@ -811,7 +811,7 @@ const Navdata = () => {
       id: "departement",
       label: "Gestion Département",
       icon: "bi bi-house-gear-fill",
-      link: "/departement",
+      link: "/#",
       click: function (e: any) {
         e.preventDefault();
         setIsDeaprtement(!isDeaprtement);
@@ -819,78 +819,80 @@ const Navdata = () => {
         updateIconSidebar(e);
       },
       stateVariables: isDeaprtement,
+
       subItems: [
+
         {
           id: "salles",
           label: "Salles",
           icon: "bi bi-door-closed-fill",
           link: "/departement/gestion-salles/liste-salles",
-          isChildItem: true,
-          click: function (e: any) {
-            e.preventDefault();
-            setIsLevel2(!isLevel2);
-          },
-          stateVariables: isLevel2,
-          childItems: [
-            {
-              id: 1,
-              label: "Liste Des Salles",
-              link: "/departement/gestion-salles/liste-salles",
-              icon: "bi bi-person-fill-exclamation",
-            },
-            {
-              id: 1,
-              label: "Ajouter salle",
-              link: "/departement/gestion-salles/ajouter-salle",
-              icon: "bi bi-person-fill-exclamation",
-            },
-          ],
+         
+          // click: function (e: any) {
+          //   e.preventDefault();
+          //   setIsLevel2(!isLevel2);
+          // },
+          // stateVariables: isLevel2,
+          // childItems: [
+          //   {
+          //     id: 1,
+          //     label: "Liste Des Salles",
+          //     link: "/departement/gestion-salles/liste-salles",
+          //     icon: "bi bi-person-fill-exclamation",
+          //   },
+          //   {
+          //     id: 1,
+          //     label: "Ajouter salle",
+          //     link: "/departement/gestion-salles/ajouter-salle",
+          //     icon: "bi bi-person-fill-exclamation",
+          //   },
+          // ],
         },
         {
           id: "classes",
           label: "Groupes",
           icon: "bi bi-people-fill",
           link: "/departement/gestion-classes/liste-classes",
-          isChildItem: true,
-          click: function (e: any) {
-            e.preventDefault();
-            setIsLevel3(!isLevel3);
-          },
-          stateVariables: isLevel3,
-          childItems: [
-            {
-              id: 1,
-              label: "Liste des groupes",
-              link: "/departement/gestion-classes/liste-classes",
-              icon: "bi bi-people-fill",
-            },
-          ],
+         
+          // click: function (e: any) {
+          //   e.preventDefault();
+          //   setIsLevel3(!isLevel3);
+          // },
+          // stateVariables: isLevel3,
+          // childItems: [
+          //   {
+          //     id: 1,
+          //     label: "Liste des groupes",
+          //     link: "/departement/gestion-classes/liste-classes",
+          //     icon: "bi bi-people-fill",
+          //   },
+          // ],
         },
         {
           id: "departements",
           label: "Départements",
           icon: "bi bi-house-gear-fill",
           link: "/departement/gestion-departements/liste-departements",
-          isChildItem: true,
-          click: function (e: any) {
-            e.preventDefault();
-            setIsLevel4(!isLevel4);
-          },
-          stateVariables: isLevel4,
-          childItems: [
-            {
-              id: 1,
-              label: "Liste Des Départements",
-              link: "/departement/gestion-departements/liste-departements",
-              icon: "bi bi-diagram-3-fill",
-            },
-            {
-              id: 1,
-              label: "Ajouter département",
-              link: "/departement/gestion-departements/departements/add-departement",
-              icon: "bi bi-diagram-3-fill",
-            },
-          ],
+         
+          // click: function (e: any) {
+          //   e.preventDefault();
+          //   setIsLevel4(!isLevel4);
+          // },
+          // stateVariables: isLevel4,
+          // childItems: [
+          //   {
+          //     id: 1,
+          //     label: "Liste Des Départements",
+          //     link: "/departement/gestion-departements/liste-departements",
+          //     icon: "bi bi-diagram-3-fill",
+          //   },
+          //   {
+          //     id: 1,
+          //     label: "Ajouter département",
+          //     link: "/departement/gestion-departements/departements/add-departement",
+          //     icon: "bi bi-diagram-3-fill",
+          //   },
+          // ],
         },
       ],
     },
@@ -919,46 +921,46 @@ const Navdata = () => {
 
         {
           id: 1,
-          label: "Liste Des parcours",
+          label: "Parcours",
           link: "/parcours/gestion-parcours/liste-parcours",
           icon: "bi bi-list",
         },
         {
           id: 3,
-          label: "Liste types des parcours",
+          label: "Types des parcours",
           link: "/parcours/gestion-parcours/liste-type-parcours",
           icon: "bi bi-list",
         },
 
         {
           id: 2,
-          label: "Listes des niveaux",
+          label: "Niveaux",
           link: "/departement/gestion-classes/liste-niveau",
           icon: "bi bi-sliders2-vertical",
         },
         {
           id: 2,
-          label: "Listes des cycles",
+          label: "Cycles",
           link: "/parcours/gestion-parcours/liste-cycle",
           icon: "bi bi-bar-chart-step",
         },
         {
           id: 3,
-          label: "Listes des spécialités",
+          label: "Spécialités",
           link: "/departement/gestion-classes/liste-section",
           icon: "bi bi-diagram-3-fill",
         },
         //added liste mentions classess
         {
           id: 4,
-          label: "Listes des mentions",
+          label: "Mentions",
           link: "/departement/gestion-classes/liste-mentions",
           icon: "bi bi-trophy-fill",
         },
         //added liste domaines classess
         {
           id: 5,
-          label: "Listes des domaines",
+          label: "Domaines",
           link: "/departement/gestion-classes/liste-domaines",
           icon: "bi bi-globe2",
         },

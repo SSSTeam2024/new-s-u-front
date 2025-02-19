@@ -205,7 +205,7 @@ const ListSalles = () => {
       <div className="page-content">
         <Container fluid={true}>
           <Breadcrumb
-            title="Gestion des départements"
+            title="Gestion des salles"
             pageTitle="Liste des salles"
           />
 
