@@ -5,18 +5,13 @@ import { Link, useNavigate } from "react-router-dom";
 import TableContainer from "Common/TableContainer";
 import Swal from "sweetalert2";
 import {
-  TypeInscriptionEtudiant,
-  useDeleteTypeInscriptionEtudiantMutation,
-  useFetchTypeInscriptionsEtudiantQuery,
-} from "features/typeInscriptionEtudiant/typeInscriptionEtudiant";
-import {
   PapierAdministratif,
   useDeletePapierAdministratifMutation,
   useFetchPapierAdministratifQuery,
 } from "features/papierAdministratif/papierAdministratif";
 
 const ListePapierAdministratifs = () => {
-  document.title = "Liste papier administratifs | ENIGA";
+  document.title = "Liste papiers administratifs | ENIGA";
 
   const navigate = useNavigate();
 
@@ -31,7 +26,7 @@ const ListePapierAdministratifs = () => {
   }
 
   function tog_AddPapierAdministratif() {
-    navigate("/ajoutPapierAdministratif");
+    navigate("/papier-administratif/ajouter-papier");
   }
   const { data = [] } = useFetchPapierAdministratifQuery();
   console.log(data);
@@ -215,7 +210,7 @@ const ListePapierAdministratifs = () => {
                           className="add-btn"
                           onClick={() => tog_AddPapierAdministratif()}
                         >
-                          Ajouter papier administratif
+                          Ajouter un papier administratif
                         </Button>
                       </div>
                     </Col>

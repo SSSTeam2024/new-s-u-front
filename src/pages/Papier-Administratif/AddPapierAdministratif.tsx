@@ -153,7 +153,7 @@ const AddPapierAdministratif: React.FC = () => {
                     <Button
                       variant="outline-danger"
                       className="rounded-pill px-4 py-2 transition-all"
-                      onClick={() => navigate("/listePapierAdministratif")}
+                      onClick={() => navigate("/papier-administratif/lister-papier")}
                     >
                       Retour
                     </Button>

@@ -14,7 +14,7 @@ import TableContainer from "Common/TableContainer";
 import { userList } from "Common/data";
 import Flatpickr from "react-flatpickr";
 import dummyImg from "../../assets/images/users/user-dummy-img.jpg";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { RootState } from "app/store";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "features/account/authSlice";
@@ -32,6 +32,8 @@ const ListeNotesPro = () => {
   document.title = "Notes Professionnelles | ENIGA";
 
   const user = useSelector((state: RootState) => selectCurrentUser(state));
+
+  const navigate = useNavigate();
 
   const { data: notesPro } = useFetchNotesProQuery();
 
@@ -67,6 +69,10 @@ const ListeNotesPro = () => {
       ? setIsMultiDeleteButton(true)
       : setIsMultiDeleteButton(false);
   };
+
+  function tog_AddNewGrades() {
+    navigate("/gestion-notes-professionelles/Ajouter-notes-professionelles");
+  }
 
   const handleDeleteAvisEnseignant = async (id: string) => {
     try {
@@ -269,7 +275,21 @@ const ListeNotesPro = () => {
             title="Liste des notes profesionnelles"
             pageTitle="Note profesionnelle"
           />
-
+          <Row className="col-lg-auto ms-auto mb-3">
+            <Col lg={10}>
+            </Col>
+            <Col lg={2}>
+            <div className="hstack gap-2">
+              <Button
+                variant="primary"
+                className="add-btn"
+                onClick={() => tog_AddNewGrades()}
+              >
+                Ajouter une note professionnelle
+              </Button>
+            </div>
+            </Col>
+          </Row>
           <Row id="usersList">
             <Col lg={12}>
               {/* <Card>

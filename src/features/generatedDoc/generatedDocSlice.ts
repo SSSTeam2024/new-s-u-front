@@ -5,11 +5,11 @@ import { Personnel } from "features/personnel/personnelSlice";
 import { TemplateBody } from "features/templateBody/templateBodySlice";
 
 export interface GeneratedDoc {
-  _id: string;
-  personnel: Personnel;
-  etudiant: Etudiant;
-  enseignant: Enseignant;
-  model: TemplateBody;
+  _id?: string;
+  personnel?: Personnel | string;
+  etudiant?: Etudiant | string;
+  enseignant?: Enseignant | string;
+  model: TemplateBody | string;
   body: string;
   date_generation: string;
   num_ordre: string;
@@ -31,7 +31,7 @@ export const generatedDocSlice = createApi({
       //   providesTags: ["Classe"],
       // }),
 
-      saveGeneratedDoc: builder.mutation<void, GeneratedDoc>({
+      saveGeneratedDoc: builder.mutation<GeneratedDoc, GeneratedDoc>({
         query(payload) {
           return {
             url: "save-generated-doc",

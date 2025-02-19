@@ -1,32 +1,18 @@
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState, useMemo } from "react";
 import {
   Button,
   Card,
   Col,
   Container,
-  Form,
-  Modal,
   Row,
 } from "react-bootstrap";
 import Breadcrumb from "Common/BreadCrumb";
 import { useNavigate } from "react-router-dom";
-import CountUp from "react-countup";
 import TableContainer from "Common/TableContainer";
-import { userList } from "Common/data";
-import Flatpickr from "react-flatpickr";
-import dummyImg from "../../assets/images/users/user-dummy-img.jpg";
 import { Link } from "react-router-dom";
 import { RootState } from "app/store";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "features/account/authSlice";
-import { actionAuthorization } from "utils/pathVerification";
-import {
-  useFetchAvisEnseignantQuery,
-  AvisEnseignant,
-  useDeleteAvisEnseignantMutation,
-} from "features/avisEnseignant/avisEnseignantSlice";
-import Swal from "sweetalert2";
-import { useFetchDeplacementQuery } from "features/deplacement/deplacementSlice";
 import { useFetchMissionQuery } from "features/mission/missionSlice";
 import {
   TemplateBody,
@@ -65,6 +51,10 @@ const ListeMissions = () => {
       },
     });
   };
+
+  function tog_AddTask() {
+    navigate("/gestion-mission/ajouter-mission");
+  }
 
   const columns = useMemo(
     () => [
@@ -259,9 +249,20 @@ const ListeMissions = () => {
                         <input
                           type="text"
                           className="form-control search"
-                          placeholder="Chercher un avis..."
+                          placeholder="Chercher ..."
                         />
                         <i className="ri-search-line search-icon"></i>
+                      </div>
+                    </Col>
+                    <Col className="col-lg-auto ms-auto">
+                      <div className="hstack gap-2">
+                        <Button
+                          variant="primary"
+                          className="add-btn"
+                          onClick={() => tog_AddTask()}
+                        >
+                          Ajouter une tache
+                        </Button>
                       </div>
                     </Col>
                   </Row>

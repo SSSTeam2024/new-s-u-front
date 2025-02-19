@@ -137,7 +137,7 @@ const SingleDemandeEtudiant = (props: any) => {
                     <Card.Body>
                       <div className="mt-n5">
                         <img
-                          src={`${process.env.REACT_APP_API_URL}/files/etudiantFiles/PhotoProfil/${state.state?.studentId.photo_profil}`}
+                          src={`${process.env.REACT_APP_API_URL}/files/etudiantFiles/PhotoProfil/${state.state?.studentId?.photo_profil!}`}
                           alt=""
                           className="rounded-circle p-1 bg-body mt-n5"
                           width="150"
@@ -160,7 +160,7 @@ const SingleDemandeEtudiant = (props: any) => {
                     <Button
                       onClick={() =>
                         navigate(`/gestion-etudiant/compte-etudiant`, {
-                          state: { _id: state.state?.studentId._id },
+                          state: { _id: state.state?.studentId?._id! },
                         })
                       }
                       type="button"
@@ -182,8 +182,8 @@ const SingleDemandeEtudiant = (props: any) => {
                           <td className="fs-5">Nom et Prénom:</td>
                           <td>
                             <span className="mb-1 fs-5">
-                              {state.state?.studentId.nom_fr}{" "}
-                              {state.state?.studentId.prenom_fr}
+                              {state.state?.studentId?.nom_fr!}{" "}
+                              {state.state?.studentId?.prenom_fr!}
                             </span>
                           </td>
                         </tr>
@@ -191,7 +191,7 @@ const SingleDemandeEtudiant = (props: any) => {
                           <td className="fs-5">CIN:</td>
                           <td>
                             <span className="mb-1 fs-5">
-                              {state.state?.studentId.num_CIN}
+                              {state.state?.studentId?.num_CIN!}
                             </span>
                           </td>
                         </tr>
@@ -200,8 +200,7 @@ const SingleDemandeEtudiant = (props: any) => {
                           <td>
                             <span className="mb-1 fs-5">
                               {
-                                state.state?.studentId.groupe_classe
-                                  .nom_classe_fr
+                                state.state?.studentId?.groupe_classe?.nom_classe_fr!
                               }
                             </span>
                           </td>
@@ -210,7 +209,7 @@ const SingleDemandeEtudiant = (props: any) => {
                           <td className="fs-5">Téléphone</td>
                           <td>
                             <span className="mb-1 fs-5">
-                              {state.state?.studentId.num_phone}
+                              {state.state?.studentId?.num_phone!}
                             </span>
                           </td>
                         </tr>
@@ -234,13 +233,11 @@ const SingleDemandeEtudiant = (props: any) => {
                   <div className="flex-shrink-0">
                     <Link
                       to="/demandes-etudiant/generer-demande-etudiant"
-                      // onClick={()=>navigate("")}
-                      // type="button"
                       state={state.state}
                       className="btn btn-danger btn-label m-1"
                     >
                       <i className="bi bi-file-earmark-pdf label-icon align-middle fs-16 me-2"></i>
-                      Générer
+                      {state.state.status === 'traité' && state.state.generated_doc !== null ? (<>Visualiser</>) : (<>Générer</>)}
                     </Link>
                     <Button type="button" className="btn btn-success btn-label">
                       <i className="bi bi-postcard label-icon align-middle fs-16 me-2"></i>
@@ -259,7 +256,7 @@ const SingleDemandeEtudiant = (props: any) => {
                           <td className="fs-5">Pièce demandée:</td>
                           <td>
                             <span className="mb-1 fs-5">
-                              {state.state?.title}
+                              {state.state?.piece_demande?.title!}
                             </span>
                           </td>
                         </tr>
@@ -267,7 +264,7 @@ const SingleDemandeEtudiant = (props: any) => {
                           <td className="fs-5">Description:</td>
                           <td>
                             <span className="mb-1 fs-5">
-                              {state.state?.description}
+                              {state.state?.description!}
                             </span>
                           </td>
                         </tr>
@@ -275,7 +272,7 @@ const SingleDemandeEtudiant = (props: any) => {
                           <td className="fs-5">Status:</td>
                           <td>
                             <span className="mb-1 fs-5">
-                              {state.state?.status}
+                              {state.state?.status!}
                             </span>
                           </td>
                         </tr>
@@ -284,7 +281,7 @@ const SingleDemandeEtudiant = (props: any) => {
                           <td>
                             <span className="mb-1 fs-5">
                               {new Date(
-                                state.state?.createdAt
+                                state.state?.createdAt!
                               ).toLocaleDateString("fr-FR")}
                             </span>
                           </td>

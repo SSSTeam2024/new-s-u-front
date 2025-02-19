@@ -12,7 +12,7 @@ import {
 } from "react-bootstrap";
 import Breadcrumb from "Common/BreadCrumb";
 import TableContainer from "Common/TableContainer";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import {
   useFetchAllUsersQuery,
@@ -44,6 +44,8 @@ interface UserPermissionHistoryItem {
 
 const ListeAdmin = () => {
   document.title = "Liste des admins | ENIGA";
+
+  const navigate = useNavigate();
 
   const { data: usersResponse = [] } = useFetchAllUsersQuery();
   const [deleteUser] = useDeleteUserMutation();
@@ -104,6 +106,10 @@ const ListeAdmin = () => {
     },
     buttonsStyling: false,
   });
+
+  function tog_AddAdmin() {
+    navigate("/admin/ajouter-admin");
+  }
 
   const AlertDelete = async (_id: string) => {
     swalWithBootstrapButtons
@@ -313,6 +319,17 @@ const ListeAdmin = () => {
                           placeholder="Chercher un admin..."
                         />
                         <i className="ri-search-line search-icon"></i>
+                      </div>
+                    </Col>
+                    <Col className="col-lg-auto ms-auto">
+                      <div className="hstack gap-2">
+                        <Button
+                          variant="primary"
+                          className="add-btn"
+                          onClick={() => tog_AddAdmin()}
+                        >
+                          Ajouter un admin
+                        </Button>
                       </div>
                     </Col>
                     {isMultiDeleteButton && (

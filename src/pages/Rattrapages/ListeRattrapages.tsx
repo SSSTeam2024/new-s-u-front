@@ -29,7 +29,7 @@ const ListeRattrapages = () => {
 
   const navigate = useNavigate();
   function tog_AddRattrapage() {
-    navigate("/ajouter-rattrapage");
+    navigate("/rattrapage/ajouter-rattrapage");
   }
   const [searchQuery, setSearchQuery] = useState("");
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {

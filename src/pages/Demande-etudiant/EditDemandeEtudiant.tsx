@@ -45,7 +45,7 @@ const EditDemandeEtudiant = () => {
   const [status, setStatus] = useState(state?.status || "");
   const [updateDemande] = useUpdateDemandeEtudiantMutation();
   const Navigate = (studentId: any) => {
-    navigate("/demande-etudiant/single-demande-etudiant");
+    navigate("/demandes-etudiant/Liste-demandes-etudiant");
   };
 
   // Handle form submission
@@ -61,7 +61,7 @@ const EditDemandeEtudiant = () => {
   
       // Delay navigation to allow the notification to be visible
       setTimeout(() => {
-        navigate("/demande-etudiant/Liste-demandes-etudiant");
+        navigate("/demandes-etudiant/Liste-demandes-etudiant");
       }, 2000); // Adjust delay to match the timer in the Swal notification
     } catch (error) {
       console.error("Failed to update demande:", error);
