@@ -436,7 +436,9 @@ const ListFicheVoeux = () => {
                           {voeux?.matieres?.map((matiere: any) => (
                             <li>
                               <span className="fw-medium">
-                                {matiere?.matiere + " " + matiere?.type}
+                                {matiere?.matiere +
+                                  " " +
+                                  matiere?.types[0].type}
                               </span>
                             </li>
                           ))}

@@ -394,6 +394,7 @@ const GestionEmploiClasse = () => {
   const [getTeachersPeriods] = useGetTeachersPeriodsMutation();
   const { data: allVoeux = [] } = useFetchFicheVoeuxsQuery();
   const voeux = allVoeux;
+  console.log(voeux);
   const { data: classe } = useFetchClasseByIdQuery(
     classeDetails?.id_classe?._id
   );
@@ -821,6 +822,7 @@ const GestionEmploiClasse = () => {
   };
 
   async function tog_AddSeanceModals() {
+    console.log("wishList", wishList);
     setShowForm(true);
     let tempIds = [];
     for (const wish of wishList) {
@@ -834,6 +836,8 @@ const GestionEmploiClasse = () => {
 
     let result: any = await getTeachersPeriods(payload).unwrap();
 
+    console.log("teachers periods", result);
+
     setTeachersPeriods(result);
 
     let averages = [];
@@ -842,11 +846,13 @@ const GestionEmploiClasse = () => {
         let wish_teacher = wishList.filter(
           (wish) => wish.teacher._id === element.id_teacher
         );
+        console.log("wish_teacher", wish_teacher);
         let average = {
           teacher: wish_teacher[0].teacher,
           hours: 0,
         };
         averages.push(average);
+        console.log("average", average);
       } else {
         let merged = mergeIntervals(element?.periods!);
 
@@ -862,6 +868,7 @@ const GestionEmploiClasse = () => {
         averages.push(average);
       }
     }
+    console.log("averages", averages);
     setAverageTeachers(averages);
     setShowForm(false);
     setCanAddSession(true);
@@ -1155,7 +1162,7 @@ const GestionEmploiClasse = () => {
       let tempMat = [];
       for (let mat of currentVoeux[0]?.matieres!) {
         tempMat.push({
-          name: mat.matiere + " " + mat.type,
+          name: mat.matiere + " " + mat.types[0].type,
           id: mat._id,
         });
       }
@@ -1968,7 +1975,7 @@ const GestionEmploiClasse = () => {
                                   >
                                     {`${element?.teacher?.prenom_fr!} ${element
                                       ?.teacher
-                                      ?.nom_fr!}  ${element?.hours!}/${annualMaxHE}`}
+                                      ?.nom_fr!}   ${element?.hours!}/${annualMaxHE}`}
                                   </option>
                                 );
                               })}

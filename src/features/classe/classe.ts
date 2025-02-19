@@ -21,6 +21,7 @@ export interface Classe {
   niveau_classe: Niveau;
   matieres: Matiere[];
   groupe_number: string;
+  parcours?: any;
 }
 
 export interface AssignMatieresPayload {
