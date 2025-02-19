@@ -207,8 +207,20 @@ import ListeModulesParcours from "pages/GestionParcours/ModulesParcours/ListeMod
 import ListTypeParcours from "pages/GestionParcours/TypeParcours/ListTypeParcours";
 import AddPlanParcours from "pages/GestionParcours/Parcours/AddPlanParcours";
 import AjouterAbsencePersonnel from "pages/AbsencePersonnel/AjouterAbsencePersonnel";
+import ListeCycle from "pages/GestionParcours/Cycle/ListeCycle";
+import ViewParcours from "pages/GestionParcours/Parcours/ViewParcours";
 const authProtectedRoutes = [
   { path: "/dashboard", component: <Dashboard /> },
+  // view parcours
+  {
+    path: "/parcours/gestion-parcours/view-parcours",
+    component: <ViewParcours />,
+  },
+  // liste cycles
+  {
+    path: "/parcours/gestion-parcours/liste-cycle",
+    component: <ListeCycle />,
+  },
 
   //Parcours Part
 
@@ -925,13 +937,12 @@ const authProtectedRoutes = [
     component: <EquilibreHorairesGrade />,
   },
 
-  // absence personnel 
+  // absence personnel
 
   {
     path: "/absence-personnel/ajouter-absence-personnel",
     component: <AjouterAbsencePersonnel />,
   },
-
 
   // Accounts
   { path: "/account", component: <MyAccount /> },

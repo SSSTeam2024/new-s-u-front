@@ -216,6 +216,7 @@ export interface EtudiantExcel {
   matricule_number: string;
   passeport_number: string;
   cnss_number: string;
+  emails?: string[];
 }
 export const etudiantSlice = createApi({
   reducerPath: "Etudiant",

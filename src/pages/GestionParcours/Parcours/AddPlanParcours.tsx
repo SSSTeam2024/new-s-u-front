@@ -7,7 +7,7 @@ import "./AddPlanParcours.css";
 
 export interface ModuleParcours {
   _id: string;
-  semestre: string;
+  semestre_module: string;
   code_Ue: string;
   libelle: string;
   credit: string;
@@ -33,7 +33,7 @@ const AddPlanParcours = () => {
 
   const [formData, setFormData] = useState({
     _id: "",
-    semestre: "",
+    semestre_module: "",
     code_Ue: "",
     libelle: "",
     credit: "",
@@ -46,7 +46,7 @@ const AddPlanParcours = () => {
   const [modules, setModules] = useState<ModuleParcours[]>([
     {
       _id: "",
-      semestre: "",
+      semestre_module: "",
       code_Ue: "",
       libelle: "",
       credit: "",
@@ -62,7 +62,7 @@ const AddPlanParcours = () => {
       ...modules,
       {
         _id: "",
-        semestre: "",
+        semestre_module: "",
         code_Ue: "",
         libelle: "",
         credit: "",
@@ -119,7 +119,7 @@ const AddPlanParcours = () => {
     });
   };
   const handleSemestreChange = (e: any) => {
-    setFormData({ ...formData, semestre: e.target.value });
+    setFormData({ ...formData, semestre_module: e.target.value });
     setModules([]); // Reset modules when semestre changes
   };
 
@@ -136,7 +136,7 @@ const AddPlanParcours = () => {
                       <h5>Semestre</h5>
                       <Form.Select
                         id="semestre"
-                        value={formData.semestre}
+                        value={formData.semestre_module}
                         onChange={handleSemestreChange}
                         className="form-select-lg form-select-info"
                       >

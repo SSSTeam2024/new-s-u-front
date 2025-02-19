@@ -20,11 +20,18 @@ export interface Classe {
   };
   niveau_classe: Niveau;
   matieres: Matiere[];
+  groupe_number: string;
 }
 
 export interface AssignMatieresPayload {
   _id: string;
   matiereIds: string[];
+}
+
+export interface AssignParcoursPayload {
+  _id: string;
+  parcoursIds: string[];
+  semestres: string[];
 }
 export const classeSlice = createApi({
   reducerPath: "Classe",
@@ -125,6 +132,15 @@ export const classeSlice = createApi({
         query: (classeId) => `${classeId}/matieres`,
         providesTags: ["Classe"],
       }),
+
+      assignParcoursToClasse: builder.mutation<void, AssignParcoursPayload>({
+        query: (payload) => ({
+          url: `/assign-parcours/${payload._id}/${payload.parcoursIds[0]}`, // Use the first parcoursId
+          method: "PUT",
+          body: { semestres: payload.semestres },
+        }),
+        invalidatesTags: ["Classe"],
+      }),
     };
   },
 });
@@ -141,4 +157,5 @@ export const {
   useFetchClassesByTeacherMutation,
   useGetMatieresByClasseIdQuery,
   useGetClasseValueMutation,
+  useAssignParcoursToClasseMutation,
 } = classeSlice;

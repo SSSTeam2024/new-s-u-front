@@ -16,6 +16,7 @@ import Swal from "sweetalert2";
 import TableContainer from "Common/TableContainer";
 import {
   Classe,
+  useAssignParcoursToClasseMutation,
   useDeleteClasseMutation,
   useFetchClassesQuery,
 } from "features/classe/classe";
@@ -23,9 +24,14 @@ import {
   useFetchEtudiantsQuery,
   useUpdateGroupeClasseMutation,
 } from "features/etudiant/etudiantSlice";
+import { useFetchAllCycleQuery } from "features/cycle/cycle";
+import {
+  useFetchParcoursQuery,
+  useGetSemestreByIdParcoursMutation,
+} from "features/parcours/parcours";
 
 const ListClasses = () => {
-  document.title = "Liste des classes | ENIGA";
+  document.title = "Liste des groupes | ENIGA";
   const navigate = useNavigate();
   const [modal_AffecterEtudiant, setModal_AffecterEtudiant] =
     useState<boolean>(false);
@@ -41,7 +47,9 @@ const ListClasses = () => {
     setModal_AffecterEtudiant(!modal_AffecterEtudiant);
   };
   const { data = [] } = useFetchClassesQuery();
+  console.log(data);
   const { data: AllEtudiants = [] } = useFetchEtudiantsQuery();
+
   const [updateGroupeClasse, { isLoading, isSuccess }] =
     useUpdateGroupeClasseMutation();
 
@@ -192,36 +200,69 @@ const ListClasses = () => {
         }
       });
   };
+  const [selectedParcours, setSelectedParcours] = useState<string | null>(null);
+  const [selectedSemesters, setSelectedSemesters] = useState<string[]>([]);
+  const [semesters, setSemesters] = useState<string[]>([]);
+  const [selectedClasse, setSelectedClasse] = useState<Classe | null>(null);
+  const { data: AllParcours = [] } = useFetchParcoursQuery();
+  const [assignParcours] = useAssignParcoursToClasseMutation();
+  const [getSemestreByIdParcours] = useGetSemestreByIdParcoursMutation();
+  const [modal_AddOrderModals, setmodal_AddOrderModals] =
+    useState<boolean>(false);
+  function tog_AddOrderModals() {
+    setmodal_AddOrderModals(!modal_AddOrderModals);
+  }
+  const [isAssignParcoursModalOpen, setIsAssignParccoursModalOpen] =
+    useState(false);
+
+  const handleGetSemestreByParcoursId = async (
+    id: string
+  ): Promise<string[]> => {
+    try {
+      const data = await getSemestreByIdParcours(id).unwrap();
+      return data; // ✅ Return the fetched data (string[])
+    } catch (error) {
+      console.error("Error fetching semestres:", error);
+      return []; // ✅ Return an empty array in case of error
+    }
+  };
+
+  // const handleParcoursChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  //   setSelectedParcours(e.target.value);
+  //   setSemesters(handleGetSemestreByParcoursId(e.target.value));
+  // };
+
+  const handleParcoursChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedId = e.target.value;
+    setSelectedParcours(selectedId);
+
+    handleGetSemestreByParcoursId(selectedId)
+      .then((semestersData) => setSemesters(semestersData)) // ✅ Now this works
+      .catch((error) => console.error("Error fetching semestres:", error));
+  };
+  console.log(semesters);
+  const handleSemesterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value, checked } = e.target;
+    setSelectedSemesters((prev) =>
+      checked ? [...prev, value] : prev.filter((s) => s !== value)
+    );
+  };
+  const classeId = selectedClasse?._id;
+
+  const [showOffcanvas, setShowOffcanvas] = useState(false);
+  const [offcanvasTitle, setOffcanvasTitle] = useState("");
+  const [offcanvasData, setOffcanvasData] = useState<string[]>([]);
+
+  const handleShowOffcanvas = (title: string, data: any[]) => {
+    setOffcanvasTitle(title);
+    setOffcanvasData(
+      data.map((item) => item.parcours.modules[0].matiere[0].matiere)
+    );
+    setShowOffcanvas(true);
+  };
 
   const columns = useMemo(
     () => [
-      {
-        Header: (
-          <div className="form-check">
-            {" "}
-            <input
-              className="form-check-input"
-              type="checkbox"
-              id="checkAll"
-              value="option"
-            />{" "}
-          </div>
-        ),
-        Cell: (cellProps: any) => {
-          return (
-            <div className="form-check">
-              {" "}
-              <input
-                className="form-check-input"
-                type="checkbox"
-                name="chk_child"
-                defaultValue="option1"
-              />{" "}
-            </div>
-          );
-        },
-        id: "#",
-      },
       {
         Header: "Nom Classe (FR)",
         accessor: "nom_classe_fr",
@@ -241,14 +282,51 @@ const ListClasses = () => {
         filterable: true,
       },
       {
-        Header: "Section",
+        Header: "Spécialité",
         accessor: (row: any) =>
           row.niveau_classe?.sections[0]?.abreviation! || "",
         disableFilters: true,
         filterable: true,
       },
       {
-        Header: "Affecter Matières",
+        Header: "Cycle",
+        accessor: (row: any) => row.niveau_classe?.cycles[0]?.cycle_fr! || "",
+        disableFilters: true,
+        filterable: true,
+      },
+      {
+        Header: "Parcours",
+        accessor: (row: any) =>
+          row.parcours?.nom_parcours
+            ? row.parcours.nom_parcours
+            : "Aucun parcours assigné",
+        disableFilters: true,
+        filterable: true,
+      },
+      {
+        Header: "Semestres",
+        accessor: (row: any) =>
+          row?.semestres && row.semestres.length > 0
+            ? row.semestres.join(", ")
+            : "Aucun semestre assigné",
+        disableFilters: true,
+        filterable: true,
+      },
+      {
+        Header: "Groupe",
+        accessor: (row: any) => (row.groupe_number ? row.groupe_number : "-"),
+        disableFilters: true,
+        filterable: true,
+      },
+      // {
+      //   Header: "Matieres",
+      //   accessor: (row: any) =>
+      //     row?.parcours?.modules[0]?.matiere[0]?.matiere?.length!,
+      //   disableFilters: true,
+      //   filterable: true,
+      // },
+      {
+        Header: "Affecter Parcours",
         disableFilters: true,
         filterable: true,
         accessor: (classe: Classe) => {
@@ -256,9 +334,13 @@ const ListClasses = () => {
             <ul className="hstack gap-2 list-unstyled mb-0">
               <li>
                 <Link
-                  to="/departement/gestion-classes/affecter-matiere"
+                  to=""
                   className="badge bg-success-subtle text-success remove-item-btn"
                   state={classe}
+                  onClick={() => {
+                    setSelectedClasse(classe); // Store selected class
+                    tog_AddOrderModals(); // Open modal
+                  }}
                 >
                   <i
                     className="ph ph-file-plus"
@@ -351,6 +433,49 @@ const ListClasses = () => {
     ],
     []
   );
+  const notify = () => {
+    Swal.fire({
+      position: "center",
+      icon: "success",
+      title: "Parcours a été assigné avec succés",
+      showConfirmButton: false,
+      timer: 2000,
+    });
+  };
+  const onSubmitParcours = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (!selectedParcours || selectedSemesters.length === 0) {
+      alert("Veuillez sélectionner un parcours et au moins un semestre.");
+      return;
+    }
+
+    if (!classeId) {
+      alert("Classe ID not found!");
+      return;
+    }
+
+    // ✅ Debugging output
+    console.log("Sending Data:", {
+      _id: classeId,
+      parcoursIds: [selectedParcours],
+      semestres: selectedSemesters,
+    });
+
+    try {
+      await assignParcours({
+        _id: classeId,
+        parcoursIds: [selectedParcours],
+        semestres: selectedSemesters, // ✅ Check if this is correctly populated
+      }).unwrap();
+      setSelectedSemesters([]);
+      setSemesters([]);
+      notify();
+      setIsAssignParccoursModalOpen(false);
+    } catch (error: any) {
+      console.error("API Error:", error);
+    }
+  };
 
   return (
     <React.Fragment>
@@ -358,7 +483,7 @@ const ListClasses = () => {
         <Container fluid={true}>
           <Breadcrumb
             title="Gestion des départements"
-            pageTitle="Liste des classes"
+            pageTitle="Liste des groupes"
           />
 
           <Row id="sellersList">
@@ -519,6 +644,7 @@ const ListClasses = () => {
                         data={data || []}
                         iscustomPageSize={false}
                         isBordered={false}
+                        isPagination={true}
                         customPageSize={10}
                         className="custom-header-css table align-middle table-nowrap"
                         tableClass="table-centered align-middle table-nowrap mb-0"
@@ -724,6 +850,76 @@ const ListClasses = () => {
                 </Form>
               )}
             </Modal.Body>
+          </Modal>
+
+          <Modal
+            show={modal_AddOrderModals}
+            onHide={() => setmodal_AddOrderModals(false)}
+            centered
+          >
+            <Modal.Header className="px-4 pt-4" closeButton>
+              <h5 className="modal-title" id="exampleModalLabel">
+                Affecter Parcours Pour Groupe
+              </h5>
+            </Modal.Header>
+            <Form className="tablelist-form" onSubmit={onSubmitParcours}>
+              <Modal.Body className="p-4">
+                {/* Select Parcours */}
+                <Form.Group className="mb-3">
+                  <Form.Label>Sélectionnez un Parcours</Form.Label>
+                  <Form.Select
+                    value={selectedParcours || ""}
+                    onChange={handleParcoursChange}
+                  >
+                    <option value="">-- Choisir un Parcours --</option>
+                    {AllParcours.map((parcours) => (
+                      <option key={parcours._id} value={parcours._id}>
+                        {parcours.nom_parcours}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </Form.Group>
+
+                {/* Select Semesters */}
+                <Form.Group className="mb-3">
+                  <Form.Label>Sélectionnez les Semestres</Form.Label>
+                  <div>
+                    {semesters.map((semestre) => (
+                      <Form.Check
+                        key={semestre}
+                        type="checkbox"
+                        label={semestre}
+                        value={semestre}
+                        checked={selectedSemesters.includes(semestre)}
+                        onChange={handleSemesterChange}
+                      />
+                    ))}
+                  </div>
+                </Form.Group>
+              </Modal.Body>
+
+              <div className="modal-footer">
+                <div className="hstack gap-2 justify-content-end">
+                  <Button
+                    className="btn-ghost-danger"
+                    onClick={() => setmodal_AddOrderModals(false)}
+                  >
+                    Fermer
+                  </Button>
+                  <Button
+                    variant="success"
+                    id="add-btn"
+                    type="submit"
+                    onClick={tog_AddOrderModals}
+                    disabled={
+                      !selectedParcours || selectedSemesters.length === 0
+                    }
+                  >
+                    Ajouter
+                  </Button>
+                </div>
+              </div>
+            </Form>
           </Modal>
         </Container>
       </div>

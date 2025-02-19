@@ -80,40 +80,6 @@ const ListParametresEtudiants = () => {
   const columns = useMemo(
     () => [
       {
-        Header: (
-          <div className="form-check">
-            {" "}
-            <input
-              className="form-check-input"
-              type="checkbox"
-              id="checkAll"
-              value="option"
-            />{" "}
-          </div>
-        ),
-        Cell: (cellProps: any) => {
-          return (
-            <div className="form-check">
-              {" "}
-              <input
-                className="form-check-input"
-                type="checkbox"
-                name="chk_child"
-                defaultValue="option1"
-              />{" "}
-            </div>
-          );
-        },
-        id: "#",
-      },
-      {
-        Header: "Value",
-        accessor: "value_etat_etudiant",
-        disableFilters: true,
-        filterable: true,
-      },
-
-      {
         Header: "Etat Compte Etudiant",
         accessor: "etat_fr",
         disableFilters: true,
