@@ -209,6 +209,7 @@ import AddPlanParcours from "pages/GestionParcours/Parcours/AddPlanParcours";
 import AjouterAbsencePersonnel from "pages/AbsencePersonnel/AjouterAbsencePersonnel";
 import ListeCycle from "pages/GestionParcours/Cycle/ListeCycle";
 import ViewParcours from "pages/GestionParcours/Parcours/ViewParcours";
+import ParametresEmploi from "pages/Departements/ParametresEmploi/ParametresEmploi";
 const authProtectedRoutes = [
   { path: "/dashboard", component: <Dashboard /> },
   // view parcours
@@ -935,6 +936,11 @@ const authProtectedRoutes = [
   {
     path: "/gestion-emplois/emlpoi-enseignant/liste-charges-grade",
     component: <EquilibreHorairesGrade />,
+  },
+
+  {
+    path: "gestion-emplois-classe/parametres-emplois-classe",
+    component: <ParametresEmploi />,
   },
 
   // absence personnel
