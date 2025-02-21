@@ -50,9 +50,11 @@ export const replaceShortCodes = (demandData: any, globalData: any, docNumber?: 
 
   if (newBody?.includes("اسم-الطالب")) {
     newBody = newBody?.replace(
-      "اسم-الطالب",
-      studentId?.prenom_ar! + " " + studentId?.nom_ar!
-    );
+      "اسم-الطالب", studentId?.prenom_ar! );
+  }
+  if (newBody?.includes("لقب_الطالب")) {
+    newBody = newBody?.replace(
+      "لقب_الطالب", studentId?.nom_ar!);
   }
   if (newBody?.includes("تاريخ-ولادة-الطالب")) {
     newBody = newBody?.replace("تاريخ-ولادة-الطالب", studentId?.date_naissance!);
@@ -72,7 +74,7 @@ export const replaceShortCodes = (demandData: any, globalData: any, docNumber?: 
   if (newBody?.includes("حالة-حساب-الطالب")) {
     newBody = newBody?.replace(
       "حالة-حساب-الطالب",
-      studentId?.etat_compte?.etat_ar!
+      studentId?.etat_compte_Ar!
     );
   }
   if (newBody?.includes("مجموعة-الطالب")) {
@@ -93,46 +95,47 @@ export const replaceShortCodes = (demandData: any, globalData: any, docNumber?: 
   if (newBody?.includes("ايميل-الطالب")) {
     newBody = newBody?.replace("ايميل-الطالب", studentId?.email!);
   }
-  if (newBody?.includes("وظيفة-اب-الطالب")) {
-    newBody = newBody?.replace("وظيفة-اب-الطالب", studentId?.job_pere!);
-  }
-  if (newBody?.includes("اسم-اب-الطالب")) {
-    newBody = newBody?.replace("اسم-اب-الطالب", studentId?.nom_pere!);
-  }
-  if (newBody?.includes("اسم-ام-الطالب")) {
-    newBody = newBody?.replace("اسم-ام-الطالب", studentId?.nom_mere!);
-  }
+ 
   if (newBody?.includes("نوع-التسجيل")) {
-    newBody = newBody?.replace(
-      "نوع-التسجيل",
-      studentId?.type_inscription?.type_ar!
-    );
+    newBody = newBody?.replace( "نوع-التسجيل", studentId?.type_inscription_ar!);
   }
-
+  if (newBody?.includes("هاتف_الولي")) {
+    newBody = newBody?.replace(  "هاتف_الولي", studentId?.tel_parents!);
+  }
+  if (newBody?.includes("معدل_الباكالوريا")) {
+    newBody = newBody?.replace("معدل_الباكالوريا", studentId?.moyen!);
+  }
+  if (newBody?.includes("المستوى_الدراسي")) {
+    newBody = newBody?.replace("المستوى_الدراسي", studentId?.NiveauAr!);
+  }
+  if (newBody?.includes("شهادة_الطالب")) {
+    newBody = newBody?.replace("شهادة_الطالب", studentId?.DiplomeAr!);
+  }
+  if (newBody?.includes("اختصاص_الطالب")) {
+    newBody = newBody?.replace("اختصاص_الطالب", studentId?.SpecialiteAr!);
+  }
+  if (newBody?.includes("مرحلة_الطالب")) {
+    newBody = newBody?.replace("مرحلة_الطالب", studentId?.Cycle_Ar!);
+  }
+  
   // STUDENT fr
   if (newBody?.includes("nom_etudiant")) {
-    newBody = newBody?.replace(
-      "nom_etudiant",
-      studentId?.prenom_fr! + " " + studentId?.nom_fr!
-    );
+    newBody = newBody?.replace("nom_etudiant", studentId?.nom_fr! );
+  }
+  if (newBody?.includes("prénom_étudiant")) {
+    newBody = newBody?.replace("prénom_étudiant",studentId?.prenom_fr! );
   }
   if (newBody?.includes("sexe-etudiant")) {
     newBody = newBody?.replace("sexe-etudiant", studentId?.sexe!);
   }
   if (newBody?.includes("date_naissance_etudiant")) {
-    newBody = newBody?.replace(
-      "date_naissance_etudiant",
-      studentId?.date_naissance!
-    );
+    newBody = newBody?.replace("date_naissance_etudiant", studentId?.date_naissance!);
   }
   if (newBody?.includes("adresse_etudiant")) {
     newBody = newBody?.replace("adresse_etudiant", studentId?.adress_fr!);
   }
   if (newBody?.includes("lieu_naissance-etudiant")) {
-    newBody = newBody?.replace(
-      "lieu_naissance-etudiant",
-      studentId?.lieu_naissance_fr!
-    );
+    newBody = newBody?.replace("lieu_naissance-etudiant",studentId?.lieu_naissance_fr!);
   }
   if (newBody?.includes("nationalité-etudiant")) {
     newBody = newBody?.replace("nationalité-etudiant", studentId?.nationalite!);
@@ -141,28 +144,13 @@ export const replaceShortCodes = (demandData: any, globalData: any, docNumber?: 
     newBody = newBody?.replace("cin_etudiant", studentId?.num_CIN!);
   }
   if (newBody?.includes("etat-compte-etudiant")) {
-    newBody = newBody?.replace(
-      "etat-compte-etudiant",
-      studentId?.etat_compte.etat_fr!
-    );
+    newBody = newBody?.replace( "etat-compte-etudiant",studentId?.etat_compte.etat_fr!);
   }
   if (newBody?.includes("classe_etudiant")) {
-    newBody = newBody?.replace(
-      "classe_etudiant",
-      studentId?.groupe_classe?.nom_classe_fr!
-    );
-  }
-  if (newBody?.includes("classe_etudiant")) {
-    newBody = newBody?.replace(
-      "classe_etudiant",
-      studentId?.groupe_classe?.nom_classe_fr!
-    );
+    newBody = newBody?.replace("classe_etudiant",studentId?.groupe_classe?.nom_classe_fr!);
   }
   if (newBody?.includes("type_inscription")) {
-    newBody = newBody?.replace(
-      "type_inscription",
-      studentId?.type_inscription?.type_fr!
-    );
+    newBody = newBody?.replace("type_inscription",studentId?.type_inscription?.type_fr!);
   }
   if (newBody?.includes("telephone_etudiant")) {
     newBody = newBody?.replace("telephone_etudiant", studentId?.num_phone!);
@@ -179,6 +167,110 @@ export const replaceShortCodes = (demandData: any, globalData: any, docNumber?: 
   if (newBody?.includes("nom_mere_etudiant")) {
     newBody = newBody?.replace("nom_mere_etudiant", studentId?.nom_mere!);
   }
+  if (newBody?.includes("etat_civil")) {
+    newBody = newBody?.replace("etat_civil", studentId?.etat_civil!);
+  }
+  if (newBody?.includes("gouvernorat")) {
+    newBody = newBody?.replace("gouvernorat", studentId?.gouvernorat!);
+  }
+  if (newBody?.includes("municipalité")) {
+    newBody = newBody?.replace("gouvernorat", studentId?.ville!);
+  }
+  if (newBody?.includes("code_postal")) {
+    newBody = newBody?.replace("code_postal", studentId?.code_postale!);
+  }
+  if (newBody?.includes("téléphone_parent")) {
+    newBody = newBody?.replace("téléphone_parent", studentId?.tel_parents!);
+  }
+  if (newBody?.includes("moyenne_bac")) {
+    newBody = newBody?.replace("moyenne_bac", studentId?.moyen!);
+  }
+  if (newBody?.includes("session_bac")) {
+    newBody = newBody?.replace("session_bac", studentId?.session!);
+  }
+  if (newBody?.includes("section_bac")) {
+    newBody = newBody?.replace("section_bac", studentId?.filiere!);
+  }
+  if (newBody?.includes("num_inscription")) {
+    newBody = newBody?.replace("num_inscription", studentId?.num_inscri!);
+  }
+  if (newBody?.includes("Niveau")) {
+    newBody = newBody?.replace("Niveau", studentId?.Niveau_Fr!);
+  }
+  if (newBody?.includes("Diplome")) {
+    newBody = newBody?.replace("Diplome", studentId?.DIPLOME!);
+  }
+  if (newBody?.includes("Spécialité")) {
+    newBody = newBody?.replace("Spécialité", studentId?.Spécialité!);
+  }
+  if (newBody?.includes("Groupe")) {
+    newBody = newBody?.replace("Groupe", studentId?.Groupe!);
+  }
+  if (newBody?.includes("Cycle")) {
+    newBody = newBody?.replace("Cycle", studentId?.Cycle!);
+  }
+  if (newBody?.includes("Modele_Carte")) {
+    newBody = newBody?.replace("Modele_Carte", studentId?.Modele_Carte!);
+  }
+  if (newBody?.includes("nombre_enfants")) {
+    newBody = newBody?.replace("nombre_enfants", studentId?.nbre_enfants!);
+  }
+  if (newBody?.includes("etablissement_conjoint")) {
+    newBody = newBody?.replace("etablissement_conjoint", studentId?.etablissement_conjoint!);
+  }
+  if (newBody?.includes("profesion_Conjoint")) {
+    newBody = newBody?.replace("profesion_Conjoint", studentId?.profesion_Conjoint!);
+  }
+  if (newBody?.includes("prenom_conjoint")) {
+    newBody = newBody?.replace("prenom_conjoint", studentId?.prenom_conjoint!);
+  }
+  if (newBody?.includes("pays_bac")) {
+    newBody = newBody?.replace("pays_bac", studentId?.pays_bac!);
+  }
+  if (newBody?.includes("situation_militaire")) {
+    newBody = newBody?.replace("situation_militaire", studentId?.situation_militaire!);
+  }
+  if (newBody?.includes("tel_parents")) {
+    newBody = newBody?.replace("tel_parents", studentId?.tel_parents!);
+  }
+  if (newBody?.includes("pays_parents")) {
+    newBody = newBody?.replace("pays_parents", studentId?.pays_parents!);
+  }
+  if (newBody?.includes("gouvernorat_parents")) {
+    newBody = newBody?.replace("gouvernorat_parents", studentId?.gouvernorat_parents!);
+  }
+  if (newBody?.includes("code_postale_parents")) {
+    newBody = newBody?.replace("code_postale_parents", studentId?.code_postale_parents!);
+  }
+  if (newBody?.includes("adresse_parents")) {
+    newBody = newBody?.replace("adresse_parents", studentId?.adresse_parents!);
+  }
+  if (newBody?.includes("adresse_parents")) {
+    newBody = newBody?.replace("adresse_parents", studentId?.adresse_parents!);
+  }
+  if (newBody?.includes("etat_mere")) {
+    newBody = newBody?.replace("etat_mere", studentId?.etat_mere!);
+  }
+  if (newBody?.includes("etablissement_mere")) {
+    newBody = newBody?.replace("etablissement_mere", studentId?.etablissement_mere!);
+  }
+  if (newBody?.includes("prenom_mere")) {
+    newBody = newBody?.replace("prenom_mere", studentId?.profession_mere!);
+  }
+  if (newBody?.includes("etat_pere")) {
+    newBody = newBody?.replace("etat_pere", studentId?.etat_pere!);
+  }
+  if (newBody?.includes("pays")) {
+    newBody = newBody?.replace("pays", studentId?.pays!);
+  }
+  if (newBody?.includes("matricule_etudiant")) {
+    newBody = newBody?.replace("matricule_etudiant", studentId?.num_CIN!);
+  }
+  if (newBody?.includes("photo_etudiant")) {
+    newBody = newBody?.replace("photo_etudiant", `${process.env.REACT_APP_API_URL}/files/etudiantFiles/PhotoProfil/${studentId?.photo_profil!}`);
+  }
+ 
+
 
   // university ar
   if (newBody?.includes("اسم-الجامعة")) {
@@ -215,21 +307,13 @@ export const replaceShortCodes = (demandData: any, globalData: any, docNumber?: 
   }
 
   if (newBody?.includes("nom_secretaire_général")) {
-    newBody = newBody?.replace(
-      "nom_secretaire_général",
-      allVariables?.secretaire_fr!
-    );
+    newBody = newBody?.replace("nom_secretaire_général",allVariables?.secretaire_fr!);
   }
   if (newBody?.includes("nom-etablissement")) {
-    newBody = newBody?.replace(
-      "nom-etablissement",
-      allVariables?.etablissement_fr!
-    );
+    newBody = newBody?.replace("nom-etablissement",allVariables?.etablissement_fr!);
   }
   if (newBody?.includes("adresse_etablissement")) {
-    newBody = newBody?.replace(
-      "adresse_etablissement",
-      allVariables?.address_fr!
+    newBody = newBody?.replace( "adresse_etablissement", allVariables?.address_fr!
     );
   }
   if (newBody?.includes("phone_etablissement")) {
@@ -253,11 +337,11 @@ export const replaceShortCodes = (demandData: any, globalData: any, docNumber?: 
   }
 
   // personnel FR
-  if (newBody?.includes("nom_personnel_fr")) {
-    newBody = newBody?.replace(
-      /nom_personnel_fr/g,
-      personnelId?.nom_fr! + " " + personnelId?.prenom_fr!
-    );
+  if (newBody?.includes("nom_personnel")) {
+    newBody = newBody?.replace(/nom_personnel/g, personnelId?.nom_fr!);
+  }
+  if (newBody?.includes("prenom_personnel")) {
+    newBody = newBody?.replace(/prenom_personnel/g, personnelId?.prenom_fr!);
   }
 
   if (newBody?.includes("poste_personnel")) {
@@ -341,10 +425,10 @@ export const replaceShortCodes = (demandData: any, globalData: any, docNumber?: 
 
   //Personnel AR
   if (newBody?.includes("اسم-الموظف")) {
-    newBody = newBody.replace(
-      /اسم-الموظف/g,
-      personnelId?.nom_ar! + " " + personnelId?.prenom_ar!
-    );
+    newBody = newBody.replace(/اسم-الموظف/g,personnelId?.prenom_ar!);
+  }
+  if (newBody?.includes("لقب-الموظف")) {
+ newBody = newBody.replace( /لقب-الموظف/g, personnelId?.nom_ar!);
   }
 
   if (newBody?.includes("تاريخ-ولادة-الموظف")) {
@@ -452,17 +536,14 @@ export const replaceShortCodes = (demandData: any, globalData: any, docNumber?: 
 
   // enseignant FR
   if (newBody?.includes("nom_enseignant")) {
-    newBody = newBody.replace(
-      /nom_enseignant/g,
-      enseignantId.nom_fr + " " + enseignantId.prenom_fr
-    );
+    newBody = newBody.replace(/nom_enseignant/g,enseignantId.nom_fr );
+  }
+    if (newBody?.includes("prenom_enseignant")) {
+    newBody = newBody.replace(/prenom_enseignant/g,enseignantId.prenom_fr );
   }
 
   if (newBody?.includes("date_affectation_enseignant")) {
-    newBody = newBody.replace(
-      /date_affectation_enseignant/g,
-      enseignantId.date_affectation
-    );
+    newBody = newBody.replace(/date_affectation_enseignant/g,enseignantId.date_affectation);
   }
 
   if (newBody?.includes("date_naissance_enseignant")) {
@@ -635,7 +716,10 @@ export const replaceShortCodes = (demandData: any, globalData: any, docNumber?: 
   }
 
   if (newBody?.includes("اسم-الأستاذ")) {
-    newBody = newBody.replace(/اسم-الأستاذ/g, enseignantId.nom_ar);
+    newBody = newBody.replace(/اسم-الأستاذ/g, enseignantId.prenom_ar);
+  }
+  if (newBody?.includes("لقب-الأستاذ")) {
+    newBody = newBody.replace(/لقب-الأستاذ/g, enseignantId.nom_ar);
   }
 
   if (newBody?.includes("تاريخ-ولادة-الأستاذ")) {
