@@ -114,8 +114,50 @@ const AddFicheVoeux = () => {
   };
 
   const handleTeacherChange = (e: any) => {
+    console.log("formData", formData);
     if (e.target.value !== "") {
       setSelectedTeacherId(e.target.value);
+
+      let teacher = allTeachers.filter(
+        (teacher) => teacher._id === e.target.value
+      );
+
+      if (teacher[0].grade === null) {
+        alert("Assigner un grade pour cet(te) enseignant!");
+        setFormData((prevState) => {
+          const updatedFicheVoeux = [...prevState.fiche_voeux_classes];
+
+          updatedFicheVoeux.splice(0, updatedFicheVoeux.length);
+          updatedFicheVoeux.push({
+            classe: "",
+            matieres: [],
+            consernedClasses: [],
+            selectedSubjectOptions: [],
+            selectedSubjects: [],
+            filteredSubjectsOptions: [],
+            filtredSubjects: [],
+          });
+          return {
+            ...prevState,
+            fiche_voeux_classes: updatedFicheVoeux,
+            enseignant: {
+              _id: "",
+              nom_ar: "",
+              nom_fr: "",
+              prenom_ar: "",
+              prenom_fr: "",
+            },
+            matieres: [],
+            jours: [
+              {
+                jour: "",
+                temps: "",
+              },
+            ],
+          };
+        });
+        return;
+      }
 
       setFormData((prevState) => {
         const updatedFicheVoeux = [...prevState.fiche_voeux_classes];
@@ -369,26 +411,9 @@ const AddFicheVoeux = () => {
         );
         console.log("semestre", formData.semestre);
 
-        // const filtredMatieres = allMatieres.filter((mat) =>
-        //   consernedClass[0]?.matieres?.some(
-        //     (obj2) => obj2._id === mat._id && mat.semestre === formData.semestre
-        //   )
-        // );
-
-        // const filtredMatieres = consernedClass[0]?.parcours?.modules!.filter(
-        //   (module: any) =>
-        //     module?.matiere?.some(
-        //       (mat: any) => module?.semestre_module! === formData.semestre!
-        //     )
-        // );
-
-        let filtredMatieres: any = [];
-
-        for (let module of consernedClass[0]?.parcours?.modules!) {
-          if (module?.semestre_module! === formData.semestre!) {
-            filtredMatieres = filtredMatieres.concat(module?.matiere!);
-          }
-        }
+        let filtredMatieres: any = extractSubjectsBasedOnSemester(
+          consernedClass[0]
+        );
 
         console.log("filtredMatieres", filtredMatieres);
 
@@ -423,6 +448,24 @@ const AddFicheVoeux = () => {
         });
       }
     }
+  };
+
+  const extractSubjectsBasedOnSemester = (classe: any) => {
+    let filtredMatieres: any = [];
+
+    for (let module of classe?.parcours?.modules!) {
+      console.log(classe?.semestres);
+      if (formData.semestre === "S1") {
+        if (module?.semestre_module! === classe?.semestres[0]!) {
+          filtredMatieres = filtredMatieres.concat(module?.matiere!);
+        }
+      } else {
+        if (module?.semestre_module! === classe?.semestres[1]!) {
+          filtredMatieres = filtredMatieres.concat(module?.matiere!);
+        }
+      }
+    }
+    return filtredMatieres;
   };
 
   const customStyles = {

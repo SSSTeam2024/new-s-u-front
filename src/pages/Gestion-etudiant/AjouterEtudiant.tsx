@@ -2079,7 +2079,7 @@ const AjouterEtudiant = () => {
                                       id="section_classe"
                                     >
                                       {formData?.groupe_classe?.niveau_classe?.sections?.map(
-                                        (section) => (
+                                        (section: any) => (
                                           <span key={section._id}>
                                             {section.name_section_fr} <br />
                                           </span>

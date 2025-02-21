@@ -41,6 +41,7 @@ import {
 import {
   useAddClasseMutation,
   useGetClasseValueMutation,
+  useUpdateClasseMutation,
 } from "features/classe/classe";
 import {
   useAddEtatEtudiantMutation,
@@ -50,6 +51,10 @@ import {
   useAddCycleMutation,
   useGetCycleByValueMutation,
 } from "features/cycle/cycle";
+import {
+  useAddNiveauMutation,
+  useGetNiveauValueMutation,
+} from "features/niveau/niveau";
 
 const excelDateToJSDate = (excelDate: number): string => {
   const jsDate = new Date((excelDate - 25569) * 86400 * 1000); // Convert Excel date to JS date
@@ -477,12 +482,15 @@ const ListEtudiants = () => {
   );
   const [addTypeInscription] = useAddTypeInscriptionEtudiantMutation();
   const [addClasse] = useAddClasseMutation();
+  const [updateClasse] = useUpdateClasseMutation();
   const [addEtatCompte] = useAddEtatEtudiantMutation();
   const [addCycle] = useAddCycleMutation();
 
   const [getEtatCompteValue] = useGetEtatEtudiantValueMutation();
   const [getCycleValue] = useGetCycleByValueMutation();
   const [getClasseValue] = useGetClasseValueMutation();
+  const [getNiveauValue] = useGetNiveauValueMutation();
+  const [addNiveauClasse] = useAddNiveauMutation();
   const [getTypeInscriptionValue] = useGetTypeInscriptionValueMutation();
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -542,6 +550,11 @@ const ListEtudiants = () => {
           { id: string; cycle_ar: string; cycle_fr: string }
         >();
 
+        const uniqueNiveau = new Map<
+          string,
+          { id: string; name_niveau_ar: string; name_niveau_fr: string }
+        >();
+
         console.log("Excel Data:", jsonData);
 
         jsonData.forEach((item: any) => {
@@ -554,7 +567,7 @@ const ListEtudiants = () => {
             });
           }
 
-          const classeKey = `${item["Groupe AR"]}-${item["Groupe FR"]}`;
+          const classeKey = `${item["Niveau"]}-${item["Specialite"]}-${item["Abbreviation"]}- G${item["Groupe"]}`;
           if (!uniqueClasse.has(classeKey)) {
             uniqueClasse.set(classeKey, {
               id: "",
@@ -566,12 +579,22 @@ const ListEtudiants = () => {
                   : `3-${item["Specialite_Ar"]}-${item["Groupe"]}`,
               nom_classe_fr:
                 item["Niveau"] === "Première année"
-                  ? `1-${item["Abbreviation"]}-${item["Groupe"]}`
+                  ? `1 ${item["Abbreviation"]}- G${item["Groupe"]}`
                   : item["Niveau"] === "Deuxième année"
-                  ? `2-${item["Abbreviation"]}-${item["Groupe"]}`
-                  : `3-${item["Abbreviation"]}-${item["Groupe"]}`,
+                  ? `2 ${item["Abbreviation"]}- G${item["Groupe"]}`
+                  : `3 ${item["Abbreviation"]}- G${item["Groupe"]}`,
             });
           }
+
+          const niveauKey = `${item["Niveau"]}-${item["Cycle"]}`;
+          if (!uniqueNiveau.has(niveauKey)) {
+            uniqueNiveau.set(niveauKey, {
+              id: "",
+              name_niveau_ar: item["Niveau_Ar"] + " " + item["Cycle_Ar"],
+              name_niveau_fr: item["Niveau"] + " " + item["Cycle"],
+            });
+          }
+
           const cycleKey = `${item["Cycle_Ar"]}-${item["Cycle"]}`;
           if (!uniqueCycle.has(cycleKey)) {
             uniqueCycle.set(cycleKey, {
@@ -605,8 +628,10 @@ const ListEtudiants = () => {
         };
 
         await getOrCreate(uniqueCycle, getCycleValue, addCycle);
+        console.log(uniqueClasse);
         await getOrCreate(uniqueClasse, getClasseValue, addClasse);
         await getOrCreate(uniqueEtatComptes, getEtatCompteValue, addEtatCompte);
+        await getOrCreate(uniqueNiveau, getNiveauValue, addNiveauClasse);
         await getOrCreate(
           uniqueTypeIscription,
           getTypeInscriptionValue,
@@ -675,6 +700,10 @@ const ListEtudiants = () => {
             type_inscription_ar: items.Type_inscription_Ar || "",
             // etat_compte: items.Etat_compte || "",
             etat_compte_Ar: items.Etat_compte_Ar || "",
+            groupe_classe:
+              uniqueClasse.get(
+                `${items["Niveau"]}-${items["Specialite"]}-${items["Abbreviation"]}- G${items["Groupe"]}`
+              )?.id || "",
             Niveau_Fr: items.Niveau || "",
             DIPLOME: items.Diplôme || "",
             DiplomeAr: items.Diplôme_Ar || "",
@@ -697,10 +726,10 @@ const ListEtudiants = () => {
               // uniqueClasse.get(`${items["Abbreviation"]}-${items["Groupe"]}`)
               //   ?.id || "",
               items["Niveau"] === "Première année"
-                ? `1-${items["Abbreviation"]}-${items["Groupe"]}`
+                ? `1 ${items["Abbreviation"]}- G${items["Groupe"]}`
                 : items["Niveau"] === "Deuxième année"
-                ? `2-${items["Abbreviation"]}-${items["Groupe"]}`
-                : `3-${items["Abbreviation"]}-${items["Groupe"]}`,
+                ? `2 ${items["Abbreviation"]}- G${items["Groupe"]}`
+                : `3 ${items["Abbreviation"]}- G${items["Groupe"]}`,
             type_inscription:
               uniqueTypeIscription.get(
                 `${items["Type_inscription_Ar"]}-${items["Type_inscription"]}`
@@ -708,6 +737,36 @@ const ListEtudiants = () => {
           };
 
           try {
+            console.log(
+              uniqueClasse.get(
+                `${items["Niveau"]}-${items["Specialite"]}-${items["Abbreviation"]}- G${items["Groupe"]}`
+              )?.id!
+            );
+            let id = uniqueClasse.get(
+              `${items["Niveau"]}-${items["Specialite"]}-${items["Abbreviation"]}- G${items["Groupe"]}`
+            )?.id!;
+            fetch(
+              `${process.env.REACT_APP_API_URL}/api/classe/get-classe/${id}`
+            )
+              .then((res) => {
+                return res.json();
+              })
+              .then(async (data) => {
+                console.log(data);
+                console.log(
+                  uniqueNiveau.get(`${items["Niveau"]}-${items["Cycle"]}`)
+                );
+                if (data.niveau_classe === undefined) {
+                  const reqData = {
+                    id: data._id,
+                    niveau_classe: uniqueNiveau.get(
+                      `${items["Niveau"]}-${items["Cycle"]}`
+                    )?.id!,
+                  };
+                  console.log(reqData);
+                  await updateClasse(reqData).unwrap();
+                }
+              });
             const createdEtudiant = await addEtudiant(etudiantData).unwrap();
             console.log("createdEtudiant", createdEtudiant);
             console.log("Etudiant created:", createdEtudiant);

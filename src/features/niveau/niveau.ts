@@ -65,6 +65,19 @@ export const niveauSlice = createApi({
         }),
         providesTags: (result, error, id) => [{ type: "Niveau", id }],
       }),
+      getNiveauValue: builder.mutation<
+        { id: string; name_niveau_fr: string; name_niveau_ar: string },
+        Niveau
+      >({
+        query(payload) {
+          return {
+            url: "/get-niveau-value",
+            method: "POST",
+            body: payload,
+          };
+        },
+        invalidatesTags: ["Niveau"],
+      }),
     };
   },
 });
@@ -76,4 +89,5 @@ export const {
   useUpdateNiveauMutation,
   useFetchSectionsByNiveauIdQuery,
   useFetchCyclesByNiveauIdQuery,
+  useGetNiveauValueMutation,
 } = niveauSlice;

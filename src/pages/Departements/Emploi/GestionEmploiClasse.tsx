@@ -1852,7 +1852,10 @@ const GestionEmploiClasse = () => {
                                                     className="mt-2"
                                                   >
                                                     <div className="mb-1 text-dark fw-bold">
-                                                      {session.matiere.matiere}
+                                                      {
+                                                        session?.matiere
+                                                          ?.matiere!
+                                                      }
                                                     </div>
                                                     <div
                                                       style={{
