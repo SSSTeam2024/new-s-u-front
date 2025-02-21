@@ -489,6 +489,7 @@ const ListClasses = () => {
         parcoursIds: [selectedParcours],
         semestres: selectedSemesters,
       }).unwrap();
+      setSelectedParcours("");
       setSelectedSemesters([]);
       setSemesters([]);
       notify();

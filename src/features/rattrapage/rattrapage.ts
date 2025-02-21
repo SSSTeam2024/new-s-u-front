@@ -12,6 +12,7 @@ export interface Rattrapage {
   semestre: string;
   etat?: string;
   status?: string;
+  date: string;
 }
 
 export const rattrapageSlice = createApi({
