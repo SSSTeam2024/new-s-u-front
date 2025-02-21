@@ -47,7 +47,7 @@ const ListClasses = () => {
     setModal_AffecterEtudiant(!modal_AffecterEtudiant);
   };
   const { data = [] } = useFetchClassesQuery();
-  console.log(data);
+  console.log("data classe", data);
   const { data: AllEtudiants = [] } = useFetchEtudiantsQuery();
 
   const [updateGroupeClasse, { isLoading, isSuccess }] =

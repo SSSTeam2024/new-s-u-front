@@ -258,7 +258,7 @@ const AddNiveau = () => {
                     </Col>
 
                     {/* Right Column (Cycle Dropdown) */}
-                    {/* <Col lg={5}>
+                    <Col lg={5}>
                       <Form.Label htmlFor="nom_parcours">Cycle</Form.Label>
                       <select
                         className="form-select text-muted"
@@ -283,7 +283,7 @@ const AddNiveau = () => {
                           <option value="">No cycles available</option>
                         )}
                       </select>
-                    </Col> */}
+                    </Col>
                   </Row>
                 </Row>
 

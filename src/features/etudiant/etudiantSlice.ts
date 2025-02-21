@@ -26,8 +26,8 @@ export interface GroupeClasse {
   _id: string;
   nom_classe_fr: string;
   nom_classe_ar: string;
-  departement: string;
-  niveau_classe: NiveauClasse;
+  departement?: string;
+  niveau_classe: NiveauClasse | string;
   matieres: string[];
 }
 
@@ -149,7 +149,7 @@ export interface EtudiantExcel {
   face_2_CIN?: string;
   fiche_paiement?: string;
   etat_compte?: string;
-  groupe_classe?: GroupeClasse;
+  groupe_classe?: any; // GroupeClasse | string
   state: string;
   dependence: string;
   code_postale: string;

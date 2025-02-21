@@ -87,11 +87,11 @@ const TableauChargesHorairesClasses = () => {
         (seance: any) =>
           seance.classe._id === classe._id && seance.semestre === "2"
       );
-
-      outputElement.charge_s1 = calculerChargeSemestriel(classe.matieres, "1");
+      console.log("classe", classe);
+      outputElement.charge_s1 = calculerChargeSemestriel(classe, "1");
       tch1 += Number(outputElement.charge_s1);
 
-      outputElement.charge_s2 = calculerChargeSemestriel(classe.matieres, "2");
+      outputElement.charge_s2 = calculerChargeSemestriel(classe, "2");
       tch2 += Number(outputElement.charge_s2);
 
       outputElement.emploi_s1 = calculerHESemestriel(semester1Sessions);
@@ -153,25 +153,32 @@ const TableauChargesHorairesClasses = () => {
     return volumeTotal.toFixed(2);
   };
 
-  const calculerChargeSemestriel = (matieres: any[], semestre: string) => {
+  const calculerChargeSemestriel = (classe: any, semestre: string) => {
+    let filtredMatieres: any = [];
+
     let volumeTotal = 0;
-    if (semestre === "1") {
-      let arrS1 = matieres.filter((matiere) => matiere.semestre === "S1");
-      volumeTotal = accumulateVolumes(arrS1);
+    if (semestre === "1" && classe?.parcours !== null) {
+      for (let module of classe?.parcours?.modules!) {
+        if (module?.semestre_module! === "S1") {
+          filtredMatieres = filtredMatieres.concat(module?.matiere!);
+        }
+      }
     }
-
-    if (semestre === "2") {
-      let arrS2 = matieres.filter((matiere) => matiere.semestre === "S2");
-      volumeTotal = accumulateVolumes(arrS2);
+    if (semestre === "2" && classe?.parcours !== null) {
+      for (let module of classe?.parcours?.modules!) {
+        if (module?.semestre_module! === "S2") {
+          filtredMatieres = filtredMatieres.concat(module?.matiere!);
+        }
+      }
     }
-
+    volumeTotal = accumulateVolumes(filtredMatieres);
     return volumeTotal.toFixed(2);
   };
 
   const accumulateVolumes = (matieres: any[]) => {
     let sum = 0;
     matieres.forEach((matiere) => {
-      sum += Number(matiere.volume);
+      sum += Number(matiere.types[0].volume);
     });
 
     return sum;

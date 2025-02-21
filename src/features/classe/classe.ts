@@ -21,6 +21,8 @@ export interface Classe {
   niveau_classe: Niveau;
   matieres: Matiere[];
   groupe_number: string;
+  parcours?: any;
+  semestres?: any;
 }
 
 export interface AssignMatieresPayload {
@@ -83,11 +85,11 @@ export const classeSlice = createApi({
         invalidatesTags: ["Classe"],
       }),
 
-      updateClasse: builder.mutation<void, Classe>({
-        query: ({ _id, ...rest }) => ({
-          url: `/update-classe/${_id}`,
+      updateClasse: builder.mutation<void, any>({
+        query: (payload) => ({
+          url: `/update-classe`,
           method: "PUT",
-          body: rest,
+          body: payload,
         }),
         invalidatesTags: ["Classe"],
       }),
