@@ -261,6 +261,8 @@ export interface Enseignant {
   PhotoProfilFileExtension?: string;
   PhotoProfilFileBase64String?: string;
   papers?: string[];
+  situation_fr?: string;
+  situation_ar?: string;
 }
 
 export interface EnseignantGroupedByGrade {
@@ -332,6 +334,8 @@ export interface EnseignantExcel {
   PhotoProfilFileExtension?: string;
   PhotoProfilFileBase64String?: string;
   papers?: string[];
+  situation_fr?: string;
+  situation_ar?: string;
 }
 
 export const enseignantSlice = createApi({

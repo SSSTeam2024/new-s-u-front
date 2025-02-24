@@ -567,6 +567,7 @@ const ListEnseignants = () => {
               specialite_ar: item["Spécialité AR"],
               specialite_fr: item["Spécialité FR"],
             });
+            console.log("specialiteKey", specialiteKey);
           }
 
           const gradeKey = `${item["Grade AR"]}-${item["Grade FR"]}`;
@@ -656,6 +657,8 @@ const ListEnseignants = () => {
             lieu_naissance_ar: items.LieuNaissanceAr || "",
             prenom_ar: items.PrenomEnseignantAr || "",
             nom_ar: items.NomEnseignantAr || "",
+            situation_fr: items.SituationFr || "",
+            situation_ar: items.SituationAr || "",
             etat_compte:
               uniqueEtatComptes.get(`${items["Etat AR"]}-${items["Etat FR"]}`)
                 ?.id || "",
@@ -719,6 +722,16 @@ const ListEnseignants = () => {
         "CodePostale",
         "Nationalite",
         "EtatCvil",
+        "Etat AR",
+        "Etat FR",
+        "Poste AR",
+        "Poste FR",
+        "SituationAr",
+        "SituationFr",
+        "Grade AR",
+        "Grade FR",
+        "Spécialité FR",
+        "Spécialité AR",
         "Sexe",
         "DateAffectation",
         "Datedelivrance",
@@ -745,14 +758,6 @@ const ListEnseignants = () => {
         "Entreprise3",
         "AnneeCertif3",
         "NomCertif3",
-        "Poste FR",
-        "Poste AR",
-        "Spécialité FR",
-        "Spécialité AR",
-        "Grade FR",
-        "Grade AR",
-        "Etat FR",
-        "Etat AR",
       ],
     ]);
     const wb = XLSX.utils.book_new();
@@ -1263,20 +1268,20 @@ const ListEnseignants = () => {
 
                     <Col className="col-lg-auto ms-auto">
                       <div className="hstack gap-2">
-                        <Button
+                        {/* <Button
                           variant="success"
                           className="add-btn"
                           // onClick={() => fileInputRef.current?.click()}
                         >
                           Ajouter Depuis Excel
-                        </Button>
-                        <input
+                        </Button> */}
+                        {/* <input
                           type="file"
                           accept=".xlsx, .xls"
                           // ref={fileInputRef}
                           style={{ display: "none" }}
                           // onChange={handleFileChange}
-                        />
+                        /> */}
                         <Button
                           variant="primary"
                           className="add-btn"
