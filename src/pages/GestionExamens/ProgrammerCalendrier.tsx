@@ -67,7 +67,7 @@ const ProgrammerCalendrier = () => {
 
     const usedEnseignantIds = new Set<string>();
     AllExamens.forEach((exam) => {
-      exam.epreuve.forEach((ep) => {
+      exam?.epreuve?.forEach((ep) => {
         if (
           ep.date === selectedJour &&
           ((ep.heure_debut <= heureFin && ep.heure_debut >= heureDebut) ||
@@ -216,7 +216,7 @@ const ProgrammerCalendrier = () => {
 
     if (selectedClasse && selectedJour) {
       const conflict = AllExamens.some((examen) =>
-        examen.epreuve.some((epreuve) => {
+        examen?.epreuve?.some((epreuve) => {
           if (
             epreuve?.classe?._id === selectedClasse &&
             epreuve.date === selectedJour
@@ -252,7 +252,7 @@ const ProgrammerCalendrier = () => {
     }
 
     const conflict = AllExamens.some((examen) =>
-      examen.epreuve.some((epreuve) => {
+      examen?.epreuve?.some((epreuve) => {
         if (
           epreuve?.classe?._id === selectedClasse &&
           epreuve.date === selectedJour
@@ -306,7 +306,7 @@ const ProgrammerCalendrier = () => {
   };
 
   let filtredMatieres: any = extractSubjectsBasedOnSemester(OneClasse);
-
+  console.log("filtredMatieres", filtredMatieres);
   const filteredMat = filtredMatieres.filter(
     (mat: any) =>
       (calendrierState?.type_examen! === "EXAMEN" &&
@@ -315,7 +315,9 @@ const ProgrammerCalendrier = () => {
         mat.regime_matiere === "MX") ||
       (calendrierState?.type_examen! === "Examens" &&
         mat.regime_matiere === "Mx") ||
-      (calendrierState?.type_examen! === "DS" && mat.regime_matiere === "CC")
+      (calendrierState?.type_examen! === "DS" && mat.regime_matiere === "CC") ||
+      (calendrierState?.type_examen! === "Examens" &&
+        mat.regime_matiere === "Ex")
 
     //   // const isMatchingClasse = matiere?.classes!.some(
     //   //   (classe) =>

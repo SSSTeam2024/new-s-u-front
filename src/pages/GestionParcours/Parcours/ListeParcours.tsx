@@ -407,14 +407,32 @@ const ListParcours = () => {
   const [isAddModalOpen, setAddModalOpen] = useState(false);
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [formData, setFormData] = useState({
+  // const [formData, setFormData] = useState({
+  //   _id: "",
+  //   type_parcours: "",
+  //   mention: "",
+  //   domaine: "",
+  //   nom_parcours: "",
+  //   code_parcours: "",
+  //    semestre_parcours: [],
+  // });
+
+  const [formData, setFormData] = useState<{
+    _id: string;
+    type_parcours: any;
+    mention: any;
+    domaine: any;
+    nom_parcours: string;
+    code_parcours: string;
+    semestre_parcours: string[]; // Explicitly define type
+  }>({
     _id: "",
     type_parcours: "",
     mention: "",
     domaine: "",
     nom_parcours: "",
     code_parcours: "",
-    // semestre_parcours: [],
+    semestre_parcours: [], // Ensure it's initialized as an array of strings
   });
 
   const handleAddClick = () => {
@@ -425,7 +443,7 @@ const ListParcours = () => {
       domaine: "",
       nom_parcours: "",
       code_parcours: "",
-      //semestre_parcours: [],
+      semestre_parcours: [],
     });
     setAddModalOpen(true);
   };
@@ -438,7 +456,7 @@ const ListParcours = () => {
       domaine: parcours.domaine || { name_domaine_fr: "" },
       nom_parcours: parcours.nom_parcours || "",
       code_parcours: parcours.code_parcours || "",
-      //semestre_parcours: parcours.semestre_parcours || [],
+      semestre_parcours: parcours.semestre_parcours || [],
     });
     setShowEditModal(true);
   };
@@ -494,7 +512,7 @@ const ListParcours = () => {
         domaine: parcours.domaine || { name_domaine_fr: "" },
         type_parcours: parcours.type_parcours || { name_type_parcours_fr: "" },
         mention: parcours.mention || { name_mention_fr: "" },
-        //semestre_parcours: parcours.semestre_parcours || "",
+        semestre_parcours: parcours.semestre_parcours || "",
       });
     }
   }, [parcours, isEditModalOpen]);
@@ -1146,6 +1164,26 @@ const ListParcours = () => {
     const value = e.target.value;
     setSelectedMention(value);
   };
+  const semestres = [
+    "S1",
+    "S2",
+    "S3",
+    "S4",
+    "S5",
+    "S6",
+    "S7",
+    "S8",
+    "S9",
+    "S10",
+    "S11",
+    "S12",
+    "S13",
+    "S14",
+    "S15",
+    "S16",
+    "S17",
+    "S18",
+  ]; // Example semesters
 
   return (
     <React.Fragment>
@@ -1286,6 +1324,37 @@ const ListParcours = () => {
                         </select>
                       </div>
                     </Col> */}
+                    <Col lg={12}>
+                      <div className="mb-3">
+                        <Form.Label htmlFor="semestre_parcours">
+                          Semestres
+                        </Form.Label>
+                        <select
+                          className="form-select text-muted"
+                          name="semestre_parcours"
+                          id="semestre_parcours"
+                          multiple // Allows multiple selections
+                          value={formData.semestre_parcours} // Bind to array
+                          onChange={(e) => {
+                            const selectedOptions = Array.from(
+                              e.target.selectedOptions,
+                              (option) => option.value
+                            ); // Get selected values as an array
+
+                            setFormData((prev) => ({
+                              ...prev,
+                              semestre_parcours: selectedOptions,
+                            })); // Update formData
+                          }}
+                        >
+                          {semestres.map((num: any) => (
+                            <option key={num} value={num}>
+                              Semestre {num}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </Col>
                   </Row>
                   <Row>
                     <Col lg={12}>
