@@ -487,7 +487,7 @@ const AjouterRattrapage = () => {
           ...prevState,
           date: formattedDate,
         }));
-        await runAvailabilityProcess(frenshDay);
+        await runAvailabilityProcess(frenshDay, date);
       }
     } else {
       setFormData((prevState) => ({
@@ -498,7 +498,7 @@ const AjouterRattrapage = () => {
     }
   };
 
-  const runAvailabilityProcess = async (jourRattrapage: string) => {
+  const runAvailabilityProcess = async (jourRattrapage: string, date: Date) => {
     let requestData = {
       teacher_id: formData.enseignant,
       jour: jourRattrapage,
@@ -526,9 +526,18 @@ const AjouterRattrapage = () => {
     setSelectedStart(convertTimeStringToMs(paramsData[0].day_start_time));
     setSelectedEnd(convertTimeStringToMs("09:00"));
 
+    // const filteredRecoverSessions: any = allRattrapages.filter(
+    //   (r) =>
+    //     r?.jour! === jourRattrapage && r?.classe?._id! === formData?.classe!
+    // );
+
+    console.log(parseDate(allRattrapages[0].date).getTime());
+    console.log(date.getTime());
+
     const filteredRecoverSessions: any = allRattrapages.filter(
       (r) =>
-        r?.jour! === jourRattrapage && r?.classe?._id! === formData?.classe!
+        parseDate(r?.date!).getTime() === date.getTime() &&
+        r?.classe?._id! === formData?.classe!
     );
 
     console.log("filteredRecoverSessions", filteredRecoverSessions);

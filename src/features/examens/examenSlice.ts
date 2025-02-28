@@ -2,47 +2,47 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export interface Examen {
   _id: string;
-  annee_universitaire: string,
-  semestre: string,
-  session: string,
+  annee_universitaire: string;
+  semestre: string;
+  session: string;
   type_examen: string;
-  period: string,
+  period: string;
   group_enseignant: {
-    enseignant: string[],
-    date: string[]
-  }[],
-  epreuve: {
-    _id?: string,
-    group_surveillants: any [],
-    group_responsables?: any[],
-    nbr_copie?: string,
-    date: string
-    heure_debut: string
-    heure_fin: string
-    salle: any
-    matiere: any
-    classe: any
-    epreuveStatus?: string
-    nbrePresent?: string
-  nbreAbsent?: string
-  nbreExclus?: string
-  epreuveNotes?: string
-  }[],
+    enseignant: string[];
+    date: string[];
+  }[];
+  epreuve?: {
+    _id?: string;
+    group_surveillants: any[];
+    group_responsables?: any[];
+    nbr_copie?: string;
+    date: string;
+    heure_debut: string;
+    heure_fin: string;
+    salle: any;
+    matiere: any;
+    classe: any;
+    epreuveStatus?: string;
+    nbrePresent?: string;
+    nbreAbsent?: string;
+    nbreExclus?: string;
+    epreuveNotes?: string;
+  }[];
 }
 
 export interface GetExamenByRegime {
-    semester: string,
-    regime: string
+  semester: string;
+  regime: string;
 }
 
 export interface DataToEditExamsEpreuve {
-  id_Calendrier?: string
-  epreuveId?: string
-  epreuve_status?: string
-  nbre_present?: string
-  nbre_absent?: string
-  nbre_exclus?: string
-  notes?: string
+  id_Calendrier?: string;
+  epreuveId?: string;
+  epreuve_status?: string;
+  nbre_present?: string;
+  nbre_absent?: string;
+  nbre_exclus?: string;
+  notes?: string;
 }
 
 export const examenSlice = createApi({
@@ -103,25 +103,24 @@ export const examenSlice = createApi({
       }),
       getExamenByRegime: builder.mutation<void, GetExamenByRegime>({
         query(payload) {
-            return{
-                url: `get-examen-by-regime-semestre`,
-                method: "POST",
-                body: payload
-            }
+          return {
+            url: `get-examen-by-regime-semestre`,
+            method: "POST",
+            body: payload,
+          };
         },
         invalidatesTags: ["Examen"],
       }),
     };
   },
-  
 });
 
 export const {
-   useAddExamenMutation,
-   useDeleteExamenMutation,
-   useFetchExamensQuery,
-   useUpdateExamenMutation,
-   useGetExamenByRegimeMutation,
-   useFetchExamenByIdQuery,
-   useModifierExamenEpreuveMutation
+  useAddExamenMutation,
+  useDeleteExamenMutation,
+  useFetchExamensQuery,
+  useUpdateExamenMutation,
+  useGetExamenByRegimeMutation,
+  useFetchExamenByIdQuery,
+  useModifierExamenEpreuveMutation,
 } = examenSlice;

@@ -70,9 +70,7 @@ const ListClassPeriods = () => {
       const currentDate = new Date();
       const dateStr = formatDate(currentDate);
       const { nextSunday, nextMonday } = getNextSundayAndMonday(
-        convertStringToDate(
-          /* "10-11-2024"  currentDate*/ dateStr
-        ) /* currentDate */
+        convertStringToDate("05-03-2025" /* dateStr */) /* currentDate */
       );
 
       const date_debut_next_period = nextMonday;

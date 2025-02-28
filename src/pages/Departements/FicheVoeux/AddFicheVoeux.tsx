@@ -409,6 +409,16 @@ const AddFicheVoeux = () => {
           "consernedClass[0] .parcours",
           consernedClass[0]?.parcours!
         );
+
+        if (consernedClass[0]?.parcours! === null) {
+          alert(
+            "Assigner un parcours pour la classe " +
+              consernedClass[0].nom_classe_fr +
+              " tout d'abord"
+          );
+          return;
+        }
+
         console.log("semestre", formData.semestre);
 
         let filtredMatieres: any = extractSubjectsBasedOnSemester(

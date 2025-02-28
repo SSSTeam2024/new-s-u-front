@@ -30,6 +30,7 @@ import {
   Page,
   View,
   Text,
+  Image,
 } from "@react-pdf/renderer";
 import { useFetchVaribaleGlobaleQuery } from "features/variableGlobale/variableGlobaleSlice";
 
@@ -46,15 +47,42 @@ const styles = StyleSheet.create({
 
   headerColumn: {
     flex: 1,
+    marginTop: 5,
+    alignItems: "center",
   },
   headerCenter: {
     flex: 2,
     alignItems: "center",
   },
+  headerLeft: {
+    alignItems: "flex-start",
+    flex: 1,
+  },
+  headerRight: {
+    alignItems: "flex-end",
+    flex: 1,
+  },
+  headerLogoRight: {
+    width: 60,
+    height: 60,
+    marginTop: 5,
+    marginRight: 50,
+  },
+  headerLogoLeft: {
+    width: 60,
+    height: 60,
+    marginTop: 5,
+  },
   headerTitle: {
-    fontSize: 15,
-    fontWeight: "bold",
+    fontSize: 18,
+    fontWeight: "ultrabold",
     textAlign: "center",
+  },
+
+  headerSubtitle: {
+    fontSize: 14, // Adjust the font size as needed
+    textAlign: "center",
+    marginTop: 5, // Add some spacing between the title and subtitle
   },
 
   periodicInfo: {
@@ -75,12 +103,15 @@ const styles = StyleSheet.create({
     fontSize: 10,
     textAlign: "left",
     marginBottom: 2,
+    marginTop: 3,
   },
 
   timetable: {
     // marginTop: 0,
-    borderWidth: 1,
+    borderWidth: 2,
     borderColor: "#000",
+    marginLeft: 50,
+    marginRight: 50,
   },
   row: {
     flexDirection: "row",
@@ -155,7 +186,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginTop: 10,
+    marginTop: 20,
+    marginLeft: 10,
+    marginLRight: 10,
   },
   footerText: {
     fontSize: 11,
@@ -176,6 +209,11 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     alignItems: "flex-end",
     marginRight: 20,
+  },
+  footerCenterColumn: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
   typeSeance: {
     backgroundColor: "grey",
@@ -222,6 +260,7 @@ const GestionEmploiClasse = () => {
   document.title = " Gestion emploi classe | Application Smart Institute";
   const { data: paramsData = [] } = useFetchTimeTableParamsQuery();
   const { data: variableGlobales = [] } = useFetchVaribaleGlobaleQuery();
+  console.log("variableGlobales", variableGlobales);
   const convertTimeStringToMs = (timeString: string) => {
     const [hours, minutes] = timeString.split(":").map(Number);
     const now = new Date();
@@ -398,7 +437,7 @@ const GestionEmploiClasse = () => {
   const { data: classe } = useFetchClasseByIdQuery(
     classeDetails?.id_classe?._id
   );
-
+  console.log("classe state ", classe);
   const { data: allSessions = [], isSuccess: sessionClassFetched } =
     useFetchAllSeancesByTimeTableIdQuery(classeDetails?._id!);
 
@@ -1562,6 +1601,11 @@ const GestionEmploiClasse = () => {
     }
     return { class: className, bg: background, textColor: textColor };
   };
+
+  const lastVariable =
+    variableGlobales.length > 0
+      ? variableGlobales[variableGlobales.length - 1]
+      : null;
   const TimetablePDF: React.FC<TimetablePDFProps> = ({
     days,
     groupedSessions,
@@ -1574,30 +1618,44 @@ const GestionEmploiClasse = () => {
         <View style={styles.header}>
           {/* Top Row */}
           <View style={styles.headerRow}>
-            <View style={styles.headerColumn}>
+            <View style={styles.headerLeft}>
               <Text style={styles.headerText}>
-                {variableGlobales[2].universite_fr}
+                {lastVariable?.universite_fr}
               </Text>
-              <Text style={styles.headerText}>
-                {variableGlobales[2].etablissement_fr}
-              </Text>
+              <Image
+                style={styles.headerLogoRight}
+                src={`${process.env.REACT_APP_API_URL}/files/variableGlobaleFiles/logoUniversiteFiles/${lastVariable?.logo_universite}`}
+              />
             </View>
+
             <View style={styles.headerCenter}>
-              <Text style={styles.headerTitle}>
-                Emploi de temps {classeDetails?.id_classe?.nom_classe_fr!}
+              <Text style={styles.headerTitle}>Emploi du temps</Text>
+              <Text style={styles.headerSubtitle}>
+                {classeDetails?.id_classe?.nom_classe_fr!}
               </Text>
+              <View style={styles.headerColumn}>
+                <Text style={styles.headerText}>
+                  A.U: {startYear}/{endYear}
+                </Text>
+                <Text style={styles.headerText}>
+                  Semestre: {classeDetails.semestre}
+                </Text>
+                <Text style={styles.headerText}>
+                  Période: {classeDetails?.date_debut!} /{" "}
+                  {classeDetails?.date_fin!}
+                </Text>
+              </View>
             </View>
-            <View style={styles.headerColumn}>
+
+            {/* Right Side: Establishment Name and Logo */}
+            <View style={styles.headerRight}>
               <Text style={styles.headerText}>
-                A.U: {startYear}/{endYear}
+                {lastVariable?.etablissement_fr}
               </Text>
-              <Text style={styles.headerText}>
-                Semestre: {classeDetails.semestre}
-              </Text>
-              <Text style={styles.headerText}>
-                Période: {classeDetails?.date_debut!} /{" "}
-                {classeDetails?.date_fin!}
-              </Text>
+              <Image
+                style={styles.headerLogoRight}
+                src={`${process.env.REACT_APP_API_URL}/files/variableGlobaleFiles/logoEtablissementFiles/${lastVariable?.logo_etablissement}`}
+              />
             </View>
           </View>
 
@@ -1660,11 +1718,17 @@ const GestionEmploiClasse = () => {
             </Text>
           </View>
 
+          {/* center Column */}
+          <View style={styles.footerCenterColumn}>
+            <Text style={styles.footerText}>Directeur</Text>
+            <Text style={styles.footerText}>{lastVariable?.directeur_fr!}</Text>
+          </View>
+
           {/* Right Column */}
           <View style={styles.rightColumn}>
             <Text style={styles.footerRightText}>Secrétaire Générale</Text>
             <Text style={styles.footerRightText}>
-              {variableGlobales[2].secretaire_fr}
+              {lastVariable?.secretaire_fr!}
             </Text>
           </View>
         </View>

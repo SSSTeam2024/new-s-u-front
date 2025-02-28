@@ -1,4 +1,7 @@
-import { useFetchClassesQuery } from "features/classe/classe";
+import {
+  useFetchClasseByIdQuery,
+  useFetchClassesQuery,
+} from "features/classe/classe";
 import { useFetchEnseignantsQuery } from "features/enseignant/enseignantSlice";
 import React, { useEffect, useState } from "react";
 import { Card, Col, Container, Form, Row } from "react-bootstrap";
@@ -24,7 +27,9 @@ const ProgrammerCalendrier = () => {
 
   const navigate = useNavigate();
   const [nombreCopie, setNombreCopie] = useState<string>("");
-  const [selectedClasse, setSelectedClasse] = useState<string>("");
+  const [selectedClasse, setSelectedClasse] = useState<string>(
+    "67b87c0762cf56e785f8bf2a"
+  );
   const [selectedSalle, setSelectedSalle] = useState<string>("");
   const [selectedMatiere, setSelectedMatiere] = useState<string>("");
   const [selectedJour, setSelectedJour] = useState<string>("");
@@ -35,6 +40,7 @@ const ProgrammerCalendrier = () => {
 
   const location = useLocation();
   const calendrierState = location.state;
+  console.log("calendrierState", calendrierState);
 
   const [days, setDays] = useState<any[]>([]);
   const [showAddCard, setShowAddCard] = useState<boolean>(false);
@@ -61,7 +67,7 @@ const ProgrammerCalendrier = () => {
 
     const usedEnseignantIds = new Set<string>();
     AllExamens.forEach((exam) => {
-      exam.epreuve.forEach((ep) => {
+      exam?.epreuve?.forEach((ep) => {
         if (
           ep.date === selectedJour &&
           ((ep.heure_debut <= heureFin && ep.heure_debut >= heureDebut) ||
@@ -171,7 +177,7 @@ const ProgrammerCalendrier = () => {
     setSelectedEnseignantSurveillant(ids);
   };
 
-  console.log("availableEnseignants", availableEnseignants);
+  //console.log("availableEnseignants", availableEnseignants);
   const optionColumnsTable = availableEnseignants.map((enseignant: any) => ({
     value: enseignant,
     label: `${enseignant.prenom_fr} ${enseignant.nom_fr}`,
@@ -210,7 +216,7 @@ const ProgrammerCalendrier = () => {
 
     if (selectedClasse && selectedJour) {
       const conflict = AllExamens.some((examen) =>
-        examen.epreuve.some((epreuve) => {
+        examen?.epreuve?.some((epreuve) => {
           if (
             epreuve?.classe?._id === selectedClasse &&
             epreuve.date === selectedJour
@@ -218,12 +224,13 @@ const ProgrammerCalendrier = () => {
             const existingStart = epreuve.heure_debut;
             const existingEnd = epreuve.heure_fin;
             const newStart = newHeureDebut;
-
             return newStart >= existingStart && newStart < existingEnd;
           }
+
           return false;
         })
       );
+      console.log("conflict", conflict);
       if (conflict) {
         alert("Cette classe a déjà un examen prévu à l'heure sélectionnée");
         return;
@@ -245,14 +252,13 @@ const ProgrammerCalendrier = () => {
     }
 
     const conflict = AllExamens.some((examen) =>
-      examen.epreuve.some((epreuve) => {
+      examen?.epreuve?.some((epreuve) => {
         if (
           epreuve?.classe?._id === selectedClasse &&
           epreuve.date === selectedJour
         ) {
           const existingStart = epreuve.heure_debut;
           const existingEnd = epreuve.heure_fin;
-
           return (
             (heureDebut >= existingStart && heureDebut < existingEnd) ||
             (selectedHeureFin > existingStart &&
@@ -271,41 +277,63 @@ const ProgrammerCalendrier = () => {
       setHeureFin(selectedHeureFin);
     }
   };
-
-  const filteredMatieres = AllMatieres.filter((matiere) => {
-    // Match the semestre
-    const isSameSemestre = matiere.semestre === calendrierState?.semestre!;
-    // Check the regime_matiere based on type_examen
-    //! It will be changed to Examens
-    const isMatchingRegimeMatiere =
-      (calendrierState?.type_examen! === "EXAMEN" &&
-        matiere.regime_matiere === "MX") ||
-      (calendrierState?.type_examen! === "Examens" &&
-        matiere.regime_matiere === "MX") ||
-      (calendrierState?.type_examen! === "DS" &&
-        matiere.regime_matiere === "CC");
-    const isMatchingClasse = matiere?.classes!.some(
-      (classe) =>
-        classe._id === selectedClasse || classe.nom_classe_fr === selectedClasse
-    );
-    const isNotAlreadyExamined = !calendrierState.epreuve.some(
-      (epreuve: any) => {
-        return (
-          epreuve?.matiere?._id! === matiere?._id! &&
-          epreuve?.classe?._id! === selectedClasse
-        );
-      }
-    );
-
-    return (
-      isSameSemestre &&
-      isMatchingRegimeMatiere &&
-      isMatchingClasse &&
-      isNotAlreadyExamined
-    );
+  const {
+    data: OneClasse,
+    error,
+    isLoading,
+  } = useFetchClasseByIdQuery(selectedClasse, {
+    skip: !selectedClasse,
   });
 
-  // Function to filter available salles
+  const extractSubjectsBasedOnSemester = (classe: any) => {
+    let filtredMatieres: any = [];
+    console.log("classe", classe);
+    if (OneClasse !== undefined) {
+      for (let module of classe?.parcours?.modules!) {
+        if (calendrierState?.semestre! === "S1") {
+          if (module?.semestre_module! === classe?.semestres[0]!) {
+            filtredMatieres = filtredMatieres.concat(module?.matiere!);
+          }
+        } else {
+          if (module?.semestre_module! === classe?.semestres[1]!) {
+            filtredMatieres = filtredMatieres.concat(module?.matiere!);
+          }
+        }
+      }
+    }
+
+    return filtredMatieres;
+  };
+
+  let filtredMatieres: any = extractSubjectsBasedOnSemester(OneClasse);
+  console.log("filtredMatieres", filtredMatieres);
+  const filteredMat = filtredMatieres.filter(
+    (mat: any) =>
+      (calendrierState?.type_examen! === "EXAMEN" &&
+        mat.regime_matiere === "MX") ||
+      (calendrierState?.type_examen! === "Examens" &&
+        mat.regime_matiere === "MX") ||
+      (calendrierState?.type_examen! === "Examens" &&
+        mat.regime_matiere === "Mx") ||
+      (calendrierState?.type_examen! === "DS" && mat.regime_matiere === "CC") ||
+      (calendrierState?.type_examen! === "Examens" &&
+        mat.regime_matiere === "Ex")
+
+    //   // const isMatchingClasse = matiere?.classes!.some(
+    //   //   (classe) =>
+    //   //     classe._id === selectedClasse || classe.nom_classe_fr === selectedClasse
+    //   // );
+    //   // console.log("isMatchingClasse", isMatchingClasse);
+    //   // const isNotAlreadyExamined = !calendrierState.epreuve.some(
+    //   //   (epreuve: any) => {
+    //   //     return (
+    //   //       epreuve?.matiere?._id! === matiere?._id! &&
+    //   //       epreuve?.classe?._id! === selectedClasse
+    //   //     );
+    //   //   }
+    //   // );
+  );
+
   const filterAvailableSalles = () => {
     if (!selectedJour || !heureDebut || !heureFin) return AllSalles;
 
@@ -324,7 +352,50 @@ const ProgrammerCalendrier = () => {
     //   }
     // );
 
-    const usedSalles = calendrierState.epreuve.map(
+    // const usedSalles = calendrierState.epreuve.map(
+    //   (epreuve: any) => epreuve.salle?._id
+    // );
+
+    console.log("selectedJour", selectedJour);
+    console.log("heureDebut", heureDebut);
+    console.log("heureFin", heureFin);
+
+    const examCalendarsAtSelectedSemester = AllExamens.filter(
+      (ec) => ec.semestre === calendrierState.semestre
+    );
+
+    let epreuvesAtSelectedDay: any = [];
+
+    for (const examCalendar of examCalendarsAtSelectedSemester) {
+      const epreuvesAtSelectedDayRef = examCalendar?.epreuve?.filter(
+        (e: any) => e.date === selectedJour
+      );
+
+      epreuvesAtSelectedDay = epreuvesAtSelectedDay.concat(
+        epreuvesAtSelectedDayRef
+      );
+    }
+
+    console.log("epreuvesAtSelectedDay", epreuvesAtSelectedDay);
+
+    let conflictingEpreuves = epreuvesAtSelectedDay.filter(
+      (e: any) =>
+        (e.heure_debut < heureDebut &&
+          e.heure_fin > heureDebut &&
+          e.heure_fin < heureFin) ||
+        (e.heure_debut === heureDebut && e.heure_fin === heureFin) ||
+        (e.heure_debut > heureDebut &&
+          e.heure_debut < heureFin &&
+          e.heure_fin > heureFin) ||
+        (e.heure_debut === heureDebut && e.heure_fin < heureFin) ||
+        (e.heure_debut > heureDebut && e.heure_fin === heureFin) ||
+        (e.heure_debut > heureDebut && e.heure_fin < heureFin) ||
+        (e.heure_debut < heureDebut && e.heure_fin > heureFin) ||
+        (e.heure_debut === heureDebut && e.heure_fin > heureFin) ||
+        (e.heure_debut < heureDebut && e.heure_fin === heureFin)
+    );
+
+    const usedSalles = conflictingEpreuves.map(
       (epreuve: any) => epreuve.salle?._id
     );
 
@@ -478,7 +549,7 @@ const ProgrammerCalendrier = () => {
                         onChange={handleSelectMatiere}
                       >
                         <option value="">Choisir ...</option>
-                        {filteredMatieres.map((matiere) => (
+                        {filteredMat.map((matiere: any) => (
                           <option value={matiere?._id!} key={matiere?._id!}>
                             {matiere?.matiere!}
                           </option>

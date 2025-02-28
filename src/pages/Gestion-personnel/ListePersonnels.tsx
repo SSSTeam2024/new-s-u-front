@@ -790,16 +790,17 @@ const ListePersonnels = () => {
         "Nom Conjoint",
         "Poste Conjoint",
         "Nombre Fils",
-        "Service FR",
-        "Service AR",
-        "Etat Compte FR",
-        "Etat Compte AR",
-        "Catégorie FR",
         "Catégorie AR",
+        "Catégorie FR",
         "Grade FR",
         "Grade AR",
-        "Poste FR",
+
         "Poste AR",
+        "Poste FR",
+        "Etat Compte AR",
+        "Etat Compte FR",
+        "Service FR",
+        "Service AR",
       ],
     ]);
     const wb = XLSX.utils.book_new();
@@ -1306,7 +1307,7 @@ const ListePersonnels = () => {
 
                     <Col className="col-lg-auto ms-auto">
                       <div className="hstack gap-2">
-                        <Button
+                        {/* <Button
                           variant="success"
                           className="add-btn"
                           // onClick={() => fileInputRef.current?.click()}
@@ -1319,7 +1320,7 @@ const ListePersonnels = () => {
                           // ref={fileInputRef}
                           style={{ display: "none" }}
                           // onChange={handleFileChange}
-                        />
+                        /> */}
                         <Button
                           variant="primary"
                           className="add-btn"
