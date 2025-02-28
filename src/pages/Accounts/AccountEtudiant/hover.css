@@ -26,3 +26,18 @@
   max-height: 80%; /* Adjust max height as needed */
   object-fit: contain; /* Maintain aspect ratio and fit within container */
 }
+
+@media print {
+  .print-container {
+    width: 100%;
+    max-height:100%;
+    max-width: 800px; /* Ajustez selon vos besoins */
+    margin: auto;
+    size: A4;
+  }
+/*   
+  .print-container img {
+    max-height: 80px !important;
+    width: auto !important;
+  } */
+}

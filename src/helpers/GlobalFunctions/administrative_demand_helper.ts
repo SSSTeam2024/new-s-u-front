@@ -95,9 +95,14 @@ export const replaceShortCodes = (demandData: any, globalData: any, docNumber?: 
   if (newBody?.includes("ايميل-الطالب")) {
     newBody = newBody?.replace("ايميل-الطالب", studentId?.email!);
   }
- 
+  if (newBody?.includes("رقم-بطاقة-الطالب")) {
+    newBody = newBody?.replace("رقم-بطاقة-الطالب", studentId?.num_CIN!);
+  }
   if (newBody?.includes("نوع-التسجيل")) {
     newBody = newBody?.replace( "نوع-التسجيل", studentId?.type_inscription_ar!);
+  }
+  if (newBody?.includes("نوع_الترسيم")) {
+    newBody = newBody?.replace( "نوع_الترسيم", studentId?.type_inscription_ar!);
   }
   if (newBody?.includes("هاتف_الولي")) {
     newBody = newBody?.replace(  "هاتف_الولي", studentId?.tel_parents!);
@@ -117,6 +122,9 @@ export const replaceShortCodes = (demandData: any, globalData: any, docNumber?: 
   if (newBody?.includes("مرحلة_الطالب")) {
     newBody = newBody?.replace("مرحلة_الطالب", studentId?.Cycle_Ar!);
   }
+  if (newBody?.includes("الترقيم_البريدي")) {
+    newBody = newBody?.replace("الترقيم_البريدي", studentId?.code_postale!);
+  }
   
   // STUDENT fr
   if (newBody?.includes("nom_etudiant")) {
@@ -125,8 +133,8 @@ export const replaceShortCodes = (demandData: any, globalData: any, docNumber?: 
   if (newBody?.includes("prénom_étudiant")) {
     newBody = newBody?.replace("prénom_étudiant",studentId?.prenom_fr! );
   }
-  if (newBody?.includes("sexe-etudiant")) {
-    newBody = newBody?.replace("sexe-etudiant", studentId?.sexe!);
+  if (newBody?.includes("sexe_etudiant")) {
+    newBody = newBody?.replace("sexe_etudiant", studentId?.sexe!);
   }
   if (newBody?.includes("date_naissance_etudiant")) {
     newBody = newBody?.replace("date_naissance_etudiant", studentId?.date_naissance!);
@@ -137,14 +145,14 @@ export const replaceShortCodes = (demandData: any, globalData: any, docNumber?: 
   if (newBody?.includes("lieu_naissance-etudiant")) {
     newBody = newBody?.replace("lieu_naissance-etudiant",studentId?.lieu_naissance_fr!);
   }
-  if (newBody?.includes("nationalité-etudiant")) {
-    newBody = newBody?.replace("nationalité-etudiant", studentId?.nationalite!);
+  if (newBody?.includes("nationalité_etudiant")) {
+    newBody = newBody?.replace("nationalité_etudiant", studentId?.nationalite!);
   }
   if (newBody?.includes("cin_etudiant")) {
     newBody = newBody?.replace("cin_etudiant", studentId?.num_CIN!);
   }
-  if (newBody?.includes("etat-compte-etudiant")) {
-    newBody = newBody?.replace( "etat-compte-etudiant",studentId?.etat_compte.etat_fr!);
+  if (newBody?.includes("etat_compte_etudiant")) {
+    newBody = newBody?.replace( "etat_compte_etudiant",studentId?.etat_compte?.etat_fr!);
   }
   if (newBody?.includes("classe_etudiant")) {
     newBody = newBody?.replace("classe_etudiant",studentId?.groupe_classe?.nom_classe_fr!);
@@ -164,17 +172,23 @@ export const replaceShortCodes = (demandData: any, globalData: any, docNumber?: 
   if (newBody?.includes("nom_pere_etudiant")) {
     newBody = newBody?.replace("nom_pere_etudiant", studentId?.nom_pere!);
   }
+  if (newBody?.includes("prenom_pere")) {
+    newBody = newBody?.replace("prenom_pere", studentId?.prenom_pere!);
+  }
   if (newBody?.includes("nom_mere_etudiant")) {
     newBody = newBody?.replace("nom_mere_etudiant", studentId?.nom_mere!);
   }
-  if (newBody?.includes("etat_civil")) {
-    newBody = newBody?.replace("etat_civil", studentId?.etat_civil!);
+  if (newBody?.includes("prenom_mere")) {
+    newBody = newBody?.replace("prenom_mere", studentId?.prenom_mere!);
+  }
+  if (newBody?.includes("etat_civil_etudiant")) {
+    newBody = newBody?.replace("etat_civil_etudiant", studentId?.etat_civil!);
   }
   if (newBody?.includes("gouvernorat")) {
     newBody = newBody?.replace("gouvernorat", studentId?.gouvernorat!);
   }
   if (newBody?.includes("municipalité")) {
-    newBody = newBody?.replace("gouvernorat", studentId?.ville!);
+    newBody = newBody?.replace("municipalité", studentId?.ville!);
   }
   if (newBody?.includes("code_postal")) {
     newBody = newBody?.replace("code_postal", studentId?.code_postale!);
@@ -254,17 +268,23 @@ export const replaceShortCodes = (demandData: any, globalData: any, docNumber?: 
   if (newBody?.includes("etablissement_mere")) {
     newBody = newBody?.replace("etablissement_mere", studentId?.etablissement_mere!);
   }
-  if (newBody?.includes("prenom_mere")) {
-    newBody = newBody?.replace("prenom_mere", studentId?.profession_mere!);
+  if (newBody?.includes("profession_mere")) {
+    newBody = newBody?.replace("profession_mere", studentId?.profession_mere!);
   }
   if (newBody?.includes("etat_pere")) {
     newBody = newBody?.replace("etat_pere", studentId?.etat_pere!);
   }
-  if (newBody?.includes("pays")) {
-    newBody = newBody?.replace("pays", studentId?.pays!);
+  if (newBody?.includes("pays_etudiant")) {
+    newBody = newBody?.replace("pays_etudiant", studentId?.pays!);
   }
   if (newBody?.includes("matricule_etudiant")) {
     newBody = newBody?.replace("matricule_etudiant", studentId?.num_CIN!);
+  }
+  if (newBody?.includes("passeport_etudiant")) {
+    newBody = newBody?.replace("passeport_etudiant", studentId?.passeport_number!);
+  }
+  if (newBody?.includes("cnss_etudiant")) {
+    newBody = newBody?.replace("cnss_etudiant", studentId?.cnss_number!);
   }
   if (newBody?.includes("photo_etudiant")) {
     newBody = newBody?.replace("photo_etudiant", `${process.env.REACT_APP_API_URL}/files/etudiantFiles/PhotoProfil/${studentId?.photo_profil!}`);
@@ -337,12 +357,14 @@ export const replaceShortCodes = (demandData: any, globalData: any, docNumber?: 
   }
 
   // personnel FR
-  if (newBody?.includes("nom_personnel")) {
-    newBody = newBody?.replace(/nom_personnel/g, personnelId?.nom_fr!);
-  }
+
   if (newBody?.includes("prenom_personnel")) {
     newBody = newBody?.replace(/prenom_personnel/g, personnelId?.prenom_fr!);
   }
+  if (newBody?.includes("nom_personnel")) {
+    newBody = newBody?.replace(/nom_personnel/g, personnelId?.nom_fr!);
+  }
+
 
   if (newBody?.includes("poste_personnel")) {
     newBody = newBody.replace(/poste_personnel/g, personnelId?.poste.poste_fr!);
@@ -416,9 +438,9 @@ export const replaceShortCodes = (demandData: any, globalData: any, docNumber?: 
       personnelId?.job_conjoint!
     );
   }
-  if (newBody?.includes("nombre_fls_personnel")) {
+  if (newBody?.includes("nombre_fils_personnel")) {
     newBody = newBody.replace(
-      /nombre_fls_personnel/g,
+      /nombre_fils_personnel/g,
       personnelId?.job_conjoint!
     );
   }

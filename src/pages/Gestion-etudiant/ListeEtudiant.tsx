@@ -4,10 +4,13 @@ import {
   Card,
   Col,
   Container,
+  Dropdown,
   Form,
   Modal,
   Row,
   Spinner,
+  OverlayTrigger,
+ Popover
 } from "react-bootstrap";
 import Breadcrumb from "Common/BreadCrumb";
 import CountUp from "react-countup";
@@ -291,7 +294,8 @@ const ListEtudiants = () => {
   //     }
   //   }
   // };
-
+  const [show, setShow] = useState(false);
+  const togglePopover = () => setShow(!show);
   const columns = useMemo(
     () => [
       {
@@ -441,6 +445,55 @@ const ListEtudiants = () => {
                     ></i>
                   </Link>
                 </li>
+              ) : (
+                <></>
+              )}
+               {actionAuthorization(
+                "/gestion-etudiant/print-compte-etudiant",
+                user?.permissions!
+              ) ? (
+                <li>
+                  <Dropdown>
+                  <Dropdown.Toggle
+                  as="span"
+                  className="badge bg-secondary-subtle text-secondary"
+                 style={{ display: "inline-block", cursor: "pointer" }}
+                 >
+                <i
+                  className="bi bi-printer"
+                  style={{
+                    transition: "transform 0.3s ease-in-out",
+                    cursor: "pointer",
+                    fontSize: "1.5em",
+                  }}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.transform = "scale(1.4)")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.transform = "scale(1)")
+                  }
+                ></i>
+              </Dropdown.Toggle>
+
+              <Dropdown.Menu>
+                <Dropdown.Item
+                  as={Link}
+                  to="/gestion-etudiant/print-compte-etudiant"
+                  state={students}
+                >
+                  📄Fiche renseignement
+                </Dropdown.Item>
+                <Dropdown.Item
+                  as={Link}
+                  to="/gestion-etudiant/ar-print-compte-etudiant"
+                  state={students}
+                >
+                  📄 بطاقة ارشادات
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
+                </li>
+        
               ) : (
                 <></>
               )}
