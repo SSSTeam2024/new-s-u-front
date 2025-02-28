@@ -28,7 +28,7 @@ export interface Paper {
 export interface DossierAdministratif {
   _id?: string;
   papers: Paper[];
-  personnel?: {
+  personnel: {
     _id: string;
     nom_fr: string;
     nom_ar: string;
@@ -46,7 +46,8 @@ const AddDossieradministratifPersonnels = () => {
   }
 
   const [createDossierAdministratif] = useAddDossierAdministratifMutation();
-  const { data: allPersonnels = [], refetch: refetchPersonnels } = useFetchPersonnelsQuery();
+  const { data: allPersonnels = [], refetch: refetchPersonnels } =
+    useFetchPersonnelsQuery();
 
   const { data: allPapierAdministratifs = [] } =
     useFetchPapierAdministratifQuery();
@@ -104,15 +105,40 @@ const AddDossieradministratifPersonnels = () => {
     }
   };
 
+  // const handlePersonnelChange = (
+  //   event: React.ChangeEvent<HTMLSelectElement>
+  // ) => {
+  //   const selectedPersonnelId = event.target.value;
+  //   allPersonnels.forEach((personnel, index) => {
+  //     console.log(`Personnel ${index}:`, personnel);
+  //   });
+  //   const selectedPersonnel = allPersonnels.find(
+  //     (personnel) =>
+  //       personnel._id.trim().toLowerCase() ===
+  //       selectedPersonnelId.trim().toLowerCase()
+  //   ) || {
+  //     _id: "",
+  //     nom_fr: "",
+  //     nom_ar: "",
+  //     prenom_fr: "",
+  //     prenom_ar: "",
+  //   };
+  //   setFormData((prevData) => {
+  //     return {
+  //       ...prevData,
+  //       personnel: selectedPersonnel,
+  //     };
+  //   });
+  // };
+
   const handlePersonnelChange = (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
     const selectedPersonnelId = event.target.value;
-    allPersonnels.forEach((personnel, index) => {
-      console.log(`Personnel ${index}:`, personnel);
-    });
+
+    // Find the selected personnel or use a default fallback
     const selectedPersonnel = allPersonnels.find(
-      (personnel) =>
+      (personnel: any) =>
         personnel._id.trim().toLowerCase() ===
         selectedPersonnelId.trim().toLowerCase()
     ) || {
@@ -122,12 +148,21 @@ const AddDossieradministratifPersonnels = () => {
       prenom_fr: "",
       prenom_ar: "",
     };
-    setFormData((prevData) => {
-      return {
-        ...prevData,
-        personnel: selectedPersonnel,
-      };
-    });
+
+    // Extract only the relevant fields for `personnel`
+    const personnel = {
+      _id: selectedPersonnel?._id,
+      nom_fr: selectedPersonnel.nom_fr || "",
+      nom_ar: selectedPersonnel.nom_ar || "",
+      prenom_fr: selectedPersonnel.prenom_fr || "",
+      prenom_ar: selectedPersonnel.prenom_ar || "",
+    };
+
+    // Update the `formData` state
+    setFormData((prevData) => ({
+      ...prevData,
+      personnel,
+    }));
   };
 
   const handleDateChange = (selectedDates: Date[], index: number) => {
@@ -273,7 +308,7 @@ const AddDossieradministratifPersonnels = () => {
       papers: prevData.papers.filter((_, i) => i !== index),
     }));
   };
-  
+
   return (
     <React.Fragment>
       <div className="page-content">
@@ -286,7 +321,7 @@ const AddDossieradministratifPersonnels = () => {
                   className="d-none alert alert-danger py-2"
                 ></div>
                 <input type="hidden" id="id-field" />
-                <Row>         
+                <Row>
                   <Col lg={2}>
                     <div className="mb-3">
                       <Form.Label htmlFor="personnel">Personnel</Form.Label>

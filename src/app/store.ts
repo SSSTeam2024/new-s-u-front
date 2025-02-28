@@ -70,6 +70,8 @@ import { parcoursSlice } from "features/parcours/parcours";
 import { moduleParcoursSlice } from "features/moduleParcours/moduleParcours";
 import { absenceSlice } from "features/absenceEtudiant/absenceSlice";
 import { courSlice } from "features/coursEnseignant/coursSlice";
+import { generatedDocSlice } from "features/generatedDoc/generatedDocSlice";
+import { cycleSlice } from "features/cycle/cycle";
 
 export const store = configureStore({
   reducer: {
@@ -133,12 +135,14 @@ export const store = configureStore({
     [typeParcoursSlice.reducerPath]: typeParcoursSlice.reducer,
     [parcoursSlice.reducerPath]: parcoursSlice.reducer,
     [moduleParcoursSlice.reducerPath]: moduleParcoursSlice.reducer,
+    [cycleSlice.reducerPath]: cycleSlice.reducer,
     //! Notes Examen
     [notesExamenSlice.reducerPath]: notesExamenSlice.reducer,
     //! Absence Etudiant
     [absenceSlice.reducerPath]: absenceSlice.reducer,
     //! Cour Enseignant
     [courSlice.reducerPath]: courSlice.reducer,
+    [generatedDocSlice.reducerPath]: generatedDocSlice.reducer,
     auth: authSlice,
     Layout: LayoutReducer,
     ForgetPassword: ForgetPasswordReducer,
@@ -206,7 +210,9 @@ export const store = configureStore({
       parcoursSlice.middleware,
       moduleParcoursSlice.middleware,
       absenceSlice.middleware,
-      courSlice.middleware
+      courSlice.middleware,
+      generatedDocSlice.middleware,
+      cycleSlice.middleware,
     ]);
   },
 });

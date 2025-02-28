@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export interface ServicePersonnel {
-  _id: string;
+  _id?: string;
   //value: string;
   service_fr: string;
   service_ar: string;
@@ -21,10 +21,25 @@ export const servicePersonnelSlice = createApi({
         providesTags: ["ServicePersonnel"],
       }),
 
-      addServicePersonnel: builder.mutation<void, ServicePersonnel>({
+      addServicePersonnel: builder.mutation<ServicePersonnel, ServicePersonnel>(
+        {
+          query(payload) {
+            return {
+              url: "/create-service-personnel",
+              method: "POST",
+              body: payload,
+            };
+          },
+          invalidatesTags: ["ServicePersonnel"],
+        }
+      ),
+      getServicePersonnelValue: builder.mutation<
+        { id: string; service_fr: string; service_ar: string },
+        ServicePersonnel
+      >({
         query(payload) {
           return {
-            url: "/create-service-personnel",
+            url: "/get-service-by-value",
             method: "POST",
             body: payload,
           };
@@ -55,4 +70,5 @@ export const {
   useDeleteServicePersonnelMutation,
   useFetchServicesPersonnelQuery,
   useUpdateServicePersonnelMutation,
+  useGetServicePersonnelValueMutation,
 } = servicePersonnelSlice;

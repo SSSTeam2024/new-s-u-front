@@ -1,12 +1,13 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export interface Parcours {
-  _id: string;
-  type_parcours: any;
-  mention: any;
-  domaine: any;
+  _id?: string;
+  type_parcours?: any;
+  mention?: any;
+  domaine?: any;
   nom_parcours: string;
   code_parcours: string;
+  semestre_parcours?: string[];
 }
 
 export const parcoursSlice = createApi({
@@ -23,8 +24,31 @@ export const parcoursSlice = createApi({
         },
         providesTags: ["Parcours"],
       }),
+      getParcoursByValue: builder.mutation<
+        { id: string; nom_parcours: string; code_parcours: string },
+        Parcours
+      >({
+        query(payload) {
+          return {
+            url: "/get-parcours-by-value",
+            method: "POST",
+            body: payload,
+          };
+        },
+        invalidatesTags: ["Parcours"],
+      }),
+      getSemestreByIdParcours: builder.mutation<string[], string>({
+        query(id) {
+          return {
+            url: `/get-semestre-by-parcours-id`,
+            method: "POST",
+            body: { id }, // Send id in the body
+          };
+        },
+        invalidatesTags: ["Parcours"],
+      }),
 
-      addParcours: builder.mutation<void, Parcours>({
+      addParcours: builder.mutation<Parcours, Parcours>({
         query(payload) {
           return {
             url: "/create-parcours",
@@ -58,4 +82,6 @@ export const {
   useDeleteParcoursMutation,
   useFetchParcoursQuery,
   useUpdateParcoursMutation,
+  useGetParcoursByValueMutation,
+  useGetSemestreByIdParcoursMutation,
 } = parcoursSlice;

@@ -12,6 +12,7 @@ import "jspdf-autotable";
 import "../Emploi/GestionEmploiClasse.css";
 import {
   Document,
+  Image,
   Page,
   pdf,
   PDFDownloadLink,
@@ -30,19 +31,30 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     //borderBottomWidth: 1,
     paddingBottom: 10,
-    margin: 20,
+    margin: 10,
   },
-
+  headerLogoRight: {
+    width: 60,
+    height: 60,
+    marginTop: 5,
+    marginRight: 50,
+  },
+  headerLogoLeft: {
+    width: 60,
+    height: 60,
+    marginTop: 5,
+  },
   headerColumn: {
     flex: 1,
+    marginTop: 30,
   },
   headerCenter: {
     flex: 2,
     alignItems: "center",
   },
   headerTitle: {
-    fontSize: 16,
-    fontWeight: "bold",
+    fontSize: 18,
+    fontWeight: "heavy",
     textAlign: "center",
   },
 
@@ -54,7 +66,8 @@ const styles = StyleSheet.create({
 
   headerRow: {
     flexDirection: "row",
-    justifyContent: "flex-start",
+    // justifyContent: "flex-start",
+    justifyContent: "space-between",
     marginBottom: 10,
   },
   leftColumn: {
@@ -62,14 +75,25 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontSize: 10,
-    textAlign: "left",
+    // textAlign: "left",
+    textAlign: "center",
     marginBottom: 2,
+  },
+  headerLeft: {
+    alignItems: "flex-start",
+    flex: 1,
+  },
+  headerRight: {
+    alignItems: "flex-end",
+    flex: 1,
   },
 
   timetable: {
-    marginTop: 20,
-    borderWidth: 1,
+    marginTop: 0,
+    borderWidth: 2,
     borderColor: "#000",
+    marginLeft: 50,
+    marginRight: 50,
   },
   row: {
     flexDirection: "row",
@@ -77,14 +101,14 @@ const styles = StyleSheet.create({
     borderColor: "#000",
   },
   cell: {
-    padding: 8,
+    padding: 6,
     borderRightWidth: 1,
     borderColor: "#000",
     textAlign: "center",
-    fontSize: 10,
+    fontSize: 9,
   },
   dayCell: {
-    width: 100,
+    width: 80,
     fontWeight: "bold",
   },
   sessionCell: {
@@ -188,7 +212,11 @@ interface Session {
   heure_fin: string;
   matiere: {
     matiere: string;
-    type: string;
+    types?: {
+      type: string;
+      volume: string;
+      nbr_elimination: string;
+    }[];
   };
   salle: {
     salle: string;
@@ -216,7 +244,7 @@ const GestionEmploiEnseignant = () => {
   const [showAlertMessage, setAlertMessage] = useState("");
   const location = useLocation();
   const { teacher, ids, semestre, interval } = location?.state! || {};
-
+  console.log("teacherLocation", teacher);
   const { data: seances = [], isSuccess: sessionClassFetched } =
     useGetPeriodicSessionsByTeacherQuery({
       teacher_id: teacher?._id!,
@@ -224,9 +252,98 @@ const GestionEmploiEnseignant = () => {
     });
 
   const { data: variableGlobales = [] } = useFetchVaribaleGlobaleQuery();
-
+  console.log("variableGlobales", variableGlobales);
   const { data: typeSeances = [] } = useFetchTypeSeancesQuery();
 
+  // const typesFromSeances = useMemo(() => {
+  //   if (
+  //     !sessionClassFetched ||
+  //     seances.length === 0 ||
+  //     typeSeances.length === 0
+  //   ) {
+  //     return [];
+  //   }
+
+  //   const matchedTypes = seances.flatMap((seance: any) => {
+  //     const typeMatiere = seance?.matiere?.type;
+
+  //     if (!typeMatiere) return [];
+
+  //     // Find matching typeSeances based on abbreviation
+  //     const matches = typeSeances.filter(
+  //       (typeSeance: any) => typeSeance.abreviation === typeMatiere
+  //     );
+
+  //     return matches;
+  //   });
+  //   return matchedTypes;
+  // }, [seances, typeSeances, sessionClassFetched]);
+
+  // const [cours, setCours] = useState("");
+  // const [tp, setTp] = useState("");
+  // const [td, setTd] = useState("");
+  // const [ci, setCi] = useState("");
+
+  // useEffect(() => {
+  //   let tempCours = 0;
+  //   let tempTp = 0;
+  //   let tempTd = 0;
+  //   let tempCi = 0;
+
+  // typesFromSeances.forEach((types: any) => {
+  //   seances.forEach((seance: any) => {
+  //     const heureDebut = new Date(`1970-01-01T${seance?.heure_debut}`);
+  //     const heureFin = new Date(`1970-01-01T${seance?.heure_fin}`);
+  //     const duration =
+  //       (heureFin.getTime() - heureDebut.getTime()) / (60 * 1000); // minutes
+
+  //     if (types?.abreviation === "C" && seance.matiere.type === "C") {
+  //       tempCours = 1.83 * (duration / 60);
+  //     }
+  //     if (types?.abreviation === "CI" && seance.matiere.type === "CI") {
+  //       tempCi = 1.55 * (duration / 60);
+  //     }
+  //     if (types?.abreviation === "TP" && seance.matiere.type === "TP") {
+  //       tempTp = 0.86 * (duration / 60);
+  //     }
+  //     if (types?.abreviation === "TD" && seance.matiere.type === "TD") {
+  //       tempTd = 1 * (duration / 60);
+  //     }
+  //   });
+  // });
+  //   typesFromSeances.forEach((types: { abreviation: string }) => {
+  //     seances.forEach((seance: Session) => {
+  //       if (!seance.matiere.types) return; // Ensure types exist
+
+  //       const heureDebut = new Date(`1970-01-01T${seance.heure_debut}`);
+  //       const heureFin = new Date(`1970-01-01T${seance.heure_fin}`);
+  //       const duration =
+  //         (heureFin.getTime() - heureDebut.getTime()) / (60 * 1000); // Convert to minutes
+
+  //       // Check for matching type inside the types array
+  //       seance.matiere.types.forEach((matiereType) => {
+  //         if (types.abreviation === "C" && matiereType.type === "C") {
+  //           tempCours += 1.83 * (duration / 60);
+  //         }
+  //         if (types.abreviation === "CI" && matiereType.type === "CI") {
+  //           tempCi += 1.55 * (duration / 60);
+  //         }
+  //         if (types.abreviation === "TP" && matiereType.type === "TP") {
+  //           tempTp += 0.86 * (duration / 60);
+  //         }
+  //         if (types.abreviation === "TD" && matiereType.type === "TD") {
+  //           tempTd += 1 * (duration / 60);
+  //         }
+  //       });
+  //     });
+  //   });
+
+  //   // Update the state once after all calculations
+  //   setCours(tempCours.toFixed(2));
+  //   setTp(tempTp.toFixed(2));
+  //   setTd(tempTd.toFixed(2));
+  //   setCi(tempCi.toFixed(2));
+  // }, [typesFromSeances, seances]);
   const typesFromSeances = useMemo(() => {
     if (
       !sessionClassFetched ||
@@ -236,25 +353,25 @@ const GestionEmploiEnseignant = () => {
       return [];
     }
 
-    const matchedTypes = seances.flatMap((seance: any) => {
-      const typeMatiere = seance?.matiere?.type;
+    const matchedTypes = seances.flatMap((seance: Session) => {
+      if (!seance.matiere.types) return [];
 
-      if (!typeMatiere) return [];
-
-      // Find matching typeSeances based on abbreviation
-      const matches = typeSeances.filter(
-        (typeSeance: any) => typeSeance.abreviation === typeMatiere
-      );
-
-      return matches;
+      // Loop through all types in the `matiere.types` array
+      return seance.matiere.types.flatMap((matiereType) => {
+        return typeSeances.filter(
+          (typeSeance: { abreviation: string }) =>
+            typeSeance.abreviation === matiereType.type
+        );
+      });
     });
+
     return matchedTypes;
   }, [seances, typeSeances, sessionClassFetched]);
 
-  const [cours, setCours] = useState("");
-  const [tp, setTp] = useState("");
-  const [td, setTd] = useState("");
-  const [ci, setCi] = useState("");
+  const [cours, setCours] = useState(0);
+  const [tp, setTp] = useState(0);
+  const [td, setTd] = useState(0);
+  const [ci, setCi] = useState(0);
 
   useEffect(() => {
     let tempCours = 0;
@@ -262,33 +379,38 @@ const GestionEmploiEnseignant = () => {
     let tempTd = 0;
     let tempCi = 0;
 
-    typesFromSeances.forEach((types: any) => {
-      seances.forEach((seance: any) => {
-        const heureDebut = new Date(`1970-01-01T${seance?.heure_debut}`);
-        const heureFin = new Date(`1970-01-01T${seance?.heure_fin}`);
-        const duration =
-          (heureFin.getTime() - heureDebut.getTime()) / (60 * 1000); // minutes
+    typesFromSeances.forEach((types: { abreviation: string }) => {
+      seances.forEach((seance: Session) => {
+        if (!seance.matiere.types) return; // Ensure types exist
 
-        if (types?.abreviation === "C" && seance.matiere.type === "C") {
-          tempCours = 1.83 * (duration / 60);
-        }
-        if (types?.abreviation === "CI" && seance.matiere.type === "CI") {
-          tempCi = 1.55 * (duration / 60);
-        }
-        if (types?.abreviation === "TP" && seance.matiere.type === "TP") {
-          tempTp = 0.86 * (duration / 60);
-        }
-        if (types?.abreviation === "TD" && seance.matiere.type === "TD") {
-          tempTd = 1 * (duration / 60);
-        }
+        const heureDebut = new Date(`1970-01-01T${seance.heure_debut}`);
+        const heureFin = new Date(`1970-01-01T${seance.heure_fin}`);
+        const duration =
+          (heureFin.getTime() - heureDebut.getTime()) / (60 * 1000); // Convert to minutes
+
+        // Check for matching type inside the types array
+        seance.matiere.types.forEach((matiereType) => {
+          if (types.abreviation === "C" && matiereType.type === "C") {
+            tempCours += 1.83 * (duration / 60);
+          }
+          if (types.abreviation === "CI" && matiereType.type === "CI") {
+            tempCi += 1.55 * (duration / 60);
+          }
+          if (types.abreviation === "TP" && matiereType.type === "TP") {
+            tempTp += 0.86 * (duration / 60);
+          }
+          if (types.abreviation === "TD" && matiereType.type === "TD") {
+            tempTd += 1 * (duration / 60);
+          }
+        });
       });
     });
 
     // Update the state once after all calculations
-    setCours(tempCours.toFixed(2));
-    setTp(tempTp.toFixed(2));
-    setTd(tempTd.toFixed(2));
-    setCi(tempCi.toFixed(2));
+    setCours(parseFloat(tempCours.toFixed(2)));
+    setTp(parseFloat(tempTp.toFixed(2)));
+    setTd(parseFloat(tempTd.toFixed(2)));
+    setCi(parseFloat(tempCi.toFixed(2)));
   }, [typesFromSeances, seances]);
 
   const timeSlotsDynamic: any = [];
@@ -371,6 +493,11 @@ const GestionEmploiEnseignant = () => {
   const startYear = currentMonth >= 8 ? currentYear : currentYear - 1; // August is 8
   const endYear = startYear + 1;
 
+  const lastVariable =
+    variableGlobales.length > 0
+      ? variableGlobales[variableGlobales.length - 1]
+      : null;
+
   const TimetablePDF: React.FC<TimetablePDFProps> = ({
     days,
     groupedSessions,
@@ -383,24 +510,36 @@ const GestionEmploiEnseignant = () => {
         <View style={styles.header}>
           {/* Top Row */}
           <View style={styles.headerRow}>
-            <View style={styles.headerColumn}>
+            <View style={styles.headerLeft}>
               <Text style={styles.headerText}>
-                {variableGlobales[2].universite_fr}
+                {lastVariable?.universite_fr}
               </Text>
-              <Text style={styles.headerText}>
-                {variableGlobales[2].etablissement_fr}
-              </Text>
+              <Image
+                style={styles.headerLogoRight}
+                src={`${process.env.REACT_APP_API_URL}/files/variableGlobaleFiles/logoUniversiteFiles/${lastVariable?.logo_universite}`}
+              />
             </View>
+
+            {/* Center Title */}
             <View style={styles.headerCenter}>
-              <Text style={styles.headerTitle}>
-                Emploi de temps pour enseignant
-              </Text>
+              <Text style={styles.headerTitle}>Emploi du Temps Enseignant</Text>
+              <View style={styles.headerColumn}>
+                <Text style={styles.headerText}>
+                  A.U: {startYear}/{endYear}
+                </Text>
+                <Text style={styles.headerText}>Semestre: {semestre}</Text>
+              </View>
             </View>
-            <View style={styles.headerColumn}>
+
+            {/* Right Side: Establishment Name and Logo */}
+            <View style={styles.headerRight}>
               <Text style={styles.headerText}>
-                A.U: {startYear}/{endYear}
+                {lastVariable?.etablissement_fr}
               </Text>
-              <Text style={styles.headerText}>Semestre: {semestre}</Text>
+              <Image
+                style={styles.headerLogoRight}
+                src={`${process.env.REACT_APP_API_URL}/files/variableGlobaleFiles/logoEtablissementFiles/${lastVariable?.logo_etablissement}`}
+              />
             </View>
           </View>
 
@@ -478,11 +617,12 @@ const GestionEmploiEnseignant = () => {
                     {session.heure_debut || "N/A"} -{" "}
                     {session.heure_fin || "N/A"}
                     {"\n"}
-                    {session.matiere?.matiere + " | " + session.matiere?.type ||
-                      "No Subject"}{" "}
+                    {(session.matiere?.matiere || "Pas de matière") +
+                      " | " +
+                      (session.matiere?.types?.[0]?.type || "Pas de type")}
                     {"\n"}
-                    {session.salle?.salle || "No Room"} {"\n"}
-                    {session.classe?.nom_classe_fr || "No Class"}
+                    {session.salle?.salle || "Pas de salle"} {"\n"}
+                    {session.classe?.nom_classe_fr || "Pas de classe"}
                   </Text>
                 ))
               ) : (
@@ -506,14 +646,14 @@ const GestionEmploiEnseignant = () => {
           {/* Right: Course Load Table */}
           <View style={styles.loadContainer}>
             <View style={styles.footerRightText}>
-              <Text>Secrétaire Générale</Text>
+              <Text>Secrétaire Général</Text>
             </View>
           </View>
         </View>
         <View style={styles.footerRowTitle}>
           <View style={styles.leftColumn}>
             <Text style={styles.footerText}>
-              {teacher?.departements.nom_chef_dep}
+              {teacher?.departements?.nom_chef_dep!}
             </Text>
           </View>
           {/* Left: Periodic Date Section */}
@@ -528,7 +668,7 @@ const GestionEmploiEnseignant = () => {
           {/* Right: Course Load Table */}
           <View style={styles.loadContainer}>
             <View style={styles.footerRightText}>
-              <Text>{variableGlobales[2].secretaire_fr}</Text>
+              <Text>{lastVariable?.secretaire_fr!}</Text>
             </View>
           </View>
         </View>

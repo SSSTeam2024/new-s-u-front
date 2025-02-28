@@ -8,7 +8,7 @@ import { useFetchDepartementsQuery } from "features/departement/departement";
 import { useFetchMentionsClasseQuery } from "features/mentionClasse/mentionClasse";
 
 const AddSection = () => {
-  document.title = " Ajouter Section | Application Smart Institute";
+  document.title = " Ajouter Spécialités | Application Smart Institute";
   const navigate = useNavigate();
 
   function tog_retourParametres() {
@@ -50,11 +50,7 @@ const AddSection = () => {
       notify();
       navigate("/departement/gestion-classes/liste-section");
     } catch (error: any) {
-      if (error.status === 400) {
-        errorAlert("La valeur doit être unique.");
-      } else {
-        errorAlert("La valeur doit être unique. Veuillez réessayer.");
-      }
+      console.log(error);
     }
   };
 
@@ -62,7 +58,7 @@ const AddSection = () => {
     Swal.fire({
       position: "center",
       icon: "success",
-      title: "Section a été crée avec succés",
+      title: "Spécialités a été crée avec succés",
       showConfirmButton: false,
       timer: 2000,
     });
@@ -71,7 +67,7 @@ const AddSection = () => {
     Swal.fire({
       position: "center",
       icon: "error",
-      title: `Creation section échoué ${error}`,
+      title: `Creation spécialités échoué ${error}`,
       showConfirmButton: false,
       timer: 2000,
     });

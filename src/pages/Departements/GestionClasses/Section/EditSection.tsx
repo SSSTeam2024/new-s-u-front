@@ -7,7 +7,7 @@ import { useFetchDepartementsQuery } from "features/departement/departement";
 import { useFetchMentionsClasseQuery } from "features/mentionClasse/mentionClasse";
 
 const EditSection = () => {
-  document.title = "Modifier Section | Application Smart Institute";
+  document.title = "Modifier Spécialités | Application Smart Institute";
   const navigate = useNavigate();
   const { state: section } = useLocation();
 
@@ -75,11 +75,7 @@ const EditSection = () => {
       notify();
       navigate("/departement/gestion-classes/liste-section");
     } catch (error: any) {
-      if (error.status === 400) {
-        errorAlert("La valeur doit être unique.");
-      } else {
-        errorAlert("La valeur doit être unique. Veuillez réessayer.");
-      }
+      console.log(error);
     }
   };
 
@@ -87,7 +83,7 @@ const EditSection = () => {
     Swal.fire({
       position: "center",
       icon: "success",
-      title: "Section a été modifiée avec succès",
+      title: "Spécialités a été modifiée avec succès",
       showConfirmButton: false,
       timer: 2000,
     });

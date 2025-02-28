@@ -73,41 +73,6 @@ const ListeInscriptionEtudiants = () => {
   const columns = useMemo(
     () => [
       {
-        Header: (
-          <div className="form-check">
-            {" "}
-            <input
-              className="form-check-input"
-              type="checkbox"
-              id="checkAll"
-              value="option"
-            />{" "}
-          </div>
-        ),
-        Cell: (cellProps: any) => {
-          return (
-            <div className="form-check">
-              {" "}
-              <input
-                className="form-check-input"
-                type="checkbox"
-                name="chk_child"
-                defaultValue="option1"
-              />{" "}
-            </div>
-          );
-        },
-        id: "#",
-      },
-
-      {
-        Header: "Value",
-        accessor: "value_type_inscription",
-        disableFilters: true,
-        filterable: true,
-      },
-
-      {
         Header: "Inscription Etudiant",
         accessor: "type_fr",
         disableFilters: true,

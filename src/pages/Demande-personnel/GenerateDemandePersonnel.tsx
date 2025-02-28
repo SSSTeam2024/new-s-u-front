@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Button, Container, Row } from "react-bootstrap";
 import { useLocation } from "react-router-dom";
 import BodyPDF from "Common/BodyPDF";
@@ -10,6 +10,8 @@ import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 
 import { replaceShortCodes } from "helpers/GlobalFunctions/administrative_demand_helper";
+import { generateQRCode } from "helpers/GlobalFunctions/administrative_demand_helper";
+import { useGetGeneratedDocNextNumberByModelIdQuery } from "features/generatedDoc/generatedDocSlice";
 
 const GenerateDemandePersonnel = () => {
   document.title = "Demande Enseignant | ENIGA";
@@ -21,6 +23,13 @@ const GenerateDemandePersonnel = () => {
   const { data: AllVariablesGlobales = [] } = useFetchVaribaleGlobaleQuery();
   const bodyRef = useRef<HTMLDivElement | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [hasProcessed, setHasProcessed] = useState(false);
+  const [newUpdateBody, setNewUpdateBody] = useState("");
+
+  const { data: number, isSuccess: nextNumberLoaded } = useGetGeneratedDocNextNumberByModelIdQuery(
+    demandeLocation?.piece_demande?._id!
+    );
+
   // const generatePDF = async () => {
   //   try {
   //     setIsGenerating(true);
@@ -54,6 +63,21 @@ const GenerateDemandePersonnel = () => {
   //     setIsGenerating(false);
   //   }
   // };
+
+  useEffect(() => {
+      if (!hasProcessed && nextNumberLoaded) {
+        const cryptedDataCode = generateQRCode(demandeLocation._id, number.value);
+        let generatedDocument = replaceShortCodes(
+          demandeLocation,
+          AllVariablesGlobales,
+          number.value,
+          cryptedDataCode
+        );
+        setNewUpdateBody(generatedDocument);
+  
+        setHasProcessed(true);
+      }
+    }, [newUpdateBody, hasProcessed, nextNumberLoaded]);
 
   const extractTableData = (tableElement: any) => {
     if (!tableElement) {
@@ -188,15 +212,19 @@ const GenerateDemandePersonnel = () => {
   // };
 
   const handleSaveAsPDF = async () => {
+    const cryptedDataCode = generateQRCode(demandeLocation._id, number.value)
     let generatedDocument = replaceShortCodes(
       demandeLocation,
-      AllVariablesGlobales
+      AllVariablesGlobales,
+      // number.value,
+      // cryptedDataCode
     );
 
     if (generatedDocument) {
       const tempContainer = document.createElement("div");
       tempContainer.style.position = "absolute";
       tempContainer.style.left = "-9999px";
+      // tempContainer.style.display = "none";
       tempContainer.style.width = "fit-content";
       tempContainer.style.background = "#fff";
       tempContainer.innerHTML = generatedDocument;
@@ -352,7 +380,7 @@ const GenerateDemandePersonnel = () => {
               <TitlePDF piece_demande={demandeLocation?.piece_demande!} />
             </Row> */}
             <Row>
-              <BodyPDF
+              {/* <BodyPDF
                 piece_demande={demandeLocation?.piece_demande!}
                 studentId={demandeLocation?.studentId!}
                 enseignantId={demandeLocation?.enseignantId!}
@@ -363,7 +391,22 @@ const GenerateDemandePersonnel = () => {
                 ).toLocaleDateString("fr-FR")}
                 // departement={demandeLocation.enseignantId.departements}
                 allVariables={AllVariablesGlobales[2]}
-              />
+              /> */}
+              <div
+                style={{
+                  border: "1px solid #ccc",
+                  padding: "10px",
+                  marginTop: "20px",
+                  minHeight: "300px",
+                  background: "#f9f9f9",
+                }}
+              >
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: /* JSON.parse(newUpdateBody) */ newUpdateBody,
+                  }}
+                />
+              </div>
             </Row>
             {/* <Row className="mt-auto">
               <FooterPDF

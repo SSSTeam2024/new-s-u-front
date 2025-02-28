@@ -89,7 +89,7 @@ const TemplateBody = () => {
                   to="/template/single-template-body"
                   state={cellProps}
                   className="badge bg-info-subtle text-info view-item-btn"
-                  data-bs-toggle="offcanvas"
+                  
                 >
                   <i
                     className="ph ph-eye"
@@ -200,7 +200,7 @@ const TemplateBody = () => {
                             navigate("/template/ajouter-template-body")
                           }
                         >
-                          Ajouter un corps du modèle
+                          Ajouter un modèle
                         </Button>
                       </div>
                     </Col>

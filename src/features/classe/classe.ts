@@ -20,11 +20,20 @@ export interface Classe {
   };
   niveau_classe: Niveau;
   matieres: Matiere[];
+  groupe_number: string;
+  parcours?: any;
+  semestres?: any;
 }
 
 export interface AssignMatieresPayload {
   _id: string;
   matiereIds: string[];
+}
+
+export interface AssignParcoursPayload {
+  _id: string;
+  parcoursIds: string[];
+  semestres: string[];
 }
 export const classeSlice = createApi({
   reducerPath: "Classe",
@@ -51,6 +60,19 @@ export const classeSlice = createApi({
         },
         invalidatesTags: ["Classe"],
       }),
+      getClasseValue: builder.mutation<
+        { id: string; nom_classe_fr: string; nom_classe_ar: string },
+        Classe
+      >({
+        query(payload) {
+          return {
+            url: "/get-classe-by-value",
+            method: "POST",
+            body: payload,
+          };
+        },
+        invalidatesTags: ["Classe"],
+      }),
 
       fetchClassesByTeacher: builder.mutation<Classe[], any>({
         query(payload) {
@@ -63,11 +85,11 @@ export const classeSlice = createApi({
         invalidatesTags: ["Classe"],
       }),
 
-      updateClasse: builder.mutation<void, Classe>({
-        query: ({ _id, ...rest }) => ({
-          url: `/update-classe/${_id}`,
+      updateClasse: builder.mutation<void, any>({
+        query: (payload) => ({
+          url: `/update-classe`,
           method: "PUT",
-          body: rest,
+          body: payload,
         }),
         invalidatesTags: ["Classe"],
       }),
@@ -112,6 +134,15 @@ export const classeSlice = createApi({
         query: (classeId) => `${classeId}/matieres`,
         providesTags: ["Classe"],
       }),
+
+      assignParcoursToClasse: builder.mutation<void, AssignParcoursPayload>({
+        query: (payload) => ({
+          url: `/assign-parcours/${payload._id}/${payload.parcoursIds[0]}`, // Use the first parcoursId
+          method: "PUT",
+          body: { semestres: payload.semestres },
+        }),
+        invalidatesTags: ["Classe"],
+      }),
     };
   },
 });
@@ -126,5 +157,7 @@ export const {
   useDeleteAssignedMatiereFromClasseMutation,
   useGetAssignedMatieresQuery,
   useFetchClassesByTeacherMutation,
-  useGetMatieresByClasseIdQuery
+  useGetMatieresByClasseIdQuery,
+  useGetClasseValueMutation,
+  useAssignParcoursToClasseMutation,
 } = classeSlice;

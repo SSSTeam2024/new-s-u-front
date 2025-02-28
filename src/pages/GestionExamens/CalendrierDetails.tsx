@@ -82,17 +82,126 @@ const styleGlobalCalendar = StyleSheet.create({
 
 const styles = StyleSheet.create({
   page: { padding: 30 },
-  title: { fontSize: 24, textAlign: "center", marginBottom: 20 },
+  title: { fontSize: 15, textAlign: "center", marginBottom: 20 },
   section: { marginBottom: 20 },
   text: { fontSize: 14, marginBottom: 15 },
   listItem: { fontSize: 14, marginLeft: 20, marginBottom: 5 },
   footer: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 20,
+    justifyContent: "flex-end",
+  },
+  headerRow: {
+    flexDirection: "row",
+    justifyContent: "space-between", // Ensures left and right positioning
+    alignItems: "center",
+    marginBottom: 20,
   },
   leftAlign: { fontSize: 14 },
   rightAlign: { fontSize: 14 },
+  headerLogoRight: {
+    width: 60,
+    height: 60,
+    marginTop: 5,
+    marginRight: 50,
+  },
+  headerLeft: {
+    alignItems: "flex-start",
+    flex: 1,
+  },
+  headerRight: {
+    alignItems: "flex-end",
+    flex: 1,
+  },
+  headerCenter: {
+    flex: 2,
+    alignItems: "center",
+  },
+
+  headerContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  headerTitle: {
+    fontSize: 14,
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  headerSubtitle: {
+    fontSize: 12,
+    marginTop: 5,
+    textAlign: "center",
+  },
+  headerText: {
+    fontSize: 12,
+    // fontWeight: "ultrabold",
+    textAlign: "center",
+    marginBottom: 5,
+  },
+  headerLogo: {
+    width: 60,
+    height: 60,
+    marginTop: 5,
+    marginRight: 50,
+  },
+  centeredRightSection: {
+    marginTop: 10,
+    alignItems: "center",
+  },
+  infoText: {
+    fontSize: 10,
+    textAlign: "center",
+  },
+  header: {
+    marginBottom: 20,
+    //borderBottomWidth: 1,
+    paddingBottom: 10,
+    margin: 20,
+  },
+
+  headerColumn: {
+    flex: 1,
+    marginTop: 5,
+    alignItems: "center",
+  },
+
+  table: {
+    width: "100%",
+    borderCollapse: "collapse",
+    marginVertical: 10,
+    display: "flex",
+  },
+  tableRowHeader: {
+    flexDirection: "row",
+    backgroundColor: "#EAEAEA",
+    borderBottomWidth: 1,
+    borderBottomColor: "#000",
+    paddingVertical: 5,
+  },
+  tableHeaderCell: {
+    flex: 1,
+    fontSize: 12,
+    fontWeight: "bold",
+    textAlign: "center",
+    padding: 5,
+    borderRightWidth: 1,
+    borderRightColor: "#000",
+  },
+  tableRow: {
+    flexDirection: "row",
+    borderBottomWidth: 1,
+    borderBottomColor: "#ddd",
+    paddingVertical: 5,
+  },
+  tableCell: {
+    flex: 1,
+    fontSize: 12,
+    textAlign: "center",
+    padding: 5,
+    borderRightWidth: 1,
+    borderRightColor: "#ddd",
+  },
 });
 
 const stylesCalenderFilter = StyleSheet.create({
@@ -103,6 +212,58 @@ const stylesCalenderFilter = StyleSheet.create({
     marginBottom: 20,
     paddingBottom: 10,
     margin: 20,
+  },
+  headerContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "100%",
+    marginBottom: 10,
+  },
+  footerRightText: {
+    fontSize: 11,
+    textAlign: "right",
+    marginBottom: 2,
+  },
+  footerleftColumn: {
+    position: "absolute",
+    bottom: 20, // Keeps it at the bottom
+    left: 50, // Aligns it to the left side
+  },
+  footerTextDirecteur: {
+    fontSize: 12,
+    fontWeight: "bold",
+    marginBottom: 2,
+  },
+  footerText: {
+    fontSize: 12,
+    marginBottom: 50, // Creates space for the signature
+  },
+  signatureSpace: {
+    height: 40, // Defines a blank space for the signature
+    marginTop: 10, // Adds space after the name
+    borderBottom: "1px solid black", // Optional: adds a signature line
+    width: 150, // Adjust as needed
+  },
+
+  rightColumn: {
+    flex: 1,
+    justifyContent: "flex-end",
+    alignItems: "flex-end",
+    marginRight: 20,
+  },
+  // headerLogo: {
+  //   width: 60, // Adjust as needed
+  //   height: 60, // Adjust as needed
+  //   resizeMode: "contain",
+  //   marginTop: 5,
+  // },
+  logo: {
+    width: 50,
+    height: 50,
+    objectFit: "contain", // Instead of resizeMode
+    marginTop: 5,
+    marginRight: 50,
   },
   title: {
     fontSize: 16,
@@ -120,7 +281,7 @@ const stylesCalenderFilter = StyleSheet.create({
   timetable: {
     borderWidth: 1,
     borderColor: "#000",
-    marginTop: 50,
+    marginTop: 30,
   },
   row: {
     flexDirection: "row",
@@ -135,7 +296,7 @@ const stylesCalenderFilter = StyleSheet.create({
     fontSize: 10,
   },
   dayCell: {
-    width: 100,
+    width: 150,
     fontWeight: "bold",
   },
   classeCell: {
@@ -143,7 +304,7 @@ const stylesCalenderFilter = StyleSheet.create({
     fontWeight: "bold",
   },
   salleCell: {
-    width: 80,
+    width: 150,
   },
   matiereCell: {
     flex: 1,
@@ -250,6 +411,50 @@ const stylesCalenderFilter = StyleSheet.create({
     textAlign: "center",
     fontSize: 10,
   },
+  headerLeft: {
+    flex: 1,
+    alignItems: "center",
+  },
+  headerRight: {
+    flex: 1,
+    alignItems: "center",
+  },
+  headerCenter: {
+    flex: 2, // Gives more space to the center
+    alignItems: "center",
+    justifyContent: "center",
+    textAlign: "center",
+  },
+  headerText: {
+    fontSize: 10,
+    textAlign: "center",
+    marginBottom: 5,
+    fontWeight: "bold",
+  },
+  headerLogo: {
+    width: 70, // Increased for better visibility
+    height: 70,
+    objectFit: "contain",
+    marginBottom: 5,
+  },
+  headerTitle: {
+    fontSize: 14,
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  headerSubtitle: {
+    fontSize: 12,
+    textAlign: "center",
+  },
+  centeredRightSection: {
+    marginTop: 5,
+    alignItems: "center",
+  },
+  infoText: {
+    fontSize: 10,
+    textAlign: "center",
+    fontWeight: "bold",
+  },
 });
 
 interface Props {
@@ -270,6 +475,10 @@ const CalendrierDetails: React.FC = () => {
   const { data: AllSalles = [] } = useFetchSallesQuery();
   const { data: AllEnseignants = [] } = useFetchEnseignantsQuery();
   const { data: variableGlobales = [] } = useFetchVaribaleGlobaleQuery();
+  const lastVariable =
+    variableGlobales.length > 0
+      ? variableGlobales[variableGlobales.length - 1]
+      : null;
   console.log("variableGlobales", variableGlobales);
   const [modifierExamenEpreuve] = useModifierExamenEpreuveMutation();
 
@@ -393,36 +602,105 @@ const CalendrierDetails: React.FC = () => {
   }: {
     teacherName: string;
     exams: any[];
-  }) => (
-    <Document>
-      <Page size="A4" style={styles.page}>
-        <Text style={styles.title}>Convocation</Text>
-        <Text style={styles.text}>Cher(e) {teacherName},</Text>
-        <Text style={styles.text}>
-          Vous êtes convoqué(e) pour surveiller les examens selon le planning
-          suivant :
-        </Text>
-        <View style={styles.section}>
-          {exams.map((exam, idx) => (
-            <Text key={idx} style={styles.listItem}>
-              - {exam.day.charAt(0).toUpperCase() + exam.day.slice(1)}{" "}
-              {exam.date}
-            </Text>
-          ))}
-        </View>
-        <Text style={styles.text}>
-          Nous comptons sur votre présence et votre ponctualité pour assurer le
-          bon déroulement des épreuves.
-        </Text>
-        <View style={styles.footer}>
-          <Text style={styles.leftAlign}>
-            Signature l'équipe administrative
+  }) => {
+    console.log("exams", exams[0].exams[0].time);
+    return (
+      <Document>
+        <Page size="A4" style={styles.page}>
+          {/* Header Section */}
+          <View style={styles.header}>
+            {/* Top Row */}
+            <View style={styles.headerRow}>
+              <View style={styles.headerLeft}>
+                <Text style={styles.headerText}>
+                  {lastVariable?.universite_fr}
+                </Text>
+                <Image
+                  style={styles.headerLogoRight}
+                  src={`${process.env.REACT_APP_API_URL}/files/variableGlobaleFiles/logoUniversiteFiles/${lastVariable?.logo_universite}`}
+                />
+              </View>
+
+              <View style={styles.headerCenter}>
+                <Text style={styles.title}>Convocation de Surveillance</Text>
+
+                <View style={styles.headerColumn}>
+                  <Text style={styles.headerText}>
+                    Session: {startYear}/{endYear}
+                  </Text>
+                </View>
+              </View>
+
+              {/* Right Side: Establishment Name and Logo */}
+              <View style={styles.headerRight}>
+                <Text style={styles.headerText}>
+                  {lastVariable?.etablissement_fr}
+                </Text>
+                <Image
+                  style={styles.headerLogoRight}
+                  src={`${process.env.REACT_APP_API_URL}/files/variableGlobaleFiles/logoEtablissementFiles/${lastVariable?.logo_etablissement}`}
+                />
+              </View>
+            </View>
+          </View>
+
+          <Text style={styles.text}>Cher(e) {teacherName},</Text>
+          <Text style={styles.text}>
+            Vous êtes convoqué(e) pour surveiller les examens selon le planning
+            suivant :
           </Text>
-          <Text style={styles.rightAlign}>Signature l'enseignant</Text>
-        </View>
-      </Page>
-    </Document>
-  );
+          <View style={styles.table}>
+            <View style={styles.tableRowHeader}>
+              <Text style={styles.tableHeaderCell}>Jour</Text>
+              <Text style={styles.tableHeaderCell}>Horaire</Text>
+            </View>
+
+            {exams.map((examen, idx) =>
+              examen.exams.map((exam: any) => (
+                <View key={idx} style={styles.tableRow}>
+                  <Text style={styles.tableCell}>
+                    {examen.day.charAt(0).toUpperCase() + examen.day.slice(1)} -{" "}
+                    {examen.date}
+                  </Text>
+                  <Text style={styles.tableCell}>{exam.time}</Text>
+                </View>
+              ))
+            )}
+          </View>
+
+          <Text style={styles.text}>
+            Merci de vous présenter 10 minutes avant le début de l'examen pour
+            les préparatifs nécessaires.
+          </Text>
+          <Text style={styles.text}>Cordialement.</Text>
+          <View style={[styles.footer, { marginTop: 20 }]}>
+            <Text style={styles.rightAlign}>Directeur</Text>
+          </View>
+          <View style={[styles.footer, { marginTop: 10 }]}>
+            <Text style={styles.rightAlign}>{lastVariable?.directeur_fr!}</Text>
+          </View>
+        </Page>
+      </Document>
+    );
+  };
+
+  // const filteredExamsForTeacher = days
+  //   .filter(({ epreuve }) =>
+  //     epreuve.some((exam: any) =>
+  //       exam.group_surveillants.some(
+  //         (teacher: any) => teacher._id === selectedTeacher
+  //       )
+  //     )
+  //   )
+  //   .map(({ date, day, epreuve }) => ({
+  //     date,
+  //     day,
+  //     epreuve: epreuve.filter((exam: any) =>
+  //       exam.group_surveillants.some(
+  //         (teacher: any) => teacher._id === selectedTeacher
+  //       )
+  //     ),
+  //   }));
 
   const filteredExamsForTeacher = days
     .filter(({ epreuve }) =>
@@ -435,13 +713,18 @@ const CalendrierDetails: React.FC = () => {
     .map(({ date, day, epreuve }) => ({
       date,
       day,
-      epreuve: epreuve.filter((exam: any) =>
-        exam.group_surveillants.some(
-          (teacher: any) => teacher._id === selectedTeacher
+      // Extracting relevant exams with their time
+      exams: epreuve
+        .filter((exam: any) =>
+          exam.group_surveillants.some(
+            (teacher: any) => teacher._id === selectedTeacher
+          )
         )
-      ),
+        .map((exam: any) => ({
+          time: `${exam.heure_debut} - ${exam.heure_fin}`,
+        })),
     }));
-
+  console.log("days", days);
   const selectedTeacherDetails = AllEnseignants.find(
     (t) => t._id === selectedTeacher
   );
@@ -514,6 +797,195 @@ const CalendrierDetails: React.FC = () => {
   const startYear = currentMonth >= 8 ? currentYear : currentYear - 1;
   const endYear = startYear + 1;
 
+  // const CalendarPDF = ({
+  //   title,
+  //   filteredDays,
+  //   filterBy,
+  //   filterValue = "",
+  // }: Props) => {
+  //   const rows = groupByDay(filteredDays);
+
+  //   return (
+  //     <Document>
+  //       <Page orientation="landscape" style={stylesCalenderFilter.page}>
+  //         {/* Header Section */}
+  //         <View
+  //           style={{
+  //             flexDirection: "row",
+  //             justifyContent: "space-between",
+  //             marginBottom: 10,
+  //           }}
+  //         >
+  //           {/* Left Section */}
+  //           <View style={{ flex: 1, flexWrap: "wrap", maxWidth: "30%" }}>
+  //             <Text
+  //               style={{
+  //                 fontSize: 10,
+  //                 fontWeight: "bold",
+  //                 textAlign: "left",
+  //               }}
+  //             >
+  //               {variableGlobales[29]?.universite_fr!}
+  //             </Text>
+  //             <Text
+  //               style={{
+  //                 fontSize: 10,
+  //                 textAlign: "left",
+  //               }}
+  //             >
+  //               {variableGlobales[29]?.etablissement_fr!}
+  //             </Text>
+  //           </View>
+
+  //           {/* Center Section (Title with Subtitle) */}
+  //           <View style={{ flex: 1, alignItems: "center" }}>
+  //             <Text style={{ fontSize: 14, fontWeight: "bold" }}>{title}</Text>
+  //             {filterValue && (
+  //               <Text style={{ fontSize: 12, marginTop: 5 }}>
+  //                 {filterValue}
+  //               </Text>
+  //             )}
+  //           </View>
+
+  //           {/* Right Section */}
+  //           <View style={{ alignItems: "flex-end" }}>
+  //             <Text style={{ fontSize: 10 }}>
+  //               A.U: {startYear}/{endYear}
+  //             </Text>
+  //             <Text style={{ fontSize: 10 }}>
+  //               Semestre: {calendrierState?.semestre!}
+  //             </Text>
+  //             <Text style={{ fontSize: 10 }}>
+  //               Période: {calendrierState?.period!}
+  //             </Text>
+  //           </View>
+  //         </View>
+
+  //         {/* Timetable */}
+  //         <View style={stylesCalenderFilter.timetable}>
+  //           {/* Header Row */}
+  //           <View
+  //             style={[stylesCalenderFilter.row, stylesCalenderFilter.headerRow]}
+  //           >
+  //             {filterBy && filterBy === "jour" ? (
+  //               ""
+  //             ) : (
+  //               <Text
+  //                 style={[
+  //                   stylesCalenderFilter.cell,
+  //                   stylesCalenderFilter.dayCell,
+  //                 ]}
+  //               >
+  //                 Jour
+  //               </Text>
+  //             )}
+  //             {filterBy !== "classe" && (
+  //               <Text
+  //                 style={[
+  //                   stylesCalenderFilter.cell,
+  //                   stylesCalenderFilter.classeCell,
+  //                 ]}
+  //               >
+  //                 Classe
+  //               </Text>
+  //             )}
+  //             {filterBy !== "salle" && (
+  //               <Text
+  //                 style={[
+  //                   stylesCalenderFilter.cell,
+  //                   stylesCalenderFilter.salleCell,
+  //                 ]}
+  //               >
+  //                 Salle
+  //               </Text>
+  //             )}
+  //             <Text
+  //               style={[
+  //                 stylesCalenderFilter.cell,
+  //                 stylesCalenderFilter.matiereCell,
+  //               ]}
+  //             >
+  //               Matière
+  //             </Text>
+  //             <Text
+  //               style={[
+  //                 stylesCalenderFilter.cell,
+  //                 stylesCalenderFilter.timeCell,
+  //               ]}
+  //             >
+  //               Horaire
+  //             </Text>
+  //           </View>
+
+  //           {rows.map((row, idx) => (
+  //             <View key={idx} style={stylesCalenderFilter.row}>
+  //               {/* Render the Day column only if it's the first row for that day */}
+  //               {filterBy !== "jour" && (
+  //                 <Text
+  //                   style={[
+  //                     stylesCalenderFilter.cell,
+  //                     stylesCalenderFilter.dayCell,
+  //                     idx === 0 || row.day !== rows[idx - 1].day
+  //                       ? {}
+  //                       : { display: "none" }, // Hide the cell for subsequent rows with the same day
+  //                   ]}
+  //                 >
+  //                   {idx === 0 || row.day !== rows[idx - 1].day
+  //                     ? `${
+  //                         row.day.charAt(0).toUpperCase() + row.day.slice(1)
+  //                       } - ${row.date}`
+  //                     : ""}
+  //                 </Text>
+  //               )}
+  //               {filterBy !== "classe" && (
+  //                 <Text
+  //                   style={[
+  //                     stylesCalenderFilter.cell,
+  //                     stylesCalenderFilter.classeCell,
+  //                   ]}
+  //                 >
+  //                   {row.classe}
+  //                 </Text>
+  //               )}
+  //               {/* Salle */}
+  //               {filterBy !== "salle" && (
+  //                 <Text
+  //                   style={[
+  //                     stylesCalenderFilter.cell,
+  //                     stylesCalenderFilter.salleCell,
+  //                   ]}
+  //                 >
+  //                   {row.salle}
+  //                 </Text>
+  //               )}
+
+  //               {/* Matière */}
+  //               <Text
+  //                 style={[
+  //                   stylesCalenderFilter.cell,
+  //                   stylesCalenderFilter.matiereCell,
+  //                 ]}
+  //               >
+  //                 {row.matiere}
+  //               </Text>
+
+  //               {/* Horaire */}
+  //               <Text
+  //                 style={[
+  //                   stylesCalenderFilter.cell,
+  //                   stylesCalenderFilter.timeCell,
+  //                 ]}
+  //               >
+  //                 {row.heure_debut} - {row.heure_fin}
+  //               </Text>
+  //             </View>
+  //           ))}
+  //         </View>
+  //       </Page>
+  //     </Document>
+  //   );
+  // };
+
   const CalendarPDF = ({
     title,
     filteredDays,
@@ -526,55 +998,48 @@ const CalendrierDetails: React.FC = () => {
       <Document>
         <Page orientation="landscape" style={stylesCalenderFilter.page}>
           {/* Header Section */}
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              marginBottom: 10,
-            }}
-          >
-            {/* Left Section */}
-            <View style={{ flex: 1, flexWrap: "wrap", maxWidth: "30%" }}>
-              <Text
-                style={{
-                  fontSize: 10,
-                  fontWeight: "bold",
-                  textAlign: "left",
-                }}
-              >
-                {variableGlobales[2]?.universite_fr!}
+          <View style={stylesCalenderFilter.headerContainer}>
+            {/* Left Side: University Name and Logo */}
+            <View style={stylesCalenderFilter.headerLeft}>
+              <Text style={stylesCalenderFilter.headerText}>
+                {lastVariable?.universite_fr}
               </Text>
-              <Text
-                style={{
-                  fontSize: 10,
-                  textAlign: "left",
-                }}
-              >
-                {variableGlobales[2]?.etablissement_fr!}
-              </Text>
+              <Image
+                style={stylesCalenderFilter.headerLogo}
+                src={`${process.env.REACT_APP_API_URL}/files/variableGlobaleFiles/logoUniversiteFiles/${lastVariable?.logo_universite}`}
+              />
             </View>
 
-            {/* Center Section (Title with Subtitle) */}
-            <View style={{ flex: 1, alignItems: "center" }}>
-              <Text style={{ fontSize: 14, fontWeight: "bold" }}>{title}</Text>
+            {/* Center Section: Title and Exam Info */}
+            <View style={stylesCalenderFilter.headerCenter}>
+              <Text style={stylesCalenderFilter.headerTitle}>{title}</Text>
               {filterValue && (
-                <Text style={{ fontSize: 12, marginTop: 5 }}>
+                <Text style={stylesCalenderFilter.headerSubtitle}>
                   {filterValue}
                 </Text>
               )}
+              <View style={stylesCalenderFilter.centeredRightSection}>
+                <Text style={stylesCalenderFilter.infoText}>
+                  A.U: {startYear}/{endYear}
+                </Text>
+                <Text style={stylesCalenderFilter.infoText}>
+                  Semestre: {calendrierState?.semestre!}
+                </Text>
+                <Text style={stylesCalenderFilter.infoText}>
+                  Période: {calendrierState?.period!}
+                </Text>
+              </View>
             </View>
 
-            {/* Right Section */}
-            <View style={{ alignItems: "flex-end" }}>
-              <Text style={{ fontSize: 10 }}>
-                A.U: {startYear}/{endYear}
+            {/* Right Side: Etablissement Name and Logo */}
+            <View style={stylesCalenderFilter.headerRight}>
+              <Text style={stylesCalenderFilter.headerText}>
+                {lastVariable?.etablissement_fr}
               </Text>
-              <Text style={{ fontSize: 10 }}>
-                Semestre: {calendrierState?.semestre!}
-              </Text>
-              <Text style={{ fontSize: 10 }}>
-                Période: {calendrierState?.period!}
-              </Text>
+              <Image
+                style={stylesCalenderFilter.headerLogo}
+                src={`${process.env.REACT_APP_API_URL}/files/variableGlobaleFiles/logoEtablissementFiles/${lastVariable?.logo_etablissement}`}
+              />
             </View>
           </View>
 
@@ -584,38 +1049,22 @@ const CalendrierDetails: React.FC = () => {
             <View
               style={[stylesCalenderFilter.row, stylesCalenderFilter.headerRow]}
             >
-              {filterBy && filterBy === "jour" ? (
-                ""
-              ) : (
-                <Text
-                  style={[
-                    stylesCalenderFilter.cell,
-                    stylesCalenderFilter.dayCell,
-                  ]}
-                >
-                  Jour
-                </Text>
-              )}
-              {filterBy !== "classe" && (
-                <Text
-                  style={[
-                    stylesCalenderFilter.cell,
-                    stylesCalenderFilter.classeCell,
-                  ]}
-                >
-                  Classe
-                </Text>
-              )}
-              {filterBy !== "salle" && (
-                <Text
-                  style={[
-                    stylesCalenderFilter.cell,
-                    stylesCalenderFilter.salleCell,
-                  ]}
-                >
-                  Salle
-                </Text>
-              )}
+              <Text
+                style={[
+                  stylesCalenderFilter.cell,
+                  stylesCalenderFilter.dayCell,
+                ]}
+              >
+                Jour
+              </Text>
+              <Text
+                style={[
+                  stylesCalenderFilter.cell,
+                  stylesCalenderFilter.timeCell,
+                ]}
+              >
+                Horaire
+              </Text>
               <Text
                 style={[
                   stylesCalenderFilter.cell,
@@ -627,66 +1076,26 @@ const CalendrierDetails: React.FC = () => {
               <Text
                 style={[
                   stylesCalenderFilter.cell,
-                  stylesCalenderFilter.timeCell,
+                  stylesCalenderFilter.salleCell,
                 ]}
               >
-                Horaire
+                Salle
               </Text>
             </View>
 
+            {/* Table Rows */}
             {rows.map((row, idx) => (
               <View key={idx} style={stylesCalenderFilter.row}>
-                {/* Render the Day column only if it's the first row for that day */}
-                {filterBy !== "jour" && (
-                  <Text
-                    style={[
-                      stylesCalenderFilter.cell,
-                      stylesCalenderFilter.dayCell,
-                      idx === 0 || row.day !== rows[idx - 1].day
-                        ? {}
-                        : { display: "none" }, // Hide the cell for subsequent rows with the same day
-                    ]}
-                  >
-                    {idx === 0 || row.day !== rows[idx - 1].day
-                      ? `${
-                          row.day.charAt(0).toUpperCase() + row.day.slice(1)
-                        } - ${row.date}`
-                      : ""}
-                  </Text>
-                )}
-                {filterBy !== "classe" && (
-                  <Text
-                    style={[
-                      stylesCalenderFilter.cell,
-                      stylesCalenderFilter.classeCell,
-                    ]}
-                  >
-                    {row.classe}
-                  </Text>
-                )}
-                {/* Salle */}
-                {filterBy !== "salle" && (
-                  <Text
-                    style={[
-                      stylesCalenderFilter.cell,
-                      stylesCalenderFilter.salleCell,
-                    ]}
-                  >
-                    {row.salle}
-                  </Text>
-                )}
-
-                {/* Matière */}
+                {/* Display the day */}
                 <Text
                   style={[
                     stylesCalenderFilter.cell,
-                    stylesCalenderFilter.matiereCell,
+                    stylesCalenderFilter.dayCell,
                   ]}
                 >
-                  {row.matiere}
+                  {row.day.charAt(0).toUpperCase() + row.day.slice(1)} -{" "}
+                  {row.date}
                 </Text>
-
-                {/* Horaire */}
                 <Text
                   style={[
                     stylesCalenderFilter.cell,
@@ -695,8 +1104,33 @@ const CalendrierDetails: React.FC = () => {
                 >
                   {row.heure_debut} - {row.heure_fin}
                 </Text>
+                <Text
+                  style={[
+                    stylesCalenderFilter.cell,
+                    stylesCalenderFilter.matiereCell,
+                  ]}
+                >
+                  {row.matiere}
+                </Text>
+                <Text
+                  style={[
+                    stylesCalenderFilter.cell,
+                    stylesCalenderFilter.salleCell,
+                  ]}
+                >
+                  {row.salle}
+                </Text>
               </View>
             ))}
+          </View>
+          <View style={stylesCalenderFilter.footerleftColumn}>
+            <Text style={stylesCalenderFilter.footerTextDirecteur}>
+              Directeur
+            </Text>
+            <Text style={stylesCalenderFilter.footerText}>
+              {lastVariable?.directeur_fr}
+            </Text>
+            {/* <View style={stylesCalenderFilter.signatureSpace} /> */}
           </View>
         </Page>
       </Document>
@@ -1074,15 +1508,16 @@ const CalendrierDetails: React.FC = () => {
                   textAlign: "left",
                 }}
               >
-                {variableGlobales[2]?.universite_fr!}
+                {lastVariable?.universite_fr!}
               </Text>
+
               <Text
                 style={{
                   fontSize: 10,
                   textAlign: "left",
                 }}
               >
-                {variableGlobales[2]?.etablissement_fr!}
+                {lastVariable?.etablissement_fr!}
               </Text>
             </View>
             {/* Center Section */}
@@ -1264,9 +1699,30 @@ const CalendrierDetails: React.FC = () => {
   const QrCodePage = ({ epreuve }: { epreuve: any }) => {
     const [qrCodes, setQrCodes] = useState<any[]>([]);
     const etudiants = useMemo(() => {
-      return AllEtudiants.filter(
+      let arr1 = AllEtudiants.filter(
         (etudiant) => etudiant?.groupe_classe?._id! === epreuve?.classe?._id!
       );
+      // let arr: any = [];
+      // if (arr1.length % 2 == 0) {
+      //   for (const element of arr1) {
+      //     const index = arr1.indexOf(element);
+      //     if (index % 2 === 0) {
+      //       arr.push([element, arr1[index + 1]]);
+      //     }
+      //   }
+      // } else {
+      //   for (const element of arr1) {
+      //     const index = arr1.indexOf(element);
+      //     if (index % 2 === 0) {
+      //       if (index + 1 !== arr1.length) {
+      //         arr.push([element, arr1[index + 1]]);
+      //       } else if (index + 1 == arr1.length) {
+      //         arr.push([element]);
+      //       }
+      //     }
+      //   }
+      // }
+      return arr1;
     }, [AllEtudiants, epreuve]);
 
     const [start, end] = calendrierState.period.split(" / ");
@@ -1302,7 +1758,7 @@ const CalendrierDetails: React.FC = () => {
 
       const fetchQRCodes = async () => {
         const qrCodeData = await Promise.all(
-          etudiants.map((etudiant) => generateQRCode(etudiant))
+          etudiants.map((etudiant: any) => generateQRCode(etudiant))
         );
         setQrCodes(qrCodeData);
       };
@@ -1317,92 +1773,101 @@ const CalendrierDetails: React.FC = () => {
           <View
             style={{
               flexDirection: "row",
+              alignItems: "center",
               justifyContent: "space-between",
               marginBottom: 10,
             }}
           >
-            {/* Left Section */}
-            <View style={{ flex: 1, flexWrap: "wrap", maxWidth: "30%" }}>
-              <Text
-                style={{ fontSize: 10, fontWeight: "bold", textAlign: "left" }}
-              >
-                {variableGlobales[2]?.universite_fr!}
+            {/* Left Section (University) */}
+            <View style={{ alignItems: "flex-start", maxWidth: "30%" }}>
+              <Text style={{ fontSize: 8, fontWeight: "heavy" }}>
+                {lastVariable?.universite_fr}
               </Text>
-              <Text style={{ fontSize: 10, textAlign: "left" }}>
-                {variableGlobales[2]?.etablissement_fr!}
-              </Text>
+              <Image
+                style={stylesCalenderFilter.logo}
+                src={`${process.env.REACT_APP_API_URL}/files/variableGlobaleFiles/logoUniversiteFiles/${lastVariable?.logo_universite}`}
+              />
             </View>
-            {/* Center Section */}
-            <View style={{ flex: 1, alignItems: "center" }}>
+
+            {/* Center Section (A.U., Semestre, Période) */}
+            <View style={{ alignItems: "center", flex: 1 }}>
               <Text style={{ fontSize: 14, fontWeight: "bold" }}>
-                Session des {calendrierState.type_examen}{" "}
-                {calendrierState.session}
-              </Text>
-              <Text style={styleGlobalCalendar.secondTitle}>
-                Groupe: {epreuve?.classe?.nom_classe_fr!}
-              </Text>
-            </View>
-            {/* Right Section */}
-            <View style={{ alignItems: "flex-end" }}>
-              <Text style={{ fontSize: 10 }}>
                 A.U: {startYear}/{endYear}
               </Text>
-              <Text style={{ fontSize: 10 }}>
-                Semestre: {calendrierState?.semestre!}
+              <Text style={{ fontSize: 12 }}>
+                Semestre: {calendrierState?.semestre}
               </Text>
-              <Text style={{ fontSize: 10 }}>
-                Période: {calendrierState?.period!}
+              <Text style={{ fontSize: 12 }}>
+                Période: {calendrierState?.period}
               </Text>
             </View>
+
+            {/* Right Section (Institution) */}
+            <View style={{ alignItems: "flex-end", maxWidth: "30%" }}>
+              <Text style={{ fontSize: 8, fontWeight: "heavy" }}>
+                {lastVariable?.etablissement_fr}
+              </Text>
+              <Image
+                style={stylesCalenderFilter.logo}
+                src={`${process.env.REACT_APP_API_URL}/files/variableGlobaleFiles/logoEtablissementFiles/${lastVariable?.logo_etablissement}`}
+              />
+            </View>
           </View>
+
           {/* Table */}
           <View style={stylesCalenderFilter.timetable}>
             {/* Body */}
-            {etudiants.map((etudiant, index) => {
+            {etudiants.map((etudiant: any, index: any) => {
               const qrCodeData = qrCodes[index];
               if (index % 2 === 0) {
-                return (
-                  <View style={stylesCalenderFilter.row} key={index}>
-                    <View style={stylesCalenderFilter.block}>
-                      <View
-                        style={[
-                          stylesCalenderFilter.cellQRCode,
-                          stylesCalenderFilter.codeZone,
-                          { flexDirection: "column", alignItems: "center" },
-                        ]}
-                      >
+                console.log(index);
+                if (index % 6 === 0) {
+                  console.log("modulo 6");
+                  return (
+                    <View
+                      style={[stylesCalenderFilter.row, { marginBottom: 90 }]}
+                      key={index}
+                    >
+                      <View style={stylesCalenderFilter.block}>
                         <View
-                          style={{
-                            borderRightWidth: 2,
-                            borderRightColor: "black",
-                            borderStyle: "dashed",
-                          }}
+                          style={[
+                            stylesCalenderFilter.cellQRCode,
+                            stylesCalenderFilter.codeZone,
+                            { flexDirection: "column", alignItems: "center" },
+                          ]}
                         >
-                          <Image
-                            src={qrCodeData?.qrCode!}
-                            style={{ width: 100, height: 80 }}
-                          />
+                          <View
+                            style={{
+                              borderRightWidth: 2,
+                              borderRightColor: "black",
+                              borderStyle: "dashed",
+                            }}
+                          >
+                            <Image
+                              src={qrCodeData?.qrCode!}
+                              style={{ width: 100, height: 91 }}
+                            />
+                          </View>
+                          <Text>{qrCodeData?.hashedCode}</Text>
                         </View>
-                        <Text>{qrCodeData?.hashedCode}</Text>
+                        <Text
+                          style={[
+                            stylesCalenderFilter.cellQRCode,
+                            stylesCalenderFilter.infoZone,
+                          ]}
+                        >
+                          {etudiant.nom_fr} {etudiant.prenom_fr}
+                          {"\n"}
+                          {etudiant.num_CIN}
+                          {"\n"}
+                          {epreuve?.classe?.nom_classe_fr!}
+                          {"\n"}
+                          {epreuve?.matiere?.matiere!}
+                          {"\n"}
+                          Session: {monthName} 2025
+                        </Text>
                       </View>
-                      <Text
-                        style={[
-                          stylesCalenderFilter.cellQRCode,
-                          stylesCalenderFilter.infoZone,
-                        ]}
-                      >
-                        {etudiant.nom_fr} {etudiant.prenom_fr}
-                        {"\n"}
-                        {etudiant.num_CIN}
-                        {"\n"}
-                        {epreuve?.classe?.nom_classe_fr!}
-                        {"\n"}
-                        {epreuve?.matiere?.matiere!}
-                        {"\n"}
-                        Session: {monthName} 2025
-                      </Text>
-                    </View>
-                    {etudiants[index + 1] && (
+                      {/* {etudiants[index + 1] && ( */}
                       <View style={stylesCalenderFilter.block}>
                         <View
                           style={[
@@ -1420,7 +1885,7 @@ const CalendrierDetails: React.FC = () => {
                           >
                             <Image
                               src={qrCodes[index + 1]?.qrCode!}
-                              style={{ width: 100, height: 80 }}
+                              style={{ width: 100, height: 91 }}
                             />
                           </View>
                           <Text>{qrCodes[index + 1]?.hashedCode}</Text>
@@ -1431,10 +1896,10 @@ const CalendrierDetails: React.FC = () => {
                             stylesCalenderFilter.infoZone,
                           ]}
                         >
-                          {etudiants[index + 1].nom_fr}{" "}
-                          {etudiants[index + 1].prenom_fr}
+                          {etudiants[index + 1]?.nom_fr!}{" "}
+                          {etudiants[index + 1]?.prenom_fr!}
                           {"\n"}
-                          {etudiants[index + 1].num_CIN}
+                          {etudiants[index + 1]?.num_CIN!}
                           {"\n"}
                           {epreuve?.classe?.nom_classe_fr!}
                           {"\n"}
@@ -1443,10 +1908,274 @@ const CalendrierDetails: React.FC = () => {
                           Session: {monthName} 2025
                         </Text>
                       </View>
-                    )}
-                  </View>
-                );
+                      {/* )} */}
+                    </View>
+                  );
+                } else {
+                  console.log("non modulo 6");
+                  return (
+                    <View style={[stylesCalenderFilter.row]} key={index}>
+                      <View style={stylesCalenderFilter.block}>
+                        <View
+                          style={[
+                            stylesCalenderFilter.cellQRCode,
+                            stylesCalenderFilter.codeZone,
+                            { flexDirection: "column", alignItems: "center" },
+                          ]}
+                        >
+                          <View
+                            style={{
+                              borderRightWidth: 2,
+                              borderRightColor: "black",
+                              borderStyle: "dashed",
+                            }}
+                          >
+                            <Image
+                              src={qrCodeData?.qrCode!}
+                              style={{ width: 100, height: 91 }}
+                            />
+                          </View>
+                          <Text>{qrCodeData?.hashedCode}</Text>
+                        </View>
+                        <Text
+                          style={[
+                            stylesCalenderFilter.cellQRCode,
+                            stylesCalenderFilter.infoZone,
+                          ]}
+                        >
+                          {etudiant.nom_fr} {etudiant.prenom_fr}
+                          {"\n"}
+                          {etudiant.num_CIN}
+                          {"\n"}
+                          {epreuve?.classe?.nom_classe_fr!}
+                          {"\n"}
+                          {epreuve?.matiere?.matiere!}
+                          {"\n"}
+                          Session: {monthName} 2025
+                        </Text>
+                      </View>
+                      {/* {etudiants[index + 1] && ( */}
+                      <View style={stylesCalenderFilter.block}>
+                        <View
+                          style={[
+                            stylesCalenderFilter.cellQRCode,
+                            stylesCalenderFilter.codeZone,
+                            { flexDirection: "column", alignItems: "center" },
+                          ]}
+                        >
+                          <View
+                            style={{
+                              borderRightWidth: 2,
+                              borderRightColor: "black",
+                              borderStyle: "dashed",
+                            }}
+                          >
+                            <Image
+                              src={qrCodes[index + 1]?.qrCode!}
+                              style={{ width: 100, height: 91 }}
+                            />
+                          </View>
+                          <Text>{qrCodes[index + 1]?.hashedCode}</Text>
+                        </View>
+                        <Text
+                          style={[
+                            stylesCalenderFilter.cellQRCode,
+                            stylesCalenderFilter.infoZone,
+                          ]}
+                        >
+                          {etudiants[index + 1]?.nom_fr!}{" "}
+                          {etudiants[index + 1]?.prenom_fr!}
+                          {"\n"}
+                          {etudiants[index + 1]?.num_CIN!}
+                          {"\n"}
+                          {epreuve?.classe?.nom_classe_fr!}
+                          {"\n"}
+                          {epreuve?.matiere?.matiere!}
+                          {"\n"}
+                          Session: {monthName} 2025
+                        </Text>
+                      </View>
+                      {/* )} */}
+                    </View>
+                  );
+                }
               }
+
+              // if (index % 2 === 0) {
+              // if ((index + 1) % 6 === 0 && index !== 0) {
+              //   return (
+              //     <View
+              //       style={[stylesCalenderFilter.row, { marginBottom: 90 }]}
+              //       key={index}
+              //     >
+              //       <View style={stylesCalenderFilter.block}>
+              //         <View
+              //           style={[
+              //             stylesCalenderFilter.cellQRCode,
+              //             stylesCalenderFilter.codeZone,
+              //             { flexDirection: "column", alignItems: "center" },
+              //           ]}
+              //         >
+              //           <View
+              //             style={{
+              //               borderRightWidth: 2,
+              //               borderRightColor: "black",
+              //               borderStyle: "dashed",
+              //             }}
+              //           >
+              //             <Image
+              //               src={qrCodeData?.qrCode!}
+              //               style={{ width: 100, height: 91 }}
+              //             />
+              //           </View>
+              //           <Text>{qrCodeData?.hashedCode}</Text>
+              //         </View>
+              //         <Text
+              //           style={[
+              //             stylesCalenderFilter.cellQRCode,
+              //             stylesCalenderFilter.infoZone,
+              //           ]}
+              //         >
+              //           {etudiant[0].nom_fr} {etudiant[0].prenom_fr}
+              //           {"\n"}
+              //           {etudiant[0].num_CIN}
+              //           {"\n"}
+              //           {epreuve?.classe?.nom_classe_fr!}
+              //           {"\n"}
+              //           {epreuve?.matiere?.matiere!}
+              //           {"\n"}
+              //           Session: {monthName} 2025
+              //         </Text>
+              //       </View>
+              //       {/* {etudiants[index + 1] && ( */}
+              //       <View style={stylesCalenderFilter.block}>
+              //         <View
+              //           style={[
+              //             stylesCalenderFilter.cellQRCode,
+              //             stylesCalenderFilter.codeZone,
+              //             { flexDirection: "column", alignItems: "center" },
+              //           ]}
+              //         >
+              //           <View
+              //             style={{
+              //               borderRightWidth: 2,
+              //               borderRightColor: "black",
+              //               borderStyle: "dashed",
+              //             }}
+              //           >
+              //             <Image
+              //               src={qrCodes[index + 1]?.qrCode!}
+              //               style={{ width: 100, height: 91 }}
+              //             />
+              //           </View>
+              //           <Text>{qrCodes[index + 1]?.hashedCode}</Text>
+              //         </View>
+              //         <Text
+              //           style={[
+              //             stylesCalenderFilter.cellQRCode,
+              //             stylesCalenderFilter.infoZone,
+              //           ]}
+              //         >
+              //           {etudiants[1].nom_fr} {etudiants[1].prenom_fr}
+              //           {"\n"}
+              //           {etudiants[1].num_CIN}
+              //           {"\n"}
+              //           {epreuve?.classe?.nom_classe_fr!}
+              //           {"\n"}
+              //           {epreuve?.matiere?.matiere!}
+              //           {"\n"}
+              //           Session: {monthName} 2025
+              //         </Text>
+              //       </View>
+              //       {/* )} */}
+              //     </View>
+              //   );
+              // } else {
+              //   return (
+              //     <View style={stylesCalenderFilter.row} key={index}>
+              //       <View style={stylesCalenderFilter.block}>
+              //         <View
+              //           style={[
+              //             stylesCalenderFilter.cellQRCode,
+              //             stylesCalenderFilter.codeZone,
+              //             { flexDirection: "column", alignItems: "center" },
+              //           ]}
+              //         >
+              //           <View
+              //             style={{
+              //               borderRightWidth: 2,
+              //               borderRightColor: "black",
+              //               borderStyle: "dashed",
+              //             }}
+              //           >
+              //             <Image
+              //               src={qrCodeData?.qrCode!}
+              //               style={{ width: 100, height: 91 }}
+              //             />
+              //           </View>
+              //           <Text>{qrCodeData?.hashedCode}</Text>
+              //         </View>
+              //         <Text
+              //           style={[
+              //             stylesCalenderFilter.cellQRCode,
+              //             stylesCalenderFilter.infoZone,
+              //           ]}
+              //         >
+              //           {etudiant[0].nom_fr} {etudiant[0].prenom_fr}
+              //           {"\n"}
+              //           {etudiant[0].num_CIN}
+              //           {"\n"}
+              //           {epreuve?.classe?.nom_classe_fr!}
+              //           {"\n"}
+              //           {epreuve?.matiere?.matiere!}
+              //           {"\n"}
+              //           Session: {monthName} 2025
+              //         </Text>
+              //       </View>
+
+              //       <View style={stylesCalenderFilter.block}>
+              //         <View
+              //           style={[
+              //             stylesCalenderFilter.cellQRCode,
+              //             stylesCalenderFilter.codeZone,
+              //             { flexDirection: "column", alignItems: "center" },
+              //           ]}
+              //         >
+              //           <View
+              //             style={{
+              //               borderRightWidth: 2,
+              //               borderRightColor: "black",
+              //               borderStyle: "dashed",
+              //             }}
+              //           >
+              //             <Image
+              //               src={qrCodes[index + 1]?.qrCode!}
+              //               style={{ width: 100, height: 91 }}
+              //             />
+              //           </View>
+              //           <Text>{qrCodes[index + 1]?.hashedCode}</Text>
+              //         </View>
+              //         <Text
+              //           style={[
+              //             stylesCalenderFilter.cellQRCode,
+              //             stylesCalenderFilter.infoZone,
+              //           ]}
+              //         >
+              //           {etudiants[1].nom_fr} {etudiants[1].prenom_fr}
+              //           {"\n"}
+              //           {etudiants[1].num_CIN}
+              //           {"\n"}
+              //           {epreuve?.classe?.nom_classe_fr!}
+              //           {"\n"}
+              //           {epreuve?.matiere?.matiere!}
+              //           {"\n"}
+              //           Session: {monthName} 2025
+              //         </Text>
+              //       </View>
+              //     </View>
+              //   );
+              // }
+              // }
             })}
           </View>
           {/* Footer */}

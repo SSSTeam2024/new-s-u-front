@@ -161,17 +161,17 @@ const AjouterCalendrierExamen = () => {
         date: [""],
       },
     ],
-    epreuve: [
-      {
-        group_surveillants: [],
-        date: "",
-        heure_debut: "",
-        heure_fin: "",
-        salle: null,
-        matiere: null,
-        classe: null,
-      },
-    ],
+    // epreuve: [
+    //   {
+    //     group_surveillants: [],
+    //     date: "",
+    //     heure_debut: "",
+    //     heure_fin: "",
+    //     salle: null,
+    //     matiere: null,
+    //     classe: null,
+    //   },
+    // ],
   });
   const formatPeriod = (period: Date[] | null): string => {
     if (!period || period.length !== 2) {
@@ -214,9 +214,9 @@ const AjouterCalendrierExamen = () => {
       session: selectedSession || "",
       period: periodString || "",
       group_enseignant: groupEnseignantArray,
-      epreuve: formData.epreuve || [],
+      // epreuve: formData.epreuve || [],
     };
-
+    // console.log("completeFormData", completeFormData);
     createNewCalendrierExamen(completeFormData);
     notify();
     navigate("/gestion-examen/liste-des-calendrier");

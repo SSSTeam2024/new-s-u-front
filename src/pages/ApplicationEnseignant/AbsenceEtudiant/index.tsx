@@ -150,7 +150,7 @@ const AbsenceEtudiant = () => {
       cell: (row: any) => {
         return (
           <ul className="hstack gap-2 list-unstyled mb-0">
-            <li>
+            {/* <li>
               <Link
                 to="#"
                 className="badge badge-soft-info edit-item-btn"
@@ -172,8 +172,8 @@ const AbsenceEtudiant = () => {
                   }
                 ></i>
               </Link>
-            </li>
-            <li>
+            </li> */}
+            {/* <li>
               <Link
                 to="/modifier-absence"
                 className="badge badge-soft-success edit-item-btn"
@@ -194,7 +194,7 @@ const AbsenceEtudiant = () => {
                   }
                 ></i>
               </Link>
-            </li>
+            </li> */}
             {/* <li>
               <Link to="#" className="badge badge-soft-danger remove-item-btn">
                 <i

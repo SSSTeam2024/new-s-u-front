@@ -114,74 +114,61 @@ const AddFicheVoeux = () => {
   };
 
   const handleTeacherChange = (e: any) => {
+    console.log("formData", formData);
     if (e.target.value !== "") {
       setSelectedTeacherId(e.target.value);
-      /*---------------- Days selection ---------------- */
-      let allJours: any = [
-        { _id: 0, name: "Lundi" },
-        { _id: 1, name: "Mardi" },
-        { _id: 2, name: "Mercredi" },
-        { _id: 3, name: "Jeudi" },
-        { _id: 4, name: "Vendredi" },
-        { _id: 5, name: "Samedi" },
-      ];
 
-      /*---------------- Days selection ---------------- */
+      let teacher = allTeachers.filter(
+        (teacher) => teacher._id === e.target.value
+      );
+
+      if (teacher[0].grade === null) {
+        alert("Assigner un grade pour cet(te) enseignant!");
+        setFormData((prevState) => {
+          const updatedFicheVoeux = [...prevState.fiche_voeux_classes];
+
+          updatedFicheVoeux.splice(0, updatedFicheVoeux.length);
+          updatedFicheVoeux.push({
+            classe: "",
+            matieres: [],
+            consernedClasses: [],
+            selectedSubjectOptions: [],
+            selectedSubjects: [],
+            filteredSubjectsOptions: [],
+            filtredSubjects: [],
+          });
+          return {
+            ...prevState,
+            fiche_voeux_classes: updatedFicheVoeux,
+            enseignant: {
+              _id: "",
+              nom_ar: "",
+              nom_fr: "",
+              prenom_ar: "",
+              prenom_fr: "",
+            },
+            matieres: [],
+            jours: [
+              {
+                jour: "",
+                temps: "",
+              },
+            ],
+          };
+        });
+        return;
+      }
 
       setFormData((prevState) => {
         const updatedFicheVoeux = [...prevState.fiche_voeux_classes];
 
-        /*---------------- Days selection ---------------- */
-        const filtredJours = allJours.map((jour: any) => jour);
-
-        let jourOptions = filtredJours.map((jour: any) => ({
-          value: jour._id,
-          label: jour.name,
-        }));
-
-        // const filteredJoursOptions = jourOptions.filter(
-        //   (option: any) =>
-        //     !updatedFicheVoeux[0]?.selectedJours?.some(
-        //       (jour) => jour === option.value
-        //     )
-        // );
-        /*---------------- Days selection ---------------- */
-
-        /*---------------- Subjects selection ---------------- */
-        let selectedTeacher = teachersWithoutWishCard.filter(
-          (teacher: any) => teacher._id === e.target.value
-        );
-
         let classes: any;
         classes = allClasses;
-        // if (
-        //   selectedTeacher[0].departements?.name_fr === "Tous les départements"
-        // ) {
-        //   classes = allClasses;
-        // } else {
-        //   classes = allClasses.filter(
-        //     (classItem) =>
-        //       classItem.departement._id === selectedTeacher[0].departements?._id
-        //   );
-        // }
-
-        /*---------------- Subjects selection ---------------- */
 
         updatedFicheVoeux.splice(0, updatedFicheVoeux.length);
         updatedFicheVoeux.push({
           classe: "",
-          //  jours: [],
           matieres: [],
-          // temps: "",
-          //Temporary data for days selection
-          //allDays: allJours,
-          //selectedJourOptions: [],
-          //selectedJours: [],
-          //joursArray: [],
-          //filtredJours: filtredJours,
-          //jourOptions: jourOptions,
-          // filteredJoursOptions: filteredJoursOptions,
-          //Temporary data for subjects selection
           consernedClasses: classes,
           selectedSubjectOptions: [],
           selectedSubjects: [],
@@ -307,6 +294,8 @@ const AddFicheVoeux = () => {
 
   const { data: allClasses = [] } = useFetchClassesQuery();
 
+  console.log("allClasses", allClasses);
+
   const { data: allMatieres = [] } = useFetchMatiereQuery();
 
   const [consernedClasses, setConsernedClasses] = useState<any[]>([]);
@@ -414,20 +403,38 @@ const AddFicheVoeux = () => {
           (classItem) => classItem._id === value
         );
 
-        const filtredMatieres = allMatieres.filter((mat) =>
-          consernedClass[0]?.matieres?.some(
-            (obj2) => obj2._id === mat._id && mat.semestre === formData.semestre
-          )
+        console.log("consernedClass[0]", consernedClass[0]);
+
+        console.log(
+          "consernedClass[0] .parcours",
+          consernedClass[0]?.parcours!
         );
 
-        let options = filtredMatieres.map((matiere) => ({
-          value: matiere._id,
-          label: matiere.matiere + " " + matiere.type,
-          type: matiere.type,
-          semestre: matiere.semestre,
-          code_matiere: matiere.code_matiere,
-          volume: matiere.volume,
-          nbr_elimination: matiere.nbr_elimination,
+        if (consernedClass[0]?.parcours! === null) {
+          alert(
+            "Assigner un parcours pour la classe " +
+              consernedClass[0].nom_classe_fr +
+              " tout d'abord"
+          );
+          return;
+        }
+
+        console.log("semestre", formData.semestre);
+
+        let filtredMatieres: any = extractSubjectsBasedOnSemester(
+          consernedClass[0]
+        );
+
+        console.log("filtredMatieres", filtredMatieres);
+
+        let options = filtredMatieres.map((matiere: any) => ({
+          value: matiere?._id!,
+          label: matiere?.matiere! + " " + matiere.types[0]?.type!,
+          type: matiere.types[0]?.type!,
+          semestre: matiere?.semestre!,
+          code_matiere: matiere?.code_matiere!,
+          volume: matiere?.volume!,
+          nbr_elimination: matiere?.nbr_elimination!,
         }));
 
         setFormData((prevState) => {
@@ -437,7 +444,7 @@ const AddFicheVoeux = () => {
           updatedFicheVoeux[index].selectedSubjectOptions = [];
 
           let filtredOptions: any = options.filter(
-            (option) =>
+            (option: any) =>
               !updatedFicheVoeux[index].selectedSubjects.some(
                 (matiere: any) => matiere._id === option.value
               )
@@ -451,6 +458,24 @@ const AddFicheVoeux = () => {
         });
       }
     }
+  };
+
+  const extractSubjectsBasedOnSemester = (classe: any) => {
+    let filtredMatieres: any = [];
+
+    for (let module of classe?.parcours?.modules!) {
+      console.log(classe?.semestres);
+      if (formData.semestre === "S1") {
+        if (module?.semestre_module! === classe?.semestres[0]!) {
+          filtredMatieres = filtredMatieres.concat(module?.matiere!);
+        }
+      } else {
+        if (module?.semestre_module! === classe?.semestres[1]!) {
+          filtredMatieres = filtredMatieres.concat(module?.matiere!);
+        }
+      }
+    }
+    return filtredMatieres;
   };
 
   const customStyles = {

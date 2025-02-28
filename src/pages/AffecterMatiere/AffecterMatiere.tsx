@@ -100,7 +100,7 @@ const AffecterMatiere = () => {
 
   const handleSubmit = async () => {
     try {
-      const matiereIds = selectedMatieres.map((matiere) => matiere._id);
+      const matiereIds = selectedMatieres.map((matiere) => matiere?._id!);
       await assignMatiereToClasse({
         _id: classeId,
         matiereIds,
@@ -157,12 +157,12 @@ const AffecterMatiere = () => {
     }
 
     return {
-      value: matiere._id,
+      value: matiere?._id!,
       label: `${matiere.matiere}  / ${matiere.semestre} / ${
         matiere?.types || ""
       }`, // Add the type to the label
       type: matiere.type || "",
-      semestre: matiere.semestre,
+      semestre: matiere?.semestre!,
       code_matiere: matiere.code_matiere || "",
       volume: matiere.volume || "",
       nbr_elimination: matiere.nbr_elimination || "",
@@ -337,7 +337,7 @@ const AffecterMatiere = () => {
                                         type="button"
                                         className="btn btn-danger btn-icon btn-sm"
                                         onClick={() =>
-                                          handleDeleteClick(matiere._id)
+                                          handleDeleteClick(matiere?._id!)
                                         }
                                         disabled={
                                           isAssigningMatiere ||

@@ -7,7 +7,7 @@ import "./AddPlanParcours.css";
 
 export interface ModuleParcours {
   _id: string;
-  semestre: string;
+  semestre_module: string;
   code_Ue: string;
   libelle: string;
   credit: string;
@@ -33,7 +33,7 @@ const AddPlanParcours = () => {
 
   const [formData, setFormData] = useState({
     _id: "",
-    semestre: "",
+    semestre_module: "",
     code_Ue: "",
     libelle: "",
     credit: "",
@@ -46,7 +46,7 @@ const AddPlanParcours = () => {
   const [modules, setModules] = useState<ModuleParcours[]>([
     {
       _id: "",
-      semestre: "",
+      semestre_module: "",
       code_Ue: "",
       libelle: "",
       credit: "",
@@ -62,7 +62,7 @@ const AddPlanParcours = () => {
       ...modules,
       {
         _id: "",
-        semestre: "",
+        semestre_module: "",
         code_Ue: "",
         libelle: "",
         credit: "",
@@ -118,6 +118,10 @@ const AddPlanParcours = () => {
       timer: 2000,
     });
   };
+  const handleSemestreChange = (e: any) => {
+    setFormData({ ...formData, semestre_module: e.target.value });
+    setModules([]); // Reset modules when semestre changes
+  };
 
   return (
     <React.Fragment>
@@ -132,10 +136,8 @@ const AddPlanParcours = () => {
                       <h5>Semestre</h5>
                       <Form.Select
                         id="semestre"
-                        value={formData.semestre}
-                        onChange={(e) =>
-                          setFormData({ ...formData, semestre: e.target.value })
-                        }
+                        value={formData.semestre_module}
+                        onChange={handleSemestreChange}
                         className="form-select-lg form-select-info"
                       >
                         <option value="">Selectionner semestre</option>
@@ -145,6 +147,12 @@ const AddPlanParcours = () => {
                         <option value="4">Semestre 4</option>
                         <option value="5">Semestre 5</option>
                         <option value="6">Semestre 6</option>
+                        <option value="7">Semestre 7</option>
+                        <option value="8">Semestre 8</option>
+                        <option value="9">Semestre 9</option>
+                        <option value="10">Semestre 10</option>
+                        <option value="11">Semestre 11</option>
+                        <option value="12">Semestre 12</option>
                       </Form.Select>
                     </div>
                   </Col>
@@ -162,8 +170,8 @@ const AddPlanParcours = () => {
                     {modules.map((module, index) => (
                       <div key={index} className="module-card">
                         <h6>Module {index + 1}</h6>
-                        <Row>
-                          <Col>
+                        <Row className="align-items-center gy-2">
+                          <Col xs={2}>
                             <Form.Control
                               type="text"
                               placeholder="Code UE"
@@ -177,7 +185,7 @@ const AddPlanParcours = () => {
                               }
                             />
                           </Col>
-                          <Col>
+                          <Col xs={3}>
                             <Form.Control
                               type="text"
                               placeholder="Libelle"
@@ -191,7 +199,7 @@ const AddPlanParcours = () => {
                               }
                             />
                           </Col>
-                          <Col>
+                          <Col xs={1}>
                             <Form.Control
                               type="number"
                               placeholder="Credit"
@@ -205,7 +213,7 @@ const AddPlanParcours = () => {
                               }
                             />
                           </Col>
-                          <Col>
+                          <Col xs={1}>
                             <Form.Control
                               type="text"
                               placeholder="Coef"
@@ -219,11 +227,12 @@ const AddPlanParcours = () => {
                               }
                             />
                           </Col>
-                          <Col>
+                          <Col xs={2}>
                             <Form.Group controlId={`nature-select-${index}`}>
-                              <Form.Label>Nature</Form.Label>
+                              {/* <Form.Label className="mb-1">Nature</Form.Label> */}
                               <Form.Select
                                 value={module.nature}
+                                placeholder="Nature"
                                 onChange={(e) =>
                                   handleModuleChange(
                                     index,
@@ -242,11 +251,12 @@ const AddPlanParcours = () => {
                               </Form.Select>
                             </Form.Group>
                           </Col>
-                          <Col>
+                          <Col xs={2}>
                             <Form.Group controlId={`regime-select-${index}`}>
-                              <Form.Label>Regime</Form.Label>
+                              {/* <Form.Label className="mb-1">Regime</Form.Label> */}
                               <Form.Select
                                 value={module.regime}
+                                placeholder="Regime"
                                 onChange={(e) =>
                                   handleModuleChange(
                                     index,
@@ -261,19 +271,18 @@ const AddPlanParcours = () => {
                               </Form.Select>
                             </Form.Group>
                           </Col>
-
                           <Col
-                            style={{
-                              display: "flex",
-                              justifyContent: "start",
-                              alignItems: "center",
-                              cursor: "pointer",
-                            }}
+                            xs={1}
+                            className="d-flex justify-content-start align-items-center"
                           >
                             <i
                               className="ph ph-x"
                               onClick={() => removeModuleLine(index)}
-                              style={{ fontSize: "24px", color: "red" }}
+                              style={{
+                                fontSize: "24px",
+                                color: "red",
+                                cursor: "pointer",
+                              }}
                             ></i>
                           </Col>
                         </Row>

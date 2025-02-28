@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export interface GradePersonnel {
-  _id: string;
+  _id?: string;
   // value_grade_personnel: string;
   grade_fr: string;
   grade_ar: string;
@@ -21,10 +21,23 @@ export const gradePersonnelSlice = createApi({
         providesTags: ["GradePersonnel"],
       }),
 
-      addGradePersonnel: builder.mutation<void, GradePersonnel>({
+      addGradePersonnel: builder.mutation<GradePersonnel, GradePersonnel>({
         query(payload) {
           return {
             url: "/create-grade-personnel",
+            method: "POST",
+            body: payload,
+          };
+        },
+        invalidatesTags: ["GradePersonnel"],
+      }),
+      getGradePersonnelValue: builder.mutation<
+        { id: string; grade_fr: string; grade_ar: string },
+        GradePersonnel
+      >({
+        query(payload) {
+          return {
+            url: "/get-grade-by-value",
             method: "POST",
             body: payload,
           };
@@ -55,4 +68,5 @@ export const {
   useAddGradePersonnelMutation,
   useUpdateGradePersonnelMutation,
   useDeleteGradePersonnelMutation,
+  useGetGradePersonnelValueMutation,
 } = gradePersonnelSlice;

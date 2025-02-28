@@ -878,7 +878,7 @@ const EditProfilEtudiant = () => {
       try {
         // console.log("Fetching student data...");
         const response = await fetch(
-          `http://localhost:5000/api/etudiant/get-etudiant/${etudiant._id}`
+          `${process.env.REACT_APP_API_URL}/api/etudiant/get-etudiant/${etudiant._id}`
         );
         const data = await response.json();
         console.log("Student Data:", data);
@@ -1136,7 +1136,7 @@ const EditProfilEtudiant = () => {
             ...selectedGroupeClasse,
             departement: selectedGroupeClasse.departement?._id || "",
             matieres: selectedGroupeClasse.matieres.map(
-              (matiere) => matiere._id
+              (matiere) => matiere?._id!
             ),
           },
         }));
@@ -2383,7 +2383,7 @@ const EditProfilEtudiant = () => {
                           </Card.Header>
                           <Card.Body>
                             <Row>
-                              {formData.groupe_classe.niveau_classe && (
+                              {formData?.groupe_classe?.niveau_classe && (
                                 <Col lg={4}>
                                   <div className="mb-3">
                                     <Form.Label htmlFor="niveau_classe">
@@ -2393,14 +2393,14 @@ const EditProfilEtudiant = () => {
                                       className="form-control-plaintext"
                                       id="niveau_classe"
                                     >
-                                      {formData.groupe_classe.niveau_classe
-                                        .name_niveau_fr || ""}{" "}
+                                      {formData?.groupe_classe?.niveau_classe
+                                        ?.name_niveau_fr! || ""}{" "}
                                     </p>
                                   </div>
                                 </Col>
                               )}
-                              {formData.groupe_classe.niveau_classe
-                                .sections && (
+                              {formData?.groupe_classe?.niveau_classe
+                                ?.sections && (
                                 <Col lg={4}>
                                   <div className="mb-3">
                                     <Form.Label htmlFor="section_classe">
@@ -2411,10 +2411,10 @@ const EditProfilEtudiant = () => {
                                       id="section_classe"
                                     >
                                       {/* Assuming you want to display the first section's name; adjust as needed */}
-                                      {formData.groupe_classe.niveau_classe
-                                        .sections.length > 0
-                                        ? formData.groupe_classe.niveau_classe
-                                            .sections[0].name_section_fr // Accessing the first section as an example
+                                      {formData?.groupe_classe?.niveau_classe
+                                        ?.sections?.length > 0
+                                        ? formData?.groupe_classe?.niveau_classe
+                                            ?.sections[0]?.name_section_fr! // Accessing the first section as an example
                                         : ""}
                                     </p>
                                   </div>

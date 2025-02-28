@@ -17,6 +17,7 @@ import Swal from "sweetalert2";
 import "flatpickr/dist/flatpickr.min.css";
 import {
   Enseignant,
+  EnseignantExcel,
   useAddEnseignantMutation,
 } from "features/enseignant/enseignantSlice";
 import { useFetchEtatsEnseignantQuery } from "features/etatEnseignant/etatEnseignant";
@@ -422,7 +423,7 @@ const AjouterEnseignant = () => {
   const { data: specilaite = [] } = useFetchSpecialitesEnseignantQuery();
   const { data: departements = [] } = useFetchDepartementsQuery();
 
-  const [formData, setFormData] = useState<Enseignant>({
+  const [formData, setFormData] = useState<any>({
     _id: "",
     nom_fr: "",
     matricule: "",
@@ -436,30 +437,10 @@ const AjouterEnseignant = () => {
     nationalite: "",
     etat_civil: "",
     sexe: "",
-    etat_compte: {
-      _id: "",
-      value_etat_enseignant: "",
-      etat_ar: "",
-      etat_fr: "",
-    },
-    poste: {
-      _id: "",
-      value_poste_enseignant: "",
-      poste_ar: "",
-      poste_fr: "",
-    },
-    grade: {
-      _id: "",
-      value_grade_enseignant: "",
-      grade_ar: "",
-      grade_fr: "",
-    },
-    specilaite: {
-      _id: "",
-      value_specialite_enseignant: "",
-      specialite_ar: "",
-      specialite_fr: "",
-    },
+    etat_compte: "",
+    poste: "",
+    grade: "",
+    specilaite: "",
     departements: {
       _id: "",
       description: "",
@@ -505,7 +486,7 @@ const AjouterEnseignant = () => {
   });
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData((prevState) => ({
+    setFormData((prevState: any) => ({
       ...prevState,
       [e.target.id]: e.target.value,
     }));
@@ -513,7 +494,7 @@ const AjouterEnseignant = () => {
 
   const handleChange = (e: any) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
+    setFormData((prevData: any) => ({
       ...prevData,
       [name]: value,
     }));
@@ -548,12 +529,12 @@ const AjouterEnseignant = () => {
     setSelectedDate(selectedDate);
     if (selectedDate) {
       const formattedDate = format(selectedDate, "yyyy-MM-dd");
-      setFormData((prevState) => ({
+      setFormData((prevState: any) => ({
         ...prevState,
         date_naissance: formattedDate,
       }));
     } else {
-      setFormData((prevState) => ({
+      setFormData((prevState: any) => ({
         ...prevState,
         date_naissance: "",
       }));
@@ -566,12 +547,12 @@ const AjouterEnseignant = () => {
     setSelectedDate(selectedDate);
     if (selectedDate) {
       const formattedDate = format(selectedDate, "yyyy-MM-dd");
-      setFormData((prevState) => ({
+      setFormData((prevState: any) => ({
         ...prevState,
         date_affectation: formattedDate,
       }));
     } else {
-      setFormData((prevState) => ({
+      setFormData((prevState: any) => ({
         ...prevState,
         date_affectation: "",
       }));
@@ -584,12 +565,12 @@ const AjouterEnseignant = () => {
     setSelectedDate(selectedDate);
     if (selectedDate) {
       const formattedDate = format(selectedDate, "yyyy-MM-dd");
-      setFormData((prevState) => ({
+      setFormData((prevState: any) => ({
         ...prevState,
         date_delivrance: formattedDate,
       }));
     } else {
-      setFormData((prevState) => ({
+      setFormData((prevState: any) => ({
         ...prevState,
         date_delivrance: "",
       }));
@@ -601,12 +582,12 @@ const AjouterEnseignant = () => {
     setSelectedDate(selectedDate);
     if (selectedDate) {
       const formattedDate = format(selectedDate, "yyyy-MM-dd");
-      setFormData((prevState) => ({
+      setFormData((prevState: any) => ({
         ...prevState,
         annee_certif1: formattedDate,
       }));
     } else {
-      setFormData((prevState) => ({
+      setFormData((prevState: any) => ({
         ...prevState,
         annee_certif1: "",
       }));
@@ -618,12 +599,12 @@ const AjouterEnseignant = () => {
     setSelectedDate(selectedDate);
     if (selectedDate) {
       const formattedDate = format(selectedDate, "yyyy-MM-dd");
-      setFormData((prevState) => ({
+      setFormData((prevState: any) => ({
         ...prevState,
         annee_certif3: formattedDate,
       }));
     } else {
-      setFormData((prevState) => ({
+      setFormData((prevState: any) => ({
         ...prevState,
         annee_certif3: "",
       }));
@@ -635,12 +616,12 @@ const AjouterEnseignant = () => {
     setSelectedDate(selectedDate);
     if (selectedDate) {
       const formattedDate = format(selectedDate, "yyyy-MM-dd");
-      setFormData((prevState) => ({
+      setFormData((prevState: any) => ({
         ...prevState,
         annee_certif2: formattedDate,
       }));
     } else {
-      setFormData((prevState) => ({
+      setFormData((prevState: any) => ({
         ...prevState,
         annee_certif2: "",
       }));
@@ -650,7 +631,7 @@ const AjouterEnseignant = () => {
 
   const selectChangeStatus = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const value = event.target.value;
-    setFormData((prevState) => ({
+    setFormData((prevState: any) => ({
       ...prevState,
       etat_civil: value,
     }));
@@ -660,7 +641,7 @@ const AjouterEnseignant = () => {
   //change gender
   const selectChangeGender = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const value = event.target.value;
-    setFormData((prevState) => ({
+    setFormData((prevState: any) => ({
       ...prevState,
       sexe: value,
     }));
@@ -669,7 +650,7 @@ const AjouterEnseignant = () => {
   // changer nationalite
   const handleCountrySelect = (country: any) => {
     setSelectedCountry1(country);
-    setFormData((prevData) => ({
+    setFormData((prevData: any) => ({
       ...prevData,
       nationalite: country.countryName,
     }));
@@ -1792,7 +1773,7 @@ const AjouterEnseignant = () => {
                                     name="specilaite"
                                     id="specilaite"
                                     // required
-                                    value={formData?.specilaite.specialite_fr!}
+                                    value={formData?.specilaite?.specialite_fr!}
                                     onChange={handleChange}
                                   >
                                     <option value="">

@@ -127,6 +127,7 @@ import NewTemplateBody from "pages/TemplateBody/NewTemplateBody";
 import ShortCode from "pages/ShortCode";
 import NewShortCode from "pages/ShortCode/NewShortCode";
 import AjouterVariablesGlobales from "pages/VariableGlobal/AjouterVariableGlobale";
+import ListeVariablesGlobales from "pages/VariableGlobal/ListeVariableGlobale";
 import EditActualite from "pages/actualite/EditActualite";
 import ProfilEnseignant from "pages/Accounts/AccountEnseignant/ProfilEnseignant";
 import EditAvisEtudiant from "pages/avis-etudiant/EditAvisEtudiant";
@@ -211,8 +212,23 @@ import AbsenceEtudiant from "pages/ApplicationEnseignant/AbsenceEtudiant";
 import Cours from "pages/ApplicationEnseignant/Cours";
 import AjouterAbsence from "pages/ApplicationEnseignant/AbsenceEtudiant/AjouterAbsence";
 
+import AjouterAbsencePersonnel from "pages/AbsencePersonnel/AjouterAbsencePersonnel";
+import ListeCycle from "pages/GestionParcours/Cycle/ListeCycle";
+import ViewParcours from "pages/GestionParcours/Parcours/ViewParcours";
+import ParametresEmploi from "pages/Departements/ParametresEmploi/ParametresEmploi";
+import AjouterCours from "pages/ApplicationEnseignant/Cours/AjouterCours";
 const authProtectedRoutes = [
   { path: "/dashboard", component: <Dashboard /> },
+  // view parcours
+  {
+    path: "/parcours/gestion-parcours/view-parcours",
+    component: <ViewParcours />,
+  },
+  // liste cycles
+  {
+    path: "/parcours/gestion-parcours/liste-cycle",
+    component: <ListeCycle />,
+  },
 
   //Parcours Part
 
@@ -238,6 +254,10 @@ const authProtectedRoutes = [
   {
     path: "/avis-etudiant/ajouter-avis-etudiant",
     component: <AjouterAvisEtudiant />,
+  },
+  {
+    path: "/avis-etudiant/liste-avis-etudiant",
+    component: <ListeAvisEtudiant />,
   },
   {
     path: "/avis-etudiant/single-avis-etudiant",
@@ -314,6 +334,10 @@ const authProtectedRoutes = [
   {
     path: "/application-enseignant/lister-cours",
     component: <Cours />,
+  },
+  {
+    path: "/application-enseignant/ajouter-cours",
+    component: <AjouterCours />,
   },
 
   //gestion enseignant
@@ -773,6 +797,10 @@ const authProtectedRoutes = [
     path: "/variable/ajouter-variables-globales",
     component: <AjouterVariablesGlobales />,
   },
+  {
+    path: "/variable/liste-variables-globales",
+    component: <ListeVariablesGlobales />,
+  },
 
   // Papier administratif
   {
@@ -933,6 +961,18 @@ const authProtectedRoutes = [
   {
     path: "/gestion-emplois/emlpoi-enseignant/liste-charges-grade",
     component: <EquilibreHorairesGrade />,
+  },
+
+  {
+    path: "gestion-emplois-classe/parametres-emplois-classe",
+    component: <ParametresEmploi />,
+  },
+
+  // absence personnel
+
+  {
+    path: "/absence-personnel/ajouter-absence-personnel",
+    component: <AjouterAbsencePersonnel />,
   },
 
   // Accounts

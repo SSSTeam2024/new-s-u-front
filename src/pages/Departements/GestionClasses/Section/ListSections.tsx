@@ -21,7 +21,7 @@ import {
 } from "features/section/section";
 
 const ListSections = () => {
-  document.title = "Liste des sections | ENIGA";
+  document.title = "Liste des spécialités | ENIGA";
 
   const navigate = useNavigate();
 
@@ -61,13 +61,13 @@ const ListSections = () => {
           deleteSection(_id);
           swalWithBootstrapButtons.fire(
             "Supprimé!",
-            "Section a été supprimé.",
+            "Spécialité a été supprimé.",
             "success"
           );
         } else if (result.dismiss === Swal.DismissReason.cancel) {
           swalWithBootstrapButtons.fire(
             "Annulé",
-            "Section est en sécurité :)",
+            "Spécialité est en sécurité :)",
             "error"
           );
         }
@@ -165,8 +165,8 @@ const ListSections = () => {
       <div className="page-content">
         <Container fluid={true}>
           <Breadcrumb
-            title="Gestion des départements"
-            pageTitle="Liste des sections"
+            title="Liste des spécialités"
+            pageTitle="Liste des spécialités"
           />
 
           <Row id="sellersList">
@@ -203,7 +203,7 @@ const ListSections = () => {
                           className="add-btn"
                           onClick={() => tog_AddSection()}
                         >
-                          Ajouter section
+                          Ajouter spécialité
                         </Button>
                       </div>
                     </Col>
@@ -221,7 +221,7 @@ const ListSections = () => {
               >
                 <Modal.Header className="px-4 pt-4" closeButton>
                   <h5 className="modal-title" id="exampleModalLabel">
-                    Ajouter une section
+                    Ajouter une spécialité
                   </h5>
                 </Modal.Header>
                 <Form className="tablelist-form">

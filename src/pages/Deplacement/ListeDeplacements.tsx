@@ -14,7 +14,7 @@ import TableContainer from "Common/TableContainer";
 import { userList } from "Common/data";
 import Flatpickr from "react-flatpickr";
 import dummyImg from "../../assets/images/users/user-dummy-img.jpg";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { RootState } from "app/store";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "features/account/authSlice";
@@ -33,6 +33,7 @@ const ListeDeplacements = () => {
   const user = useSelector((state: RootState) => selectCurrentUser(state));
 
   const { data: deplacements } = useFetchDeplacementQuery();
+  const navigate = useNavigate()
 
   const { refetch } = useFetchAvisEnseignantQuery();
   const [deleteAvisEnseignant] = useDeleteAvisEnseignantMutation();
@@ -96,6 +97,10 @@ const ListeDeplacements = () => {
       );
     }
   };
+
+  function tog_AddDeplacement() {
+    navigate("/gestion-deplacement/Ajouter-deplacement");
+  }
 
   const handleShowPdfModal = (fileName: string) => {
     let link =
@@ -311,17 +316,29 @@ const ListeDeplacements = () => {
                         <input
                           type="text"
                           className="form-control search"
-                          placeholder="Chercher un avis..."
+                          placeholder="Chercher ..."
                         />
                         <i className="ri-search-line search-icon"></i>
                       </div>
                     </Col>
+
 
                     {isMultiDeleteButton && (
                       <Button variant="danger" className="btn-icon">
                         <i className="ri-delete-bin-2-line"></i>
                       </Button>
                     )}
+                    <Col className="col-lg-auto ms-auto">
+                      <div className="hstack gap-2">
+                        <Button
+                          variant="primary"
+                          className="add-btn"
+                          onClick={() => tog_AddDeplacement()}
+                        >
+                          Ajouter un déplacement
+                        </Button>
+                      </div>
+                    </Col>
                   </Row>
                 </Card.Body>
               </Card>

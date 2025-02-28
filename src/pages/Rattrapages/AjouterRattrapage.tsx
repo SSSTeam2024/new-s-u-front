@@ -384,14 +384,11 @@ const AjouterRattrapage = () => {
       salle: "",
     }));
 
-    let arr: any = [];
     let classe: any = classesList?.filter((c) => c?._id! === e.target.value);
     console.log("classe filter subjects", classe);
-    if (formData.semestre == "1") {
-      arr = classe[0].matieres?.filter((m: any) => m?.semestre! === "S1");
-    } else {
-      arr = classe[0].matieres?.filter((m: any) => m?.semestre! === "S2");
-    }
+
+    let arr: any = extractSubjectsBasedOnSemester(classe[0]);
+
     console.log("arr filter subjects", arr);
 
     let scheduleRequestData = {
@@ -428,6 +425,24 @@ const AjouterRattrapage = () => {
     setStartTime(null);
     setSelectedEnd(null);
     setSelectedStart(null);
+  };
+
+  const extractSubjectsBasedOnSemester = (classe: any) => {
+    let filtredMatieres: any = [];
+
+    for (let module of classe?.parcours?.modules!) {
+      console.log(classe?.semestres);
+      if (formData.semestre === "1") {
+        if (module?.semestre_module! === classe?.semestres[0]!) {
+          filtredMatieres = filtredMatieres.concat(module?.matiere!);
+        }
+      } else {
+        if (module?.semestre_module! === classe?.semestres[1]!) {
+          filtredMatieres = filtredMatieres.concat(module?.matiere!);
+        }
+      }
+    }
+    return filtredMatieres;
   };
 
   const handleDateChangeRattrapage = async (
@@ -472,7 +487,7 @@ const AjouterRattrapage = () => {
           ...prevState,
           date: formattedDate,
         }));
-        await runAvailabilityProcess(frenshDay);
+        await runAvailabilityProcess(frenshDay, date);
       }
     } else {
       setFormData((prevState) => ({
@@ -483,7 +498,7 @@ const AjouterRattrapage = () => {
     }
   };
 
-  const runAvailabilityProcess = async (jourRattrapage: string) => {
+  const runAvailabilityProcess = async (jourRattrapage: string, date: Date) => {
     let requestData = {
       teacher_id: formData.enseignant,
       jour: jourRattrapage,
@@ -511,9 +526,18 @@ const AjouterRattrapage = () => {
     setSelectedStart(convertTimeStringToMs(paramsData[0].day_start_time));
     setSelectedEnd(convertTimeStringToMs("09:00"));
 
+    // const filteredRecoverSessions: any = allRattrapages.filter(
+    //   (r) =>
+    //     r?.jour! === jourRattrapage && r?.classe?._id! === formData?.classe!
+    // );
+
+    console.log(parseDate(allRattrapages[0].date).getTime());
+    console.log(date.getTime());
+
     const filteredRecoverSessions: any = allRattrapages.filter(
       (r) =>
-        r?.jour! === jourRattrapage && r?.classe?._id! === formData?.classe!
+        parseDate(r?.date!).getTime() === date.getTime() &&
+        r?.classe?._id! === formData?.classe!
     );
 
     console.log("filteredRecoverSessions", filteredRecoverSessions);
@@ -1072,7 +1096,7 @@ const AjouterRattrapage = () => {
       console.log(formData);
       await createRattrapage(formData).unwrap();
       notify();
-      navigate("/liste-rattrapages");
+      navigate("/rattrapage/liste-rattrapages");
       setDisabledIntervals([]);
       setDisponibiliteSalles([]);
     } catch (error: any) {

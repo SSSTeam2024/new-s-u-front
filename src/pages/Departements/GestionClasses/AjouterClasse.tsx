@@ -6,6 +6,7 @@ import Swal from "sweetalert2";
 import { useFetchDepartementsQuery } from "features/departement/departement";
 import {
   Niveau,
+  useFetchCyclesByNiveauIdQuery,
   useFetchNiveauxQuery,
   useFetchSectionsByNiveauIdQuery,
 } from "features/niveau/niveau";
@@ -19,7 +20,11 @@ interface Section {
   departements: string[];
   mention_classe: any;
 }
-
+export interface Cycle {
+  _id: string;
+  cycle_fr: string;
+  cycle_ar: string;
+}
 interface FormData {
   _id: string;
   nom_classe_fr: string;
@@ -41,13 +46,15 @@ interface FormData {
     name_niveau_fr: string;
     abreviation: string;
     sections: any[];
+    cycles: Cycle[];
   };
 
   matieres: any[];
+  groupe_number: string;
 }
 
 const AddClasse = () => {
-  document.title = " Ajouter Classe | Application Smart Institute";
+  document.title = " Ajouter groupe | Application Smart Institute";
   const navigate = useNavigate();
 
   function tog_retourParametres() {
@@ -60,6 +67,11 @@ const AddClasse = () => {
   const { data: niveaux = [] } = useFetchNiveauxQuery();
   const { data: sectionsData = [], isLoading: sectionsLoading } =
     useFetchSectionsByNiveauIdQuery(selectedNiveauId ?? "", {
+      skip: !selectedNiveauId,
+    });
+
+  const { data: cyclesData = [], isLoading: cylesLoading } =
+    useFetchCyclesByNiveauIdQuery(selectedNiveauId ?? "", {
       skip: !selectedNiveauId,
     });
 
@@ -84,9 +96,11 @@ const AddClasse = () => {
       name_niveau_fr: "",
       abreviation: "",
       sections: [],
+      cycles: [],
     },
 
     matieres: [],
+    groupe_number: "",
   });
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -109,17 +123,25 @@ const AddClasse = () => {
   };
 
   useEffect(() => {
-    if (selectedNiveauId && sectionsData && "sections" in sectionsData) {
+    if (
+      selectedNiveauId &&
+      sectionsData &&
+      "sections" in sectionsData &&
+      cyclesData &&
+      "cycles" in cyclesData
+    ) {
       const { sections } = sectionsData as Niveau;
+      const cycles = (cyclesData as Niveau)?.cycles ?? [];
       setFormData((prevState) => ({
         ...prevState,
         niveau_classe: {
           ...prevState.niveau_classe,
           sections,
+          cycles,
         },
       }));
     }
-  }, [sectionsData, selectedNiveauId]);
+  }, [sectionsData, cyclesData, selectedNiveauId]);
 
   const errorAlert = (message: string) => {
     Swal.fire({
@@ -146,7 +168,7 @@ const AddClasse = () => {
     Swal.fire({
       position: "center",
       icon: "success",
-      title: "Classe a été crée avec succés",
+      title: "Groupe a été crée avec succés",
       showConfirmButton: false,
       timer: 2000,
     });
@@ -155,11 +177,13 @@ const AddClasse = () => {
     Swal.fire({
       position: "center",
       icon: "error",
-      title: `Creation classe échoué ${error}`,
+      title: `Creation groupe échoué ${error}`,
       showConfirmButton: false,
       timer: 2000,
     });
   };
+  const [selectedGroupe, setSelectedGroupe] = useState<string | null>(null);
+  const groupes = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]; // Example groupe numbers
 
   return (
     <React.Fragment>
@@ -189,32 +213,7 @@ const AddClasse = () => {
                       />
                     </div>
                   </Col>
-                  <Col lg={4}>
-                    <div className="mb-3">
-                      <Form.Label htmlFor="departement">Departement</Form.Label>
-                      <select
-                        className="form-select text-muted"
-                        name="departement"
-                        id="departement"
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            departement:
-                              departements.find(
-                                (d) => d._id === e.target.value
-                              ) || formData.departement,
-                          })
-                        }
-                      >
-                        <option value="">Sélectionner Département</option>
-                        {departements.map((departement) => (
-                          <option key={departement._id} value={departement._id}>
-                            {departement.name_fr}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  </Col>
+
                   <Col lg={4}>
                     <div className="mb-3">
                       <Form.Label htmlFor="niveau_classe">Niveau</Form.Label>
@@ -234,11 +233,11 @@ const AddClasse = () => {
                       </select>
                     </div>
                   </Col>
-                </Row>
-                <Row>
                   <Col lg={4}>
                     <div className="mb-3">
-                      <Form.Label htmlFor="section_classe">Section</Form.Label>
+                      <Form.Label htmlFor="section_classe">
+                        Spécialité
+                      </Form.Label>
                       <select
                         className="form-select text-muted"
                         name="section_classe"
@@ -278,6 +277,108 @@ const AddClasse = () => {
                               </option>
                             ))
                           : null}
+                      </select>
+                    </div>
+                  </Col>
+                  {/* <Col lg={3}>
+                    <div className="mb-3">
+                      <Form.Label htmlFor="cycles">Cycle</Form.Label>
+                      <select
+                        className="form-select text-muted"
+                        name="cycles"
+                        id="cycles"
+                        value={formData.niveau_classe.cycles.map(
+                          (cycle) => cycle._id
+                        )}
+                        onChange={(e) => {
+                          const selectedCyclesIds = Array.from(
+                            e.target.selectedOptions,
+                            (option) => option.value
+                          );
+                          const selectedCycles =
+                            cyclesData &&
+                            "cycles" in cyclesData &&
+                            cyclesData.cycles
+                              ? cyclesData.cycles.filter((cycles) =>
+                                  selectedCyclesIds.includes(cycles._id)
+                                )
+                              : [];
+                          setFormData((prevState) => ({
+                            ...prevState,
+                            niveau_classe: {
+                              ...prevState.niveau_classe,
+                              cycles: selectedCycles,
+                            },
+                          }));
+                        }}
+                        multiple
+                      >
+                        {cyclesData &&
+                        "cycles" in cyclesData &&
+                        cyclesData.cycles
+                          ? cyclesData.cycles.map((cycle: Cycle) => (
+                              <option key={cycle._id} value={cycle._id}>
+                                {cycle.cycle_fr}
+                              </option>
+                            ))
+                          : null}
+                      </select>
+                    </div>
+                  </Col> */}
+                </Row>
+                <Row>
+                  <Col lg={4}>
+                    <div className="mb-3">
+                      <Form.Label htmlFor="departement">Département</Form.Label>
+                      <select
+                        className="form-select text-muted"
+                        name="departement"
+                        id="departement"
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            departement:
+                              departements.find(
+                                (d) => d._id === e.target.value
+                              ) || formData.departement,
+                          })
+                        }
+                      >
+                        <option value="">Sélectionner Département</option>
+                        {departements.map((departement) => (
+                          <option key={departement._id} value={departement._id}>
+                            {departement.name_fr}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </Col>
+
+                  <Col lg={4}>
+                    <div className="mb-3">
+                      <Form.Label htmlFor="groupeNumber">
+                        Numéro de Groupe
+                      </Form.Label>
+                      <select
+                        className="form-select text-muted"
+                        name="groupeNumber"
+                        id="groupeNumber"
+                        value={selectedGroupe || ""}
+                        onChange={(e) => {
+                          const newGroupe = e.target.value;
+                          setSelectedGroupe(newGroupe);
+                          setFormData((prev) => ({
+                            ...prev,
+                            groupe_number: newGroupe,
+                          })); // Update FormData
+                        }}
+                      >
+                        <option value="">Sélectionner Groupe</option>
+                        {groupes.map((num) => (
+                          <option key={num} value={num}>
+                            Groupe {num}
+                          </option>
+                        ))}
                       </select>
                     </div>
                   </Col>

@@ -74,37 +74,6 @@ const ListDepartement = () => {
   const columns = useMemo(
     () => [
       {
-        Header: (
-          <div className="form-check">
-            <input
-              className="form-check-input"
-              type="checkbox"
-              id="checkAll"
-              value="option"
-            />
-          </div>
-        ),
-        Cell: (cellProps: any) => {
-          return (
-            <div className="form-check">
-              <input
-                className="form-check-input"
-                type="checkbox"
-                name="chk_child"
-                defaultValue="option1"
-              />
-            </div>
-          );
-        },
-        id: "#",
-      },
-      {
-        Header: "ID",
-        accessor: "_id",
-        disableFilters: true,
-        filterable: true,
-      },
-      {
         Header: "Nom Département",
         accessor: "name_fr",
         disableFilters: true,

@@ -347,7 +347,7 @@ const CreateAdmin = () => {
                                   key={enseignant._id}
                                   value={enseignant._id}
                                 >
-                                  {enseignant.prenom_fr} {enseignant.nom_fr}
+                                  {enseignant.prenom_fr} {enseignant?.nom_fr!}
                                 </option>
                               ))}
                             {userType === "personnel" &&

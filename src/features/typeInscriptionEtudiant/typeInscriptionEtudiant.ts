@@ -10,19 +10,25 @@ export interface TypeInscriptionEtudiant {
 export const typeInscriptionEtudiantSlice = createApi({
   reducerPath: "TypeInscriptionEtudiant",
   baseQuery: fetchBaseQuery({
-    baseUrl: `${process.env.REACT_APP_API_URL}/api/type-inscription-etudiant/`
+    baseUrl: `${process.env.REACT_APP_API_URL}/api/type-inscription-etudiant/`,
   }),
   tagTypes: ["TypeInscriptionEtudiant"],
   endpoints(builder) {
     return {
-      fetchTypeInscriptionsEtudiant: builder.query<TypeInscriptionEtudiant[], number | void>({
+      fetchTypeInscriptionsEtudiant: builder.query<
+        TypeInscriptionEtudiant[],
+        number | void
+      >({
         query() {
           return `get-all-type-inscription-etudiant`;
         },
         providesTags: ["TypeInscriptionEtudiant"],
       }),
 
-      addTypeInscriptionEtudiant: builder.mutation<void, TypeInscriptionEtudiant>({
+      addTypeInscriptionEtudiant: builder.mutation<
+        void,
+        TypeInscriptionEtudiant
+      >({
         query(payload) {
           return {
             url: "/create-type-inscription-etudiant",
@@ -32,7 +38,23 @@ export const typeInscriptionEtudiantSlice = createApi({
         },
         invalidatesTags: ["TypeInscriptionEtudiant"],
       }),
-      updateTypeInscriptionEtudiant: builder.mutation<void, TypeInscriptionEtudiant>({
+      getTypeInscriptionValue: builder.mutation<
+        { id: string; type_fr: string; type_ar: string },
+        TypeInscriptionEtudiant
+      >({
+        query(payload) {
+          return {
+            url: "/get-type-inscription-by-value",
+            method: "POST",
+            body: payload,
+          };
+        },
+        invalidatesTags: ["TypeInscriptionEtudiant"],
+      }),
+      updateTypeInscriptionEtudiant: builder.mutation<
+        void,
+        TypeInscriptionEtudiant
+      >({
         query: ({ _id, ...rest }) => ({
           url: `/update-type-inscription-etudiant/${_id}`,
           method: "PUT",
@@ -52,8 +74,9 @@ export const typeInscriptionEtudiantSlice = createApi({
 });
 
 export const {
-useAddTypeInscriptionEtudiantMutation,
-useDeleteTypeInscriptionEtudiantMutation,
-useFetchTypeInscriptionsEtudiantQuery,
-useUpdateTypeInscriptionEtudiantMutation
+  useAddTypeInscriptionEtudiantMutation,
+  useDeleteTypeInscriptionEtudiantMutation,
+  useFetchTypeInscriptionsEtudiantQuery,
+  useUpdateTypeInscriptionEtudiantMutation,
+  useGetTypeInscriptionValueMutation,
 } = typeInscriptionEtudiantSlice;

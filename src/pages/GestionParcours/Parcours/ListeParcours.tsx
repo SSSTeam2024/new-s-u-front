@@ -7,6 +7,7 @@ import {
   Form,
   Modal,
   Row,
+  Spinner,
 } from "react-bootstrap";
 import Breadcrumb from "Common/BreadCrumb";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -16,16 +17,70 @@ import { actionAuthorization } from "utils/pathVerification";
 import { RootState } from "app/store";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "features/account/authSlice";
-import { useFetchDomainesClasseQuery } from "features/domaineClasse/domaineClasse";
+import {
+  useAddDomaineClasseMutation,
+  useFetchDomainesClasseQuery,
+  useGetDomaineByValueMutation,
+} from "features/domaineClasse/domaineClasse";
 import {
   Parcours,
   useAddParcoursMutation,
   useDeleteParcoursMutation,
   useFetchParcoursQuery,
+  useGetParcoursByValueMutation,
   useUpdateParcoursMutation,
 } from "features/parcours/parcours";
-import { useFetchMentionsClasseQuery } from "features/mentionClasse/mentionClasse";
-import { useFetchTypeParcoursQuery } from "features/TypeParcours/TypeParcours";
+import {
+  useAddMentionsClasseMutation,
+  useFetchMentionsClasseQuery,
+  useGetMentionByValueMutation,
+} from "features/mentionClasse/mentionClasse";
+import {
+  useAddTypeParcoursMutation,
+  useFetchTypeParcoursQuery,
+  useGetTypeParcoursByValueMutation,
+} from "features/TypeParcours/TypeParcours";
+import * as XLSX from "xlsx";
+import FileSaver from "file-saver";
+import {
+  useAddModuleParcoursMutation,
+  useGetModuleParcoursByCodeMutation,
+} from "features/moduleParcours/moduleParcours";
+import {
+  useAddMatiereMutation,
+  useGetMatiereByCodeMutation,
+} from "features/matiere/matiere";
+export interface ParcoursFileEXEL {
+  _id: string;
+  Type_Parcours_AR: string;
+  Type_Parcours_FR: string;
+  Domaine_FR: string;
+  Domaine_AR: string;
+  Mention_FR: string;
+  Mention_AR: string;
+  codeParcours: string;
+  NomParcours: string;
+  codeUE: string;
+  Semestre_Module: string;
+  NomUE: string;
+  CreditUE: string;
+  CoefUE: string;
+  NatureUE: string;
+  RegimeUE: string;
+  codeMatiere: string;
+  NomMatiere: string;
+  RegimeMatiere: string;
+  CreditMatiere: string;
+  coefficientMatiere: string;
+  TypeMatiere: string;
+  VolumeHoraire: string;
+  NomreElimination: string;
+  Abreviation_Domaine: any;
+  Abreviation_Mention: any;
+  Abreviation_Type_Parcours: any;
+  Semestre_Parcours: string;
+  Semestre_Matiere: string;
+}
 
 const ListParcours = () => {
   document.title = "Liste parcours | ENIGA";
@@ -38,6 +93,7 @@ const ListParcours = () => {
   };
 
   const { data = [] } = useFetchParcoursQuery();
+  // console.log("parcours data", data);
   const { data: allDomaines = [] } = useFetchDomainesClasseQuery();
   const { data: allMentions = [] } = useFetchMentionsClasseQuery();
   const { data: allTypesParcours = [] } = useFetchTypeParcoursQuery();
@@ -52,6 +108,7 @@ const ListParcours = () => {
           parcours.domaine,
           parcours.mention,
           parcours.type_parcours,
+          parcours.semestre_parcours,
         ].some((value) => value && value.toLowerCase().includes(searchQuery))
       );
     }
@@ -111,6 +168,21 @@ const ListParcours = () => {
         disableFilters: true,
         filterable: true,
       },
+      {
+        Header: "Semestres",
+        accessor: (row: any) => {
+          // Remove duplicates using Set and convert back to an array
+          const uniqueSemesters = Array.from(new Set(row.semestre_parcours));
+
+          // Join unique semesters into a single string
+          return uniqueSemesters.length > 0
+            ? uniqueSemesters.join(", ")
+            : "Aucun semestre assigné";
+        },
+        disableFilters: true,
+        filterable: true,
+      },
+
       {
         Header: "Domaine",
         accessor: (row: any) => row.domaine?.name_domaine_fr! || "",
@@ -224,6 +296,35 @@ const ListParcours = () => {
           return (
             <ul className="hstack gap-2 list-unstyled mb-0">
               {actionAuthorization(
+                "/parcours/gestion-parcours/view-parcours",
+                user?.permissions!
+              ) ? (
+                <li>
+                  <Link
+                    to="/parcours/gestion-parcours/view-parcours"
+                    className="badge bg-info-subtle text-info view-item-btn"
+                    state={parcours}
+                  >
+                    <i
+                      className="ph ph-eye"
+                      style={{
+                        transition: "transform 0.3s ease-in-out",
+                        cursor: "pointer",
+                        fontSize: "1.5em",
+                      }}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.transform = "scale(1.4)")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.transform = "scale(1)")
+                      }
+                    ></i>
+                  </Link>
+                </li>
+              ) : (
+                <></>
+              )}
+              {actionAuthorization(
                 "/parcours/gestion-parcours/edit-parcours",
                 user?.permissions!
               ) ? (
@@ -299,40 +400,50 @@ const ListParcours = () => {
   }
 
   const [createParcours] = useAddParcoursMutation();
+  const [createModule] = useAddModuleParcoursMutation();
+  const [createMatiere] = useAddMatiereMutation();
   const { state: parcours } = useLocation();
   const [editParcours] = useUpdateParcoursMutation();
   const [isAddModalOpen, setAddModalOpen] = useState(false);
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [formData, setFormData] = useState({
+  // const [formData, setFormData] = useState({
+  //   _id: "",
+  //   type_parcours: "",
+  //   mention: "",
+  //   domaine: "",
+  //   nom_parcours: "",
+  //   code_parcours: "",
+  //    semestre_parcours: [],
+  // });
+
+  const [formData, setFormData] = useState<{
+    _id: string;
+    type_parcours: any;
+    mention: any;
+    domaine: any;
+    nom_parcours: string;
+    code_parcours: string;
+    semestre_parcours: string[]; // Explicitly define type
+  }>({
     _id: "",
-    type_parcours: {
-      name_type_parcours_fr: "",
-    },
-    mention: {
-      name_mention_fr: "",
-    },
-    domaine: {
-      name_domaine_fr: "",
-    },
+    type_parcours: "",
+    mention: "",
+    domaine: "",
     nom_parcours: "",
     code_parcours: "",
+    semestre_parcours: [], // Ensure it's initialized as an array of strings
   });
 
   const handleAddClick = () => {
     setFormData({
       _id: "",
-      type_parcours: {
-        name_type_parcours_fr: "",
-      },
-      mention: {
-        name_mention_fr: "",
-      },
-      domaine: {
-        name_domaine_fr: "",
-      },
+      type_parcours: "",
+      mention: "",
+      domaine: "",
       nom_parcours: "",
       code_parcours: "",
+      semestre_parcours: [],
     });
     setAddModalOpen(true);
   };
@@ -345,6 +456,7 @@ const ListParcours = () => {
       domaine: parcours.domaine || { name_domaine_fr: "" },
       nom_parcours: parcours.nom_parcours || "",
       code_parcours: parcours.code_parcours || "",
+      semestre_parcours: parcours.semestre_parcours || [],
     });
     setShowEditModal(true);
   };
@@ -380,6 +492,9 @@ const ListParcours = () => {
   const onSubmitEditParcours = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
+      formData["domaine"] = selectedDoamin;
+      formData["mention"] = selectedMention;
+      formData["type_parcours"] = selectedTypeParcours;
       await editParcours(formData).unwrap();
       setShowEditModal(false);
       notifyEdit();
@@ -397,6 +512,7 @@ const ListParcours = () => {
         domaine: parcours.domaine || { name_domaine_fr: "" },
         type_parcours: parcours.type_parcours || { name_type_parcours_fr: "" },
         mention: parcours.mention || { name_mention_fr: "" },
+        semestre_parcours: parcours.semestre_parcours || "",
       });
     }
   }, [parcours, isEditModalOpen]);
@@ -422,19 +538,659 @@ const ListParcours = () => {
 
   const handleChange = (e: any) => {
     const { name, value } = e.target;
-    console.log("name", name, "value", value);
+
     setFormData({
       ...formData,
       [name]: value,
     });
   };
+  const [modal_ImportModals, setmodal_ImportModals] = useState<boolean>(false);
+  const [parcoursFile, setParcoursFile] = useState<ParcoursFileEXEL[]>([]);
+  const [filePath, setFilePath] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  function tog_ImportModals() {
+    setmodal_ImportModals(!modal_ImportModals);
+  }
+
+  const [addTypeParcours] = useAddTypeParcoursMutation();
+  const [addMention] = useAddMentionsClasseMutation();
+  const [addDomaine] = useAddDomaineClasseMutation();
+
+  const [getMatiereCode] = useGetMatiereByCodeMutation();
+  const [getParcoursValue] = useGetParcoursByValueMutation();
+  const [getModuleParcoursCode] = useGetModuleParcoursByCodeMutation();
+
+  const [getDomaineValue] = useGetDomaineByValueMutation();
+  const [getTypeParcoursValue] = useGetTypeParcoursByValueMutation();
+  const [getMentionValue] = useGetMentionByValueMutation();
+
+  const getOrCreate = async (
+    map: any,
+    getFunc: any,
+    addFunc: any,
+    isMatiere?: boolean
+  ) => {
+    for (const [key, value] of map.entries()) {
+      const existingValue = await getFunc(value).unwrap();
+      if (existingValue !== null) {
+        //console.log(`existing Value ${key}:`, existingValue);
+        map.set(key, { ...value, id: existingValue.id });
+      } else {
+        if (isMatiere) {
+          const createdValue = await addFunc(value).unwrap();
+          //console.log(`Created new ${key}:`, createdValue);
+          map.set(key, { ...value, id: createdValue[0]?._id! });
+          //console.log("map", map);
+        } else {
+          const createdValue = await addFunc(value).unwrap();
+          //console.log(`Created new ${key}:`, createdValue);
+          map.set(key, { ...value, id: createdValue?._id! });
+          //console.log("map", map);
+        }
+      }
+    }
+  };
+
+  // const handleFileUpload = (event: any) => {
+  //   const file = event.target.files[0];
+  //   if (!file) {
+  //     console.error("No file selected.");
+  //     return;
+  //   }
+
+  //   const reader = new FileReader();
+  //   reader.onload = async (e) => {
+  //     setIsLoading(true);
+  //     try {
+  //       const data = new Uint8Array(e.target!.result as ArrayBuffer);
+  //       const workbook = XLSX.read(data, { type: "array" });
+  //       const sheetName = workbook.SheetNames[0];
+  //       const worksheet = workbook.Sheets[sheetName];
+  //       const jsonData: ParcoursFileEXEL[] = XLSX.utils.sheet_to_json(
+  //         worksheet
+  //       ) as ParcoursFileEXEL[];
+
+  //       const uniqueMatiere = new Map<
+  //         string,
+  //         {
+  //           id: string;
+  //           code_matiere: string;
+  //           matiere?: string;
+  //           type?: string;
+  //           semestre?: string;
+  //           volume?: string;
+  //           nbr_elimination?: string;
+  //           regime_matiere?: string;
+  //           types?: {
+  //             type: string;
+  //             volume: string;
+  //             nbr_elimination: string;
+  //           }[];
+  //           credit_matiere?: string;
+  //           coefficient_matiere?: string;
+  //         }
+  //       >();
+
+  //       const uniqueModuleParcours = new Map<
+  //         string,
+  //         {
+  //           id: string;
+  //           code_Ue: string;
+  //           semestre: string;
+  //           libelle: string;
+  //           credit: string;
+  //           coef: string;
+  //           nature: string;
+  //           regime: string;
+  //           parcours?: string;
+  //           matiere?: string[];
+  //         }
+  //       >();
+
+  //       const uniqueParcours = new Map<
+  //         string,
+  //         {
+  //           id: string;
+  //           code_parcours: string;
+  //           nom_parcours: string;
+  //         }
+  //       >();
+
+  //       jsonData.forEach(async (item: any) => {
+  //         const parcoursKey = `${item["NomParcours"]}-${item["codeParcours"]}`;
+  //         if (!uniqueParcours.has(parcoursKey)) {
+  //           uniqueParcours.set(parcoursKey, {
+  //             id: "",
+  //             code_parcours: item["codeParcours"],
+  //             nom_parcours: item["NomParcours"],
+  //           });
+  //         }
+
+  //         const matiereKey = `${item["codeMatiere"]}`;
+  //         if (!uniqueMatiere.has(matiereKey)) {
+  //           uniqueMatiere.set(matiereKey, {
+  //             id: "",
+  //             code_matiere: item["codeMatiere"],
+  //             matiere: item["NomMatiere"],
+  //             regime_matiere: item["RegimeMatiere"],
+  //             credit_matiere: item["CreditMatiere"],
+  //             coefficient_matiere: item["coefficientMatiere"],
+  //             types: [
+  //               {
+  //                 type: item["TypeMatiere"],
+  //                 volume: item["VolumeHoraire"],
+  //                 nbr_elimination: item["NomreElimination"],
+  //               },
+  //             ],
+  //           });
+  //         }
+
+  //         const moduleKey = `${item["codeUE"]}`;
+  //         if (!uniqueModuleParcours.has(moduleKey)) {
+  //           uniqueModuleParcours.set(moduleKey, {
+  //             id: "",
+  //             code_Ue: item["codeUE"],
+  //             semestre: item["Semestre"],
+  //             libelle: item["NomUE"],
+  //             credit: item["CreditUE"],
+  //             coef: item["CoefUE"],
+  //             nature: item["NatureUE"],
+  //             regime: item["RegimeUE"],
+  //             parcours:
+  //               uniqueParcours.get(
+  //                 `${item["NomParcours"]}-${item["codeParcours"]}`
+  //               )?.id || "",
+  //             matiere: [uniqueMatiere.get(`${item["codeMatiere"]}`)?.id!],
+  //           });
+  //         }
+  //       });
+  //       console.log("uniqueModuleParcours", uniqueModuleParcours);
+  //       await getOrCreate(uniqueParcours, getParcoursValue, createParcours);
+
+  //       await getOrCreate(uniqueMatiere, getMatiereCode, createMatiere);
+
+  //       await getOrCreate(
+  //         uniqueModuleParcours,
+  //         getModuleParcoursCode,
+  //         createModule
+  //       );
+  //       setParcoursFile(jsonData);
+  //       setFilePath(file.name);
+  //     } catch (error) {
+  //       console.error("Error processing file:", error);
+  //     } finally {
+  //       setIsLoading(false);
+  //       setmodal_ImportModals(false);
+  //     }
+  //   };
+
+  //   reader.onerror = () => {
+  //     console.error("File could not be read.");
+  //     setIsLoading(false);
+  //   };
+
+  //   reader.readAsArrayBuffer(file);
+  // };
+
+  const handleFileUpload = async (event: any) => {
+    const file = event.target.files[0];
+    if (!file) {
+      console.error("No file selected.");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      setIsLoading(true);
+      try {
+        const data = new Uint8Array(e.target!.result as ArrayBuffer);
+        const workbook = XLSX.read(data, { type: "array" });
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        const jsonData: ParcoursFileEXEL[] = XLSX.utils.sheet_to_json(
+          worksheet
+        ) as ParcoursFileEXEL[];
+
+        const uniqueMatiere = new Map<string, any>();
+        const uniqueModuleParcours = new Map<string, any>();
+        const uniqueParcours = new Map<string, any>();
+
+        for (const item of jsonData) {
+          const parcoursKey = `${item["NomParcours"]}-${item["codeParcours"]}`;
+          if (!uniqueParcours.has(parcoursKey)) {
+            let tab = [];
+            tab.push(item["Semestre_Parcours"]);
+
+            uniqueParcours.set(parcoursKey, {
+              id: "",
+              code_parcours: item["codeParcours"],
+              nom_parcours: item["NomParcours"],
+              semestre_parcours: tab,
+            });
+          } else {
+            let s = uniqueParcours.get(parcoursKey)?.semestre_parcours;
+            s.push(item["Semestre_Parcours"]);
+            uniqueParcours.set(parcoursKey, {
+              id: "",
+              code_parcours: item["codeParcours"],
+              nom_parcours: item["NomParcours"],
+              semestre_parcours: s,
+            });
+          }
+
+          const matiereKey = `${item["codeMatiere"]}`;
+          if (!uniqueMatiere.has(matiereKey)) {
+            uniqueMatiere.set(matiereKey, {
+              id: "",
+              code_matiere: item["codeMatiere"],
+              semestre: item["Semestre_Parcours"],
+              matiere: item["NomMatiere"],
+              regime_matiere: item["RegimeMatiere"],
+              credit_matiere: item["CreditMatiere"],
+              coefficient_matiere: item["coefficientMatiere"],
+              types: [
+                {
+                  type: item["TypeMatiere"],
+                  volume: item["VolumeHoraire"],
+                  nbr_elimination: item["NomreElimination"],
+                },
+              ],
+            });
+          }
+
+          // if (Number(item["Semestre_Parcours"].slice(1, 2)) % 2 === 0) {
+          //   if (!uniqueMatiere.has(matiereKey)) {
+          //     uniqueMatiere.set(matiereKey, {
+          //       id: "",
+          //       code_matiere: item["codeMatiere"],
+          //       semestre: "S2",
+          //       matiere: item["NomMatiere"],
+          //       regime_matiere: item["RegimeMatiere"],
+          //       credit_matiere: item["CreditMatiere"],
+          //       coefficient_matiere: item["coefficientMatiere"],
+          //       types: [
+          //         {
+          //           type: item["TypeMatiere"],
+          //           volume: item["VolumeHoraire"],
+          //           nbr_elimination: item["NomreElimination"],
+          //         },
+          //       ],
+          //     });
+          //   }
+          // } else {
+          //   if (!uniqueMatiere.has(matiereKey)) {
+          //     uniqueMatiere.set(matiereKey, {
+          //       id: "",
+          //       code_matiere: item["codeMatiere"],
+          //       semestre: "S1",
+          //       matiere: item["NomMatiere"],
+          //       regime_matiere: item["RegimeMatiere"],
+          //       credit_matiere: item["CreditMatiere"],
+          //       coefficient_matiere: item["coefficientMatiere"],
+          //       types: [
+          //         {
+          //           type: item["TypeMatiere"],
+          //           volume: item["VolumeHoraire"],
+          //           nbr_elimination: item["NomreElimination"],
+          //         },
+          //       ],
+          //     });
+          //   }
+          // }
+        }
+        console.log("unique parcours", uniqueParcours);
+        await getOrCreate(uniqueParcours, getParcoursValue, createParcours);
+
+        await getOrCreate(uniqueMatiere, getMatiereCode, createMatiere, true);
+
+        // for (const item of jsonData) {
+        //   const moduleKey = `${item["codeUE"]}`;
+        //   if (!uniqueModuleParcours.has(moduleKey)) {
+        //     const parcoursKey = `${item["NomParcours"]}-${item["codeParcours"]}`;
+        //     const matiereKey = `${item["codeMatiere"]}`;
+
+        //     uniqueModuleParcours.set(moduleKey, {
+        //       id: "",
+        //       code_Ue: item["codeUE"],
+        //       semestre_module: item["Semestre_Module"],
+        //       libelle: item["NomUE"],
+        //       credit: item["CreditUE"],
+        //       coef: item["CoefUE"],
+        //       nature: item["NatureUE"],
+        //       regime: item["RegimeUE"],
+        //       parcours: uniqueParcours.get(parcoursKey)?.id || "",
+        //       matiere: [uniqueMatiere.get(matiereKey)?.id || ""],
+        //     });
+        //   }
+        // }
+        // for (const item of jsonData) {
+        //   const moduleKey = `${item["codeUE"]}`;
+        //   if (Number(item["Semestre_Parcours"].slice(1, 2)) % 2 === 0) {
+        //     if (!uniqueModuleParcours.has(moduleKey)) {
+        //       const parcoursKey = `${item["NomParcours"]}-${item["codeParcours"]}`;
+        //       const matiereKey = `${item["codeMatiere"]}`;
+
+        //       const matiereId = uniqueMatiere.has(matiereKey)
+        //         ? uniqueMatiere.get(matiereKey)?.id
+        //         : null;
+        //       if (matiereId) {
+        //         uniqueModuleParcours.set(moduleKey, {
+        //           id: "",
+        //           code_Ue: item["codeUE"],
+        //           semestre_module: "S2",
+        //           libelle: item["NomUE"],
+        //           credit: item["CreditUE"],
+        //           coef: item["CoefUE"],
+        //           nature: item["NatureUE"],
+        //           regime: item["RegimeUE"],
+        //           parcours: uniqueParcours.get(parcoursKey)?.id || "",
+        //           matiere: [matiereId],
+        //         });
+        //       } else {
+        //         console.error(`Matiere ID for ${matiereKey} not found.`);
+        //       }
+        //     }
+        //   } else {
+        //     if (!uniqueModuleParcours.has(moduleKey)) {
+        //       const parcoursKey = `${item["NomParcours"]}-${item["codeParcours"]}`;
+        //       const matiereKey = `${item["codeMatiere"]}`;
+
+        //       const matiereId = uniqueMatiere.has(matiereKey)
+        //         ? uniqueMatiere.get(matiereKey)?.id
+        //         : null;
+        //       //console.log("matiereId", uniqueMatiere.get(matiereKey)?.id!);
+        //       if (matiereId) {
+        //         uniqueModuleParcours.set(moduleKey, {
+        //           id: "",
+        //           code_Ue: item["codeUE"],
+        //           semestre_module: "S1",
+        //           libelle: item["NomUE"],
+        //           credit: item["CreditUE"],
+        //           coef: item["CoefUE"],
+        //           nature: item["NatureUE"],
+        //           regime: item["RegimeUE"],
+        //           parcours: uniqueParcours.get(parcoursKey)?.id || "",
+        //           matiere: [matiereId],
+        //         });
+        //       } else {
+        //         console.error(`Matiere ID for ${matiereKey} not found.`);
+        //       }
+        //     }
+        //   }
+        // }
+
+        for (const item of jsonData) {
+          const moduleKey = `${item["codeUE"]}`;
+          const parcoursKey = `${item["NomParcours"]}-${item["codeParcours"]}`;
+          const matiereKey = `${item["codeMatiere"]}`;
+          // const semestre_module =
+          // Number(item["Semestre_Parcours"].slice(1, 2)) % 2 === 0
+          //   ? "S2"
+          //   : "S1";
+
+          const matiereId = uniqueMatiere.has(matiereKey)
+            ? uniqueMatiere.get(matiereKey)?.id
+            : null;
+
+          if (matiereId) {
+            if (!uniqueModuleParcours.has(moduleKey)) {
+              uniqueModuleParcours.set(moduleKey, {
+                id: "",
+                code_Ue: item["codeUE"],
+                semestre_module: item["Semestre_Parcours"],
+                libelle: item["NomUE"],
+                credit: item["CreditUE"],
+                coef: item["CoefUE"],
+                nature: item["NatureUE"],
+                regime: item["RegimeUE"],
+                parcours: uniqueParcours.get(parcoursKey)?.id || "",
+                matiere: [matiereId],
+              });
+
+              // Update the parcours object to include the new module
+              const parcours = uniqueParcours.get(parcoursKey);
+              if (parcours) {
+                if (!parcours.modules) {
+                  parcours.modules = [];
+                }
+                if (!parcours.modules.includes(moduleKey)) {
+                  parcours.modules.push(moduleKey);
+                  uniqueParcours.set(parcoursKey, parcours);
+                }
+              }
+            } else {
+              const existingModule = uniqueModuleParcours.get(moduleKey);
+              if (!existingModule.matiere.includes(matiereId)) {
+                existingModule.matiere.push(matiereId);
+                uniqueModuleParcours.set(moduleKey, existingModule);
+
+                // Update the parcours object to include the new matiere in the module
+                const parcours = uniqueParcours.get(parcoursKey);
+                if (parcours) {
+                  if (!parcours.modules) {
+                    parcours.modules = [];
+                  }
+                  if (!parcours.modules.includes(moduleKey)) {
+                    parcours.modules.push(moduleKey);
+                    uniqueParcours.set(parcoursKey, parcours);
+                  }
+                }
+              }
+            }
+          } else {
+            console.error(`Matiere ID for ${matiereKey} not found.`);
+          }
+        }
+
+        await getOrCreate(
+          uniqueModuleParcours,
+          getModuleParcoursCode,
+          createModule
+        );
+
+        setParcoursFile(jsonData);
+        setFilePath(file.name);
+      } catch (error) {
+        console.error("Error processing file:", error);
+      } finally {
+        setIsLoading(false);
+        setmodal_ImportModals(false);
+      }
+    };
+
+    reader.onerror = () => {
+      console.error("File could not be read.");
+      setIsLoading(false);
+    };
+
+    reader.readAsArrayBuffer(file);
+  };
+
+  // const handleFileUpload = async (event: any) => {
+  //   const file = event.target.files[0];
+  //   if (!file) {
+  //     console.error("No file selected.");
+  //     return;
+  //   }
+
+  //   const reader = new FileReader();
+  //   reader.onload = async (e) => {
+  //     setIsLoading(true);
+  //     try {
+  //       const data = new Uint8Array(e.target!.result as ArrayBuffer);
+  //       const workbook = XLSX.read(data, { type: "array" });
+  //       const sheetName = workbook.SheetNames[0];
+  //       const worksheet = workbook.Sheets[sheetName];
+  //       const jsonData: ParcoursFileEXEL[] = XLSX.utils.sheet_to_json(
+  //         worksheet
+  //       ) as ParcoursFileEXEL[];
+
+  //       const uniqueMatiere = new Map<string, any>();
+  //       const uniqueModuleParcours = new Map<string, any>();
+  //       const uniqueParcours = new Map<string, any>();
+
+  //       // Populate uniqueParcours and uniqueMatiere maps
+  //       for (const item of jsonData) {
+  //         const parcoursKey = `${item["NomParcours"]}-${item["codeParcours"]}`;
+  //         if (!uniqueParcours.has(parcoursKey)) {
+  //           uniqueParcours.set(parcoursKey, {
+  //             id: "",
+  //             code_parcours: item["codeParcours"],
+  //             nom_parcours: item["NomParcours"],
+  //             semestre_parcours: item["Semestre_Parcours"],
+  //           });
+  //         }
+
+  //         const matiereKey = `${item["codeMatiere"]}`;
+  //         if (!uniqueMatiere.has(matiereKey)) {
+  //           uniqueMatiere.set(matiereKey, {
+  //             id: "",
+  //             code_matiere: item["codeMatiere"],
+  //             semestre: item["Semestre_Matiere"],
+  //             matiere: item["NomMatiere"],
+  //             regime_matiere: item["RegimeMatiere"],
+  //             credit_matiere: item["CreditMatiere"],
+  //             coefficient_matiere: item["coefficientMatiere"],
+  //             types: [
+  //               {
+  //                 type: item["TypeMatiere"],
+  //                 volume: item["VolumeHoraire"],
+  //                 nbr_elimination: item["NomreElimination"],
+  //               },
+  //             ],
+  //           });
+  //         }
+  //       }
+
+  //       // Await the creation of parcours and matiere
+  //       await getOrCreate(uniqueParcours, getParcoursValue, createParcours);
+  //       await getOrCreate(uniqueMatiere, getMatiereCode, createMatiere);
+  //       // console.log("uniqueMatiere", uniqueMatiere);
+  //       // let tabMat = [];
+  //       // for (const umatiere of Array.from(uniqueMatiere.entries())) {
+  //       //   tabMat.push(umatiere[1].id);
+  //       // }
+  //       // console.log("tabMat", tabMat);
+  //       // // Now, create module entries with the correct IDs
+  //       for (const item of jsonData) {
+  //         const moduleKey = `${item["codeUE"]}`;
+  //         if (!uniqueModuleParcours.has(moduleKey)) {
+  //           const parcoursKey = `${item["NomParcours"]}-${item["codeParcours"]}-${item["Semestre_Parcours"]}`;
+  //           const matiereKey = `${item["codeMatiere"]}`;
+
+  //           uniqueModuleParcours.set(moduleKey, {
+  //             id: "",
+  //             code_Ue: item["codeUE"],
+  //             semestre_module: item["Semestre_Module"],
+  //             libelle: item["NomUE"],
+  //             credit: item["CreditUE"],
+  //             coef: item["CoefUE"],
+  //             nature: item["NatureUE"],
+  //             regime: item["RegimeUE"],
+  //             parcours: uniqueParcours.get(parcoursKey)?.id || "",
+  //             matiere: [uniqueMatiere.get(matiereKey)?.id || ""],
+  //           });
+  //         }
+  //       }
+
+  //       // Await the creation of modules
+  //       await getOrCreate(
+  //         uniqueModuleParcours,
+  //         getModuleParcoursCode,
+  //         createModule
+  //       );
+
+  //       setParcoursFile(jsonData);
+  //       setFilePath(file.name);
+  //     } catch (error) {
+  //       console.error("Error processing file:", error);
+  //     } finally {
+  //       setIsLoading(false);
+  //       setmodal_ImportModals(false);
+  //     }
+  //   };
+
+  //   reader.onerror = () => {
+  //     console.error("File could not be read.");
+  //     setIsLoading(false);
+  //   };
+
+  //   reader.readAsArrayBuffer(file);
+  // };
+
+  const createAndDownloadExcel = () => {
+    const ws = XLSX.utils.json_to_sheet([]);
+    XLSX.utils.sheet_add_aoa(ws, [
+      [
+        "codeParcours",
+        "NomParcours",
+        "Semestre_Parcours",
+        "codeUE",
+        "NomUE",
+        "CreditUE",
+        "CoefUE",
+        "NatureUE",
+        "RegimeUE",
+        // "Semestre_Module",
+        "codeMatiere",
+        "NomMatiere",
+        "RegimeMatiere",
+        "CreditMatiere",
+        "coefficientMatiere",
+        "TypeMatiere",
+        "VolumeHoraire",
+        "NomreElimination",
+        // "Semestre_Matiere",
+      ],
+    ]);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Parcours");
+    const wbout = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+    const blob = new Blob([wbout], { type: "application/octet-stream" });
+    FileSaver.saveAs(blob, "template_parcours.xlsx");
+  };
+  const [selectedDoamin, setSelectedDoamin] = useState("");
+  const [selectedTypeParcours, setSelectedTypeParcours] = useState("");
+  const [selectedMention, setSelectedMention] = useState("");
+  const handleSelectDomain = (e: any) => {
+    const value = e.target.value;
+    setSelectedDoamin(value);
+  };
+  const handleSelectTypeParcours = (e: any) => {
+    const value = e.target.value;
+    setSelectedTypeParcours(value);
+  };
+  const handleSelectMention = (e: any) => {
+    const value = e.target.value;
+    setSelectedMention(value);
+  };
+  const semestres = [
+    "S1",
+    "S2",
+    "S3",
+    "S4",
+    "S5",
+    "S6",
+    "S7",
+    "S8",
+    "S9",
+    "S10",
+    "S11",
+    "S12",
+    "S13",
+    "S14",
+    "S15",
+    "S16",
+    "S17",
+    "S18",
+  ]; // Example semesters
 
   return (
     <React.Fragment>
       <div className="page-content">
         <Container fluid={true}>
           <Breadcrumb
-            title="Paramètres des Parcours"
+            title="Liste des parcours"
             pageTitle="Liste des parcours"
           />
 
@@ -455,8 +1211,8 @@ const ListParcours = () => {
                         <i className="ri-search-line search-icon"></i>
                       </div>
                     </Col>
-                    <Col className="col-lg-auto ms-auto">
-                      <div className="hstack gap-2">
+                    <Col className="col-lg-auto">
+                      <div className="">
                         {actionAuthorization(
                           "/parcours/gestion-parcours/ajouter-parcours",
                           user?.permissions!
@@ -471,6 +1227,17 @@ const ListParcours = () => {
                         ) : (
                           <></>
                         )}
+                      </div>
+                    </Col>
+                    <Col className="col-lg-auto ms-auto">
+                      <div className="">
+                        <Button
+                          variant="secondary"
+                          className="add-btn"
+                          onClick={() => tog_ImportModals()}
+                        >
+                          Importer depuis Excel
+                        </Button>
                       </div>
                     </Col>
                   </Row>
@@ -489,6 +1256,7 @@ const ListParcours = () => {
                       // isGlobalFilter={false}
                       iscustomPageSize={false}
                       isBordered={false}
+                      isPagination={true}
                       customPageSize={10}
                       className="custom-header-css table align-middle table-nowrap"
                       tableClass="table-centered align-middle table-nowrap mb-0"
@@ -527,6 +1295,67 @@ const ListParcours = () => {
               </Modal.Header>
               <Form className="tablelist-form" onSubmit={onSubmitParcours}>
                 <Modal.Body className="p-4">
+                  <Row>
+                    {/* <Col lg={12}>
+                      <div className="mb-3">
+                        <Form.Label htmlFor="semestre_parcours">
+                          Semestre
+                        </Form.Label>
+                        <select
+                          className="form-select text-muted"
+                          name="semestre_parcours"
+                          id="semestre_parcours"
+                          value={selectedSemestre || ""}
+                          onChange={(e) => {
+                            const newSemestre = e.target.value;
+                            setSelectedSemestre(newSemestre);
+                            setFormData((prev) => ({
+                              ...prev,
+                              semestre_parcours: newSemestre,
+                            })); // Update FormData
+                          }}
+                        >
+                          <option value="">Sélectionner Semestre</option>
+                          {semestres.map((num: any) => (
+                            <option key={num} value={num}>
+                              Semestre {num}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </Col> */}
+                    <Col lg={12}>
+                      <div className="mb-3">
+                        <Form.Label htmlFor="semestre_parcours">
+                          Semestres
+                        </Form.Label>
+                        <select
+                          className="form-select text-muted"
+                          name="semestre_parcours"
+                          id="semestre_parcours"
+                          multiple // Allows multiple selections
+                          value={formData.semestre_parcours} // Bind to array
+                          onChange={(e) => {
+                            const selectedOptions = Array.from(
+                              e.target.selectedOptions,
+                              (option) => option.value
+                            ); // Get selected values as an array
+
+                            setFormData((prev) => ({
+                              ...prev,
+                              semestre_parcours: selectedOptions,
+                            })); // Update formData
+                          }}
+                        >
+                          {semestres.map((num: any) => (
+                            <option key={num} value={num}>
+                              Semestre {num}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </Col>
+                  </Row>
                   <Row>
                     <Col lg={12}>
                       <div className="mb-3">
@@ -570,7 +1399,7 @@ const ListParcours = () => {
                         className="form-select text-muted"
                         name="type_parcours"
                         id="type_parcours"
-                        value={formData.type_parcours.name_type_parcours_fr}
+                        value={formData.type_parcours}
                         onChange={handleChange}
                         disabled={
                           !allTypesParcours || allTypesParcours.length === 0
@@ -599,7 +1428,7 @@ const ListParcours = () => {
                         className="form-select text-muted"
                         name="mention"
                         id="mention"
-                        value={formData.mention.name_mention_fr}
+                        value={formData.mention}
                         onChange={handleChange}
                         disabled={!allMentions || allMentions.length === 0}
                       >
@@ -623,7 +1452,7 @@ const ListParcours = () => {
                         className="form-select text-muted"
                         name="domaine"
                         id="domaine"
-                        value={formData.domaine.name_domaine_fr}
+                        value={formData.domaine}
                         onChange={handleChange}
                         disabled={!allDomaines || allDomaines.length === 0}
                       >
@@ -671,7 +1500,7 @@ const ListParcours = () => {
               <Form className="tablelist-form" onSubmit={onSubmitEditParcours}>
                 <Modal.Body className="p-4">
                   <Row>
-                    <Col lg={4}>
+                    <Col lg={12}>
                       <div className="mb-3">
                         <Form.Label htmlFor="code_parcours">
                           Code Parcours
@@ -686,8 +1515,9 @@ const ListParcours = () => {
                         />
                       </div>
                     </Col>
-
-                    <Col lg={4}>
+                  </Row>
+                  <Row>
+                    <Col lg={12}>
                       <div className="mb-3">
                         <Form.Label htmlFor="nom_parcours">
                           Nom Parcours
@@ -702,26 +1532,83 @@ const ListParcours = () => {
                         />
                       </div>
                     </Col>
-                    <Col lg={6}>
-                      <div className="mb-3">
-                        <Form.Label htmlFor="name_domaine_fr">
-                          Domaine Classe
-                        </Form.Label>
-                        <select
-                          className="form-select text-muted"
-                          name="name_domaine_fr"
-                          id="name_domaine_fr"
-                          value={formData.domaine.name_domaine_fr}
-                          onChange={handleChange}
-                        >
-                          <option value="">Sélectionner Domaine</option>
-                          {allDomaines.map((domaine) => (
-                            <option key={domaine._id} value={domaine._id}>
-                              {domaine.name_domaine_fr}
+                    <Row>
+                      <Col lg={12}>
+                        <div className="mb-3">
+                          <Form.Label htmlFor="name_domaine_fr">
+                            Domaine Classe
+                          </Form.Label>
+                          <select
+                            className="form-select text-muted"
+                            name="name_domaine_fr"
+                            id="name_domaine_fr"
+                            // value={formData.domaine.name_domaine_fr}
+                            onChange={handleSelectDomain}
+                          >
+                            <option value="">Sélectionner Domaine</option>
+                            {allDomaines.map((domaine) => (
+                              <option key={domaine._id} value={domaine._id}>
+                                {domaine.name_domaine_fr}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </Col>
+                    </Row>
+                  </Row>
+                  <Row>
+                    <Col lg={12}>
+                      <Form.Label htmlFor="nom_parcours">Mention</Form.Label>
+                      <select
+                        className="form-select text-muted"
+                        name="mention"
+                        id="mention"
+                        //value={formData.mention}
+                        onChange={handleSelectMention}
+                        disabled={!allMentions || allMentions.length === 0}
+                      >
+                        <option value="">Sélectionner Mention</option>
+                        {allMentions.length > 0 ? (
+                          allMentions.map((mention) => (
+                            <option key={mention._id} value={mention._id}>
+                              {mention.name_mention_fr}
                             </option>
-                          ))}
-                        </select>
-                      </div>
+                          ))
+                        ) : (
+                          <option value="">No mentions available</option>
+                        )}
+                      </select>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col lg={12}>
+                      <Form.Label htmlFor="nom_parcours">
+                        Type Parcours
+                      </Form.Label>
+                      <select
+                        className="form-select text-muted"
+                        name="type_parcours"
+                        id="type_parcours"
+                        //value={formData.type_parcours}
+                        onChange={handleSelectTypeParcours}
+                        disabled={
+                          !allTypesParcours || allTypesParcours.length === 0
+                        }
+                      >
+                        <option value="">Sélectionner Type Parcours</option>
+                        {allTypesParcours.length > 0 ? (
+                          allTypesParcours.map((type_parcours) => (
+                            <option
+                              key={type_parcours._id}
+                              value={type_parcours._id}
+                            >
+                              {type_parcours.name_type_parcours_fr}
+                            </option>
+                          ))
+                        ) : (
+                          <option value="">No type parcours available</option>
+                        )}
+                      </select>
                     </Col>
                   </Row>
                 </Modal.Body>
@@ -738,6 +1625,50 @@ const ListParcours = () => {
                     </Button>
                   </div>
                 </div>
+              </Form>
+            </Modal>
+
+            <Modal
+              className="fade modal-fullscreen"
+              show={modal_ImportModals}
+              onHide={tog_ImportModals}
+              centered
+            >
+              <Modal.Header className="px-4 pt-4" closeButton>
+                <h5 className="modal-title" id="exampleModalLabel">
+                  Importer parcours
+                </h5>
+              </Modal.Header>
+              <Form className="tablelist-form">
+                <Modal.Body className="p-4">
+                  {isLoading ? (
+                    <div className="d-flex justify-content-center align-items-center">
+                      <Spinner animation="border" role="status">
+                        <span className="visually-hidden">
+                          Téléchargement...
+                        </span>
+                      </Spinner>
+                    </div>
+                  ) : (
+                    <>
+                      Vous pouvez importer plusieurs parcours à partir de ce
+                      template{" "}
+                      <a href="#" onClick={createAndDownloadExcel}>
+                        Cliquer ici pour télécharger
+                      </a>
+                      <Form.Group controlId="formFile" className="mt-3">
+                        <Form.Label>Upload Excel File</Form.Label>
+                        <Form.Control
+                          type="file"
+                          accept=".xlsx, .xls"
+                          onChange={handleFileUpload}
+                          disabled={isLoading} // Disable input during loading
+                        />
+                      </Form.Group>
+                      {filePath && <p>File Path: {filePath}</p>}
+                    </>
+                  )}
+                </Modal.Body>
               </Form>
             </Modal>
           </Row>

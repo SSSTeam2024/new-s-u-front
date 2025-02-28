@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { Button, Card, Col, Container, Row } from "react-bootstrap";
+import { Button, Card, Col, Container, Offcanvas, Row } from "react-bootstrap";
 import Breadcrumb from "Common/BreadCrumb";
 import { Link, useNavigate } from "react-router-dom";
 import TableContainer from "Common/TableContainer";
@@ -35,6 +35,15 @@ const ListNiveau = () => {
     },
     buttonsStyling: false,
   });
+  const [showOffcanvas, setShowOffcanvas] = useState(false);
+  const [offcanvasTitle, setOffcanvasTitle] = useState("");
+  const [offcanvasData, setOffcanvasData] = useState<string[]>([]);
+
+  const handleShowOffcanvas = (title: string, data: any[]) => {
+    setOffcanvasTitle(title);
+    setOffcanvasData(data.map((item) => item.name_section_fr || item.cycle_fr));
+    setShowOffcanvas(true);
+  };
   const AlertDelete = async (_id: string) => {
     swalWithBootstrapButtons
       .fire({
@@ -71,7 +80,6 @@ const ListNiveau = () => {
         disableFilters: true,
         filterable: true,
       },
-
       {
         Header: "المستوى التعليمي",
         accessor: "name_niveau_ar",
@@ -86,7 +94,35 @@ const ListNiveau = () => {
       },
       {
         Header: "Sections",
-        accessor: (row: any) => row?.sections?.length! || "",
+        accessor: (row: any) =>
+          row.sections?.length ? (
+            <Button
+              variant="link"
+              className="p-0 text-primary"
+              onClick={() => handleShowOffcanvas("Sections", row.sections)}
+            >
+              {row.sections.length}
+            </Button>
+          ) : (
+            "-"
+          ),
+        disableFilters: true,
+        filterable: true,
+      },
+      {
+        Header: "Cycles",
+        accessor: (row: any) =>
+          row.cycles?.length ? (
+            <Button
+              variant="link"
+              className="p-0 text-primary"
+              onClick={() => handleShowOffcanvas("Cycles", row.cycles)}
+            >
+              {row.cycles.length}
+            </Button>
+          ) : (
+            "-"
+          ),
         disableFilters: true,
         filterable: true,
       },
@@ -148,12 +184,13 @@ const ListNiveau = () => {
     ],
     []
   );
+
   return (
     <React.Fragment>
       <div className="page-content">
         <Container fluid={true}>
           <Breadcrumb
-            title="Gestion des départements"
+            title="Liste des niveaux"
             pageTitle="Liste des niveaux"
           />
 
@@ -313,6 +350,28 @@ const ListNiveau = () => {
             </Col>
           </Row>
         </Container>
+        <Offcanvas
+          show={showOffcanvas}
+          onHide={() => setShowOffcanvas(false)}
+          placement="end"
+        >
+          <Offcanvas.Header closeButton>
+            <Offcanvas.Title>{offcanvasTitle}</Offcanvas.Title>
+          </Offcanvas.Header>
+          <Offcanvas.Body>
+            {offcanvasData.length > 0 ? (
+              <ul className="list-group">
+                {offcanvasData.map((name, index) => (
+                  <li key={index} className="list-group-item">
+                    {name}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-muted">Aucune donnée disponible.</p>
+            )}
+          </Offcanvas.Body>
+        </Offcanvas>
       </div>
     </React.Fragment>
   );

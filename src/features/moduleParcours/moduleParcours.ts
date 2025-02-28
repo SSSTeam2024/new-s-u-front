@@ -1,8 +1,8 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export interface ModuleParcours {
-  _id: string;
-  semestre: string;
+  _id?: string;
+  semestre_module: string;
   code_Ue: string;
   libelle: string;
   credit: string;
@@ -28,10 +28,23 @@ export const moduleParcoursSlice = createApi({
         providesTags: ["ModuleParcours"],
       }),
 
-      addModuleParcours: builder.mutation<void, ModuleParcours>({
+      addModuleParcours: builder.mutation<ModuleParcours, ModuleParcours>({
         query(payload) {
           return {
             url: "/create-module-parcours",
+            method: "POST",
+            body: payload,
+          };
+        },
+        invalidatesTags: ["ModuleParcours"],
+      }),
+      getModuleParcoursByCode: builder.mutation<
+        { id: string; code_Ue: string },
+        ModuleParcours
+      >({
+        query(payload) {
+          return {
+            url: "/get-module-by-code",
             method: "POST",
             body: payload,
           };
@@ -62,4 +75,5 @@ export const {
   useDeleteModuleParcoursMutation,
   useFetchModulesParcoursQuery,
   useUpdateModuleParcoursMutation,
+  useGetModuleParcoursByCodeMutation,
 } = moduleParcoursSlice;

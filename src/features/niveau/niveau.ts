@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { Cycle } from "features/cycle/cycle";
 import { Section } from "features/section/section";
 
 export interface Niveau {
@@ -7,6 +8,7 @@ export interface Niveau {
   name_niveau_fr: string;
   abreviation: string;
   sections: Section[];
+  cycles?: Cycle[];
 }
 export const niveauSlice = createApi({
   reducerPath: "Niveau",
@@ -55,6 +57,27 @@ export const niveauSlice = createApi({
         }),
         providesTags: (result, error, id) => [{ type: "Niveau", id }],
       }),
+
+      fetchCyclesByNiveauId: builder.query<Niveau, string>({
+        query: (niveauClasseId) => ({
+          url: `${niveauClasseId}/cycles`,
+          method: "GET",
+        }),
+        providesTags: (result, error, id) => [{ type: "Niveau", id }],
+      }),
+      getNiveauValue: builder.mutation<
+        { id: string; name_niveau_fr: string; name_niveau_ar: string },
+        Niveau
+      >({
+        query(payload) {
+          return {
+            url: "/get-niveau-value",
+            method: "POST",
+            body: payload,
+          };
+        },
+        invalidatesTags: ["Niveau"],
+      }),
     };
   },
 });
@@ -65,4 +88,6 @@ export const {
   useFetchNiveauxQuery,
   useUpdateNiveauMutation,
   useFetchSectionsByNiveauIdQuery,
+  useFetchCyclesByNiveauIdQuery,
+  useGetNiveauValueMutation,
 } = niveauSlice;

@@ -14,7 +14,7 @@ import TableContainer from "Common/TableContainer";
 import { userList } from "Common/data";
 import Flatpickr from "react-flatpickr";
 import dummyImg from "../../assets/images/users/user-dummy-img.jpg"
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { RootState } from 'app/store';
 import { useSelector } from 'react-redux';
 import { selectCurrentUser } from 'features/account/authSlice'; 
@@ -102,7 +102,10 @@ const { refetch } = useFetchAvisEnseignantQuery();
     setShowPdfModal(false);
     setPdfUrl("");
   };
-
+  const navigate = useNavigate();
+  function tog_AddAvisEnseignant() {
+    navigate("/avis-enseignant/ajouter-avis-enseignant");
+  }
  
 
     const columns = useMemo(
@@ -265,7 +268,17 @@ const { refetch } = useFetchAvisEnseignantQuery();
                         <i className="ri-search-line search-icon"></i>
                       </div>
                     </Col>
-
+                    <Col className="col-lg-auto ms-auto">
+                      <div className="hstack gap-2">
+                        <Button
+                          variant="primary"
+                          className="add-btn"
+                          onClick={() => tog_AddAvisEnseignant()}
+                        >
+                          Ajouter Avis
+                        </Button>
+                      </div>
+                    </Col>
                     {isMultiDeleteButton && (
                       <Button variant="danger" className="btn-icon">
                         <i className="ri-delete-bin-2-line"></i>

@@ -29,6 +29,8 @@ import {
   useAddAbsenceEtudiantMutation,
 } from "features/absenceEtudiant/absenceSlice";
 import { useFetchParcoursQuery } from "features/parcours/parcours";
+import { useFetchEtudiantsByIdClasseQuery } from "features/etudiant/etudiantSlice";
+import { formatDate, formatTime } from "helpers/data_time_format";
 
 const AjouterAbsence = () => {
   const { data: AllEnseignants = [] } = useFetchEnseignantsQuery();
@@ -48,7 +50,7 @@ const AjouterAbsence = () => {
   const handleDateChange = (selectedDates: Date[]) => {
     setSelectedDate(selectedDates[0]);
   };
-  console.log("AllParcours", AllParcours);
+
   const [selectedTime, setSelectedTime] = useState<Date | null>(null);
 
   const handleTimeChange = (selectedDates: Date[]) => {
@@ -78,14 +80,6 @@ const AjouterAbsence = () => {
 
   const [selectedClasse, setSelectedClasse] = useState<string>("");
   const [students, setStudents] = useState<any[]>([]);
-  //   const handleSelectClasse = async (
-  //     event: React.ChangeEvent<HTMLSelectElement>
-  //   ) => {
-  //     const value = event.target.value;
-  //     const result = await fetchEtudiantsByClasseId(value).unwrap();
-  //     setStudents(result);
-  //     setSelectedClasse(value);
-  //   };
 
   const [selectedEleve, setSelectedEleve] = useState<string>("");
 
@@ -96,13 +90,17 @@ const AjouterAbsence = () => {
 
   const [selectedEnseignant, setSelectedEnseignant] = useState<string>("");
 
-  const [selectedTrimestre, setSelectedTrimestre] = useState<string>("");
+  const [selectedTrimestre, setSelectedTrimestre] = useState<string>("1");
 
   const handleSelectTrimestre = (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
     const value = event.target.value;
     setSelectedTrimestre(value);
+  };
+
+  const toggleSemestre = () => {
+    setSelectedTrimestre((prev) => (prev === "1" ? "2" : "1"));
   };
 
   const handleSelectEnseignant = async (
@@ -126,6 +124,11 @@ const AjouterAbsence = () => {
   const handleSelectMatiere = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const value = event.target.value;
     setSelectedMatiere(value);
+  };
+
+  const handleSelectClasse = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = event.target.value;
+    setSelectedClasse(value);
   };
 
   const [selectedType, setSelectedType] = useState<string>("");
@@ -166,70 +169,56 @@ const AjouterAbsence = () => {
   const handleStudentTypeChange = (e: any, studentId: string) => {
     const { value } = e.target;
 
-    // Update the studentTypes state
     setStudentTypes((prevState) => ({
       ...prevState,
       [studentId]: value,
     }));
 
-    // Update the eleves array in the absence state
     setAbsence((prevAbsence) => {
-      // Filter out any existing entry for the student
       const updatedEleves = prevAbsence.etudiants.filter(
         (eleve) => eleve.etudiant !== studentId
       );
 
       return {
         ...prevAbsence,
-        eleves: [
-          ...updatedEleves,
-          { etudiant: studentId, typeAbsent: value }, // Add updated student data
-        ],
+        eleves: [...updatedEleves, { etudiant: studentId, typeAbsent: value }],
       };
     });
   };
 
-  //   const onChangeAbsence = (
-  //     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  //   ) => {
-  //     setAbsence((prevState) => ({
-  //       ...prevState,
-  //       [e.target.id]: e.target.value,
-  //     }));
-  //   };
+  const { data: EtudiantsByClasseID = [] } =
+    useFetchEtudiantsByIdClasseQuery(selectedClasse);
+
   const navigate = useNavigate();
 
   function tog_AllAbsences() {
-    navigate("/absence");
+    navigate("/application-enseignant/lister-absence");
   }
   const onSubmitAbsence = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {
-      // Create elevesWithTypes with the correct structure (array of objects)
-      const elevesWithTypes = students.map((eleve) => ({
-        eleve: eleve._id,
-        typeAbsent: studentTypes[eleve._id] || "P", // Default to "P" if no type selected
+      const elevesWithTypes = EtudiantsByClasseID?.map((eleve) => ({
+        etudiant: eleve?._id!,
+        typeAbsent: studentTypes[eleve?._id!] || "P",
       }));
 
       const absenceData = {
         ...absence,
         classe: selectedClasse,
-        etudiants: elevesWithTypes, // Ensure this is an array of objects, not a string
-        date: selectedDate,
-        matiere: "",
-        heure: selectedTime,
+        etudiants: elevesWithTypes,
+        date: formatDate(selectedDate),
+        matiere: selectedMatiere,
+        heure: formatTime(selectedTime),
         trimestre: selectedTrimestre,
         enseignant: selectedEnseignant,
       };
-      console.log(absenceData);
-      //   Submit to the backend
-      //   createAbsence(absenceData)
-      //     .then(() => notifySuccess())
-      //     .then(() => setAbsence(initialAbsence));
+      createAbsence(absenceData)
+        .then(() => notifySuccess())
+        .then(() => setAbsence(initialAbsence));
       tog_AllAbsences();
     } catch (error) {
-      notifyError(error); // Handle errors
+      notifyError(error);
     }
   };
 
@@ -249,16 +238,21 @@ const AjouterAbsence = () => {
                           <Form.Label htmlFor="trimestre">Semestre</Form.Label>
                         </Col>
                         <Col lg={8}>
-                          <select
-                            className="form-select text-muted"
-                            name="trimestre"
-                            id="trimestre"
-                            onChange={handleSelectTrimestre}
-                          >
-                            <option value="">Choisir</option>
-                            <option value="1">S1</option>
-                            <option value="2">S2</option>
-                          </select>
+                          <div className="form-check form-switch">
+                            <input
+                              className="form-check-input"
+                              type="checkbox"
+                              id="SwitchCheck6"
+                              checked={selectedTrimestre === "2"}
+                              onChange={toggleSemestre}
+                            />
+                            <label
+                              className="form-check-label"
+                              htmlFor="SwitchCheck6"
+                            >
+                              {selectedTrimestre === "1" ? "S1" : "S2"}
+                            </label>
+                          </div>
                         </Col>
                       </Row>
                       <Row className="mb-4">
@@ -295,7 +289,7 @@ const AjouterAbsence = () => {
                             className="form-select text-muted"
                             name="classe"
                             id="classe"
-                            // onChange={handleSelectClasse}
+                            onChange={handleSelectClasse}
                           >
                             <option value="">Choisir</option>
                             {classesList?.map((classe) => (
@@ -306,29 +300,41 @@ const AjouterAbsence = () => {
                           </select>
                         </Col>
                       </Row>
-                      {/* <Row className="mb-4">
+                      <Row className="mb-4">
                         <Col lg={3}>
-                          <Form.Label htmlFor="description">Matière</Form.Label>
+                          <Form.Label htmlFor="mat">Matière</Form.Label>
                         </Col>
                         <Col lg={8}>
                           <select
                             className="form-select text-muted"
-                            name="eleve"
-                            id="eleve"
+                            name="mat"
+                            id="mat"
                             onChange={handleSelectMatiere}
                           >
                             <option value="">Choisir</option>
-                            {allMatieresByEtudiantId.map((matiere) =>
-                              matiere.matieres.map((m) => (
-                                <option value={m.nom_matiere} key={m?._id!}>
-                                  {m.nom_matiere}
-                                </option>
-                              ))
+                            {classesList?.map((classe) =>
+                              classe.parcours.modules
+                                .filter((modul: any) => {
+                                  let sem;
+                                  if (modul.semestre_module === "S5") {
+                                    sem = "1";
+                                  }
+                                  if (modul.semestre_module === "S6") {
+                                    sem = "2";
+                                  }
+                                  return sem === selectedTrimestre;
+                                })
+                                .map((matieres: any) =>
+                                  matieres.matiere.map((mat: any) => (
+                                    <option value={mat?._id!} key={mat?._id!}>
+                                      {mat.matiere}
+                                    </option>
+                                  ))
+                                )
                             )}
                           </select>
                         </Col>
-                      </Row> */}
-
+                      </Row>
                       <Row className="mb-4">
                         <Col lg={3}>
                           <Form.Label htmlFor="date">Date</Form.Label>
@@ -367,17 +373,17 @@ const AjouterAbsence = () => {
                     </Col>
                     <Col lg={7}>
                       <Row>
-                        <Col lg={3}>
-                          <Form.Label>Elève</Form.Label>
+                        <Col lg={4}>
+                          <Form.Label>Etudiants</Form.Label>
                         </Col>
                         <Col lg={4}>
-                          <Form.Label>Type</Form.Label>
+                          <Form.Label></Form.Label>
                         </Col>
                       </Row>
-                      {students.map((eleve) => (
+                      {EtudiantsByClasseID.map((eleve) => (
                         <Row key={eleve._id}>
-                          <Col lg={3} className="mb-1">
-                            {eleve.prenom} {eleve.nom}
+                          <Col lg={4} className="mb-1">
+                            {eleve.prenom_fr} {eleve.nom_fr}
                           </Col>
                           <Col lg={4} className="mb-1">
                             <select
@@ -385,12 +391,11 @@ const AjouterAbsence = () => {
                               name="par"
                               id="par"
                               onChange={(e) =>
-                                handleStudentTypeChange(e, eleve._id)
-                              } // Bind onChange event
+                                handleStudentTypeChange(e, eleve?._id!)
+                              }
                             >
                               <option value="P">Présent(e)</option>
                               <option value="A">Absent(e)</option>
-                              <option value="R">Retard</option>
                             </select>
                           </Col>
                         </Row>

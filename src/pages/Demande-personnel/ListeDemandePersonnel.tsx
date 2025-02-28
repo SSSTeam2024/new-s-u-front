@@ -200,7 +200,6 @@ const ListeDemandePersonnel = () => {
                     to="/demandes-personnel/single-demande-personnel"
                     state={cellProps}
                     className="badge bg-info-subtle text-info view-item-btn"
-                    data-bs-toggle="offcanvas"
                   >
                     <i
                       className="ph ph-eye"

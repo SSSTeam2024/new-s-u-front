@@ -320,8 +320,8 @@ const ListMentionClasse = () => {
       <div className="page-content">
         <Container fluid={true}>
           <Breadcrumb
-            title="Paramètres des départments"
-            pageTitle="Liste mentions Classes"
+            title="Liste des mentions"
+            pageTitle="Liste des mentions"
           />
 
           <Row id="sellersList">
@@ -376,6 +376,7 @@ const ListMentionClasse = () => {
                       iscustomPageSize={false}
                       isBordered={false}
                       customPageSize={10}
+                      isPagination={true}
                       className="custom-header-css table align-middle table-nowrap"
                       tableClass="table-centered align-middle table-nowrap mb-0"
                       theadClass="text-muted table-light"

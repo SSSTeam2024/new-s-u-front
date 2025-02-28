@@ -226,6 +226,7 @@ const ListeEmploiEnseignants = () => {
                         // isGlobalFilter={false}
                         iscustomPageSize={false}
                         isBordered={false}
+                        isPagination={true}
                         customPageSize={10}
                         className="custom-header-css table align-middle table-nowrap"
                         tableClass="table-centered align-middle table-nowrap mb-0"
