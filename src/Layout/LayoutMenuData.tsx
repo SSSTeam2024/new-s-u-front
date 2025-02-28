@@ -51,6 +51,7 @@ const Navdata = () => {
   const [isDeplacement, setIsDeplacement] = useState(false);
   const [isParcours, setIsParcours] = useState(false);
   const [isNotesProfessionnelles, setIsNotesProfessionnelles] = useState(false);
+  const [isApplicationEnseignant, setIsApplicationEnseignant] = useState(false);
   const [isMission, setIsMission] = useState(false);
   const [isModele, setIsModele] = useState(false);
   const [isLevel1, setIsLevel1] = useState(false);
@@ -185,6 +186,9 @@ const Navdata = () => {
     if (iscurrentState !== "Parcours") {
       setIsParcours(false);
     }
+    if (iscurrentState !== "ApplicationEnseignant") {
+      setIsApplicationEnseignant(false);
+    }
   }, [
     iscurrentState,
     isEcommerce,
@@ -208,6 +212,7 @@ const Navdata = () => {
     isExamen,
     isNotesExamen,
     isParcours,
+    isApplicationEnseignant,
   ]);
   let routes = userPermissions
     ? userPermissions.map((permission) => permission.path)
@@ -666,6 +671,36 @@ const Navdata = () => {
           link: "/parametre-personnel/service/liste-service-personnel",
           icon: "bi bi-grid",
           parentId: "parametrePersonnel",
+        },
+      ],
+    },
+    //! Application Enseignant
+    {
+      id: "application_enseignant",
+      label: "Application enseignant",
+      icon: "bi bi-window-split",
+      link: "/#",
+      click: function (e: any) {
+        e.preventDefault();
+        setIsApplicationEnseignant(!isApplicationEnseignant);
+        setIscurrentState("ApplicationEnseignant");
+        updateIconSidebar(e);
+      },
+      stateVariables: isApplicationEnseignant,
+      subItems: [
+        {
+          id: "Absences",
+          label: "Absence",
+          link: "/application-enseignant/lister-absence",
+          parentId: "application_enseignant",
+          icon: "bi bi-fingerprint",
+        },
+        {
+          id: "Cours",
+          label: "Cours",
+          link: "/application-enseignant/lister-cours",
+          parentId: "application_enseignant",
+          icon: "bi bi-person-exclamation",
         },
       ],
     },

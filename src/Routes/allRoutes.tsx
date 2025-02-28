@@ -205,6 +205,12 @@ import ListeParcours from "pages/GestionParcours/Parcours/ListeParcours";
 import ListeModulesParcours from "pages/GestionParcours/ModulesParcours/ListeModulesParcours";
 import ListTypeParcours from "pages/GestionParcours/TypeParcours/ListTypeParcours";
 import AddPlanParcours from "pages/GestionParcours/Parcours/AddPlanParcours";
+
+//! Application Enseignant
+import AbsenceEtudiant from "pages/ApplicationEnseignant/AbsenceEtudiant";
+import Cours from "pages/ApplicationEnseignant/Cours";
+import AjouterAbsence from "pages/ApplicationEnseignant/AbsenceEtudiant/AjouterAbsence";
+
 const authProtectedRoutes = [
   { path: "/dashboard", component: <Dashboard /> },
 
@@ -294,6 +300,20 @@ const authProtectedRoutes = [
   {
     path: "/gestion-examen/ajouter-des-notes-examen",
     component: <AjouterNotesExamen />,
+  },
+
+  //! Application Enseignant
+  {
+    path: "/application-enseignant/lister-absence",
+    component: <AbsenceEtudiant />,
+  },
+  {
+    path: "/application-enseignant/ajouter-absence",
+    component: <AjouterAbsence />,
+  },
+  {
+    path: "/application-enseignant/lister-cours",
+    component: <Cours />,
   },
 
   //gestion enseignant
