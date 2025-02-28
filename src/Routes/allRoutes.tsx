@@ -217,6 +217,10 @@ import ListeCycle from "pages/GestionParcours/Cycle/ListeCycle";
 import ViewParcours from "pages/GestionParcours/Parcours/ViewParcours";
 import ParametresEmploi from "pages/Departements/ParametresEmploi/ParametresEmploi";
 import AjouterCours from "pages/ApplicationEnseignant/Cours/AjouterCours";
+import FicheEtudiant from "pages/Accounts/AccountEtudiant/FicheEtudiant";
+import FicheEtudiantAr from "pages/Accounts/AccountEtudiant/FicheEtudiantAr";
+import FicheEnseignant from "pages/Accounts/AccountEnseignant/FicheEnseignant";
+import FicheEnseignantAr from "pages/Accounts/AccountEnseignant/FicheEnseignantAr";
 const authProtectedRoutes = [
   { path: "/dashboard", component: <Dashboard /> },
   // view parcours
@@ -311,6 +315,14 @@ const authProtectedRoutes = [
     path: "/gestion-etudiant/edit-compte-etudiant",
     component: <EditProfilEtudiant />,
   },
+  {
+    path: "/gestion-etudiant/print-compte-etudiant",
+    component: <FicheEtudiant />,
+  },
+  {
+    path: "/gestion-etudiant/ar-print-compte-etudiant",
+    component: <FicheEtudiantAr />,
+  },
 
   //! Gestion des Notes Examen
   {
@@ -357,6 +369,15 @@ const authProtectedRoutes = [
     path: "/gestion-enseignant/edit-compte-enseignant",
     component: <EditProfilEnseignant />,
   },
+  {
+    path: "/gestion-enseignant/print-compte-enseignant",
+    component: <FicheEnseignant />,
+  },
+  {
+    path: "/gestion-enseignant/ar-print-compte-enseignant",
+    component: <FicheEnseignantAr />,
+  },
+
   // Dossier Administratif Enseignant
   {
     path: "/gestion-enseignant/ajouter-dossier-administartif",

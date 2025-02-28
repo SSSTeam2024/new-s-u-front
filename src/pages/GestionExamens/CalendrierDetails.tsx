@@ -1484,9 +1484,15 @@ const CalendrierDetails: React.FC = () => {
   };
 
   const ListEmergement = ({ epreuve }: { epreuve: any }) => {
-    const etudiants = AllEtudiants.filter(
-      (etudiant) => etudiant?.groupe_classe?._id! === epreuve?.classe?._id!
-    );
+    // const etudiants = AllEtudiants.filter(
+    //   (etudiant) => etudiant?.groupe_classe?._id! === epreuve?.classe?._id!
+    // );
+
+    let etudiants: any = [];
+
+    for (let i = 0; i < 26; i++) {
+      etudiants.push(AllEtudiants[i]);
+    }
 
     return (
       <Document>
@@ -1607,62 +1613,115 @@ const CalendrierDetails: React.FC = () => {
               </Text>
             </View>
             {/* Body */}
-            {etudiants.map((etudiant, index) => {
-              return (
-                <View style={stylesCalenderFilter.row} key={index}>
-                  <Text
-                    style={[
-                      stylesCalenderFilter.cell,
-                      stylesCalenderFilter.numEtudiant,
-                    ]}
-                  >
-                    {index + 1}
-                  </Text>
-                  <Text
-                    style={[
-                      stylesCalenderFilter.cell,
-                      stylesCalenderFilter.cinEtudiant,
-                    ]}
-                  >
-                    {etudiant.num_CIN}
-                  </Text>
-                  <Text
-                    style={[
-                      stylesCalenderFilter.cell,
-                      stylesCalenderFilter.nomEtudiant,
-                    ]}
-                  >
-                    {etudiant.nom_fr} {etudiant.prenom_fr}
-                  </Text>
-                  <Text
-                    style={[
-                      stylesCalenderFilter.cell,
-                      stylesCalenderFilter.entreEtudiant,
-                    ]}
-                  ></Text>
-                  <Text
-                    style={[
-                      stylesCalenderFilter.cell,
-                      stylesCalenderFilter.entreEtudiant,
-                    ]}
-                  ></Text>
-                  <Text
-                    style={[
-                      stylesCalenderFilter.cell,
-                      stylesCalenderFilter.nbrePages,
-                    ]}
-                  ></Text>
-                </View>
-              );
+            {etudiants.map((etudiant: any, index: number) => {
+              if (index !== 0 && index !== 25 && (index + 1) % 25 === 0) {
+                return (
+                  <>
+                    <View
+                      style={[stylesCalenderFilter.row, { marginBottom: 100 }]}
+                      key={index}
+                    >
+                      <Text
+                        style={[
+                          stylesCalenderFilter.cell,
+                          stylesCalenderFilter.numEtudiant,
+                        ]}
+                      >
+                        {index + 1}
+                      </Text>
+                      <Text
+                        style={[
+                          stylesCalenderFilter.cell,
+                          stylesCalenderFilter.cinEtudiant,
+                        ]}
+                      >
+                        {etudiant?.num_CIN!}
+                      </Text>
+                      <Text
+                        style={[
+                          stylesCalenderFilter.cell,
+                          stylesCalenderFilter.nomEtudiant,
+                        ]}
+                      >
+                        {etudiant?.nom_fr!} {etudiant?.prenom_fr!}
+                      </Text>
+                      <Text
+                        style={[
+                          stylesCalenderFilter.cell,
+                          stylesCalenderFilter.entreEtudiant,
+                        ]}
+                      ></Text>
+                      <Text
+                        style={[
+                          stylesCalenderFilter.cell,
+                          stylesCalenderFilter.entreEtudiant,
+                        ]}
+                      ></Text>
+                      <Text
+                        style={[
+                          stylesCalenderFilter.cell,
+                          stylesCalenderFilter.nbrePages,
+                        ]}
+                      ></Text>
+                    </View>
+                  </>
+                );
+              } else {
+                return (
+                  <>
+                    <View style={stylesCalenderFilter.row} key={index}>
+                      <Text
+                        style={[
+                          stylesCalenderFilter.cell,
+                          stylesCalenderFilter.numEtudiant,
+                        ]}
+                      >
+                        {index + 1}
+                      </Text>
+                      <Text
+                        style={[
+                          stylesCalenderFilter.cell,
+                          stylesCalenderFilter.cinEtudiant,
+                        ]}
+                      >
+                        {etudiant?.num_CIN!}
+                      </Text>
+                      <Text
+                        style={[
+                          stylesCalenderFilter.cell,
+                          stylesCalenderFilter.nomEtudiant,
+                        ]}
+                      >
+                        {etudiant?.nom_fr!} {etudiant?.prenom_fr!}
+                      </Text>
+                      <Text
+                        style={[
+                          stylesCalenderFilter.cell,
+                          stylesCalenderFilter.entreEtudiant,
+                        ]}
+                      ></Text>
+                      <Text
+                        style={[
+                          stylesCalenderFilter.cell,
+                          stylesCalenderFilter.entreEtudiant,
+                        ]}
+                      ></Text>
+                      <Text
+                        style={[
+                          stylesCalenderFilter.cell,
+                          stylesCalenderFilter.nbrePages,
+                        ]}
+                      ></Text>
+                    </View>
+                  </>
+                );
+              }
             })}
           </View>
           {/* Footer */}
           <View
             style={{
-              position: "absolute",
-              bottom: 10,
-              left: 10,
-              right: 10,
+              // marginTop: etudiants.length % 25 === 0 ? 0 : 30,
               paddingLeft: 30,
               paddingRight: 30,
             }}
@@ -1702,6 +1761,8 @@ const CalendrierDetails: React.FC = () => {
       let arr1 = AllEtudiants.filter(
         (etudiant) => etudiant?.groupe_classe?._id! === epreuve?.classe?._id!
       );
+      // const arr = arr1.concat(arr1);
+      // const arr2 = arr.concat(arr);
       // let arr: any = [];
       // if (arr1.length % 2 == 0) {
       //   for (const element of arr1) {
@@ -1722,6 +1783,7 @@ const CalendrierDetails: React.FC = () => {
       //     }
       //   }
       // }
+      console.log(arr1);
       return arr1;
     }, [AllEtudiants, epreuve]);
 
@@ -1817,103 +1879,25 @@ const CalendrierDetails: React.FC = () => {
           {/* Table */}
           <View style={stylesCalenderFilter.timetable}>
             {/* Body */}
+
             {etudiants.map((etudiant: any, index: any) => {
               const qrCodeData = qrCodes[index];
               if (index % 2 === 0) {
-                console.log(index);
-                if (index % 6 === 0) {
-                  console.log("modulo 6");
-                  return (
-                    <View
-                      style={[stylesCalenderFilter.row, { marginBottom: 90 }]}
-                      key={index}
-                    >
-                      <View style={stylesCalenderFilter.block}>
-                        <View
-                          style={[
-                            stylesCalenderFilter.cellQRCode,
-                            stylesCalenderFilter.codeZone,
-                            { flexDirection: "column", alignItems: "center" },
-                          ]}
-                        >
-                          <View
-                            style={{
-                              borderRightWidth: 2,
-                              borderRightColor: "black",
-                              borderStyle: "dashed",
-                            }}
-                          >
-                            <Image
-                              src={qrCodeData?.qrCode!}
-                              style={{ width: 100, height: 91 }}
-                            />
-                          </View>
-                          <Text>{qrCodeData?.hashedCode}</Text>
-                        </View>
-                        <Text
-                          style={[
-                            stylesCalenderFilter.cellQRCode,
-                            stylesCalenderFilter.infoZone,
-                          ]}
-                        >
-                          {etudiant.nom_fr} {etudiant.prenom_fr}
-                          {"\n"}
-                          {etudiant.num_CIN}
-                          {"\n"}
-                          {epreuve?.classe?.nom_classe_fr!}
-                          {"\n"}
-                          {epreuve?.matiere?.matiere!}
-                          {"\n"}
-                          Session: {monthName} 2025
-                        </Text>
+                return (
+                  <>
+                    {index !== 0 && index % 12 === 0 && (
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                          marginBottom: index,
+                        }}
+                      >
+                        <div style={{ height: "50px" }}></div>
                       </View>
-                      {/* {etudiants[index + 1] && ( */}
-                      <View style={stylesCalenderFilter.block}>
-                        <View
-                          style={[
-                            stylesCalenderFilter.cellQRCode,
-                            stylesCalenderFilter.codeZone,
-                            { flexDirection: "column", alignItems: "center" },
-                          ]}
-                        >
-                          <View
-                            style={{
-                              borderRightWidth: 2,
-                              borderRightColor: "black",
-                              borderStyle: "dashed",
-                            }}
-                          >
-                            <Image
-                              src={qrCodes[index + 1]?.qrCode!}
-                              style={{ width: 100, height: 91 }}
-                            />
-                          </View>
-                          <Text>{qrCodes[index + 1]?.hashedCode}</Text>
-                        </View>
-                        <Text
-                          style={[
-                            stylesCalenderFilter.cellQRCode,
-                            stylesCalenderFilter.infoZone,
-                          ]}
-                        >
-                          {etudiants[index + 1]?.nom_fr!}{" "}
-                          {etudiants[index + 1]?.prenom_fr!}
-                          {"\n"}
-                          {etudiants[index + 1]?.num_CIN!}
-                          {"\n"}
-                          {epreuve?.classe?.nom_classe_fr!}
-                          {"\n"}
-                          {epreuve?.matiere?.matiere!}
-                          {"\n"}
-                          Session: {monthName} 2025
-                        </Text>
-                      </View>
-                      {/* )} */}
-                    </View>
-                  );
-                } else {
-                  console.log("non modulo 6");
-                  return (
+                    )}
+
                     <View style={[stylesCalenderFilter.row]} key={index}>
                       <View style={stylesCalenderFilter.block}>
                         <View
@@ -1954,228 +1938,52 @@ const CalendrierDetails: React.FC = () => {
                           Session: {monthName} 2025
                         </Text>
                       </View>
-                      {/* {etudiants[index + 1] && ( */}
-                      <View style={stylesCalenderFilter.block}>
-                        <View
-                          style={[
-                            stylesCalenderFilter.cellQRCode,
-                            stylesCalenderFilter.codeZone,
-                            { flexDirection: "column", alignItems: "center" },
-                          ]}
-                        >
+                      {etudiants[index + 1] && (
+                        <View style={stylesCalenderFilter.block}>
                           <View
-                            style={{
-                              borderRightWidth: 2,
-                              borderRightColor: "black",
-                              borderStyle: "dashed",
-                            }}
+                            style={[
+                              stylesCalenderFilter.cellQRCode,
+                              stylesCalenderFilter.codeZone,
+                              { flexDirection: "column", alignItems: "center" },
+                            ]}
                           >
-                            <Image
-                              src={qrCodes[index + 1]?.qrCode!}
-                              style={{ width: 100, height: 91 }}
-                            />
+                            <View
+                              style={{
+                                borderRightWidth: 2,
+                                borderRightColor: "black",
+                                borderStyle: "dashed",
+                              }}
+                            >
+                              <Image
+                                src={qrCodes[index + 1]?.qrCode!}
+                                style={{ width: 100, height: 91 }}
+                              />
+                            </View>
+                            <Text>{qrCodes[index + 1]?.hashedCode}</Text>
                           </View>
-                          <Text>{qrCodes[index + 1]?.hashedCode}</Text>
+                          <Text
+                            style={[
+                              stylesCalenderFilter.cellQRCode,
+                              stylesCalenderFilter.infoZone,
+                            ]}
+                          >
+                            {etudiants[index + 1]?.nom_fr!}{" "}
+                            {etudiants[index + 1]?.prenom_fr!}
+                            {"\n"}
+                            {etudiants[index + 1]?.num_CIN!}
+                            {"\n"}
+                            {epreuve?.classe?.nom_classe_fr!}
+                            {"\n"}
+                            {epreuve?.matiere?.matiere!}
+                            {"\n"}
+                            Session: {monthName} 2025
+                          </Text>
                         </View>
-                        <Text
-                          style={[
-                            stylesCalenderFilter.cellQRCode,
-                            stylesCalenderFilter.infoZone,
-                          ]}
-                        >
-                          {etudiants[index + 1]?.nom_fr!}{" "}
-                          {etudiants[index + 1]?.prenom_fr!}
-                          {"\n"}
-                          {etudiants[index + 1]?.num_CIN!}
-                          {"\n"}
-                          {epreuve?.classe?.nom_classe_fr!}
-                          {"\n"}
-                          {epreuve?.matiere?.matiere!}
-                          {"\n"}
-                          Session: {monthName} 2025
-                        </Text>
-                      </View>
-                      {/* )} */}
+                      )}
                     </View>
-                  );
-                }
+                  </>
+                );
               }
-
-              // if (index % 2 === 0) {
-              // if ((index + 1) % 6 === 0 && index !== 0) {
-              //   return (
-              //     <View
-              //       style={[stylesCalenderFilter.row, { marginBottom: 90 }]}
-              //       key={index}
-              //     >
-              //       <View style={stylesCalenderFilter.block}>
-              //         <View
-              //           style={[
-              //             stylesCalenderFilter.cellQRCode,
-              //             stylesCalenderFilter.codeZone,
-              //             { flexDirection: "column", alignItems: "center" },
-              //           ]}
-              //         >
-              //           <View
-              //             style={{
-              //               borderRightWidth: 2,
-              //               borderRightColor: "black",
-              //               borderStyle: "dashed",
-              //             }}
-              //           >
-              //             <Image
-              //               src={qrCodeData?.qrCode!}
-              //               style={{ width: 100, height: 91 }}
-              //             />
-              //           </View>
-              //           <Text>{qrCodeData?.hashedCode}</Text>
-              //         </View>
-              //         <Text
-              //           style={[
-              //             stylesCalenderFilter.cellQRCode,
-              //             stylesCalenderFilter.infoZone,
-              //           ]}
-              //         >
-              //           {etudiant[0].nom_fr} {etudiant[0].prenom_fr}
-              //           {"\n"}
-              //           {etudiant[0].num_CIN}
-              //           {"\n"}
-              //           {epreuve?.classe?.nom_classe_fr!}
-              //           {"\n"}
-              //           {epreuve?.matiere?.matiere!}
-              //           {"\n"}
-              //           Session: {monthName} 2025
-              //         </Text>
-              //       </View>
-              //       {/* {etudiants[index + 1] && ( */}
-              //       <View style={stylesCalenderFilter.block}>
-              //         <View
-              //           style={[
-              //             stylesCalenderFilter.cellQRCode,
-              //             stylesCalenderFilter.codeZone,
-              //             { flexDirection: "column", alignItems: "center" },
-              //           ]}
-              //         >
-              //           <View
-              //             style={{
-              //               borderRightWidth: 2,
-              //               borderRightColor: "black",
-              //               borderStyle: "dashed",
-              //             }}
-              //           >
-              //             <Image
-              //               src={qrCodes[index + 1]?.qrCode!}
-              //               style={{ width: 100, height: 91 }}
-              //             />
-              //           </View>
-              //           <Text>{qrCodes[index + 1]?.hashedCode}</Text>
-              //         </View>
-              //         <Text
-              //           style={[
-              //             stylesCalenderFilter.cellQRCode,
-              //             stylesCalenderFilter.infoZone,
-              //           ]}
-              //         >
-              //           {etudiants[1].nom_fr} {etudiants[1].prenom_fr}
-              //           {"\n"}
-              //           {etudiants[1].num_CIN}
-              //           {"\n"}
-              //           {epreuve?.classe?.nom_classe_fr!}
-              //           {"\n"}
-              //           {epreuve?.matiere?.matiere!}
-              //           {"\n"}
-              //           Session: {monthName} 2025
-              //         </Text>
-              //       </View>
-              //       {/* )} */}
-              //     </View>
-              //   );
-              // } else {
-              //   return (
-              //     <View style={stylesCalenderFilter.row} key={index}>
-              //       <View style={stylesCalenderFilter.block}>
-              //         <View
-              //           style={[
-              //             stylesCalenderFilter.cellQRCode,
-              //             stylesCalenderFilter.codeZone,
-              //             { flexDirection: "column", alignItems: "center" },
-              //           ]}
-              //         >
-              //           <View
-              //             style={{
-              //               borderRightWidth: 2,
-              //               borderRightColor: "black",
-              //               borderStyle: "dashed",
-              //             }}
-              //           >
-              //             <Image
-              //               src={qrCodeData?.qrCode!}
-              //               style={{ width: 100, height: 91 }}
-              //             />
-              //           </View>
-              //           <Text>{qrCodeData?.hashedCode}</Text>
-              //         </View>
-              //         <Text
-              //           style={[
-              //             stylesCalenderFilter.cellQRCode,
-              //             stylesCalenderFilter.infoZone,
-              //           ]}
-              //         >
-              //           {etudiant[0].nom_fr} {etudiant[0].prenom_fr}
-              //           {"\n"}
-              //           {etudiant[0].num_CIN}
-              //           {"\n"}
-              //           {epreuve?.classe?.nom_classe_fr!}
-              //           {"\n"}
-              //           {epreuve?.matiere?.matiere!}
-              //           {"\n"}
-              //           Session: {monthName} 2025
-              //         </Text>
-              //       </View>
-
-              //       <View style={stylesCalenderFilter.block}>
-              //         <View
-              //           style={[
-              //             stylesCalenderFilter.cellQRCode,
-              //             stylesCalenderFilter.codeZone,
-              //             { flexDirection: "column", alignItems: "center" },
-              //           ]}
-              //         >
-              //           <View
-              //             style={{
-              //               borderRightWidth: 2,
-              //               borderRightColor: "black",
-              //               borderStyle: "dashed",
-              //             }}
-              //           >
-              //             <Image
-              //               src={qrCodes[index + 1]?.qrCode!}
-              //               style={{ width: 100, height: 91 }}
-              //             />
-              //           </View>
-              //           <Text>{qrCodes[index + 1]?.hashedCode}</Text>
-              //         </View>
-              //         <Text
-              //           style={[
-              //             stylesCalenderFilter.cellQRCode,
-              //             stylesCalenderFilter.infoZone,
-              //           ]}
-              //         >
-              //           {etudiants[1].nom_fr} {etudiants[1].prenom_fr}
-              //           {"\n"}
-              //           {etudiants[1].num_CIN}
-              //           {"\n"}
-              //           {epreuve?.classe?.nom_classe_fr!}
-              //           {"\n"}
-              //           {epreuve?.matiere?.matiere!}
-              //           {"\n"}
-              //           Session: {monthName} 2025
-              //         </Text>
-              //       </View>
-              //     </View>
-              //   );
-              // }
-              // }
             })}
           </View>
           {/* Footer */}

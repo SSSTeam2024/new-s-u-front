@@ -40,7 +40,7 @@ const ProgrammerCalendrier = () => {
 
   const location = useLocation();
   const calendrierState = location.state;
-  //console.log("calendrierState", calendrierState);
+  console.log("calendrierState", calendrierState);
 
   const [days, setDays] = useState<any[]>([]);
   const [showAddCard, setShowAddCard] = useState<boolean>(false);
@@ -338,21 +338,64 @@ const ProgrammerCalendrier = () => {
     if (!selectedJour || !heureDebut || !heureFin) return AllSalles;
 
     // Get existing epreuves for the selected date
-    const conflictingEpreuves = calendrierState?.epreuve?.filter(
-      (epreuve: any) => {
-        return (
-          epreuve.date === selectedJour &&
-          // Check if the time range overlaps
-          ((heureDebut >= epreuve.heure_debut &&
-            heureDebut < epreuve.heure_fin) ||
-            (heureFin > epreuve.heure_debut && heureFin <= epreuve.heure_fin) ||
-            (heureDebut <= epreuve.heure_debut &&
-              heureFin >= epreuve.heure_fin))
-        );
-      }
+    // const conflictingEpreuves = calendrierState?.epreuve?.filter(
+    //   (epreuve: any) => {
+    //     return (
+    //       epreuve.date === selectedJour &&
+    //       // Check if the time range overlaps
+    //       ((heureDebut >= epreuve.heure_debut &&
+    //         heureDebut < epreuve.heure_fin) ||
+    //         (heureFin > epreuve.heure_debut && heureFin <= epreuve.heure_fin) ||
+    //         (heureDebut <= epreuve.heure_debut &&
+    //           heureFin >= epreuve.heure_fin))
+    //     );
+    //   }
+    // );
+
+    // const usedSalles = calendrierState.epreuve.map(
+    //   (epreuve: any) => epreuve.salle?._id
+    // );
+
+    console.log("selectedJour", selectedJour);
+    console.log("heureDebut", heureDebut);
+    console.log("heureFin", heureFin);
+
+    const examCalendarsAtSelectedSemester = AllExamens.filter(
+      (ec) => ec.semestre === calendrierState.semestre
     );
 
-    const usedSalles = calendrierState.epreuve.map(
+    let epreuvesAtSelectedDay: any = [];
+
+    for (const examCalendar of examCalendarsAtSelectedSemester) {
+      const epreuvesAtSelectedDayRef = examCalendar?.epreuve?.filter(
+        (e: any) => e.date === selectedJour
+      );
+
+      epreuvesAtSelectedDay = epreuvesAtSelectedDay.concat(
+        epreuvesAtSelectedDayRef
+      );
+    }
+
+    console.log("epreuvesAtSelectedDay", epreuvesAtSelectedDay);
+
+    let conflictingEpreuves = epreuvesAtSelectedDay.filter(
+      (e: any) =>
+        (e.heure_debut < heureDebut &&
+          e.heure_fin > heureDebut &&
+          e.heure_fin < heureFin) ||
+        (e.heure_debut === heureDebut && e.heure_fin === heureFin) ||
+        (e.heure_debut > heureDebut &&
+          e.heure_debut < heureFin &&
+          e.heure_fin > heureFin) ||
+        (e.heure_debut === heureDebut && e.heure_fin < heureFin) ||
+        (e.heure_debut > heureDebut && e.heure_fin === heureFin) ||
+        (e.heure_debut > heureDebut && e.heure_fin < heureFin) ||
+        (e.heure_debut < heureDebut && e.heure_fin > heureFin) ||
+        (e.heure_debut === heureDebut && e.heure_fin > heureFin) ||
+        (e.heure_debut < heureDebut && e.heure_fin === heureFin)
+    );
+
+    const usedSalles = conflictingEpreuves.map(
       (epreuve: any) => epreuve.salle?._id
     );
 
