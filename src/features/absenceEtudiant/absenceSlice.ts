@@ -11,7 +11,7 @@ export interface AbsenceEtudiant {
   }[];
   date: string;
   trimestre: string;
-  added_by: string;
+  added_by?: string;
 }
 
 export const absenceSlice = createApi({

@@ -345,7 +345,6 @@ const AjouterAbsence = () => {
     seance: "",
     date: "",
     trimestre: "",
-    added_by: "",
   };
 
   const [absence, setAbsence] = useState(initialAbsence);
