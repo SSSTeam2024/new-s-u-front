@@ -15,3 +15,7 @@
       font-size:larger !important;
     }
   }
+  .badge.bg-secondary-subtle.text-secondary.dropdown-toggle::after {
+    content: "" !important;
+    /* border: none !important; */
+}

@@ -38,6 +38,8 @@ const ListeEmploisClasse = () => {
   }
   const { data = [] } = useFetchClassesQuery();
 
+  console.log(data);
+
   const [deleteClasse] = useDeleteClasseMutation();
 
   const swalWithBootstrapButtons = Swal.mixin({

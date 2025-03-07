@@ -54,6 +54,7 @@
     "react-bootstrap": "^2.7.0",
     "react-countdown": "^2.3.5",
     "react-countup": "^6.4.1",
+    "react-data-table-component": "^7.7.0",
     "react-datepicker": "^7.5.0",
     "react-dom": "^18.2.0",
     "react-dropzone": "^14.2.3",

@@ -104,33 +104,33 @@ export interface Etudiant {
   NiveauAr?: string;
   DiplomeAr?: string;
   SpecialiteAr?: string;
-  // etat_compte_Ar: string;
-  // type_inscription_ar: string;
-  // nbre_enfants: string;
-  // etablissement_conjoint: string;
-  // profesion_Conjoint: string;
-  // prenom_conjoint: string;
-  // Cycle_Ar: string;
-  // ville: string;
-  // pays_bac: string;
-  // mention: string;
-  // situation_militaire: string;
-  // tel_parents: string;
-  // pays_parents: string;
-  // gouvernorat_parents: string;
-  // code_postale_parents: string;
-  // adresse_parents: string;
-  // etat_mere: string;
-  // etablissement_mere: string;
-  // profession_mere: string;
-  // prenom_mere: string;
-  // etat_pere: string;
-  // prenom_pere: string;
-  // pays: string;
-  // gouvernorat: string;
-  // matricule_number: string;
-  // passeport_number: string;
-  // cnss_number: string;
+  etat_compte_Ar: string;
+  type_inscription_ar: string;
+  nbre_enfants: string;
+  etablissement_conjoint: string;
+  profesion_Conjoint: string;
+  prenom_conjoint: string;
+  Cycle_Ar: string;
+  ville: string;
+  pays_bac: string;
+  mention: string;
+  situation_militaire: string;
+  tel_parents: string;
+  pays_parents: string;
+  gouvernorat_parents: string;
+  code_postale_parents: string;
+  adresse_parents: string;
+  etat_mere: string;
+  etablissement_mere: string;
+  profession_mere: string;
+  prenom_mere: string;
+  etat_pere: string;
+  prenom_pere: string;
+  pays: string;
+  gouvernorat: string;
+  matricule_number: string;
+  passeport_number: string;
+  cnss_number: string;
 }
 export interface EtudiantExcel {
   _id?: string;
@@ -256,7 +256,7 @@ export const etudiantSlice = createApi({
         },
         invalidatesTags: ["Etudiant"],
       }),
-      updateEtudiant: builder.mutation<void, Etudiant>({
+      updateEtudiant: builder.mutation<void, EtudiantExcel>({
         query: ({ _id, ...rest }) => {
           // console.log("Payload being sent to the backend:", { id: _id, ...rest });
           if (!_id) {

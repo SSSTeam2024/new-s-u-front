@@ -296,6 +296,13 @@ const stylesCalenderFilter = StyleSheet.create({
     textAlign: "center",
     fontSize: 10,
   },
+  nameCell: {
+    padding: 5,
+    borderRightWidth: 1,
+    borderColor: "#000",
+    textAlign: "left",
+    fontSize: 10,
+  },
   dayCell: {
     width: 150,
     fontWeight: "bold",
@@ -346,19 +353,19 @@ const stylesCalenderFilter = StyleSheet.create({
     fontWeight: "bold",
   },
   nombreCopie: {
-    width: 60,
+    width: 30,
     fontWeight: "bold",
   },
   numEtudiant: {
-    width: 50,
+    width: 30,
     fontWeight: "bold",
   },
   cinEtudiant: {
-    width: 85,
+    width: 70,
     fontWeight: "bold",
   },
   nomEtudiant: {
-    width: 160,
+    width: 250,
     fontWeight: "bold",
   },
   entreEtudiant: {
@@ -366,7 +373,7 @@ const stylesCalenderFilter = StyleSheet.create({
     fontWeight: "bold",
   },
   nbrePages: {
-    width: 80,
+    width: 70,
     fontWeight: "bold",
   },
   codeZone: {
@@ -1510,6 +1517,16 @@ const CalendrierDetails: React.FC = () => {
       (etudiant) => etudiant?.groupe_classe?._id! === epreuve?.classe?._id!
     );
 
+    etudiants.sort(function (a, b) {
+      if (a.prenom_fr < b.prenom_fr) {
+        return -1;
+      }
+      if (a.prenom_fr > b.prenom_fr) {
+        return 1;
+      }
+      return 0;
+    });
+
     const chunkArray = (arr: any, chunkSize: number) => {
       const result: any = [];
       for (let i = 0; i < arr.length; i += chunkSize) {
@@ -1685,7 +1702,7 @@ const CalendrierDetails: React.FC = () => {
                               </Text>
                               <Text
                                 style={[
-                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.nameCell,
                                   stylesCalenderFilter.nomEtudiant,
                                 ]}
                               >
@@ -1743,7 +1760,7 @@ const CalendrierDetails: React.FC = () => {
                               </Text>
                               <Text
                                 style={[
-                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.nameCell,
                                   stylesCalenderFilter.nomEtudiant,
                                 ]}
                               >
@@ -1971,7 +1988,7 @@ const CalendrierDetails: React.FC = () => {
                               </Text>
                               <Text
                                 style={[
-                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.nameCell,
                                   stylesCalenderFilter.nomEtudiant,
                                 ]}
                               >
@@ -2029,7 +2046,7 @@ const CalendrierDetails: React.FC = () => {
                               </Text>
                               <Text
                                 style={[
-                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.nameCell,
                                   stylesCalenderFilter.nomEtudiant,
                                 ]}
                               >
@@ -2260,7 +2277,7 @@ const CalendrierDetails: React.FC = () => {
                               </Text>
                               <Text
                                 style={[
-                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.nameCell,
                                   stylesCalenderFilter.nomEtudiant,
                                 ]}
                               >
@@ -2318,7 +2335,7 @@ const CalendrierDetails: React.FC = () => {
                               </Text>
                               <Text
                                 style={[
-                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.nameCell,
                                   stylesCalenderFilter.nomEtudiant,
                                 ]}
                               >
@@ -2549,7 +2566,7 @@ const CalendrierDetails: React.FC = () => {
                               </Text>
                               <Text
                                 style={[
-                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.nameCell,
                                   stylesCalenderFilter.nomEtudiant,
                                 ]}
                               >
@@ -2607,7 +2624,7 @@ const CalendrierDetails: React.FC = () => {
                               </Text>
                               <Text
                                 style={[
-                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.nameCell,
                                   stylesCalenderFilter.nomEtudiant,
                                 ]}
                               >
@@ -2834,7 +2851,7 @@ const CalendrierDetails: React.FC = () => {
                               </Text>
                               <Text
                                 style={[
-                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.nameCell,
                                   stylesCalenderFilter.nomEtudiant,
                                 ]}
                               >
@@ -2892,7 +2909,7 @@ const CalendrierDetails: React.FC = () => {
                               </Text>
                               <Text
                                 style={[
-                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.nameCell,
                                   stylesCalenderFilter.nomEtudiant,
                                 ]}
                               >
@@ -3123,7 +3140,7 @@ const CalendrierDetails: React.FC = () => {
                               </Text>
                               <Text
                                 style={[
-                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.nameCell,
                                   stylesCalenderFilter.nomEtudiant,
                                 ]}
                               >
@@ -3181,7 +3198,7 @@ const CalendrierDetails: React.FC = () => {
                               </Text>
                               <Text
                                 style={[
-                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.nameCell,
                                   stylesCalenderFilter.nomEtudiant,
                                 ]}
                               >
@@ -3263,22 +3280,13 @@ const CalendrierDetails: React.FC = () => {
 
   const QrCodePage = ({ epreuve }: { epreuve: any }) => {
     const [qrCodes, setQrCodes] = useState<any[]>([]);
-
-    const chunkArray = (arr: any, chunkSize: number) => {
-      const result: any = [];
-      for (let i = 0; i < arr.length; i += chunkSize) {
-        result.push(arr.slice(i, i + chunkSize));
-      }
-      return result;
-    };
-
     const etudiants = useMemo(() => {
       let arr1 = AllEtudiants.filter(
         (etudiant) => etudiant?.groupe_classe?._id! === epreuve?.classe?._id!
       );
-      let arr = chunkArray(arr1, 12);
-      console.log(arr);
-      return arr;
+
+      console.log("students", arr1);
+      return arr1;
     }, [AllEtudiants, epreuve]);
 
     const [start, end] = calendrierState.period.split(" / ");
@@ -3324,211 +3332,216 @@ const CalendrierDetails: React.FC = () => {
 
     return (
       <Document>
-        {etudiants.map((etudiants_block: any, block_index: number) => {
-          return (
-            <Page orientation="portrait" style={{ padding: 30 }}>
-              {/* Header */}
-              {block_index === 0 && (
-                <View
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    marginBottom: 10,
-                  }}
-                >
-                  {/* Left Section (University) */}
-                  <View style={{ alignItems: "flex-start", maxWidth: "30%" }}>
-                    <Text style={{ fontSize: 8, fontWeight: "heavy" }}>
-                      {lastVariable?.universite_fr}
-                    </Text>
-                    <Image
-                      style={stylesCalenderFilter.logo}
-                      src={`${process.env.REACT_APP_API_URL}/files/variableGlobaleFiles/logoUniversiteFiles/${lastVariable?.logo_universite}`}
-                    />
-                  </View>
+        <Page orientation="portrait" style={{ padding: 30 }}>
+          {/* Header */}
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+              // marginBottom: 10,
+            }}
+          >
+            {/* Left Section (University) */}
+            <View style={{ alignItems: "flex-start", maxWidth: "30%" }}>
+              <Text style={{ fontSize: 12, fontWeight: "heavy" }}>
+                {lastVariable?.universite_fr}
+              </Text>
+              <Image
+                style={stylesCalenderFilter.logo}
+                src={`${process.env.REACT_APP_API_URL}/files/variableGlobaleFiles/logoUniversiteFiles/${lastVariable?.logo_universite}`}
+              />
+            </View>
 
-                  {/* Center Section (A.U., Semestre, Période) */}
-                  <View style={{ alignItems: "center", flex: 1 }}>
-                    <Text style={{ fontSize: 14, fontWeight: "bold" }}>
-                      A.U: {startYear}/{endYear}
-                    </Text>
-                    <Text style={{ fontSize: 12 }}>
-                      Semestre: {calendrierState?.semestre}
-                    </Text>
-                    <Text style={{ fontSize: 12 }}>
-                      Période: {calendrierState?.period}
-                    </Text>
-                  </View>
+            {/* Center Section (A.U., Semestre, Période) */}
+            <View style={{ alignItems: "center", flex: 1 }}>
+              {/* <Text style={{ fontSize: 14, fontWeight: "bold" }}>
+                A.U: {startYear}/{endYear}
+              </Text> */}
+              <Text style={{ fontSize: 12 }}>
+                Session de {calendrierState?.type_examen!}{" "}
+                {calendrierState?.session!} / {calendrierState?.semestre!}
+              </Text>
+              <Text style={{ fontSize: 11 }}>
+                Matière: {epreuve?.matiere?.matiere!}
+              </Text>
+              <Text style={{ fontSize: 11 }}>
+                Date d'épreuve: {epreuve?.date!} {epreuve?.heure_debut!} -{" "}
+                {epreuve?.heure_fin!}
+              </Text>
+              <Text style={{ fontSize: 11 }}>
+                Salle: {epreuve?.salle?.salle!}
+              </Text>
+              <Text style={{ fontSize: 11 }}>
+                Nombre des étudiants: {etudiants.length}
+              </Text>
+            </View>
 
-                  {/* Right Section (Institution) */}
-                  <View style={{ alignItems: "flex-end", maxWidth: "30%" }}>
-                    <Text style={{ fontSize: 8, fontWeight: "heavy" }}>
-                      {lastVariable?.etablissement_fr}
-                    </Text>
-                    <Image
-                      style={stylesCalenderFilter.logo}
-                      src={`${process.env.REACT_APP_API_URL}/files/variableGlobaleFiles/logoEtablissementFiles/${lastVariable?.logo_etablissement}`}
-                    />
-                  </View>
-                </View>
-              )}
+            {/* Right Section (Institution) */}
+            <View style={{ alignItems: "flex-end", maxWidth: "30%" }}>
+              <Text style={{ fontSize: 12, fontWeight: "heavy" }}>
+                {lastVariable?.etablissement_fr}
+              </Text>
+              <Image
+                style={stylesCalenderFilter.logo}
+                src={`${process.env.REACT_APP_API_URL}/files/variableGlobaleFiles/logoEtablissementFiles/${lastVariable?.logo_etablissement}`}
+              />
+            </View>
+          </View>
 
-              {/* Table */}
-              <View style={stylesCalenderFilter.timetable}>
-                {/* Body */}
+          {/* Table */}
+          <View style={stylesCalenderFilter.timetable}>
+            {/* Body */}
 
-                {etudiants_block.map((etudiant: any, index: any) => {
-                  const qrCodeData = qrCodes[index];
-                  if (index % 2 === 0) {
-                    return (
-                      <>
-                        {index !== 0 && index % 12 === 0 && (
+            {etudiants.map((etudiant: any, index: any) => {
+              const qrCodeData = qrCodes[index];
+              if (index % 2 === 0) {
+                return (
+                  <>
+                    {index !== 0 && index % 10 === 0 && (
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                          marginBottom: index,
+                        }}
+                      >
+                        <div style={{ height: `150px` }}></div>
+                      </View>
+                    )}
+
+                    <View style={[stylesCalenderFilter.row]} key={index}>
+                      <View style={stylesCalenderFilter.block}>
+                        <View
+                          style={[
+                            stylesCalenderFilter.cellQRCode,
+                            stylesCalenderFilter.codeZone,
+                            {
+                              flexDirection: "column",
+                              alignItems: "center",
+                            },
+                          ]}
+                        >
                           <View
                             style={{
-                              flexDirection: "row",
-                              alignItems: "center",
-                              justifyContent: "space-between",
-                              marginBottom: index,
+                              borderRightWidth: 2,
+                              borderRightColor: "black",
+                              borderStyle: "dashed",
                             }}
                           >
-                            <div style={{ height: "50px" }}></div>
+                            <Image
+                              src={qrCodeData?.qrCode!}
+                              style={{ width: 100, height: 91 }}
+                            />
                           </View>
-                        )}
-
-                        <View style={[stylesCalenderFilter.row]} key={index}>
-                          <View style={stylesCalenderFilter.block}>
-                            <View
-                              style={[
-                                stylesCalenderFilter.cellQRCode,
-                                stylesCalenderFilter.codeZone,
-                                {
-                                  flexDirection: "column",
-                                  alignItems: "center",
-                                },
-                              ]}
-                            >
-                              <View
-                                style={{
-                                  borderRightWidth: 2,
-                                  borderRightColor: "black",
-                                  borderStyle: "dashed",
-                                }}
-                              >
-                                <Image
-                                  src={qrCodeData?.qrCode!}
-                                  style={{ width: 100, height: 91 }}
-                                />
-                              </View>
-                              <Text>{qrCodeData?.hashedCode}</Text>
-                            </View>
-                            <Text
-                              style={[
-                                stylesCalenderFilter.cellQRCode,
-                                stylesCalenderFilter.infoZone,
-                              ]}
-                            >
-                              {etudiant.nom_fr} {etudiant.prenom_fr}
-                              {"\n"}
-                              {etudiant.num_CIN}
-                              {"\n"}
-                              {epreuve?.classe?.nom_classe_fr!}
-                              {"\n"}
-                              {epreuve?.matiere?.matiere!}
-                              {"\n"}
-                              Session: {monthName} 2025
-                            </Text>
-                          </View>
-                          {etudiants[index + 1] && (
-                            <View style={stylesCalenderFilter.block}>
-                              <View
-                                style={[
-                                  stylesCalenderFilter.cellQRCode,
-                                  stylesCalenderFilter.codeZone,
-                                  {
-                                    flexDirection: "column",
-                                    alignItems: "center",
-                                  },
-                                ]}
-                              >
-                                <View
-                                  style={{
-                                    borderRightWidth: 2,
-                                    borderRightColor: "black",
-                                    borderStyle: "dashed",
-                                  }}
-                                >
-                                  <Image
-                                    src={qrCodes[index + 1]?.qrCode!}
-                                    style={{ width: 100, height: 91 }}
-                                  />
-                                </View>
-                                <Text>{qrCodes[index + 1]?.hashedCode}</Text>
-                              </View>
-                              <Text
-                                style={[
-                                  stylesCalenderFilter.cellQRCode,
-                                  stylesCalenderFilter.infoZone,
-                                ]}
-                              >
-                                {etudiants[index + 1]?.nom_fr!}{" "}
-                                {etudiants[index + 1]?.prenom_fr!}
-                                {"\n"}
-                                {etudiants[index + 1]?.num_CIN!}
-                                {"\n"}
-                                {epreuve?.classe?.nom_classe_fr!}
-                                {"\n"}
-                                {epreuve?.matiere?.matiere!}
-                                {"\n"}
-                                Session: {monthName} 2025
-                              </Text>
-                            </View>
-                          )}
-                          {etudiants[index + 1] === undefined && (
-                            <View style={stylesCalenderFilter.block}>
-                              <View
-                                style={[
-                                  stylesCalenderFilter.cellQRCode,
-                                  stylesCalenderFilter.codeZone,
-                                  {
-                                    flexDirection: "column",
-                                    alignItems: "center",
-                                  },
-                                ]}
-                              >
-                                <View>
-                                  <View style={{ width: 100, height: 91 }} />
-                                </View>
-                                <Text></Text>
-                              </View>
-                              <Text
-                                style={[
-                                  stylesCalenderFilter.cellQRCode,
-                                  stylesCalenderFilter.infoZone,
-                                ]}
-                              ></Text>
-                            </View>
-                          )}
+                          <Text>{qrCodeData?.hashedCode}</Text>
                         </View>
-                      </>
-                    );
-                  }
-                })}
-              </View>
-              {/* Footer */}
-              <View
-                style={{
-                  position: "absolute",
-                  bottom: 10,
-                  right: 10,
-                }}
-                render={({ pageNumber }) => (
-                  <Text style={{ fontSize: 10 }}>Page {pageNumber}</Text>
-                )}
-              />
-            </Page>
-          );
-        })}
+                        <Text
+                          style={[
+                            stylesCalenderFilter.cellQRCode,
+                            stylesCalenderFilter.infoZone,
+                          ]}
+                        >
+                          {etudiant?.nom_fr!} {etudiant?.prenom_fr!}
+                          {"\n"}
+                          {etudiant?.num_CIN!} -{" "}
+                          {epreuve?.classe?.nom_classe_fr!}
+                          {"\n"}
+                          {epreuve?.matiere?.matiere!}
+                          {"\n"}
+                          Session: {calendrierState?.type_examen!} {monthName}{" "}
+                          {startYear}
+                        </Text>
+                      </View>
+                      {etudiants[index + 1] && (
+                        <View style={stylesCalenderFilter.block}>
+                          <View
+                            style={[
+                              stylesCalenderFilter.cellQRCode,
+                              stylesCalenderFilter.codeZone,
+                              {
+                                flexDirection: "column",
+                                alignItems: "center",
+                              },
+                            ]}
+                          >
+                            <View
+                              style={{
+                                borderRightWidth: 2,
+                                borderRightColor: "black",
+                                borderStyle: "dashed",
+                              }}
+                            >
+                              <Image
+                                src={qrCodes[index + 1]?.qrCode!}
+                                style={{ width: 100, height: 91 }}
+                              />
+                            </View>
+                            <Text>{qrCodes[index + 1]?.hashedCode}</Text>
+                          </View>
+                          <Text
+                            style={[
+                              stylesCalenderFilter.cellQRCode,
+                              stylesCalenderFilter.infoZone,
+                            ]}
+                          >
+                            {etudiants[index + 1]?.nom_fr!}{" "}
+                            {etudiants[index + 1]?.prenom_fr!}
+                            {"\n"}
+                            {etudiants[index + 1]?.num_CIN!} -{" "}
+                            {epreuve?.classe?.nom_classe_fr!}
+                            {"\n"}
+                            {epreuve?.matiere?.matiere!}
+                            {"\n"}
+                            Session: {calendrierState?.type_examen!} {monthName}{" "}
+                            {startYear}
+                          </Text>
+                        </View>
+                      )}
+                      {etudiants[index + 1] === undefined && (
+                        <View style={stylesCalenderFilter.block}>
+                          <View
+                            style={[
+                              stylesCalenderFilter.cellQRCode,
+                              stylesCalenderFilter.codeZone,
+                              {
+                                flexDirection: "column",
+                                alignItems: "center",
+                              },
+                            ]}
+                          >
+                            <View>
+                              <View style={{ width: 100, height: 91 }} />
+                            </View>
+                            <Text></Text>
+                          </View>
+                          <Text
+                            style={[
+                              stylesCalenderFilter.cellQRCode,
+                              stylesCalenderFilter.infoZone,
+                            ]}
+                          ></Text>
+                        </View>
+                      )}
+                    </View>
+                  </>
+                );
+              }
+            })}
+          </View>
+          {/* Footer */}
+          {/* <View
+            style={{
+              position: "absolute",
+              bottom: 10,
+              right: 10,
+            }}
+            render={({ pageNumber }) => (
+              <Text style={{ fontSize: 10 }}>Page {pageNumber}</Text>
+            )}
+          /> */}
+        </Page>
       </Document>
     );
   };

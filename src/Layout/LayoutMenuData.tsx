@@ -53,6 +53,7 @@ const Navdata = () => {
   const [isDeplacement, setIsDeplacement] = useState(false);
   const [isParcours, setIsParcours] = useState(false);
   const [isNotesProfessionnelles, setIsNotesProfessionnelles] = useState(false);
+  const [isApplicationEnseignant, setIsApplicationEnseignant] = useState(false);
   const [isMission, setIsMission] = useState(false);
   const [isModele, setIsModele] = useState(false);
   const [isLevel1, setIsLevel1] = useState(false);
@@ -190,6 +191,9 @@ const Navdata = () => {
     if (iscurrentState !== "Parcours") {
       setIsParcours(false);
     }
+    if (iscurrentState !== "ApplicationEnseignant") {
+      setIsApplicationEnseignant(false);
+    }
     if (iscurrentState !== "Variable") {
       setIsVariable(false);
     }
@@ -217,6 +221,7 @@ const Navdata = () => {
     isExamen,
     isNotesExamen,
     isParcours,
+    isApplicationEnseignant,
     isVariable,
   ]);
   let routes = userPermissions
@@ -554,8 +559,163 @@ const Navdata = () => {
         },
       ],
     },
+    //parametre compte etudiant
+    {
+      id: "parametreEtudiant",
+      label: "Paramètres Comptes Etudiants",
+      link: "/#",
+      icon: "bi bi-sliders",
+      click: function (e: any) {
+        e.preventDefault();
+        setIsParametreEtudiant(!isParametreEtudiant);
+        setIscurrentState("ParametreEtudiant");
+        updateIconSidebar(e);
+      },
+      stateVariables: isParametreEtudiant,
+      subItems: [
+        {
+          id: "EtatEtudiant",
+          label: "Etat",
+          link: "/parametre-etudiant/etat/liste-etat-etudiant",
+          parentId: "parametreEtudiant",
+          icon: "bi bi-person-fill-exclamation",
+        },
+        {
+          id: "InscriptionEtudiant",
+          label: "Inscription",
+          link: "/parametre-etudiant/inscription/liste-inscription-etudiant",
+          parentId: "parametreEtudiant",
+          icon: "bi bi-person-plus-fill",
+        },
+      ],
+    },
+    // parametre compte enseignant
+    {
+      id: "parametreEnseignant",
+      label: "Paramètres Comptes Enseignants",
+      link: "/#",
+      icon: "bi bi-sliders",
+      click: function (e: any) {
+        e.preventDefault();
+        setIsParametreEnseignant(!isParametreEnseignant);
+        setIscurrentState("ParametreEnseignant");
+        updateIconSidebar(e);
+      },
+      stateVariables: isParametreEnseignant,
+      subItems: [
+        {
+          id: "EtatEnseignat",
+          label: "Etat",
+          link: "/parametre-enseignant/etat/liste-etat-enseignant",
+          parentId: "parametreEnseignant",
+          icon: "bi bi-person-fill-exclamation",
+        },
+        {
+          id: "GradeEnseignant",
+          label: "Grade",
+          link: "/parametre-enseignant/grade/liste-grade-enseignant",
+          icon: "bi bi-award-fill",
+          parentId: "parametreEnseignant",
+        },
+        {
+          id: "posteEnseignant",
+          label: "Poste",
+          link: "/parametre-enseignant/poste/liste-poste-enseignant",
+          icon: "bi bi-book",
+          parentId: "parametreEnseignant",
+        },
+        {
+          id: "specialiteEnseingnat",
+          label: "Spécialité",
+          link: "/parametre-enseignant/specialite/liste-specialite-enseignant",
+          icon: "bi bi-briefcase-fill",
+          parentId: "parametreEnseignant",
+        },
+      ],
+    },
+    // parametre compte personnel
+    {
+      id: "parametrePersonnel",
+      label: "Paramètres Comptes Personnels",
+      link: "/#",
+      icon: "bi bi-sliders",
+      click: function (e: any) {
+        e.preventDefault();
+        setIsParametrePersonnel(!isParametrePersonnel);
+        setIscurrentState("ParametrePersonnel");
+        updateIconSidebar(e);
+      },
+      stateVariables: isParametrePersonnel,
+      subItems: [
+        {
+          id: "EtatEtudiant",
+          label: "Etat",
+          link: "/parametre-personnel/etat/liste-etat-personnel",
+          parentId: "parametrePersonnel",
+          icon: "bi bi-person-fill-exclamation",
+        },
+        {
+          id: "gradePersonnel",
+          label: "Grade",
+          link: "/parametre-personnel/grade/liste-grade-personnel",
+          icon: "bi bi-award-fill",
+          parentId: "parametrePersonnel",
+        },
+        {
+          id: "postePersonnel",
+          label: "Poste",
+          link: "/parametre-personnel/poste/liste-poste-personnel",
+          icon: "bi bi-book",
+          parentId: "parametrePersonnel",
+        },
+        {
+          id: "categoriePersonnel",
+          label: "Catégorie",
+          link: "/parametre-personnel/categorie/liste-categorie-personnel",
+          icon: "bi bi-grid",
+          parentId: "parametrePersonnel",
+        },
+        {
+          id: "servicePersonnel",
+          label: "Service",
+          link: "/parametre-personnel/service/liste-service-personnel",
+          icon: "bi bi-grid",
+          parentId: "parametrePersonnel",
+        },
+      ],
+    },
+    //! Application Enseignant
+    {
+      id: "application_enseignant",
+      label: "Application enseignant",
+      icon: "bi bi-window-split",
+      link: "/#",
+      click: function (e: any) {
+        e.preventDefault();
+        setIsApplicationEnseignant(!isApplicationEnseignant);
+        setIscurrentState("ApplicationEnseignant");
+        updateIconSidebar(e);
+      },
+      stateVariables: isApplicationEnseignant,
+      subItems: [
+        {
+          id: "Absences",
+          label: "Absence",
+          link: "/application-enseignant/lister-absence",
+          parentId: "application_enseignant",
+          icon: "bi bi-fingerprint",
+        },
+        {
+          id: "Cours",
+          label: "Cours",
+          link: "/application-enseignant/lister-cours",
+          parentId: "application_enseignant",
+          icon: "bi bi-person-exclamation",
+        },
+      ],
+    },
 
-    // Paramétrages des comptes 
+    // Paramétrages des comptes
     {
       id: "parametrage",
       label: "Paramétrages des comptes",
@@ -821,13 +981,12 @@ const Navdata = () => {
       stateVariables: isDeaprtement,
 
       subItems: [
-
         {
           id: "salles",
           label: "Salles",
           icon: "bi bi-door-closed-fill",
           link: "/departement/gestion-salles/liste-salles",
-         
+
           // click: function (e: any) {
           //   e.preventDefault();
           //   setIsLevel2(!isLevel2);
@@ -853,7 +1012,7 @@ const Navdata = () => {
           label: "Groupes",
           icon: "bi bi-people-fill",
           link: "/departement/gestion-classes/liste-classes",
-         
+
           // click: function (e: any) {
           //   e.preventDefault();
           //   setIsLevel3(!isLevel3);
@@ -873,7 +1032,7 @@ const Navdata = () => {
           label: "Départements",
           icon: "bi bi-house-gear-fill",
           link: "/departement/gestion-departements/liste-departements",
-         
+
           // click: function (e: any) {
           //   e.preventDefault();
           //   setIsLevel4(!isLevel4);
@@ -1286,20 +1445,20 @@ const Navdata = () => {
       //     parentId: "notes-professionnels",
       //     icon: "bi bi-clipboard2-plus",
       //   },
-        // {
-        //   id: "Solde-Conge",
-        //   label: "Solde des Congés",
-        //   link: "/solde-conge/liste-solde-conge",
-        //   parentId: "congés",
-        //   icon: "bi bi-person-fill-add",
-        // },
-        // {
-        //   id: "demande-Conge",
-        //   label: "Ajouter Demande de Congé",
-        //   link: "/demande-conge/ajouter-demande-conge",
-        //   parentId: "congés",
-        //   icon: "bi bi-person-fill-add",
-        // },
+      // {
+      //   id: "Solde-Conge",
+      //   label: "Solde des Congés",
+      //   link: "/solde-conge/liste-solde-conge",
+      //   parentId: "congés",
+      //   icon: "bi bi-person-fill-add",
+      // },
+      // {
+      //   id: "demande-Conge",
+      //   label: "Ajouter Demande de Congé",
+      //   link: "/demande-conge/ajouter-demande-conge",
+      //   parentId: "congés",
+      //   icon: "bi bi-person-fill-add",
+      // },
       //   {
       //     id: "liste_notes_professionelles",
       //     label: "Liste des notes professionelles",
@@ -1387,7 +1546,7 @@ const Navdata = () => {
       //     parentId: "variable-globales",
       //     icon: "bi bi-person-lines-fill",
       //   },
-       
+
       // ],
     },
     // gestion des admins

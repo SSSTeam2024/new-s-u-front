@@ -91,6 +91,15 @@ export const seanceSlice = createApi({
         providesTags: ["Seance"],
       }),
 
+      getPeriodicSessionsByTeacherV2: builder.mutation<any, any>({
+        query: (payload) => ({
+          url: `/get-periodic-sessions-by-teacher`,
+          body: payload,
+          method: "POST",
+        }),
+        invalidatesTags: ["Seance"],
+      }),
+
       updateSeance: builder.mutation<void, Seance>({
         query: ({ _id, ...rest }) => ({
           url: `/update-seance/${_id}`,
@@ -133,4 +142,5 @@ export const {
   useGetAllSessionsByScheduleIdMutation,
   useGetSeancesByIdTeacherAndSemestreQuery,
   useGetPeriodicSessionsByTeacherQuery,
+  useGetPeriodicSessionsByTeacherV2Mutation,
 } = seanceSlice;

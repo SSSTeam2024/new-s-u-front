@@ -33,7 +33,7 @@ const ListeDeplacements = () => {
   const user = useSelector((state: RootState) => selectCurrentUser(state));
 
   const { data: deplacements } = useFetchDeplacementQuery();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const { refetch } = useFetchAvisEnseignantQuery();
   const [deleteAvisEnseignant] = useDeleteAvisEnseignantMutation();
@@ -322,7 +322,6 @@ const ListeDeplacements = () => {
                       </div>
                     </Col>
 
-
                     {isMultiDeleteButton && (
                       <Button variant="danger" className="btn-icon">
                         <i className="ri-delete-bin-2-line"></i>
@@ -351,6 +350,7 @@ const ListeDeplacements = () => {
                     iscustomPageSize={false}
                     isBordered={false}
                     customPageSize={10}
+                    isPagination={true}
                     className="custom-header-css table align-middle table-nowrap"
                     tableClass="table-centered align-middle table-nowrap mb-0"
                     theadClass="text-muted table-light"

@@ -59,11 +59,7 @@ const ListeDemandeEtudiant = () => {
       }).then(async (result) => {
         if (result.isConfirmed) {
           await deleteDemandeEtudiant(id).unwrap();
-          MySwal.fire(
-            "Supprimée!",
-            "Demande supprimée avec succès",
-            "success"
-          );
+          MySwal.fire("Supprimée!", "Demande supprimée avec succès", "success");
         }
       });
     } catch (error) {
@@ -207,7 +203,6 @@ const ListeDemandeEtudiant = () => {
                     to="/demandes-etudiant/Single-demande-etudiant"
                     state={cellProps}
                     className="badge bg-info-subtle text-info view-item-btn"
-                    
                   >
                     <i
                       className="ph ph-eye"
@@ -346,6 +341,7 @@ const ListeDemandeEtudiant = () => {
                     iscustomPageSize={false}
                     isBordered={false}
                     customPageSize={10}
+                    isPagination={true}
                     className="custom-header-css table align-middle table-nowrap"
                     tableClass="table-centered align-middle table-nowrap mb-0"
                     theadClass="text-muted table-light"

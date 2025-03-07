@@ -17,6 +17,7 @@ import Flatpickr from "react-flatpickr";
 import country from "Common/country";
 import { format } from "date-fns";
 import {
+  EtudiantExcel,
   useGetTypeInscriptionByIdStudentMutation,
   useUpdateEtudiantMutation,
 } from "features/etudiant/etudiantSlice";
@@ -497,382 +498,101 @@ const EditProfilEtudiant = () => {
 
   const [getTypeInscriptionByIdStudent, { data, isLoading, error }] =
     useGetTypeInscriptionByIdStudentMutation();
-  const [formData, setFormData] = useState<Etudiant>({
-    _id: "",
-    nom_fr: "",
-    nom_ar: "",
-    prenom_fr: "",
-    prenom_ar: "",
-    lieu_naissance_fr: "",
-    lieu_naissance_ar: "",
-    date_naissance: "",
-    nationalite: "",
-    etat_civil: "",
-    sexe: "",
-    num_CIN: "",
-    face_1_CIN: "",
-    face_2_CIN: "",
-    fiche_paiement: "",
-    etat_compte: {
-      _id: "",
-      value_etat_etudiant: "",
-      etat_ar: "",
-      etat_fr: "",
-    },
-    groupe_classe: {
-      _id: "",
-      nom_classe_fr: "",
-      nom_classe_ar: "",
-      departement: "",
-      niveau_classe: {
-        _id: "",
-        name_niveau_ar: "",
-        name_niveau_fr: "",
-        abreviation: "",
-        sections: [],
-      },
-      matieres: [],
-    },
-    state: "",
-    dependence: "",
-    code_postale: "",
-    adress_ar: "",
-    adress_fr: "",
-    num_phone: "",
-    email: "",
-    nom_pere: "",
-    job_pere: "",
-    nom_mere: "",
-    num_phone_tuteur: "",
-    moyen: "",
-    session: "",
-    filiere: "",
-    niveau_scolaire: "",
-    annee_scolaire: "",
-    type_inscription: {
-      _id: "",
-      value_type_inscription: "",
-      type_ar: "",
-      type_fr: "",
-      files_type_inscription: [
-        {
-          name_ar: "",
-          name_fr: "",
-        },
-      ],
-    },
-    Face1CINFileBase64String: "",
-    Face1CINFileExtension: "",
-    Face2CINFileBase64String: "",
-    Face2CINFileExtension: "",
-    FichePaiementFileBase64String: "",
-    FichePaiementFileExtension: "",
-    files: [
-      { name_ar: "", name_fr: "", file: "", base64String: "", extension: "" },
-    ],
-    photo_profil: "",
-    PhotoProfilFileExtension: "",
-    PhotoProfilFileBase64String: "",
-  });
-
-  // useEffect(() => {
-  //   console.log("Fetched etudiant data:", etudiant);
-  //   if (etudiant) {
-  //     // Initialize formData with fetched data
-  //     setFormData({
-  //       _id: etudiant._id || "",
-  //       nom_fr: etudiant.nom_fr || "",
-  //       nom_ar: etudiant.nom_ar || "",
-  //       prenom_fr: etudiant.prenom_fr || "",
-  //       prenom_ar: etudiant.prenom_ar || "",
-  //       lieu_naissance_fr: etudiant.lieu_naissance_fr || "",
-  //       lieu_naissance_ar: etudiant.lieu_naissance_ar || "",
-  //       date_naissance: etudiant.date_naissance || "",
-  //       nationalite: etudiant.nationalite || "",
-  //       etat_civil: etudiant.etat_civil || "",
-  //       face_1_CIN: etudiant.face_1_CIN || "",
-  //       face_2_CIN: etudiant.face_2_CIN || "",
-  //       fiche_paiement: etudiant.fiche_paiement || "",
-  //       sexe: etudiant.sexe || "",
-  //       num_CIN: etudiant.num_CIN || "",
-  //       state: etudiant.state || "",
-  //       dependence: etudiant.dependence || "",
-  //       code_postale: etudiant.code_postale || "",
-  //       adress_ar: etudiant.adress_ar || "",
-  //       adress_fr: etudiant.adress_fr || "",
-  //       email: etudiant.email || "",
-  //       num_phone: etudiant.num_phone || "",
-  //       nom_pere: etudiant.nom_pere || "",
-  //       job_pere: etudiant.job_pere || "",
-  //       nom_mere: etudiant.nom_mere || "",
-  //       num_phone_tuteur: etudiant.num_phone_tuteur || "",
-  //       moyen: etudiant.moyen || "",
-  //       session: etudiant.session || "",
-  //       filiere: etudiant.filiere || "",
-  //       niveau_scolaire: etudiant.niveau_scolaire || "",
-  //       annee_scolaire: etudiant.annee_scolaire || "",
-  //       photo_profil: etudiant.photo_profil || "",
-  //       PhotoProfilFileExtension: etudiant.PhotoProfilFileExtension || "",
-  //       PhotoProfilFileBase64String: etudiant.PhotoProfilFileBase64String || "",
-  //       etat_compte: {
-  //         _id: etudiant.etat_compte?._id || "",
-  //         value_etat_etudiant: etudiant.etat_compte?.value_etat_etudiant || "",
-  //         etat_fr: etudiant.etat_compte?.etat_fr || "",
-  //         etat_ar: etudiant.etat_compte?.etat_ar || "",
-  //       },
-  //       groupe_classe: {
-  //         _id: etudiant.groupe_classe?._id || "",
-  //         nom_classe_fr: etudiant.groupe_classe?.nom_classe_fr || "",
-  //         nom_classe_ar: etudiant.groupe_classe?.nom_classe_ar || "",
-  //         departement: etudiant.groupe_classe?.departement || "",
-  //         niveau_classe: etudiant.groupe_classe?.niveau_classe || "",
-  //         section_classe: etudiant.groupe_classe?.section_classe || "",
-  //         matieres: etudiant.groupe_classe?.matieres || [],
-  //       },
-  //       type_inscription: {
-  //         _id: etudiant.type_inscription?._id || "",
-  //         value_type_inscription:
-  //           etudiant.type_inscription?.value_type_inscription || "",
-  //         type_ar: etudiant.type_inscription?.type_ar || "",
-  //         type_fr: etudiant.type_inscription?.type_fr || "",
-  //         files_type_inscription:
-  //           etudiant?.type_inscription?.files_type_inscription || [],
-  //       },
-  //       files: [
-  //         {
-  //           name_ar: etudiant.files?.[0]?.name_ar || "",
-  //           name_fr: etudiant.files?.[0]?.name_fr || "",
-  //           file: etudiant.files?.[0]?.file || "",
-  //           base64String: etudiant.files?.[0]?.base64String || "",
-  //           extension: etudiant.files?.[0]?.extension || "",
-  //         },
-  //       ],
-  //       Face1CINFileBase64String: etudiant.Face1CINFileBase64String || "",
-  //       Face1CINFileExtension: etudiant.Face1CINFileExtension || "",
-  //       Face2CINFileBase64String: etudiant.Face2CINFileBase64String || "",
-  //       Face2CINFileExtension: etudiant.Face2CINFileExtension || "",
-  //       FichePaiementFileBase64String:
-  //         etudiant.FichePaiementFileBase64String || "",
-  //       FichePaiementFileExtension: etudiant.FichePaiementFileExtension || "",
-  //     });
-
-  //     // Update the groupe_classe property specifically
-  //     setFormData((prev) => ({
-  //       ...prev,
-  //       groupe_classe: {
-  //         ...prev.groupe_classe,
-  //         matieres: etudiant.groupe_classe?.matieres || [],
-  //       },
-  //     }));
-
-  //     // Fetch and set the profile photo if necessary
-  //     if (!etudiant.PhotoProfilFileBase64String && etudiant.photo_profil) {
-  //       const fetchImageData = async () => {
-  //         try {
-  //           const response = await fetch(
-  //             `http://localhost:5000/files/etudiantFiles/PhotoProfil/${etudiant.photo_profil}`
-  //           );
-  //           if (!response.ok) throw new Error("Network response was not ok");
-
-  //           const blob = await response.blob();
-  //           const reader = new FileReader();
-  //           reader.onloadend = () => {
-  //             const base64String = reader.result as string;
-  //             const base64Data = base64String.split(",")[1];
-  //             const extension = etudiant.photo_profil.split(".").pop();
-  //             setFormData((prev) => ({
-  //               ...prev,
-  //               PhotoProfilFileBase64String: base64Data,
-  //               PhotoProfilFileExtension: extension,
-  //             }));
-  //           };
-  //           reader.readAsDataURL(blob);
-  //         } catch (error) {
-  //           console.error("Error fetching image data:", error);
-  //         }
-  //       };
-  //       fetchImageData();
-  //     }
-
-  //     // Update date and state fields
-  //     if (etudiant.date_naissance)
-  //       setSelectedDate(new Date(etudiant.date_naissance));
-  //     else setSelectedDate(null);
-
-  //     if (etudiant.annee_scolaire)
-  //       setSelectedDateBac(new Date(etudiant.annee_scolaire));
-  //     else setSelectedDateBac(null);
-
-  //     if (etudiant?.state) setSelectedWilaya(etudiant.state as Wilaya);
-  //   }
-  // }, [etudiant]);
+  const [formData, setFormData] = useState<EtudiantExcel>({
+     _id: "",
+     nom_fr: "",
+     nom_ar: "",
+     prenom_fr: "",
+     prenom_ar: "",
+     lieu_naissance_fr: "",
+     lieu_naissance_ar: "",
+     date_naissance: "",
+     nationalite: "",
+     etat_civil: "",
+     sexe: "",
+     num_CIN: "",
+     face_1_CIN: "",
+     face_2_CIN: "",
+     fiche_paiement: "",
+     etat_compte: "",
+     groupe_classe: {
+       _id: "",
+       nom_classe_fr: "",
+       nom_classe_ar: "",
+       departement: "",
+       niveau_classe: {
+         _id: "",
+         name_niveau_ar: "",
+         name_niveau_fr: "",
+         abreviation: "",
+         sections: [], // Initialize as an empty array since it expects an array of Section objects
+       },
+       matieres: [], // Initialize as an empty array
+     },
+     state: "",
+     dependence: "",
+     code_postale: "",
+     adress_ar: "",
+     adress_fr: "",
+     num_phone: "",
+     email: "",
+     nom_pere: "",
+     job_pere: "",
+     nom_mere: "",
+     num_phone_tuteur: "",
+     moyen: "",
+     session: "",
+     filiere: "",
+     niveau_scolaire: "",
+     annee_scolaire: "",
+     type_inscription: "",
+     Face1CINFileBase64String: "",
+     Face1CINFileExtension: "",
+     Face2CINFileBase64String: "",
+     Face2CINFileExtension: "",
+     FichePaiementFileBase64String: "",
+     FichePaiementFileExtension: "",
+     files: [
+       { name_ar: "", name_fr: "", file: "", base64String: "", extension: "" },
+     ],
+     photo_profil: "",
+     PhotoProfilFileExtension: "",
+     PhotoProfilFileBase64String: "",
+     etat_compte_Ar: "",
+     type_inscription_ar: "",
+     nbre_enfants: "",
+     etablissement_conjoint: "",
+     profesion_Conjoint: "",
+     prenom_conjoint: "",
+     Cycle_Ar: "",
+     ville: "",
+     pays_bac: "",
+     mention: "",
+     situation_militaire: "",
+     tel_parents: "",
+     pays_parents: "",
+     gouvernorat_parents: "",
+     code_postale_parents: "",
+     adresse_parents: "",
+     etat_mere: "",
+     etablissement_mere: "",
+     profession_mere: "",
+     prenom_mere: "",
+     etat_pere: "",
+     prenom_pere: "",
+     pays: "",
+     gouvernorat: "",
+     matricule_number: "",
+     passeport_number: "",
+     cnss_number: "",
+   });
+ 
 
   const [fileInputs, setFileInputs] = useState<{ [key: string]: string[] }>({});
   const [selectedFiles, setselectedFiles] = useState<any>([]);
   const [selectedOption, setSelectedOption] = useState<string>("");
   const [newArray, setNewArray] = useState<any[]>([]);
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       console.log("Fetching student data...");
-  //       const response = await fetch(
-  //         `http://localhost:5000/api/etudiant/get-etudiant/${etudiant._id}`
-  //       );
-  //       const data = await response.json();
-  //       setStudentTypeInscription(data.type_inscription);
-  //       console.log("Student Data:", data);
-
-  //       setFormData(data);
-  //       if (data.date_naissance) {
-  //         setSelectedDate(new Date(data.date_naissance));
-  //       } else {
-  //         setSelectedDate(null);
-  //       }
-  //       if (data.annee_scolaire) {
-  //         setSelectedDateBac(new Date(data.annee_scolaire));
-  //       } else {
-  //         setSelectedDateBac(null);
-  //       }
-  //       if (data.state) {
-  //         setSelectedWilaya(data.state as Wilaya);
-  //       }
-
-  //       if (data.type_inscription) {
-  //         console.log("Type Inscription Data from student:", data.type_inscription);
-  //         setTypeInscriptionData(data.type_inscription);
-  //       }
-
-  //       // Fetch type inscription by student ID
-  //       const result = await getTypeInscriptionByIdStudent({
-  //         studentId: etudiant._id,
-  //       }).unwrap();
-  //       console.log("Fetched Type Inscription Data:", result);
-  //       if (result?.type_inscription) setTypeInscriptionData(result.type_inscription);
-
-  //       if (!data.PhotoProfilFileBase64String && data.photo_profil) {
-  //         console.log("Fetching photo profile from server...");
-  //         const fetchImageData = async () => {
-  //           try {
-  //             const response = await fetch(
-  //               `http://localhost:5000/files/etudiantFiles/PhotoProfil/${data.photo_profil}`
-  //             );
-  //             if (!response.ok) throw new Error("Network response was not ok");
-
-  //             const blob = await response.blob();
-  //             const reader = new FileReader();
-  //             reader.onloadend = () => {
-  //               const base64String = reader.result as string;
-  //               const base64Data = base64String.split(",")[1];
-  //               const extension = data.photo_profil.split(".").pop();
-  //               console.log("Decoded image data:", base64Data, "with extension:", extension);
-  //               setFormData((prev) => ({
-  //                 ...prev,
-  //                 PhotoProfilFileBase64String: base64Data,
-  //                 PhotoProfilFileExtension: extension,
-  //               }));
-  //             };
-  //             reader.readAsDataURL(blob);
-  //           } catch (error) {
-  //             console.error("Error fetching image data:", error);
-  //           }
-  //         };
-  //         fetchImageData();
-  //       }
-
-  //       if (!data.Face1CINFileBase64String && data.face_1_CIN) {
-  //         console.log("Fetching photo cin 1 from server...");
-  //         const fetchImageData = async () => {
-  //           try {
-  //             const response = await fetch(
-  //               `http://localhost:5000/files/etudiantFiles/Face1CIN/${data.face_1_CIN}`
-  //             );
-  //             if (!response.ok) throw new Error("Network response was not ok");
-
-  //             const blob = await response.blob();
-  //             const reader = new FileReader();
-  //             reader.onloadend = () => {
-  //               const base64String = reader.result as string;
-  //               const base64Data = base64String.split(",")[1];
-  //               const extension = data.face_1_CIN.split(".").pop();
-  //               //console.log("Decoded image data:", base64Data, "with extension:", extension);
-  //               setFormData((prev) => ({
-  //                 ...prev,
-  //                 Face1CINFileBase64String: base64Data,
-  //                 Face1CINFileExtension: extension,
-  //               }));
-  //             };
-  //             reader.readAsDataURL(blob);
-  //           } catch (error) {
-  //             console.error("Error fetching image data:", error);
-  //           }
-  //         };
-  //         fetchImageData();
-  //       }
-  //       if (!data.Face2CINFileBase64String && data.face_2_CIN) {
-  //         console.log("Fetching photo cin 2 from server...");
-  //         const fetchImageData = async () => {
-  //           try {
-  //             const response = await fetch(
-  //               `http://localhost:5000/files/etudiantFiles/Face2CIN/${data.face_2_CIN}`
-  //             );
-  //             if (!response.ok) throw new Error("Network response was not ok");
-
-  //             const blob = await response.blob();
-  //             const reader = new FileReader();
-  //             reader.onloadend = () => {
-  //               const base64String = reader.result as string;
-  //               const base64Data = base64String.split(",")[1];
-  //               const extension = data.face_2_CIN.split(".").pop();
-  //               //console.log("Decoded image data:", base64Data, "with extension:", extension);
-  //               setFormData((prev) => ({
-  //                 ...prev,
-  //                 Face2CINFileBase64String: base64Data,
-  //                 Face2CINFileExtension: extension,
-  //               }));
-  //             };
-  //             reader.readAsDataURL(blob);
-  //           } catch (error) {
-  //             console.error("Error fetching image data:", error);
-  //           }
-  //         };
-  //         fetchImageData();
-  //       }
-  //       if (!data.FichePaiementFileBase64String && data.fiche_paiement) {
-  //         console.log("Fetching photo fiche paiement from server...");
-  //         const fetchImageData = async () => {
-  //           try {
-  //             const response = await fetch(
-  //               `http://localhost:5000/files/etudiantFiles/FichePaiement/${data.fiche_paiement}`
-  //             );
-  //             if (!response.ok) throw new Error("Network response was not ok");
-
-  //             const blob = await response.blob();
-  //             const reader = new FileReader();
-  //             reader.onloadend = () => {
-  //               const base64String = reader.result as string;
-  //               const base64Data = base64String.split(",")[1];
-  //               const extension = data.fiche_paiement.split(".").pop();
-  //               //console.log("Decoded image data:", base64Data, "with extension:", extension);
-  //               setFormData((prev) => ({
-  //                 ...prev,
-  //                 FichePaiementFileBase64String: base64Data,
-  //                 FichePaiementFileExtension: extension,
-  //               }));
-  //             };
-  //             reader.readAsDataURL(blob);
-  //           } catch (error) {
-  //             console.error("Error fetching image data:", error);
-  //           }
-  //         };
-  //         fetchImageData();
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching data:", error);
-  //     }
-  //   };
-
-  //   fetchData();
-  // }, [etudiant._id, getTypeInscriptionByIdStudent]);
+ 
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -1001,13 +721,13 @@ const EditProfilEtudiant = () => {
       files_type_inscription: formattedFiles,
     });
 
-    setFormData((prevData) => ({
-      ...prevData,
-      type_inscription: {
-        ...inscription,
-        files_type_inscription: formattedFiles,
-      },
-    }));
+    // setFormData((prevData) => ({
+    //   ...prevData,
+    //   type_inscription: {
+    //     ...inscription,
+    //     files_type_inscription: formattedFiles,
+    //   },
+    // }));
   };
 
   const handleFileTypeInscriptionUpload = (event: any, index: any) => {
@@ -1119,10 +839,7 @@ const EditProfilEtudiant = () => {
     if (name === "etat_compte") {
       setFormData((prev) => ({
         ...prev,
-        etat_compte: {
-          ...prev.etat_compte,
-          _id: value,
-        },
+        etat_compte: "",
       }));
     } else if (name === "groupe_classe") {
       const selectedGroupeClasse = groupe_classe.find(
@@ -1539,15 +1256,12 @@ const EditProfilEtudiant = () => {
                           </Col>
                         </Row>
                         <Row
-                          style={{
-                            direction: "rtl",
-                            textAlign: "right",
-                          }}
+                         
                         >
                           <Col lg={3}>
-                            <div className="mb-3">
+                            <div className="mb-3"    >
                               <Form.Label htmlFor="etat_civil">
-                                الحالة المدنية
+                                Etat civil
                               </Form.Label>
                               <select
                                 className="form-select text-muted"
@@ -1557,19 +1271,18 @@ const EditProfilEtudiant = () => {
                                 value={formData?.etat_civil || ""} // Reflect the selected value from formData
                                 onChange={handleSelectChange}
                               >
-                                <option value="">الحالة</option>
-                                <option value="متزوج">متزوج</option>
-                                <option value="أعزب">أعزب</option>
-                                <option value="مطلق">مطلق</option>
-                                <option value="أرمل">أرمل</option>
+                                <option value="">etat-civil</option>
+                                <option value="Marie">Marié(e)</option>
+                                <option value="Celibataire">Celibataire</option>
+                               
                               </select>
                             </div>
                           </Col>
 
                           <Col lg={3}>
-                            <div className="mb-3">
+                            <div className="mb-3"  >
                               <label htmlFor="sexe" className="form-label">
-                                الجنس
+                                Genre
                               </label>
                               <select
                                 className="form-select text-muted"
@@ -1579,9 +1292,9 @@ const EditProfilEtudiant = () => {
                                 value={formData?.sexe || ""} // Reflect the selected value from formData
                                 onChange={handleSelectChange}
                               >
-                                <option value="">الجنس</option>
-                                <option value="ذكر">ذكر</option>
-                                <option value="أنثى">أنثى</option>
+                                <option value="">Genre</option>
+                                <option value="Masculin">Masculin</option>
+                                <option value="Feminin">Feminin</option>
                               </select>
                             </div>
                           </Col>
@@ -1964,27 +1677,18 @@ const EditProfilEtudiant = () => {
                               <Col lg={3}>
                                 <div
                                   className="mb-3"
-                                  style={{
-                                    direction: "rtl",
-                                    textAlign: "right",
-                                  }}
                                 >
                                   <Form.Label
-                                    htmlFor="num_phone_tuteur"
-                                    style={{
-                                      direction: "rtl",
-                                      textAlign: "right",
-                                    }}
+                                    htmlFor="tel_parents"
                                   >
-                                    رقم هاتف الولي
+                                    Telephone
                                   </Form.Label>
                                   <Form.Control
                                     type="text"
-                                    id="num_phone_tuteur"
+                                    id="tel_parents"
                                     placeholder=""
-                                    dir="rtl"
                                     onChange={onChange}
-                                    value={formData.num_phone_tuteur}
+                                    value={formData.tel_parents}
                                   />
                                 </div>
                               </Col>
@@ -1992,28 +1696,20 @@ const EditProfilEtudiant = () => {
                               <Col lg={3}>
                                 <div
                                   className="mb-3"
-                                  style={{
-                                    direction: "rtl",
-                                    textAlign: "right",
-                                  }}
+                                 
                                 >
                                   <Form.Label
-                                    htmlFor="nom_mere"
-                                    style={{
-                                      direction: "rtl",
-                                      textAlign: "right",
-                                    }}
+                                    htmlFor="prenom_pere"
                                   >
-                                    إسم الأم و لقبها
+                                   Prenom pere
                                   </Form.Label>
                                   <Form.Control
                                     type="text"
-                                    id="nom_mere"
+                                    id="prenom_pere"
                                     placeholder=""
-                                    dir="rtl"
-                                    // required
+                                  
                                     onChange={onChange}
-                                    value={formData.nom_mere}
+                                    value={formData.prenom_pere}
                                   />
                                 </div>
                               </Col>
@@ -2021,56 +1717,92 @@ const EditProfilEtudiant = () => {
                               <Col lg={3}>
                                 <div
                                   className="mb-3"
-                                  style={{
-                                    direction: "rtl",
-                                    textAlign: "right",
-                                  }}
-                                >
-                                  <Form.Label
-                                    htmlFor="job_pere"
-                                    style={{
-                                      direction: "rtl",
-                                      textAlign: "right",
-                                    }}
-                                  >
-                                    مهنة الأب
-                                  </Form.Label>
-                                  <Form.Control
-                                    type="text"
-                                    id="job_pere"
-                                    placeholder=""
-                                    dir="rtl"
-                                    onChange={onChange}
-                                    value={formData.job_pere}
-                                  />
-                                </div>
-                              </Col>
-                              <Col lg={3}>
-                                <div
-                                  className="mb-3"
-                                  style={{
-                                    direction: "rtl",
-                                    textAlign: "right",
-                                  }}
+                                 
                                 >
                                   <Form.Label
                                     htmlFor="nom_pere"
-                                    style={{
-                                      direction: "rtl",
-                                      textAlign: "right",
-                                    }}
                                   >
-                                    إسم الأب و لقبه
+                                       Nom pere
                                   </Form.Label>
                                   <Form.Control
                                     type="text"
                                     id="nom_pere"
                                     placeholder=""
-                                    dir="rtl"
-                                    // required
                                     onChange={onChange}
                                     value={formData.nom_pere}
                                   />
+                                </div>
+                              </Col>
+                              <Col lg={3}>
+                                <div
+                                  className="mb-3"
+                                  
+                                >
+                                  <Form.Label
+                                    htmlFor="job_pere"
+                                    
+                                  >
+                                  Profession pere
+                                  </Form.Label>
+                                  <Form.Control
+                                    type="text"
+                                    id="job_pere"
+                                    placeholder=""
+                                    onChange={onChange}
+                                    value={formData.job_pere}
+                                  />
+                                </div>
+                              </Col>
+                            </Row>
+                            <Row>
+                            <Col lg={3}>
+                                <div className="mb-3" >
+                                  <Form.Label  htmlFor="prenom_mere">
+                                  Prenom mere
+                                  </Form.Label>
+                                  <Form.Control type="text" id="prenom_mere" placeholder="" onChange={onChange} value={formData.prenom_mere} />
+                                </div>
+                              </Col>
+                              <Col lg={3}>
+                                <div className="mb-3" >
+                                  <Form.Label  htmlFor="nom_mere">
+                                  Nom mere
+                                  </Form.Label>
+                                  <Form.Control type="text" id="nom_mere" placeholder="" onChange={onChange} value={formData.nom_mere} />
+                                </div>
+                              </Col>
+                              <Col lg={3}>
+                                <div className="mb-3" >
+                                  <Form.Label  htmlFor="profession_mere">
+                                  Profession mere
+                                  </Form.Label>
+                                  <Form.Control type="text" id="profession_mere" placeholder="" onChange={onChange} value={formData.profession_mere} />
+                                </div>
+                              </Col>
+                              <Col lg={3}>
+                                <div className="mb-3" >
+                                  <Form.Label  htmlFor="etablissement_mere">
+                                  Etablissement mere       
+                                   </Form.Label>
+                                  <Form.Control type="text" id="etablissement_mere" placeholder="" onChange={onChange} value={formData.etablissement_mere} />
+                                </div>
+                              </Col>
+                            </Row>
+                            <Row>
+                            <Col lg={3}>
+                                <div className="mb-3" >
+                                  <Form.Label  htmlFor="etat_pere">
+                                  Etat pere       
+                                   </Form.Label>
+                                  <Form.Control type="text" id="etat_pere" placeholder="" onChange={onChange} value={formData.etat_pere} />
+                                </div>
+                              </Col>
+                              <Col lg={3}>
+                                <div className="mb-3" >
+                                  <Form.Label  htmlFor="etat_mere">
+                                  Etat mere       
+                                   </Form.Label>
+                                  <Form.Control type="text" id="etat_mere" placeholder="" onChange={onChange} value={formData.etat_mere} />
                                 </div>
                               </Col>
                             </Row>
@@ -2100,13 +1832,13 @@ const EditProfilEtudiant = () => {
                               <Col lg={3}>
                                 <div className="mb-3">
                                   <Form.Label htmlFor="annee_scolaire">
-                                    السنة الدراسية
+                                     Année de baccalauréat
                                   </Form.Label>
                                   <Flatpickr
                                     value={selectedDateBac!}
                                     onChange={handleDateChangeBac}
                                     className="form-control flatpickr-input"
-                                    placeholder="اختر التاريخ"
+                                    placeholder=""
                                     options={{
                                       dateFormat: "d M, Y",
                                     }}
@@ -2120,7 +1852,7 @@ const EditProfilEtudiant = () => {
                                     htmlFor="filiere"
                                     className="form-label"
                                   >
-                                    الشعبة
+                                    Filière
                                   </label>
                                   <select
                                     className="form-select text-muted"
@@ -2131,22 +1863,22 @@ const EditProfilEtudiant = () => {
                                   >
                                     <option value="">إختر الشعبة</option>
                                     <option value="آداب ">
-                                      Lettres / آداب
+                                      Lettres
                                     </option>
                                     <option value="رياضيات">
-                                      Mathématiques /رياضيات
+                                    Mathematiques 
                                     </option>
                                     <option value="علوم تجريبية">
-                                      Sciences Exprimentales / علوم تجريبية
+                                    Sciences experimentales 
                                     </option>
                                     <option value="اقتصاد وتصرف">
-                                      Economie et Gestion / اقتصاد وتصرف
+                                      Economie et Gestion
                                     </option>
                                     <option value="تقنية">
-                                      Technique /تقنية
+                                    Technique 
                                     </option>
                                     <option value="علوم إعلامية">
-                                      Sciences Informatiques / علوم إعلامية
+                                      Sciences Informatiques
                                     </option>
                                     <option value="أخرى">Autres /أخرى</option>
                                   </select>
@@ -2344,7 +2076,7 @@ const EditProfilEtudiant = () => {
                                     className="form-select text-muted"
                                     name="etat_compte"
                                     id="etat_compte"
-                                    value={formData?.etat_compte?._id || ""}
+                                    value={formData?.etat_compte! || ""}
                                     onChange={handleChange}
                                   >
                                     <option value="">

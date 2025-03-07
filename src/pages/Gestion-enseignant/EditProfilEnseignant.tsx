@@ -1320,7 +1320,7 @@ const EditProfilEnseignant = () => {
                               </Card.Header>
                               <Card.Body>
                                 <Row>
-                                  <Col lg={3}>
+                                  {/* <Col lg={3}>
                                     <div className="mb-3">
                                       <Form.Label htmlFor="matricule">
                                         Matricule
@@ -1347,17 +1347,14 @@ const EditProfilEnseignant = () => {
                                         value={formData.mat_cnrps}
                                       />
                                     </div>
-                                  </Col>
+                                  </Col> */}
                                   <Col lg={3}>
                                     <div
                                       className="mb-3"
-                                      style={{
-                                        direction: "rtl",
-                                        textAlign: "right",
-                                      }}
+                                      
                                     >
                                       <Form.Label htmlFor="date_affectation">
-                                        تاريخ الإنتداب
+                                        تاريخ الإنتداب / Date d'affectation
                                       </Form.Label>
                                       <Flatpickr
                                         value={selectedDateAffectation!}
@@ -1375,13 +1372,10 @@ const EditProfilEnseignant = () => {
                                   <Col lg={3}>
                                     <div
                                       className="mb-3"
-                                      style={{
-                                        direction: "rtl",
-                                        textAlign: "right",
-                                      }}
+                                     
                                     >
                                       <Form.Label htmlFor="grade">
-                                        الرتبة أو الصنف للأستاذ
+                                      الرتبة/ Grade
                                       </Form.Label>
                                       <select
                                         className="form-select text-muted"
@@ -1392,7 +1386,7 @@ const EditProfilEnseignant = () => {
                                         onChange={handleChange}
                                       >
                                         <option value="">
-                                          Sélectionner Classe
+                                          Sélectionner grade
                                         </option>
                                         {grade.map((grade) => (
                                           <option
@@ -1441,12 +1435,9 @@ const EditProfilEnseignant = () => {
                                   <Col lg={3}>
                                     <div
                                       className="mb-3"
-                                      style={{
-                                        direction: "rtl",
-                                        textAlign: "right",
-                                      }}
+                                     
                                     >
-                                      <Form.Label htmlFor="poste"></Form.Label>
+                                      <Form.Label htmlFor="poste"> الوظيفة/ Poste</Form.Label>
                                       <select
                                         className="form-select text-muted"
                                         name="poste"
