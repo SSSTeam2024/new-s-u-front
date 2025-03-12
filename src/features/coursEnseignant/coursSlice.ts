@@ -38,9 +38,32 @@ export const courSlice = createApi({
         },
         invalidatesTags: ["CoursEnseignant"],
       }),
+      deleteCours: builder.mutation<void, string>({
+        query: (_id) => ({
+          url: `delete-cour`,
+          method: "DELETE",
+          body: { _id },
+        }),
+        invalidatesTags: ["CoursEnseignant"],
+      }),
+      updateCoursEnseignant: builder.mutation<
+        void,
+        { id: string; data: CoursEnseignant }
+      >({
+        query: ({ id, data }) => ({
+          url: `edit-cours/${id}`,
+          method: "PUT",
+          body: data,
+        }),
+        invalidatesTags: ["CoursEnseignant"],
+      }),
     };
   },
 });
 
-export const { useAddCoursEnseignantMutation, useFetchCoursEnseignantsQuery } =
-  courSlice;
+export const {
+  useAddCoursEnseignantMutation,
+  useFetchCoursEnseignantsQuery,
+  useDeleteCoursMutation,
+  useUpdateCoursEnseignantMutation,
+} = courSlice;

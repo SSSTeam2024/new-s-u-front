@@ -6,13 +6,14 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import {
   useAddAbsenceEtudiantMutation,
+  useDeleteAbsenceMutation,
   useFetchAbsenceEtudiantsQuery,
 } from "features/absenceEtudiant/absenceSlice";
 
 const AbsenceEtudiant = () => {
   //! add this line just to push it in github !!
   const { data = [] } = useFetchAbsenceEtudiantsQuery();
-
+  console.log(data);
   //   const [deleteAbsence] = useDeleteAbsenceMutation();
 
   const [showObservation, setShowObservation] = useState<boolean>(false);
@@ -36,15 +37,6 @@ const AbsenceEtudiant = () => {
       timer: 2500,
     });
   };
-
-  const swalWithBootstrapButtons = Swal.mixin({
-    customClass: {
-      confirmButton: "btn btn-success",
-      cancelButton: "btn btn-danger",
-    },
-    buttonsStyling: false,
-  });
-
   //   const AlertDelete = async (_id: any) => {
   //     swalWithBootstrapButtons
   //       .fire({
@@ -114,6 +106,43 @@ const AbsenceEtudiant = () => {
   //       .then(() => notifySuccess());
   //   };
 
+  const [deleteAbsence] = useDeleteAbsenceMutation();
+  const swalWithBootstrapButtons = Swal.mixin({
+    customClass: {
+      confirmButton: "btn btn-success",
+      cancelButton: "btn btn-danger",
+    },
+    buttonsStyling: false,
+  });
+  const AlertDelete = async (_id: string) => {
+    swalWithBootstrapButtons
+      .fire({
+        title: "Êtes-vous sûr?",
+        text: "Vous ne pourrez pas revenir en arrière!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Oui, supprimez-le!",
+        cancelButtonText: "Non, annuler!",
+        reverseButtons: true,
+      })
+      .then((result) => {
+        if (result.isConfirmed) {
+          deleteAbsence(_id);
+          swalWithBootstrapButtons.fire(
+            "Supprimé!",
+            "Absence Etudiant a été supprimé.",
+            "success"
+          );
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+          swalWithBootstrapButtons.fire(
+            "Annulé",
+            "Classe est en sécurité :)",
+            "error"
+          );
+        }
+      });
+  };
+
   const columns = [
     {
       name: <span className="font-weight-bold fs-13">Classe</span>,
@@ -122,17 +151,22 @@ const AbsenceEtudiant = () => {
     },
     {
       name: <span className="font-weight-bold fs-13">Date</span>,
-      selector: (row: any) => row.date,
+      selector: (row: any) => row?.date!,
       sortable: true,
     },
     {
-      name: <span className="font-weight-bold fs-13">Heure</span>,
-      selector: (row: any) => row.heure,
+      name: <span className="font-weight-bold fs-13">Heure Début</span>,
+      selector: (row: any) => row?.seance?.heure_debut!,
+      sortable: true,
+    },
+    {
+      name: <span className="font-weight-bold fs-13">Heure Fin</span>,
+      selector: (row: any) => row?.seance?.heure_fin!,
       sortable: true,
     },
     {
       name: <span className="font-weight-bold fs-13">Matière</span>,
-      selector: (row: any) => row?.matiere?.matiere!,
+      selector: (row: any) => row?.seance?.matiere?.matiere!,
       sortable: true,
     },
     {
@@ -145,24 +179,30 @@ const AbsenceEtudiant = () => {
       sortable: true,
     },
     {
-      name: <span className="font-weight-bold fs-13">Actions</span>,
+      name: <span className="font-weight-bold fs-13">Etudiants Absents</span>,
+      selector: (row: any) =>
+        row.etudiants.filter((e: any) => e?.typeAbsent! === "A").length,
       sortable: true,
+    },
+    {
+      name: <span className="font-weight-bold fs-13">Actions</span>,
+      sortable: false,
       cell: (row: any) => {
         return (
           <ul className="hstack gap-2 list-unstyled mb-0">
-            {/* <li>
+            <li>
               <Link
-                to="#"
+                to="/application-enseignant/visualiser-absence-etudiant"
                 className="badge badge-soft-info edit-item-btn"
                 onClick={() => setShowObservation(!showObservation)}
-                state={row}
+                state={{ absenceDetails: row }}
               >
                 <i
                   className="ri-eye-line"
                   style={{
                     transition: "transform 0.3s ease-in-out",
                     cursor: "pointer",
-                    fontSize: "1.2em",
+                    fontSize: "1.5em",
                   }}
                   onMouseEnter={(e) =>
                     (e.currentTarget.style.transform = "scale(1.3)")
@@ -172,19 +212,20 @@ const AbsenceEtudiant = () => {
                   }
                 ></i>
               </Link>
-            </li> */}
-            {/* <li>
+            </li>
+
+            <li>
               <Link
-                to="/modifier-absence"
+                to="/application-enseignant/modifier-absence-etudiant"
                 className="badge badge-soft-success edit-item-btn"
-                state={row}
+                state={{ absenceDetails: row }}
               >
                 <i
                   className="ri-edit-2-line"
                   style={{
                     transition: "transform 0.3s ease-in-out",
                     cursor: "pointer",
-                    fontSize: "1.2em",
+                    fontSize: "1.5em",
                   }}
                   onMouseEnter={(e) =>
                     (e.currentTarget.style.transform = "scale(1.3)")
@@ -194,15 +235,16 @@ const AbsenceEtudiant = () => {
                   }
                 ></i>
               </Link>
-            </li> */}
-            {/* <li>
+            </li>
+
+            <li>
               <Link to="#" className="badge badge-soft-danger remove-item-btn">
                 <i
                   className="ri-delete-bin-2-line"
                   style={{
                     transition: "transform 0.3s ease-in-out",
                     cursor: "pointer",
-                    fontSize: "1.2em",
+                    fontSize: "1.5em",
                   }}
                   onMouseEnter={(e) =>
                     (e.currentTarget.style.transform = "scale(1.3)")
@@ -213,7 +255,7 @@ const AbsenceEtudiant = () => {
                   onClick={() => AlertDelete(row._id)}
                 ></i>
               </Link>
-            </li> */}
+            </li>
           </ul>
         );
       },

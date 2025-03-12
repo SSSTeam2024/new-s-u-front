@@ -221,6 +221,11 @@ import FicheEtudiant from "pages/Accounts/AccountEtudiant/FicheEtudiant";
 import FicheEtudiantAr from "pages/Accounts/AccountEtudiant/FicheEtudiantAr";
 import FicheEnseignant from "pages/Accounts/AccountEnseignant/FicheEnseignant";
 import FicheEnseignantAr from "pages/Accounts/AccountEnseignant/FicheEnseignantAr";
+import EditClasse from "pages/Departements/GestionClasses/EditClasse";
+import ViewAbsence from "pages/ApplicationEnseignant/AbsenceEtudiant/ViewAbsence";
+import EditAbsence from "pages/ApplicationEnseignant/AbsenceEtudiant/EditAbsence";
+import ViewCours from "pages/ApplicationEnseignant/Cours/ViewCours";
+import EditCours from "pages/ApplicationEnseignant/Cours/EditCours";
 const authProtectedRoutes = [
   { path: "/dashboard", component: <Dashboard /> },
   // view parcours
@@ -343,6 +348,15 @@ const authProtectedRoutes = [
     path: "/application-enseignant/ajouter-absence",
     component: <AjouterAbsence />,
   },
+
+  {
+    path: "/application-enseignant/visualiser-absence-etudiant",
+    component: <ViewAbsence />,
+  },
+  {
+    path: "/application-enseignant/modifier-absence-etudiant",
+    component: <EditAbsence />,
+  },
   {
     path: "/application-enseignant/lister-cours",
     component: <Cours />,
@@ -351,7 +365,14 @@ const authProtectedRoutes = [
     path: "/application-enseignant/ajouter-cours",
     component: <AjouterCours />,
   },
-
+  {
+    path: "/application-enseignant/visualiser-support-cours",
+    component: <ViewCours />,
+  },
+  {
+    path: "/application-enseignant/modifier-support-cours",
+    component: <EditCours />,
+  },
   //gestion enseignant
   {
     path: "/gestion-enseignant/ajouter-enseignant",
@@ -727,6 +748,10 @@ const authProtectedRoutes = [
   {
     path: "/departement/gestion-classes/ajouter-classe",
     component: <AddClasse />,
+  },
+  {
+    path: "/departement/gestion-departements/classes/edit-classe",
+    component: <EditClasse />,
   },
   {
     path: "/departement/gestion-classes/affecter-matiere",

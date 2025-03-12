@@ -28,13 +28,6 @@ export const absenceSlice = createApi({
         },
         providesTags: ["AbsenceEtudiant"],
       }),
-      //   fetchExamenById: builder.query<AbsenceEtudiant, number | void>({
-      //     query: (_id) => ({
-      //       url: `get-examen/${_id}`,
-      //       method: "GET",
-      //     }),
-      //     providesTags: ["AbsenceEtudiant"],
-      //   }),
       addAbsenceEtudiant: builder.mutation<void, AbsenceEtudiant>({
         query(payload) {
           return {
@@ -45,44 +38,29 @@ export const absenceSlice = createApi({
         },
         invalidatesTags: ["AbsenceEtudiant"],
       }),
-      //   ModifierExamenEpreuve: builder.mutation<void, AbsenceEtudiant>({
-      //     query(payload) {
-      //       return {
-      //         url: "/EpeditreuveData",
-      //         method: "POST",
-      //         body: payload,
-      //       };
-      //     },
-      //     invalidatesTags: ["AbsenceEtudiant"],
-      //   }),
-      //   updateExamen: builder.mutation<void, AbsenceEtudiant>({
-      //     query: ({ _id, ...rest }) => ({
-      //       url: `/update-examen/${_id}`,
-      //       method: "PUT",
-      //       body: rest,
-      //     }),
-      //     invalidatesTags: ["AbsenceEtudiant"],
-      //   }),
-      //   deleteExamen: builder.mutation<void, string>({
-      //     query: (_id) => ({
-      //       url: `delete-examen/${_id}`,
-      //       method: "DELETE",
-      //     }),
-      //     invalidatesTags: ["AbsenceEtudiant"],
-      //   }),
-      //   getExamenByRegime: builder.mutation<void, AbsenceEtudiant>({
-      //     query(payload) {
-      //         return{
-      //             url: `get-examen-by-regime-semestre`,
-      //             method: "POST",
-      //             body: payload
-      //         }
-      //     },
-      //     invalidatesTags: ["AbsenceEtudiant"],
-      //   }),
+
+      deleteAbsence: builder.mutation<void, string>({
+        query: (_id) => ({
+          url: `delete-absence-etudiant/${_id}`,
+          method: "DELETE",
+        }),
+        invalidatesTags: ["AbsenceEtudiant"],
+      }),
+      updateAbsence: builder.mutation<void, AbsenceEtudiant>({
+        query: ({ _id, ...rest }) => ({
+          url: `/update-absence-etudiant/${_id}`,
+          method: "PUT",
+          body: rest,
+        }),
+        invalidatesTags: ["AbsenceEtudiant"],
+      }),
     };
   },
 });
 
-export const { useAddAbsenceEtudiantMutation, useFetchAbsenceEtudiantsQuery } =
-  absenceSlice;
+export const {
+  useAddAbsenceEtudiantMutation,
+  useFetchAbsenceEtudiantsQuery,
+  useDeleteAbsenceMutation,
+  useUpdateAbsenceMutation,
+} = absenceSlice;
