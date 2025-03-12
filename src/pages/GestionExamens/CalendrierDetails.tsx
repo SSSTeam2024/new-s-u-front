@@ -1,6 +1,6 @@
 import { useFetchClassesQuery } from "features/classe/classe";
 import { useFetchEnseignantsQuery } from "features/enseignant/enseignantSlice";
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useRef } from "react";
 import {
   Button,
   Card,
@@ -22,12 +22,15 @@ import {
   View,
   Text,
   PDFDownloadLink,
+  Font,
 } from "@react-pdf/renderer";
 import { useFetchVaribaleGlobaleQuery } from "features/variableGlobale/variableGlobaleSlice";
 import { useModifierExamenEpreuveMutation } from "features/examens/examenSlice";
 import { useFetchEtudiantsQuery } from "features/etudiant/etudiantSlice";
 import QRCode from "qrcode";
 import CryptoJS from "crypto-js";
+import { useReactToPrint } from "react-to-print";
+import { display } from "html2canvas/dist/types/css/property-descriptors/display";
 
 const predefinedColors = [
   "#E5E4E2", // Platinum
@@ -295,6 +298,13 @@ const stylesCalenderFilter = StyleSheet.create({
     textAlign: "center",
     fontSize: 10,
   },
+  nameCell: {
+    padding: 5,
+    borderRightWidth: 1,
+    borderColor: "#000",
+    textAlign: "left",
+    fontSize: 10,
+  },
   dayCell: {
     width: 150,
     fontWeight: "bold",
@@ -345,19 +355,19 @@ const stylesCalenderFilter = StyleSheet.create({
     fontWeight: "bold",
   },
   nombreCopie: {
-    width: 60,
+    width: 30,
     fontWeight: "bold",
   },
   numEtudiant: {
-    width: 50,
+    width: 30,
     fontWeight: "bold",
   },
   cinEtudiant: {
-    width: 85,
+    width: 70,
     fontWeight: "bold",
   },
   nomEtudiant: {
-    width: 160,
+    width: 250,
     fontWeight: "bold",
   },
   entreEtudiant: {
@@ -365,7 +375,7 @@ const stylesCalenderFilter = StyleSheet.create({
     fontWeight: "bold",
   },
   nbrePages: {
-    width: 80,
+    width: 70,
     fontWeight: "bold",
   },
   codeZone: {
@@ -379,11 +389,32 @@ const stylesCalenderFilter = StyleSheet.create({
     justifyContent: "center", // Centers vertically
     alignItems: "center", // Centers horizontally
   },
-  emergedTable: {
+  emergedTableV1: {
     borderWidth: 1,
     borderColor: "#000",
     marginTop: 20,
+    marginBottom: 100,
   },
+  emergedTableV2: {
+    borderWidth: 1,
+    borderColor: "#000",
+    marginTop: 20,
+    marginBottom: 20,
+  },
+  emergedTableV3: {
+    borderWidth: 1,
+    borderColor: "#000",
+    marginTop: 20,
+    marginBottom: 4,
+  },
+
+  emergedTableV4: {
+    borderWidth: 1,
+    borderColor: "#000",
+    marginTop: 20,
+    marginBottom: 50,
+  },
+
   surTable: {
     borderWidth: 1,
     borderColor: "#000",
@@ -457,6 +488,82 @@ const stylesCalenderFilter = StyleSheet.create({
   },
 });
 
+const stylesEnveloppe = StyleSheet.create({
+  page: {
+    padding: 20,
+  },
+  examDetails: {
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 15, // Ensures space below the header
+    padding: 10, // Adds some space around the text
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    borderBottom: "1 solid black",
+    paddingBottom: 10,
+  },
+  headerRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+  },
+  headerColumn: {
+    textAlign: "center",
+  },
+  headerText: {
+    fontSize: 10,
+    textAlign: "center",
+    fontWeight: "bold",
+    fontFamily: "Amiri",
+  },
+  headerLeft: {
+    width: "33%",
+    textAlign: "left",
+  },
+  headerRight: {
+    width: "33%",
+    textAlign: "right",
+    direction: "rtl",
+  },
+  headerCenter: {
+    width: "34%",
+    alignItems: "center",
+  },
+  logo: {
+    width: 50,
+    height: 50,
+  },
+  title: {
+    fontSize: 12,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginBottom: 5,
+  },
+  footer: {
+    textAlign: "right",
+    marginTop: 20,
+  },
+  rightAlign: {
+    fontSize: 10,
+    fontWeight: "bold",
+  },
+  section: {
+    marginTop: 20,
+  },
+  sectionTitle: {
+    fontSize: 12,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  sectionContent: {
+    fontSize: 11,
+  },
+});
+
 interface Props {
   title: string;
   filteredDays: {
@@ -500,6 +607,9 @@ const CalendrierDetails: React.FC = () => {
   const [selectedEpreuve, setSelectedEpreuve] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [hashedCode, setHashedCode] = useState<string>("");
+
+  const contentRef = useRef<HTMLDivElement>(null);
+  const reactToPrintFn = useReactToPrint({ contentRef });
 
   const tog_ViewModal = (ep?: any) => {
     setSelectedEpreuve(ep || null);
@@ -684,24 +794,6 @@ const CalendrierDetails: React.FC = () => {
     );
   };
 
-  // const filteredExamsForTeacher = days
-  //   .filter(({ epreuve }) =>
-  //     epreuve.some((exam: any) =>
-  //       exam.group_surveillants.some(
-  //         (teacher: any) => teacher._id === selectedTeacher
-  //       )
-  //     )
-  //   )
-  //   .map(({ date, day, epreuve }) => ({
-  //     date,
-  //     day,
-  //     epreuve: epreuve.filter((exam: any) =>
-  //       exam.group_surveillants.some(
-  //         (teacher: any) => teacher._id === selectedTeacher
-  //       )
-  //     ),
-  //   }));
-
   const filteredExamsForTeacher = days
     .filter(({ epreuve }) =>
       epreuve.some((exam: any) =>
@@ -796,195 +888,6 @@ const CalendrierDetails: React.FC = () => {
 
   const startYear = currentMonth >= 8 ? currentYear : currentYear - 1;
   const endYear = startYear + 1;
-
-  // const CalendarPDF = ({
-  //   title,
-  //   filteredDays,
-  //   filterBy,
-  //   filterValue = "",
-  // }: Props) => {
-  //   const rows = groupByDay(filteredDays);
-
-  //   return (
-  //     <Document>
-  //       <Page orientation="landscape" style={stylesCalenderFilter.page}>
-  //         {/* Header Section */}
-  //         <View
-  //           style={{
-  //             flexDirection: "row",
-  //             justifyContent: "space-between",
-  //             marginBottom: 10,
-  //           }}
-  //         >
-  //           {/* Left Section */}
-  //           <View style={{ flex: 1, flexWrap: "wrap", maxWidth: "30%" }}>
-  //             <Text
-  //               style={{
-  //                 fontSize: 10,
-  //                 fontWeight: "bold",
-  //                 textAlign: "left",
-  //               }}
-  //             >
-  //               {variableGlobales[29]?.universite_fr!}
-  //             </Text>
-  //             <Text
-  //               style={{
-  //                 fontSize: 10,
-  //                 textAlign: "left",
-  //               }}
-  //             >
-  //               {variableGlobales[29]?.etablissement_fr!}
-  //             </Text>
-  //           </View>
-
-  //           {/* Center Section (Title with Subtitle) */}
-  //           <View style={{ flex: 1, alignItems: "center" }}>
-  //             <Text style={{ fontSize: 14, fontWeight: "bold" }}>{title}</Text>
-  //             {filterValue && (
-  //               <Text style={{ fontSize: 12, marginTop: 5 }}>
-  //                 {filterValue}
-  //               </Text>
-  //             )}
-  //           </View>
-
-  //           {/* Right Section */}
-  //           <View style={{ alignItems: "flex-end" }}>
-  //             <Text style={{ fontSize: 10 }}>
-  //               A.U: {startYear}/{endYear}
-  //             </Text>
-  //             <Text style={{ fontSize: 10 }}>
-  //               Semestre: {calendrierState?.semestre!}
-  //             </Text>
-  //             <Text style={{ fontSize: 10 }}>
-  //               Période: {calendrierState?.period!}
-  //             </Text>
-  //           </View>
-  //         </View>
-
-  //         {/* Timetable */}
-  //         <View style={stylesCalenderFilter.timetable}>
-  //           {/* Header Row */}
-  //           <View
-  //             style={[stylesCalenderFilter.row, stylesCalenderFilter.headerRow]}
-  //           >
-  //             {filterBy && filterBy === "jour" ? (
-  //               ""
-  //             ) : (
-  //               <Text
-  //                 style={[
-  //                   stylesCalenderFilter.cell,
-  //                   stylesCalenderFilter.dayCell,
-  //                 ]}
-  //               >
-  //                 Jour
-  //               </Text>
-  //             )}
-  //             {filterBy !== "classe" && (
-  //               <Text
-  //                 style={[
-  //                   stylesCalenderFilter.cell,
-  //                   stylesCalenderFilter.classeCell,
-  //                 ]}
-  //               >
-  //                 Classe
-  //               </Text>
-  //             )}
-  //             {filterBy !== "salle" && (
-  //               <Text
-  //                 style={[
-  //                   stylesCalenderFilter.cell,
-  //                   stylesCalenderFilter.salleCell,
-  //                 ]}
-  //               >
-  //                 Salle
-  //               </Text>
-  //             )}
-  //             <Text
-  //               style={[
-  //                 stylesCalenderFilter.cell,
-  //                 stylesCalenderFilter.matiereCell,
-  //               ]}
-  //             >
-  //               Matière
-  //             </Text>
-  //             <Text
-  //               style={[
-  //                 stylesCalenderFilter.cell,
-  //                 stylesCalenderFilter.timeCell,
-  //               ]}
-  //             >
-  //               Horaire
-  //             </Text>
-  //           </View>
-
-  //           {rows.map((row, idx) => (
-  //             <View key={idx} style={stylesCalenderFilter.row}>
-  //               {/* Render the Day column only if it's the first row for that day */}
-  //               {filterBy !== "jour" && (
-  //                 <Text
-  //                   style={[
-  //                     stylesCalenderFilter.cell,
-  //                     stylesCalenderFilter.dayCell,
-  //                     idx === 0 || row.day !== rows[idx - 1].day
-  //                       ? {}
-  //                       : { display: "none" }, // Hide the cell for subsequent rows with the same day
-  //                   ]}
-  //                 >
-  //                   {idx === 0 || row.day !== rows[idx - 1].day
-  //                     ? `${
-  //                         row.day.charAt(0).toUpperCase() + row.day.slice(1)
-  //                       } - ${row.date}`
-  //                     : ""}
-  //                 </Text>
-  //               )}
-  //               {filterBy !== "classe" && (
-  //                 <Text
-  //                   style={[
-  //                     stylesCalenderFilter.cell,
-  //                     stylesCalenderFilter.classeCell,
-  //                   ]}
-  //                 >
-  //                   {row.classe}
-  //                 </Text>
-  //               )}
-  //               {/* Salle */}
-  //               {filterBy !== "salle" && (
-  //                 <Text
-  //                   style={[
-  //                     stylesCalenderFilter.cell,
-  //                     stylesCalenderFilter.salleCell,
-  //                   ]}
-  //                 >
-  //                   {row.salle}
-  //                 </Text>
-  //               )}
-
-  //               {/* Matière */}
-  //               <Text
-  //                 style={[
-  //                   stylesCalenderFilter.cell,
-  //                   stylesCalenderFilter.matiereCell,
-  //                 ]}
-  //               >
-  //                 {row.matiere}
-  //               </Text>
-
-  //               {/* Horaire */}
-  //               <Text
-  //                 style={[
-  //                   stylesCalenderFilter.cell,
-  //                   stylesCalenderFilter.timeCell,
-  //                 ]}
-  //               >
-  //                 {row.heure_debut} - {row.heure_fin}
-  //               </Text>
-  //             </View>
-  //           ))}
-  //         </View>
-  //       </Page>
-  //     </Document>
-  //   );
-  // };
 
   const CalendarPDF = ({
     title,
@@ -1422,9 +1325,9 @@ const CalendrierDetails: React.FC = () => {
                   >
                     {ep?.matiere?.matiere?.length > 24
                       ? `${ep?.matiere?.matiere?.slice(
-                          0,
-                          24
-                        )}\n${ep?.matiere?.matiere?.slice(24)}`
+                        0,
+                        24
+                      )}\n${ep?.matiere?.matiere?.slice(24)}`
                       : ep?.matiere?.matiere!}
                   </Text>
                   <Text
@@ -1484,273 +1387,1767 @@ const CalendrierDetails: React.FC = () => {
   };
 
   const ListEmergement = ({ epreuve }: { epreuve: any }) => {
-    // const etudiants = AllEtudiants.filter(
-    //   (etudiant) => etudiant?.groupe_classe?._id! === epreuve?.classe?._id!
-    // );
+    const etudiants = AllEtudiants.filter(
+      (etudiant) => etudiant?.groupe_classe?._id! === epreuve?.classe?._id!
+    );
 
-    let etudiants: any = [];
+    etudiants.sort(function (a, b) {
+      if (a.prenom_fr < b.prenom_fr) {
+        return -1;
+      }
+      if (a.prenom_fr > b.prenom_fr) {
+        return 1;
+      }
+      return 0;
+    });
 
-    for (let i = 0; i < 26; i++) {
-      etudiants.push(AllEtudiants[i]);
-    }
+    const chunkArray = (arr: any, chunkSize: number) => {
+      const result: any = [];
+      for (let i = 0; i < arr.length; i += chunkSize) {
+        result.push(arr.slice(i, i + chunkSize));
+      }
+      return result;
+    };
+
+    let etudiants_blocks: any = [];
+
+    etudiants_blocks = chunkArray(etudiants, 25);
+
+    const calculateStudentsSumFromCurrentBlock = (block_index: number) => {
+      let result = 0;
+      for (let i = 0; i < block_index; i++) {
+        result += etudiants_blocks[i].length;
+      }
+      return result;
+    };
 
     return (
       <Document>
-        <Page orientation="portrait" style={{ padding: 30 }}>
-          {/* Header */}
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              marginBottom: 10,
-            }}
-          >
-            {/* Left Section */}
-            <View style={{ flex: 1, flexWrap: "wrap", maxWidth: "30%" }}>
-              <Text
-                style={{
-                  fontSize: 10,
-                  fontWeight: "bold",
-                  textAlign: "left",
-                }}
-              >
-                {lastVariable?.universite_fr!}
-              </Text>
-
-              <Text
-                style={{
-                  fontSize: 10,
-                  textAlign: "left",
-                }}
-              >
-                {lastVariable?.etablissement_fr!}
-              </Text>
-            </View>
-            {/* Center Section */}
-            <View style={{ flex: 1, alignItems: "center", maxWidth: "40%" }}>
-              <Text style={{ fontSize: 14, fontWeight: "bold" }}>
-                Session des {calendrierState.type_examen}{" "}
-                {calendrierState.session}
-              </Text>
-              <Text style={styleGlobalCalendar.secondTitle}>
-                Groupe: {epreuve?.classe?.nom_classe_fr!}
-              </Text>
-              <Text style={styleGlobalCalendar.thirdTitle}>
-                Epreuve de: {epreuve?.matiere?.matiere!}
-              </Text>
-              <Text style={styleGlobalCalendar.fourthTitle}>
-                Le {epreuve?.date!} de {epreuve?.heure_debut!} à{" "}
-                {epreuve?.heure_fin!}
-              </Text>
-            </View>
-            {/* Right Section */}
-            <View style={{ alignItems: "flex-end" }}>
-              <Text style={{ fontSize: 10 }}>
-                A.U: {startYear}/{endYear}
-              </Text>
-              <Text style={{ fontSize: 10 }}>
-                Semestre: {calendrierState?.semestre!}
-              </Text>
-              <Text style={{ fontSize: 10 }}>
-                Période: {calendrierState?.period!}
-              </Text>
-            </View>
-          </View>
-          {/* Table */}
-          {/* Table Header */}
-          <View style={stylesCalenderFilter.emergedTable}>
-            {/* Header */}
-            <View
-              style={[stylesCalenderFilter.row, stylesCalenderFilter.headerRow]}
-            >
-              <Text
-                style={[
-                  stylesCalenderFilter.cell,
-                  stylesCalenderFilter.numEtudiant,
-                ]}
-              >
-                N°
-              </Text>
-              <Text
-                style={[
-                  stylesCalenderFilter.cell,
-                  stylesCalenderFilter.cinEtudiant,
-                ]}
-              >
-                C.I.N
-              </Text>
-              <Text
-                style={[
-                  stylesCalenderFilter.cell,
-                  stylesCalenderFilter.nomEtudiant,
-                ]}
-              >
-                Nom et Prénom
-              </Text>
-              <Text
-                style={[
-                  stylesCalenderFilter.cell,
-                  stylesCalenderFilter.entreEtudiant,
-                ]}
-              >
-                Entré
-              </Text>
-              <Text
-                style={[
-                  stylesCalenderFilter.cell,
-                  stylesCalenderFilter.entreEtudiant,
-                ]}
-              >
-                Sortie
-              </Text>
-              <Text
-                style={[
-                  stylesCalenderFilter.cell,
-                  stylesCalenderFilter.nbrePages,
-                ]}
-              >
-                # Copie(s)
-              </Text>
-            </View>
-            {/* Body */}
-            {etudiants.map((etudiant: any, index: number) => {
-              if (index !== 0 && index !== 25 && (index + 1) % 25 === 0) {
-                return (
-                  <>
+        {etudiants_blocks.map((block: any, block_index: any) => {
+          if (block.length <= 20) {
+            return (
+              <Page orientation="portrait" style={{ padding: 30 }}>
+                {/* Header */}
+                {block_index === 0 ? (
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    {/* Left Section */}
                     <View
-                      style={[stylesCalenderFilter.row, { marginBottom: 100 }]}
-                      key={index}
+                      style={{ flex: 1, flexWrap: "wrap", maxWidth: "30%" }}
                     >
                       <Text
-                        style={[
-                          stylesCalenderFilter.cell,
-                          stylesCalenderFilter.numEtudiant,
-                        ]}
+                        style={{
+                          fontSize: 10,
+                          fontWeight: "bold",
+                          textAlign: "left",
+                        }}
                       >
-                        {index + 1}
+                        {lastVariable?.universite_fr!}
                       </Text>
-                      <Text
-                        style={[
-                          stylesCalenderFilter.cell,
-                          stylesCalenderFilter.cinEtudiant,
-                        ]}
-                      >
-                        {etudiant?.num_CIN!}
-                      </Text>
-                      <Text
-                        style={[
-                          stylesCalenderFilter.cell,
-                          stylesCalenderFilter.nomEtudiant,
-                        ]}
-                      >
-                        {etudiant?.nom_fr!} {etudiant?.prenom_fr!}
-                      </Text>
-                      <Text
-                        style={[
-                          stylesCalenderFilter.cell,
-                          stylesCalenderFilter.entreEtudiant,
-                        ]}
-                      ></Text>
-                      <Text
-                        style={[
-                          stylesCalenderFilter.cell,
-                          stylesCalenderFilter.entreEtudiant,
-                        ]}
-                      ></Text>
-                      <Text
-                        style={[
-                          stylesCalenderFilter.cell,
-                          stylesCalenderFilter.nbrePages,
-                        ]}
-                      ></Text>
-                    </View>
-                  </>
-                );
-              } else {
-                return (
-                  <>
-                    <View style={stylesCalenderFilter.row} key={index}>
-                      <Text
-                        style={[
-                          stylesCalenderFilter.cell,
-                          stylesCalenderFilter.numEtudiant,
-                        ]}
-                      >
-                        {index + 1}
-                      </Text>
-                      <Text
-                        style={[
-                          stylesCalenderFilter.cell,
-                          stylesCalenderFilter.cinEtudiant,
-                        ]}
-                      >
-                        {etudiant?.num_CIN!}
-                      </Text>
-                      <Text
-                        style={[
-                          stylesCalenderFilter.cell,
-                          stylesCalenderFilter.nomEtudiant,
-                        ]}
-                      >
-                        {etudiant?.nom_fr!} {etudiant?.prenom_fr!}
-                      </Text>
-                      <Text
-                        style={[
-                          stylesCalenderFilter.cell,
-                          stylesCalenderFilter.entreEtudiant,
-                        ]}
-                      ></Text>
-                      <Text
-                        style={[
-                          stylesCalenderFilter.cell,
-                          stylesCalenderFilter.entreEtudiant,
-                        ]}
-                      ></Text>
-                      <Text
-                        style={[
-                          stylesCalenderFilter.cell,
-                          stylesCalenderFilter.nbrePages,
-                        ]}
-                      ></Text>
-                    </View>
-                  </>
-                );
-              }
-            })}
-          </View>
-          {/* Footer */}
-          <View
-            style={{
-              // marginTop: etudiants.length % 25 === 0 ? 0 : 30,
-              paddingLeft: 30,
-              paddingRight: 30,
-            }}
-          >
-            {/* Table */}
-            <View style={{ borderWidth: 1, borderColor: "#000" }}>
-              {/* Body */}
-              <View style={stylesCalenderFilter.row}>
-                {epreuve.group_surveillants.map((sur: any, index: any) => (
-                  <View style={stylesCalenderFilter.cellFooter} key={index}>
-                    <Text>{`${sur.nom_fr} ${sur.prenom_fr}`}</Text>
-                  </View>
-                ))}
-              </View>
-            </View>
 
-            {/* Page Number */}
-            <View
-              style={{
-                alignItems: "flex-end",
-                marginTop: 10,
-                padding: 10,
-              }}
-              render={({ pageNumber }) => (
-                <Text style={{ fontSize: 10 }}>Page {pageNumber}</Text>
-              )}
-            />
-          </View>
-        </Page>
+                      <Text
+                        style={{
+                          fontSize: 10,
+                          textAlign: "left",
+                        }}
+                      >
+                        {lastVariable?.etablissement_fr!}
+                      </Text>
+                    </View>
+                    {/* Center Section */}
+                    <View
+                      style={{ flex: 1, alignItems: "center", maxWidth: "40%" }}
+                    >
+                      <Text style={{ fontSize: 14, fontWeight: "bold" }}>
+                        Session des {calendrierState.type_examen}{" "}
+                        {calendrierState.session}
+                      </Text>
+                      <Text style={styleGlobalCalendar.secondTitle}>
+                        Groupe: {epreuve?.classe?.nom_classe_fr!}
+                      </Text>
+                      <Text style={styleGlobalCalendar.thirdTitle}>
+                        Epreuve de: {epreuve?.matiere?.matiere!}
+                      </Text>
+                      <Text style={styleGlobalCalendar.fourthTitle}>
+                        Le {epreuve?.date!} de {epreuve?.heure_debut!} à{" "}
+                        {epreuve?.heure_fin!}
+                      </Text>
+                    </View>
+                    {/* Right Section */}
+                    <View style={{ alignItems: "flex-end" }}>
+                      <Text style={{ fontSize: 10 }}>
+                        A.U: {startYear}/{endYear}
+                      </Text>
+                      <Text style={{ fontSize: 10 }}>
+                        Semestre: {calendrierState?.semestre!}
+                      </Text>
+                      <Text style={{ fontSize: 10 }}>
+                        Période: {calendrierState?.period!}
+                      </Text>
+                    </View>
+                  </View>
+                ) : (
+                  <></>
+                )}
+
+                {/* Table */}
+                {/* Table Header */}
+                <View style={stylesCalenderFilter.emergedTableV1}>
+                  {block_index === 0 && (
+                    <>
+                      <View
+                        style={[
+                          stylesCalenderFilter.row,
+                          stylesCalenderFilter.headerRow,
+                        ]}
+                      >
+                        <Text
+                          style={[
+                            stylesCalenderFilter.cell,
+                            stylesCalenderFilter.numEtudiant,
+                          ]}
+                        >
+                          N°
+                        </Text>
+                        <Text
+                          style={[
+                            stylesCalenderFilter.cell,
+                            stylesCalenderFilter.cinEtudiant,
+                          ]}
+                        >
+                          C.I.N
+                        </Text>
+                        <Text
+                          style={[
+                            stylesCalenderFilter.cell,
+                            stylesCalenderFilter.nomEtudiant,
+                          ]}
+                        >
+                          Nom et Prénom
+                        </Text>
+                        <Text
+                          style={[
+                            stylesCalenderFilter.cell,
+                            stylesCalenderFilter.entreEtudiant,
+                          ]}
+                        >
+                          Entré
+                        </Text>
+                        <Text
+                          style={[
+                            stylesCalenderFilter.cell,
+                            stylesCalenderFilter.entreEtudiant,
+                          ]}
+                        >
+                          Sortie
+                        </Text>
+                        <Text
+                          style={[
+                            stylesCalenderFilter.cell,
+                            stylesCalenderFilter.nbrePages,
+                          ]}
+                        >
+                          # Copie(s)
+                        </Text>
+                      </View>
+                      {block.map((etudiant: any, index: number) => {
+                        return (
+                          <>
+                            <View style={stylesCalenderFilter.row} key={index}>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.numEtudiant,
+                                ]}
+                              >
+                                {index + 1}
+                              </Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.cinEtudiant,
+                                ]}
+                              >
+                                {etudiant?.num_CIN!}
+                              </Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.nameCell,
+                                  stylesCalenderFilter.nomEtudiant,
+                                ]}
+                              >
+                                {etudiant?.nom_fr!} {etudiant?.prenom_fr!}
+                              </Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.entreEtudiant,
+                                ]}
+                              ></Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.entreEtudiant,
+                                ]}
+                              ></Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.nbrePages,
+                                ]}
+                              ></Text>
+                            </View>
+                          </>
+                        );
+                      })}
+                    </>
+                  )}
+                  {block_index > 0 && (
+                    <>
+                      {block.map((etudiant: any, index: number) => {
+                        return (
+                          <>
+                            <View style={stylesCalenderFilter.row} key={index}>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.numEtudiant,
+                                ]}
+                              >
+                                {calculateStudentsSumFromCurrentBlock(
+                                  block_index
+                                ) +
+                                  index +
+                                  1}
+                              </Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.cinEtudiant,
+                                ]}
+                              >
+                                {etudiant?.num_CIN!}
+                              </Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.nameCell,
+                                  stylesCalenderFilter.nomEtudiant,
+                                ]}
+                              >
+                                {etudiant?.nom_fr!} {etudiant?.prenom_fr!}
+                              </Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.entreEtudiant,
+                                ]}
+                              ></Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.entreEtudiant,
+                                ]}
+                              ></Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.nbrePages,
+                                ]}
+                              ></Text>
+                            </View>
+                          </>
+                        );
+                      })}
+                    </>
+                  )}
+                </View>
+                {/* Footer */}
+                {block_index === etudiants_blocks.length - 1 ? (
+                  <View
+                    style={{
+                      // marginTop: etudiants.length % 25 === 0 ? 0 : 30,
+                      paddingLeft: 30,
+                      paddingRight: 30,
+                    }}
+                  >
+                    {/* Table */}
+                    <View style={{ borderWidth: 1, borderColor: "#000" }}>
+                      {/* Body */}
+                      <View style={stylesCalenderFilter.row}>
+                        {epreuve.group_surveillants.map(
+                          (sur: any, index: any) => (
+                            <View
+                              style={stylesCalenderFilter.cellFooter}
+                              key={index}
+                            >
+                              <Text>{`${sur.nom_fr} ${sur.prenom_fr}`}</Text>
+                            </View>
+                          )
+                        )}
+                      </View>
+                    </View>
+                  </View>
+                ) : (
+                  <></>
+                )}
+
+                <Text
+                  style={{
+                    position: "absolute",
+                    right: 0,
+                    bottom: 0,
+                    fontSize: "12px",
+                    padding: "10px",
+                  }}
+                  render={({ pageNumber, totalPages }) =>
+                    `${pageNumber}/${totalPages}`
+                  }
+                />
+              </Page>
+            );
+          }
+          if (block.length === 25 && etudiants_blocks.length === 1) {
+            return (
+              <Page orientation="portrait" style={{ padding: 30 }}>
+                {/* Header */}
+                {block_index === 0 ? (
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    {/* Left Section */}
+                    <View
+                      style={{ flex: 1, flexWrap: "wrap", maxWidth: "30%" }}
+                    >
+                      <Text
+                        style={{
+                          fontSize: 10,
+                          fontWeight: "bold",
+                          textAlign: "left",
+                        }}
+                      >
+                        {lastVariable?.universite_fr!}
+                      </Text>
+
+                      <Text
+                        style={{
+                          fontSize: 10,
+                          textAlign: "left",
+                        }}
+                      >
+                        {lastVariable?.etablissement_fr!}
+                      </Text>
+                    </View>
+                    {/* Center Section */}
+                    <View
+                      style={{ flex: 1, alignItems: "center", maxWidth: "40%" }}
+                    >
+                      <Text style={{ fontSize: 14, fontWeight: "bold" }}>
+                        Session des {calendrierState.type_examen}{" "}
+                        {calendrierState.session}
+                      </Text>
+                      <Text style={styleGlobalCalendar.secondTitle}>
+                        Groupe: {epreuve?.classe?.nom_classe_fr!}
+                      </Text>
+                      <Text style={styleGlobalCalendar.thirdTitle}>
+                        Epreuve de: {epreuve?.matiere?.matiere!}
+                      </Text>
+                      <Text style={styleGlobalCalendar.fourthTitle}>
+                        Le {epreuve?.date!} de {epreuve?.heure_debut!} à{" "}
+                        {epreuve?.heure_fin!}
+                      </Text>
+                    </View>
+                    {/* Right Section */}
+                    <View style={{ alignItems: "flex-end" }}>
+                      <Text style={{ fontSize: 10 }}>
+                        A.U: {startYear}/{endYear}
+                      </Text>
+                      <Text style={{ fontSize: 10 }}>
+                        Semestre: {calendrierState?.semestre!}
+                      </Text>
+                      <Text style={{ fontSize: 10 }}>
+                        Période: {calendrierState?.period!}
+                      </Text>
+                    </View>
+                  </View>
+                ) : (
+                  <></>
+                )}
+
+                {/* Table */}
+                {/* Table Header */}
+                <View style={stylesCalenderFilter.emergedTableV3}>
+                  {block_index === 0 && (
+                    <>
+                      <View
+                        style={[
+                          stylesCalenderFilter.row,
+                          stylesCalenderFilter.headerRow,
+                        ]}
+                      >
+                        <Text
+                          style={[
+                            stylesCalenderFilter.cell,
+                            stylesCalenderFilter.numEtudiant,
+                          ]}
+                        >
+                          N°
+                        </Text>
+                        <Text
+                          style={[
+                            stylesCalenderFilter.cell,
+                            stylesCalenderFilter.cinEtudiant,
+                          ]}
+                        >
+                          C.I.N
+                        </Text>
+                        <Text
+                          style={[
+                            stylesCalenderFilter.cell,
+                            stylesCalenderFilter.nomEtudiant,
+                          ]}
+                        >
+                          Nom et Prénom
+                        </Text>
+                        <Text
+                          style={[
+                            stylesCalenderFilter.cell,
+                            stylesCalenderFilter.entreEtudiant,
+                          ]}
+                        >
+                          Entré
+                        </Text>
+                        <Text
+                          style={[
+                            stylesCalenderFilter.cell,
+                            stylesCalenderFilter.entreEtudiant,
+                          ]}
+                        >
+                          Sortie
+                        </Text>
+                        <Text
+                          style={[
+                            stylesCalenderFilter.cell,
+                            stylesCalenderFilter.nbrePages,
+                          ]}
+                        >
+                          # Copie(s)
+                        </Text>
+                      </View>
+                      {block.map((etudiant: any, index: number) => {
+                        return (
+                          <>
+                            <View style={stylesCalenderFilter.row} key={index}>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.numEtudiant,
+                                ]}
+                              >
+                                {index + 1}
+                              </Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.cinEtudiant,
+                                ]}
+                              >
+                                {etudiant?.num_CIN!}
+                              </Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.nameCell,
+                                  stylesCalenderFilter.nomEtudiant,
+                                ]}
+                              >
+                                {etudiant?.nom_fr!} {etudiant?.prenom_fr!}
+                              </Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.entreEtudiant,
+                                ]}
+                              ></Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.entreEtudiant,
+                                ]}
+                              ></Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.nbrePages,
+                                ]}
+                              ></Text>
+                            </View>
+                          </>
+                        );
+                      })}
+                    </>
+                  )}
+                  {block_index > 0 && (
+                    <>
+                      {block.map((etudiant: any, index: number) => {
+                        return (
+                          <>
+                            <View style={stylesCalenderFilter.row} key={index}>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.numEtudiant,
+                                ]}
+                              >
+                                {calculateStudentsSumFromCurrentBlock(
+                                  block_index
+                                ) +
+                                  index +
+                                  1}
+                              </Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.cinEtudiant,
+                                ]}
+                              >
+                                {etudiant?.num_CIN!}
+                              </Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.nameCell,
+                                  stylesCalenderFilter.nomEtudiant,
+                                ]}
+                              >
+                                {etudiant?.nom_fr!} {etudiant?.prenom_fr!}
+                              </Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.entreEtudiant,
+                                ]}
+                              ></Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.entreEtudiant,
+                                ]}
+                              ></Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.nbrePages,
+                                ]}
+                              ></Text>
+                            </View>
+                          </>
+                        );
+                      })}
+                    </>
+                  )}
+                </View>
+                {/* Footer */}
+                {block_index === etudiants_blocks.length - 1 ? (
+                  <View
+                    style={{
+                      // marginTop: etudiants.length % 25 === 0 ? 0 : 30,
+                      paddingLeft: 30,
+                      paddingRight: 30,
+                    }}
+                  >
+                    {/* Table */}
+                    <View style={{ borderWidth: 1, borderColor: "#000" }}>
+                      {/* Body */}
+                      <View style={stylesCalenderFilter.row}>
+                        {epreuve.group_surveillants.map(
+                          (sur: any, index: any) => (
+                            <View
+                              style={stylesCalenderFilter.cellFooter}
+                              key={index}
+                            >
+                              <Text>{`${sur.nom_fr} ${sur.prenom_fr}`}</Text>
+                            </View>
+                          )
+                        )}
+                      </View>
+                    </View>
+                  </View>
+                ) : (
+                  <></>
+                )}
+                <Text
+                  style={{
+                    position: "absolute",
+                    right: 0,
+                    bottom: 0,
+                    fontSize: "12px",
+                    padding: "10px",
+                  }}
+                  render={({ pageNumber, totalPages }) =>
+                    `${pageNumber}/${totalPages}`
+                  }
+                />
+              </Page>
+            );
+          }
+          if (
+            block.length === 25 &&
+            etudiants_blocks.length > 0 &&
+            block_index < etudiants_blocks.length - 1
+          ) {
+            return (
+              <Page orientation="portrait" style={{ padding: 30 }}>
+                {/* Header */}
+                {block_index === 0 ? (
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    {/* Left Section */}
+                    <View
+                      style={{ flex: 1, flexWrap: "wrap", maxWidth: "30%" }}
+                    >
+                      <Text
+                        style={{
+                          fontSize: 10,
+                          fontWeight: "bold",
+                          textAlign: "left",
+                        }}
+                      >
+                        {lastVariable?.universite_fr!}
+                      </Text>
+
+                      <Text
+                        style={{
+                          fontSize: 10,
+                          textAlign: "left",
+                        }}
+                      >
+                        {lastVariable?.etablissement_fr!}
+                      </Text>
+                    </View>
+                    {/* Center Section */}
+                    <View
+                      style={{ flex: 1, alignItems: "center", maxWidth: "40%" }}
+                    >
+                      <Text style={{ fontSize: 14, fontWeight: "bold" }}>
+                        Session des {calendrierState.type_examen}{" "}
+                        {calendrierState.session}
+                      </Text>
+                      <Text style={styleGlobalCalendar.secondTitle}>
+                        Groupe: {epreuve?.classe?.nom_classe_fr!}
+                      </Text>
+                      <Text style={styleGlobalCalendar.thirdTitle}>
+                        Epreuve de: {epreuve?.matiere?.matiere!}
+                      </Text>
+                      <Text style={styleGlobalCalendar.fourthTitle}>
+                        Le {epreuve?.date!} de {epreuve?.heure_debut!} à{" "}
+                        {epreuve?.heure_fin!}
+                      </Text>
+                    </View>
+                    {/* Right Section */}
+                    <View style={{ alignItems: "flex-end" }}>
+                      <Text style={{ fontSize: 10 }}>
+                        A.U: {startYear}/{endYear}
+                      </Text>
+                      <Text style={{ fontSize: 10 }}>
+                        Semestre: {calendrierState?.semestre!}
+                      </Text>
+                      <Text style={{ fontSize: 10 }}>
+                        Période: {calendrierState?.period!}
+                      </Text>
+                    </View>
+                  </View>
+                ) : (
+                  <></>
+                )}
+
+                {/* Table */}
+                {/* Table Header */}
+                <View style={stylesCalenderFilter.emergedTableV4}>
+                  {block_index === 0 && (
+                    <>
+                      <View
+                        style={[
+                          stylesCalenderFilter.row,
+                          stylesCalenderFilter.headerRow,
+                        ]}
+                      >
+                        <Text
+                          style={[
+                            stylesCalenderFilter.cell,
+                            stylesCalenderFilter.numEtudiant,
+                          ]}
+                        >
+                          N°
+                        </Text>
+                        <Text
+                          style={[
+                            stylesCalenderFilter.cell,
+                            stylesCalenderFilter.cinEtudiant,
+                          ]}
+                        >
+                          C.I.N
+                        </Text>
+                        <Text
+                          style={[
+                            stylesCalenderFilter.cell,
+                            stylesCalenderFilter.nomEtudiant,
+                          ]}
+                        >
+                          Nom et Prénom
+                        </Text>
+                        <Text
+                          style={[
+                            stylesCalenderFilter.cell,
+                            stylesCalenderFilter.entreEtudiant,
+                          ]}
+                        >
+                          Entré
+                        </Text>
+                        <Text
+                          style={[
+                            stylesCalenderFilter.cell,
+                            stylesCalenderFilter.entreEtudiant,
+                          ]}
+                        >
+                          Sortie
+                        </Text>
+                        <Text
+                          style={[
+                            stylesCalenderFilter.cell,
+                            stylesCalenderFilter.nbrePages,
+                          ]}
+                        >
+                          # Copie(s)
+                        </Text>
+                      </View>
+                      {block.map((etudiant: any, index: number) => {
+                        return (
+                          <>
+                            <View style={stylesCalenderFilter.row} key={index}>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.numEtudiant,
+                                ]}
+                              >
+                                {index + 1}
+                              </Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.cinEtudiant,
+                                ]}
+                              >
+                                {etudiant?.num_CIN!}
+                              </Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.nameCell,
+                                  stylesCalenderFilter.nomEtudiant,
+                                ]}
+                              >
+                                {etudiant?.nom_fr!} {etudiant?.prenom_fr!}
+                              </Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.entreEtudiant,
+                                ]}
+                              ></Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.entreEtudiant,
+                                ]}
+                              ></Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.nbrePages,
+                                ]}
+                              ></Text>
+                            </View>
+                          </>
+                        );
+                      })}
+                    </>
+                  )}
+                  {block_index > 0 && (
+                    <>
+                      {block.map((etudiant: any, index: number) => {
+                        return (
+                          <>
+                            <View style={stylesCalenderFilter.row} key={index}>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.numEtudiant,
+                                ]}
+                              >
+                                {calculateStudentsSumFromCurrentBlock(
+                                  block_index
+                                ) +
+                                  index +
+                                  1}
+                              </Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.cinEtudiant,
+                                ]}
+                              >
+                                {etudiant?.num_CIN!}
+                              </Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.nameCell,
+                                  stylesCalenderFilter.nomEtudiant,
+                                ]}
+                              >
+                                {etudiant?.nom_fr!} {etudiant?.prenom_fr!}
+                              </Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.entreEtudiant,
+                                ]}
+                              ></Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.entreEtudiant,
+                                ]}
+                              ></Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.nbrePages,
+                                ]}
+                              ></Text>
+                            </View>
+                          </>
+                        );
+                      })}
+                    </>
+                  )}
+                </View>
+                {/* Footer */}
+                {block_index === etudiants_blocks.length - 1 ? (
+                  <View
+                    style={{
+                      // marginTop: etudiants.length % 25 === 0 ? 0 : 30,
+                      paddingLeft: 30,
+                      paddingRight: 30,
+                    }}
+                  >
+                    {/* Table */}
+                    <View style={{ borderWidth: 1, borderColor: "#000" }}>
+                      {/* Body */}
+                      <View style={stylesCalenderFilter.row}>
+                        {epreuve.group_surveillants.map(
+                          (sur: any, index: any) => (
+                            <View
+                              style={stylesCalenderFilter.cellFooter}
+                              key={index}
+                            >
+                              <Text>{`${sur.nom_fr} ${sur.prenom_fr}`}</Text>
+                            </View>
+                          )
+                        )}
+                      </View>
+                    </View>
+                  </View>
+                ) : (
+                  <></>
+                )}
+                <Text
+                  style={{
+                    position: "absolute",
+                    right: 0,
+                    bottom: 0,
+                    fontSize: "12px",
+                    padding: "10px",
+                  }}
+                  render={({ pageNumber, totalPages }) =>
+                    `${pageNumber}/${totalPages}`
+                  }
+                />
+              </Page>
+            );
+          }
+          if (
+            block.length === 25 &&
+            etudiants_blocks.length > 0 &&
+            block_index === etudiants_blocks.length - 1
+          ) {
+            return (
+              <Page orientation="portrait" style={{ padding: 30 }}>
+                {/* Header */}
+                {block_index === 0 ? (
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    {/* Left Section */}
+                    <View
+                      style={{ flex: 1, flexWrap: "wrap", maxWidth: "30%" }}
+                    >
+                      <Text
+                        style={{
+                          fontSize: 10,
+                          fontWeight: "bold",
+                          textAlign: "left",
+                        }}
+                      >
+                        {lastVariable?.universite_fr!}
+                      </Text>
+
+                      <Text
+                        style={{
+                          fontSize: 10,
+                          textAlign: "left",
+                        }}
+                      >
+                        {lastVariable?.etablissement_fr!}
+                      </Text>
+                    </View>
+                    {/* Center Section */}
+                    <View
+                      style={{ flex: 1, alignItems: "center", maxWidth: "40%" }}
+                    >
+                      <Text style={{ fontSize: 14, fontWeight: "bold" }}>
+                        Session des {calendrierState.type_examen}{" "}
+                        {calendrierState.session}
+                      </Text>
+                      <Text style={styleGlobalCalendar.secondTitle}>
+                        Groupe: {epreuve?.classe?.nom_classe_fr!}
+                      </Text>
+                      <Text style={styleGlobalCalendar.thirdTitle}>
+                        Epreuve de: {epreuve?.matiere?.matiere!}
+                      </Text>
+                      <Text style={styleGlobalCalendar.fourthTitle}>
+                        Le {epreuve?.date!} de {epreuve?.heure_debut!} à{" "}
+                        {epreuve?.heure_fin!}
+                      </Text>
+                    </View>
+                    {/* Right Section */}
+                    <View style={{ alignItems: "flex-end" }}>
+                      <Text style={{ fontSize: 10 }}>
+                        A.U: {startYear}/{endYear}
+                      </Text>
+                      <Text style={{ fontSize: 10 }}>
+                        Semestre: {calendrierState?.semestre!}
+                      </Text>
+                      <Text style={{ fontSize: 10 }}>
+                        Période: {calendrierState?.period!}
+                      </Text>
+                    </View>
+                  </View>
+                ) : (
+                  <></>
+                )}
+
+                {/* Table */}
+                {/* Table Header */}
+                <View style={stylesCalenderFilter.emergedTableV2}>
+                  {block_index === 0 && (
+                    <>
+                      <View
+                        style={[
+                          stylesCalenderFilter.row,
+                          stylesCalenderFilter.headerRow,
+                        ]}
+                      >
+                        <Text
+                          style={[
+                            stylesCalenderFilter.cell,
+                            stylesCalenderFilter.numEtudiant,
+                          ]}
+                        >
+                          N°
+                        </Text>
+                        <Text
+                          style={[
+                            stylesCalenderFilter.cell,
+                            stylesCalenderFilter.cinEtudiant,
+                          ]}
+                        >
+                          C.I.N
+                        </Text>
+                        <Text
+                          style={[
+                            stylesCalenderFilter.cell,
+                            stylesCalenderFilter.nomEtudiant,
+                          ]}
+                        >
+                          Nom et Prénom
+                        </Text>
+                        <Text
+                          style={[
+                            stylesCalenderFilter.cell,
+                            stylesCalenderFilter.entreEtudiant,
+                          ]}
+                        >
+                          Entré
+                        </Text>
+                        <Text
+                          style={[
+                            stylesCalenderFilter.cell,
+                            stylesCalenderFilter.entreEtudiant,
+                          ]}
+                        >
+                          Sortie
+                        </Text>
+                        <Text
+                          style={[
+                            stylesCalenderFilter.cell,
+                            stylesCalenderFilter.nbrePages,
+                          ]}
+                        >
+                          # Copie(s)
+                        </Text>
+                      </View>
+                      {block.map((etudiant: any, index: number) => {
+                        return (
+                          <>
+                            <View style={stylesCalenderFilter.row} key={index}>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.numEtudiant,
+                                ]}
+                              >
+                                {index + 1}
+                              </Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.cinEtudiant,
+                                ]}
+                              >
+                                {etudiant?.num_CIN!}
+                              </Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.nameCell,
+                                  stylesCalenderFilter.nomEtudiant,
+                                ]}
+                              >
+                                {etudiant?.nom_fr!} {etudiant?.prenom_fr!}
+                              </Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.entreEtudiant,
+                                ]}
+                              ></Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.entreEtudiant,
+                                ]}
+                              ></Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.nbrePages,
+                                ]}
+                              ></Text>
+                            </View>
+                          </>
+                        );
+                      })}
+                    </>
+                  )}
+                  {block_index > 0 && (
+                    <>
+                      {block.map((etudiant: any, index: number) => {
+                        return (
+                          <>
+                            <View style={stylesCalenderFilter.row} key={index}>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.numEtudiant,
+                                ]}
+                              >
+                                {calculateStudentsSumFromCurrentBlock(
+                                  block_index
+                                ) +
+                                  index +
+                                  1}
+                              </Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.cinEtudiant,
+                                ]}
+                              >
+                                {etudiant?.num_CIN!}
+                              </Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.nameCell,
+                                  stylesCalenderFilter.nomEtudiant,
+                                ]}
+                              >
+                                {etudiant?.nom_fr!} {etudiant?.prenom_fr!}
+                              </Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.entreEtudiant,
+                                ]}
+                              ></Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.entreEtudiant,
+                                ]}
+                              ></Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.nbrePages,
+                                ]}
+                              ></Text>
+                            </View>
+                          </>
+                        );
+                      })}
+                    </>
+                  )}
+                </View>
+                {/* Footer */}
+                {block_index === etudiants_blocks.length - 1 ? (
+                  <View
+                    style={{
+                      // marginTop: etudiants.length % 25 === 0 ? 0 : 30,
+                      paddingLeft: 30,
+                      paddingRight: 30,
+                    }}
+                  >
+                    {/* Table */}
+                    <View style={{ borderWidth: 1, borderColor: "#000" }}>
+                      {/* Body */}
+                      <View style={stylesCalenderFilter.row}>
+                        {epreuve.group_surveillants.map(
+                          (sur: any, index: any) => (
+                            <View
+                              style={stylesCalenderFilter.cellFooter}
+                              key={index}
+                            >
+                              <Text>{`${sur.nom_fr} ${sur.prenom_fr}`}</Text>
+                            </View>
+                          )
+                        )}
+                      </View>
+                    </View>
+                  </View>
+                ) : (
+                  <></>
+                )}
+                <Text
+                  style={{
+                    position: "absolute",
+                    right: 0,
+                    bottom: 0,
+                    fontSize: "12px",
+                    padding: "10px",
+                  }}
+                  render={({ pageNumber, totalPages }) =>
+                    `${pageNumber}/${totalPages}`
+                  }
+                />
+              </Page>
+            );
+          }
+          if (block.length < 25 && etudiants_blocks.length === 1) {
+            return (
+              <Page orientation="portrait" style={{ padding: 30 }}>
+                {/* Header */}
+                {block_index === 0 ? (
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    {/* Left Section */}
+                    <View
+                      style={{ flex: 1, flexWrap: "wrap", maxWidth: "30%" }}
+                    >
+                      <Text
+                        style={{
+                          fontSize: 10,
+                          fontWeight: "bold",
+                          textAlign: "left",
+                        }}
+                      >
+                        {lastVariable?.universite_fr!}
+                      </Text>
+
+                      <Text
+                        style={{
+                          fontSize: 10,
+                          textAlign: "left",
+                        }}
+                      >
+                        {lastVariable?.etablissement_fr!}
+                      </Text>
+                    </View>
+                    {/* Center Section */}
+                    <View
+                      style={{ flex: 1, alignItems: "center", maxWidth: "40%" }}
+                    >
+                      <Text style={{ fontSize: 14, fontWeight: "bold" }}>
+                        Session des {calendrierState.type_examen}{" "}
+                        {calendrierState.session}
+                      </Text>
+                      <Text style={styleGlobalCalendar.secondTitle}>
+                        Groupe: {epreuve?.classe?.nom_classe_fr!}
+                      </Text>
+                      <Text style={styleGlobalCalendar.thirdTitle}>
+                        Epreuve de: {epreuve?.matiere?.matiere!}
+                      </Text>
+                      <Text style={styleGlobalCalendar.fourthTitle}>
+                        Le {epreuve?.date!} de {epreuve?.heure_debut!} à{" "}
+                        {epreuve?.heure_fin!}
+                      </Text>
+                    </View>
+                    {/* Right Section */}
+                    <View style={{ alignItems: "flex-end" }}>
+                      <Text style={{ fontSize: 10 }}>
+                        A.U: {startYear}/{endYear}
+                      </Text>
+                      <Text style={{ fontSize: 10 }}>
+                        Semestre: {calendrierState?.semestre!}
+                      </Text>
+                      <Text style={{ fontSize: 10 }}>
+                        Période: {calendrierState?.period!}
+                      </Text>
+                    </View>
+                  </View>
+                ) : (
+                  <></>
+                )}
+
+                {/* Table */}
+                {/* Table Header */}
+                <View style={stylesCalenderFilter.emergedTableV2}>
+                  {block_index === 0 && (
+                    <>
+                      <View
+                        style={[
+                          stylesCalenderFilter.row,
+                          stylesCalenderFilter.headerRow,
+                        ]}
+                      >
+                        <Text
+                          style={[
+                            stylesCalenderFilter.cell,
+                            stylesCalenderFilter.numEtudiant,
+                          ]}
+                        >
+                          N°
+                        </Text>
+                        <Text
+                          style={[
+                            stylesCalenderFilter.cell,
+                            stylesCalenderFilter.cinEtudiant,
+                          ]}
+                        >
+                          C.I.N
+                        </Text>
+                        <Text
+                          style={[
+                            stylesCalenderFilter.cell,
+                            stylesCalenderFilter.nomEtudiant,
+                          ]}
+                        >
+                          Nom et Prénom
+                        </Text>
+                        <Text
+                          style={[
+                            stylesCalenderFilter.cell,
+                            stylesCalenderFilter.entreEtudiant,
+                          ]}
+                        >
+                          Entré
+                        </Text>
+                        <Text
+                          style={[
+                            stylesCalenderFilter.cell,
+                            stylesCalenderFilter.entreEtudiant,
+                          ]}
+                        >
+                          Sortie
+                        </Text>
+                        <Text
+                          style={[
+                            stylesCalenderFilter.cell,
+                            stylesCalenderFilter.nbrePages,
+                          ]}
+                        >
+                          # Copie(s)
+                        </Text>
+                      </View>
+                      {block.map((etudiant: any, index: number) => {
+                        return (
+                          <>
+                            <View style={stylesCalenderFilter.row} key={index}>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.numEtudiant,
+                                ]}
+                              >
+                                {index + 1}
+                              </Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.cinEtudiant,
+                                ]}
+                              >
+                                {etudiant?.num_CIN!}
+                              </Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.nameCell,
+                                  stylesCalenderFilter.nomEtudiant,
+                                ]}
+                              >
+                                {etudiant?.nom_fr!} {etudiant?.prenom_fr!}
+                              </Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.entreEtudiant,
+                                ]}
+                              ></Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.entreEtudiant,
+                                ]}
+                              ></Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.nbrePages,
+                                ]}
+                              ></Text>
+                            </View>
+                          </>
+                        );
+                      })}
+                    </>
+                  )}
+                  {block_index > 0 && (
+                    <>
+                      {block.map((etudiant: any, index: number) => {
+                        return (
+                          <>
+                            <View style={stylesCalenderFilter.row} key={index}>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.numEtudiant,
+                                ]}
+                              >
+                                {calculateStudentsSumFromCurrentBlock(
+                                  block_index
+                                ) +
+                                  index +
+                                  1}
+                              </Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.cinEtudiant,
+                                ]}
+                              >
+                                {etudiant?.num_CIN!}
+                              </Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.nameCell,
+                                  stylesCalenderFilter.nomEtudiant,
+                                ]}
+                              >
+                                {etudiant?.nom_fr!} {etudiant?.prenom_fr!}
+                              </Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.entreEtudiant,
+                                ]}
+                              ></Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.entreEtudiant,
+                                ]}
+                              ></Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.nbrePages,
+                                ]}
+                              ></Text>
+                            </View>
+                          </>
+                        );
+                      })}
+                    </>
+                  )}
+                </View>
+                {/* Footer */}
+                {block_index === etudiants_blocks.length - 1 ? (
+                  <View
+                    style={{
+                      // marginTop: etudiants.length % 25 === 0 ? 0 : 30,
+                      paddingLeft: 30,
+                      paddingRight: 30,
+                    }}
+                  >
+                    {/* Table */}
+                    <View style={{ borderWidth: 1, borderColor: "#000" }}>
+                      {/* Body */}
+                      <View style={stylesCalenderFilter.row}>
+                        {epreuve.group_surveillants.map(
+                          (sur: any, index: any) => (
+                            <View
+                              style={stylesCalenderFilter.cellFooter}
+                              key={index}
+                            >
+                              <Text>{`${sur.nom_fr} ${sur.prenom_fr}`}</Text>
+                            </View>
+                          )
+                        )}
+                      </View>
+                    </View>
+                  </View>
+                ) : (
+                  <></>
+                )}
+                <Text
+                  style={{
+                    position: "absolute",
+                    right: 0,
+                    bottom: 0,
+                    fontSize: "12px",
+                    padding: "10px",
+                  }}
+                  render={({ pageNumber, totalPages }) =>
+                    `${pageNumber}/${totalPages}`
+                  }
+                />
+              </Page>
+            );
+          }
+          if (
+            block.length < 25 &&
+            etudiants_blocks.length > 0 &&
+            block_index === etudiants_blocks.length - 1
+          ) {
+            return (
+              <Page orientation="portrait" style={{ padding: 30 }}>
+                {/* Header */}
+                {block_index === 0 ? (
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    {/* Left Section */}
+                    <View
+                      style={{ flex: 1, flexWrap: "wrap", maxWidth: "30%" }}
+                    >
+                      <Text
+                        style={{
+                          fontSize: 10,
+                          fontWeight: "bold",
+                          textAlign: "left",
+                        }}
+                      >
+                        {lastVariable?.universite_fr!}
+                      </Text>
+
+                      <Text
+                        style={{
+                          fontSize: 10,
+                          textAlign: "left",
+                        }}
+                      >
+                        {lastVariable?.etablissement_fr!}
+                      </Text>
+                    </View>
+                    {/* Center Section */}
+                    <View
+                      style={{ flex: 1, alignItems: "center", maxWidth: "40%" }}
+                    >
+                      <Text style={{ fontSize: 14, fontWeight: "bold" }}>
+                        Session des {calendrierState.type_examen}{" "}
+                        {calendrierState.session}
+                      </Text>
+                      <Text style={styleGlobalCalendar.secondTitle}>
+                        Groupe: {epreuve?.classe?.nom_classe_fr!}
+                      </Text>
+                      <Text style={styleGlobalCalendar.thirdTitle}>
+                        Epreuve de: {epreuve?.matiere?.matiere!}
+                      </Text>
+                      <Text style={styleGlobalCalendar.fourthTitle}>
+                        Le {epreuve?.date!} de {epreuve?.heure_debut!} à{" "}
+                        {epreuve?.heure_fin!}
+                      </Text>
+                    </View>
+                    {/* Right Section */}
+                    <View style={{ alignItems: "flex-end" }}>
+                      <Text style={{ fontSize: 10 }}>
+                        A.U: {startYear}/{endYear}
+                      </Text>
+                      <Text style={{ fontSize: 10 }}>
+                        Semestre: {calendrierState?.semestre!}
+                      </Text>
+                      <Text style={{ fontSize: 10 }}>
+                        Période: {calendrierState?.period!}
+                      </Text>
+                    </View>
+                  </View>
+                ) : (
+                  <></>
+                )}
+
+                {/* Table */}
+                {/* Table Header */}
+                <View style={stylesCalenderFilter.emergedTableV2}>
+                  {block_index === 0 && (
+                    <>
+                      <View
+                        style={[
+                          stylesCalenderFilter.row,
+                          stylesCalenderFilter.headerRow,
+                        ]}
+                      >
+                        <Text
+                          style={[
+                            stylesCalenderFilter.cell,
+                            stylesCalenderFilter.numEtudiant,
+                          ]}
+                        >
+                          N°
+                        </Text>
+                        <Text
+                          style={[
+                            stylesCalenderFilter.cell,
+                            stylesCalenderFilter.cinEtudiant,
+                          ]}
+                        >
+                          C.I.N
+                        </Text>
+                        <Text
+                          style={[
+                            stylesCalenderFilter.cell,
+                            stylesCalenderFilter.nomEtudiant,
+                          ]}
+                        >
+                          Nom et Prénom
+                        </Text>
+                        <Text
+                          style={[
+                            stylesCalenderFilter.cell,
+                            stylesCalenderFilter.entreEtudiant,
+                          ]}
+                        >
+                          Entré
+                        </Text>
+                        <Text
+                          style={[
+                            stylesCalenderFilter.cell,
+                            stylesCalenderFilter.entreEtudiant,
+                          ]}
+                        >
+                          Sortie
+                        </Text>
+                        <Text
+                          style={[
+                            stylesCalenderFilter.cell,
+                            stylesCalenderFilter.nbrePages,
+                          ]}
+                        >
+                          # Copie(s)
+                        </Text>
+                      </View>
+                      {block.map((etudiant: any, index: number) => {
+                        return (
+                          <>
+                            <View style={stylesCalenderFilter.row} key={index}>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.numEtudiant,
+                                ]}
+                              >
+                                {index + 1}
+                              </Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.cinEtudiant,
+                                ]}
+                              >
+                                {etudiant?.num_CIN!}
+                              </Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.nameCell,
+                                  stylesCalenderFilter.nomEtudiant,
+                                ]}
+                              >
+                                {etudiant?.nom_fr!} {etudiant?.prenom_fr!}
+                              </Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.entreEtudiant,
+                                ]}
+                              ></Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.entreEtudiant,
+                                ]}
+                              ></Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.nbrePages,
+                                ]}
+                              ></Text>
+                            </View>
+                          </>
+                        );
+                      })}
+                    </>
+                  )}
+                  {block_index > 0 && (
+                    <>
+                      {block.map((etudiant: any, index: number) => {
+                        return (
+                          <>
+                            <View style={stylesCalenderFilter.row} key={index}>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.numEtudiant,
+                                ]}
+                              >
+                                {calculateStudentsSumFromCurrentBlock(
+                                  block_index
+                                ) +
+                                  index +
+                                  1}
+                              </Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.cinEtudiant,
+                                ]}
+                              >
+                                {etudiant?.num_CIN!}
+                              </Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.nameCell,
+                                  stylesCalenderFilter.nomEtudiant,
+                                ]}
+                              >
+                                {etudiant?.nom_fr!} {etudiant?.prenom_fr!}
+                              </Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.entreEtudiant,
+                                ]}
+                              ></Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.entreEtudiant,
+                                ]}
+                              ></Text>
+                              <Text
+                                style={[
+                                  stylesCalenderFilter.cell,
+                                  stylesCalenderFilter.nbrePages,
+                                ]}
+                              ></Text>
+                            </View>
+                          </>
+                        );
+                      })}
+                    </>
+                  )}
+                </View>
+                {/* Footer */}
+                {block_index === etudiants_blocks.length - 1 ? (
+                  <View
+                    style={{
+                      // marginTop: etudiants.length % 25 === 0 ? 0 : 30,
+                      paddingLeft: 30,
+                      paddingRight: 30,
+                    }}
+                  >
+                    {/* Table */}
+                    <View style={{ borderWidth: 1, borderColor: "#000" }}>
+                      {/* Body */}
+                      <View style={stylesCalenderFilter.row}>
+                        {epreuve.group_surveillants.map(
+                          (sur: any, index: any) => (
+                            <View
+                              style={stylesCalenderFilter.cellFooter}
+                              key={index}
+                            >
+                              <Text>{`${sur.nom_fr} ${sur.prenom_fr}`}</Text>
+                            </View>
+                          )
+                        )}
+                      </View>
+                    </View>
+                  </View>
+                ) : (
+                  <></>
+                )}
+                <Text
+                  style={{
+                    position: "absolute",
+                    right: 0,
+                    bottom: 0,
+                    fontSize: "12px",
+                    padding: "10px",
+                  }}
+                  render={({ pageNumber, totalPages }) =>
+                    `${pageNumber}/${totalPages}`
+                  }
+                />
+              </Page>
+            );
+          }
+        })}
       </Document>
     );
   };
@@ -1761,29 +3158,8 @@ const CalendrierDetails: React.FC = () => {
       let arr1 = AllEtudiants.filter(
         (etudiant) => etudiant?.groupe_classe?._id! === epreuve?.classe?._id!
       );
-      // const arr = arr1.concat(arr1);
-      // const arr2 = arr.concat(arr);
-      // let arr: any = [];
-      // if (arr1.length % 2 == 0) {
-      //   for (const element of arr1) {
-      //     const index = arr1.indexOf(element);
-      //     if (index % 2 === 0) {
-      //       arr.push([element, arr1[index + 1]]);
-      //     }
-      //   }
-      // } else {
-      //   for (const element of arr1) {
-      //     const index = arr1.indexOf(element);
-      //     if (index % 2 === 0) {
-      //       if (index + 1 !== arr1.length) {
-      //         arr.push([element, arr1[index + 1]]);
-      //       } else if (index + 1 == arr1.length) {
-      //         arr.push([element]);
-      //       }
-      //     }
-      //   }
-      // }
-      console.log(arr1);
+
+      console.log("students", arr1);
       return arr1;
     }, [AllEtudiants, epreuve]);
 
@@ -1799,10 +3175,9 @@ const CalendrierDetails: React.FC = () => {
     }, [startYear, startMonth]);
 
     const generateQRCode = async (etudiant: any) => {
-      const qrData = `${etudiant.nom_fr} ${etudiant.prenom_fr}\n${
-        etudiant.num_CIN
-      }\n${epreuve?.matiere?.matiere!}\n${epreuve?.classe
-        ?.nom_classe_fr!}\nSession: ${monthName} 2025`;
+      const qrData = `${etudiant.nom_fr} ${etudiant.prenom_fr}\n${etudiant.num_CIN
+        }\n${epreuve?.matiere?.matiere!}\n${epreuve?.classe
+          ?.nom_classe_fr!}\nSession: ${monthName} 2025`;
       const hashedData = CryptoJS.SHA256(qrData).toString(CryptoJS.enc.Hex);
       const shortHashedData = hashedData.substring(0, 14);
 
@@ -1837,12 +3212,12 @@ const CalendrierDetails: React.FC = () => {
               flexDirection: "row",
               alignItems: "center",
               justifyContent: "space-between",
-              marginBottom: 10,
+              // marginBottom: 10,
             }}
           >
             {/* Left Section (University) */}
             <View style={{ alignItems: "flex-start", maxWidth: "30%" }}>
-              <Text style={{ fontSize: 8, fontWeight: "heavy" }}>
+              <Text style={{ fontSize: 12, fontWeight: "heavy" }}>
                 {lastVariable?.universite_fr}
               </Text>
               <Image
@@ -1853,20 +3228,31 @@ const CalendrierDetails: React.FC = () => {
 
             {/* Center Section (A.U., Semestre, Période) */}
             <View style={{ alignItems: "center", flex: 1 }}>
-              <Text style={{ fontSize: 14, fontWeight: "bold" }}>
+              {/* <Text style={{ fontSize: 14, fontWeight: "bold" }}>
                 A.U: {startYear}/{endYear}
-              </Text>
+              </Text> */}
               <Text style={{ fontSize: 12 }}>
-                Semestre: {calendrierState?.semestre}
+                Session de {calendrierState?.type_examen!}{" "}
+                {calendrierState?.session!} / {calendrierState?.semestre!}
               </Text>
-              <Text style={{ fontSize: 12 }}>
-                Période: {calendrierState?.period}
+              <Text style={{ fontSize: 11 }}>
+                Matière: {epreuve?.matiere?.matiere!}
+              </Text>
+              <Text style={{ fontSize: 11 }}>
+                Date d'épreuve: {epreuve?.date!} {epreuve?.heure_debut!} -{" "}
+                {epreuve?.heure_fin!}
+              </Text>
+              <Text style={{ fontSize: 11 }}>
+                Salle: {epreuve?.salle?.salle!}
+              </Text>
+              <Text style={{ fontSize: 11 }}>
+                Nombre des étudiants: {etudiants.length}
               </Text>
             </View>
 
             {/* Right Section (Institution) */}
             <View style={{ alignItems: "flex-end", maxWidth: "30%" }}>
-              <Text style={{ fontSize: 8, fontWeight: "heavy" }}>
+              <Text style={{ fontSize: 12, fontWeight: "heavy" }}>
                 {lastVariable?.etablissement_fr}
               </Text>
               <Image
@@ -1885,7 +3271,7 @@ const CalendrierDetails: React.FC = () => {
               if (index % 2 === 0) {
                 return (
                   <>
-                    {index !== 0 && index % 12 === 0 && (
+                    {index !== 0 && index % 10 === 0 && (
                       <View
                         style={{
                           flexDirection: "row",
@@ -1894,7 +3280,7 @@ const CalendrierDetails: React.FC = () => {
                           marginBottom: index,
                         }}
                       >
-                        <div style={{ height: "50px" }}></div>
+                        <div style={{ height: `150px` }}></div>
                       </View>
                     )}
 
@@ -1904,7 +3290,10 @@ const CalendrierDetails: React.FC = () => {
                           style={[
                             stylesCalenderFilter.cellQRCode,
                             stylesCalenderFilter.codeZone,
-                            { flexDirection: "column", alignItems: "center" },
+                            {
+                              flexDirection: "column",
+                              alignItems: "center",
+                            },
                           ]}
                         >
                           <View
@@ -1927,15 +3316,15 @@ const CalendrierDetails: React.FC = () => {
                             stylesCalenderFilter.infoZone,
                           ]}
                         >
-                          {etudiant.nom_fr} {etudiant.prenom_fr}
+                          {etudiant?.nom_fr!} {etudiant?.prenom_fr!}
                           {"\n"}
-                          {etudiant.num_CIN}
-                          {"\n"}
+                          {etudiant?.num_CIN!} -{" "}
                           {epreuve?.classe?.nom_classe_fr!}
                           {"\n"}
                           {epreuve?.matiere?.matiere!}
                           {"\n"}
-                          Session: {monthName} 2025
+                          Session: {calendrierState?.type_examen!} {monthName}{" "}
+                          {startYear}
                         </Text>
                       </View>
                       {etudiants[index + 1] && (
@@ -1944,7 +3333,10 @@ const CalendrierDetails: React.FC = () => {
                             style={[
                               stylesCalenderFilter.cellQRCode,
                               stylesCalenderFilter.codeZone,
-                              { flexDirection: "column", alignItems: "center" },
+                              {
+                                flexDirection: "column",
+                                alignItems: "center",
+                              },
                             ]}
                           >
                             <View
@@ -1970,14 +3362,39 @@ const CalendrierDetails: React.FC = () => {
                             {etudiants[index + 1]?.nom_fr!}{" "}
                             {etudiants[index + 1]?.prenom_fr!}
                             {"\n"}
-                            {etudiants[index + 1]?.num_CIN!}
-                            {"\n"}
+                            {etudiants[index + 1]?.num_CIN!} -{" "}
                             {epreuve?.classe?.nom_classe_fr!}
                             {"\n"}
                             {epreuve?.matiere?.matiere!}
                             {"\n"}
-                            Session: {monthName} 2025
+                            Session: {calendrierState?.type_examen!} {monthName}{" "}
+                            {startYear}
                           </Text>
+                        </View>
+                      )}
+                      {etudiants[index + 1] === undefined && (
+                        <View style={stylesCalenderFilter.block}>
+                          <View
+                            style={[
+                              stylesCalenderFilter.cellQRCode,
+                              stylesCalenderFilter.codeZone,
+                              {
+                                flexDirection: "column",
+                                alignItems: "center",
+                              },
+                            ]}
+                          >
+                            <View>
+                              <View style={{ width: 100, height: 91 }} />
+                            </View>
+                            <Text></Text>
+                          </View>
+                          <Text
+                            style={[
+                              stylesCalenderFilter.cellQRCode,
+                              stylesCalenderFilter.infoZone,
+                            ]}
+                          ></Text>
                         </View>
                       )}
                     </View>
@@ -1987,7 +3404,7 @@ const CalendrierDetails: React.FC = () => {
             })}
           </View>
           {/* Footer */}
-          <View
+          {/* <View
             style={{
               position: "absolute",
               bottom: 10,
@@ -1996,9 +3413,304 @@ const CalendrierDetails: React.FC = () => {
             render={({ pageNumber }) => (
               <Text style={{ fontSize: 10 }}>Page {pageNumber}</Text>
             )}
-          />
+          /> */}
         </Page>
       </Document>
+    );
+  };
+
+  //envoloppe print
+
+  const EnvoloppePDF = ({ epreuve }: { epreuve: any }) => {
+    return (
+      <Row className="justify-content-center" style={{ display: "none" }}>
+        <Col
+          xxl={9}
+        //   ref={componentRef}
+        >
+          <div ref={contentRef}>
+            <Card id="demo">
+              <Col lg={12}>
+                <Card.Body className="p-4">
+                  <div>
+                    <Row className="g-3">
+                      <Col lg={4} className="text-center pt-2">
+                        <h6>
+                          Ministère de l’Enseignement Supérieur et de la
+                          Recherche Scientifique
+                        </h6>
+                        <h6>{lastVariable?.universite_fr!}</h6>
+                        <h6>{lastVariable?.etablissement_fr!}</h6>
+                      </Col>
+                      <Col lg={4} className="text-center">
+                        <img
+                          className="w-25"
+                          src={`${process.env.REACT_APP_API_URL
+                            }/files/variableGlobaleFiles/logoRepubliqueFiles/${lastVariable?.logo_republique!}`}
+                        />
+                      </Col>
+                      <Col lg={4} className="text-center pt-2">
+                        <h6>الجمهورية التونسية</h6>
+                        <h6>وزارة التعليم العالي و البحث العلمي</h6>
+
+                        <h6>{lastVariable?.universite_ar!}</h6>
+                        <h6>{lastVariable?.etablissement_ar!}</h6>
+                      </Col>
+                    </Row>
+                    <Row style={{ marginTop: "50px" }}>
+                      <Col lg={12} className="text-center">
+                        <span>Session de {calendrierState?.type_examen!}{" "}
+                          {calendrierState?.session!} {" "}
+                          {calendrierState?.semestre! === 'S1' ? (<>Semestre 1</>) : (<>Semestre 2</>)}</span>
+                      </Col>
+                    </Row>
+                    <Row style={{ marginTop: "10px", marginBottom: '50px' }}>
+                      <Col lg={12} className="text-center">
+                        <h6>Année Universitaire {startYear} / {endYear}</h6>
+                      </Col>
+                    </Row>
+
+                    <Row style={{ marginBottom: '10px' }}>
+                      <Col lg={4} className="text-sart pt-2 ml-2">
+                        <h6>
+                          Matière:
+                        </h6>
+                      </Col>
+                      <Col lg={4} className="text-center pt-2">
+                        <span> {epreuve?.matiere?.matiere!}</span>
+                      </Col>
+                      <Col lg={4} className="text-end pt-2 mr-2">
+                        <h6> :المادة</h6>
+                      </Col>
+                    </Row>
+
+                    <Row style={{ marginBottom: '10px' }}>
+                      <Col lg={4} className="text-sart pt-2 ml-2">
+                        <h6>
+                          Filière, niveau d’étude et groupe: {/* {epreuve?.classe?.nom_classe_fr!} */}
+                        </h6>
+                      </Col>
+                      <Col lg={4} className=" pt-2">
+                        <div className="hstack gap-5 d-flex justify-content-center">
+                          <span> {epreuve?.classe?.nom_classe_fr!}</span> <span> {epreuve?.classe?.nom_classe_ar!}</span>
+                        </div>
+
+                      </Col>
+                      <Col lg={4} className="text-end pt-2 mr-2">
+                        <h6>:الشعبة، مستوى الدراسة والفريق {/* {epreuve?.classe?.nom_classe_ar!} */}</h6>
+                      </Col>
+                    </Row>
+                    <Row style={{ marginBottom: '10px' }}>
+                      <Col lg={4} className="text-sart pt-2 ml-2">
+                        <h6>
+                          Salle:
+                        </h6>
+                      </Col>
+                      <Col lg={4} className="text-center pt-2">
+                        {epreuve?.salle?.salle!}
+                      </Col>
+                      <Col lg={4} className="text-end pt-2 mr-2">
+                        <h6> :القاعة</h6>
+                      </Col>
+                    </Row>
+
+                    <Row style={{ marginBottom: '10px' }}>
+                      <Col lg={4} className="text-sart pt-2 ml-2">
+                        <h6>
+                          Date déroulement de l'épreuve:
+                        </h6>
+                      </Col>
+                      <Col lg={4} className="text-center pt-2">
+                        {epreuve?.date!}
+                      </Col>
+                      <Col lg={4} className="text-end pt-2 mr-2">
+                        <h6> :تاريخ إجراء الامتحان</h6>
+                      </Col>
+                    </Row>
+
+                    <Row style={{ marginBottom: '10px' }}>
+                      <Col lg={4} className="text-sart pt-2 ml-2">
+                        <h6>
+                          Horaire du déroulement de l’épreuve:
+                        </h6>
+                      </Col>
+                      <Col lg={4} className="text-center pt-2">
+                        {epreuve?.heure_debut!} -{" "} {epreuve?.heure_fin!}
+                      </Col>
+                      <Col lg={4} className="text-end pt-2 mr-2">
+                        <h6> :توقيت إجراء الامتحان</h6>
+                      </Col>
+                    </Row>
+                    <Row style={{ marginBottom: '10px' }}>
+                      <Col lg={4} className="text-sart pt-2 ml-2">
+                        <h6>
+                          Nom, prénom et signature des enseignants:
+                        </h6>
+                      </Col>
+                      <Col lg={4} className="text-center pt-2">
+                        {epreuve.group_responsables.map((enseignant: any) => (
+                          <div key={enseignant._id} className="mr-2">
+                            {enseignant.nom_fr} {enseignant.prenom_fr}
+                          </div>
+                        ))}
+                      </Col>
+                      <Col lg={4} className="text-end pt-2 mr-2">
+                        <h6> :إسم ، لقب و إمضاء الأساتذة</h6>
+                      </Col>
+                    </Row>
+                    <Row style={{ marginBottom: '10px' }}>
+                      <Col lg={4} className="text-sart pt-2 ml-2">
+                        <h6>
+                          Nom, prénom et signature des enseignants surveillants:
+                        </h6>
+                      </Col>
+                      <Col lg={4} className="text-center pt-2">
+                        <div>
+                          {epreuve.group_surveillants.map((enseignant: any, index: number) => {
+                            if (index % 2 === 0) {
+                              return (
+                                <Row key={index} style={{ border: '1px solid #ededed' }}>
+                                  <Col className="pb-5" style={{ borderRight: '1px solid #ededed' }}>
+                                    {enseignant.nom_fr} {enseignant.prenom_fr}
+                                  </Col>
+                                  {epreuve.group_surveillants[index + 1] ? (
+                                    <Col className="pb-5">
+                                      {epreuve.group_surveillants[index + 1].nom_fr}{" "}
+                                      {epreuve.group_surveillants[index + 1].prenom_fr}
+                                    </Col>
+                                  ) : (
+                                    <Col className="pb-5"></Col> // Empty cell for odd numbers
+                                  )}
+                                </Row>
+                              );
+                            }
+                          })}
+                        </div>
+                      </Col>
+
+                      <Col lg={4} className="text-end pt-2 mr-2">
+                        <h6> :إسم ، لقب و إمضاء الأساتذة المراقبين</h6>
+                      </Col>
+                    </Row>
+
+                  </div>
+                </Card.Body>
+              </Col>
+            </Card>
+          </div>
+        </Col>
+      </Row>
+
+      // <Document>
+      //   <Page size="A4" style={stylesEnveloppe.page}>
+      //     {/* Header Section */}
+      //     <View style={stylesEnveloppe.header}>
+      //       <View style={stylesEnveloppe.headerRow}>
+      //         {/* Left Section (French) */}
+      //         <View style={stylesEnveloppe.headerLeft}>
+      //           <Text style={stylesEnveloppe.headerText}>
+      //             Ministère de l’Enseignement Supérieur et de la Recherche
+      //             Scientifique
+      //           </Text>
+      //           <Text style={[stylesEnveloppe.headerText, { marginTop: 5 }]}>
+      //             {lastVariable?.universite_fr}
+      //           </Text>
+      //           <Text style={stylesEnveloppe.headerText}>
+      //             {lastVariable?.etablissement_fr}
+      //           </Text>
+      //         </View>
+
+      //         {/* Center Section (Emblem) */}
+      //         <View style={stylesEnveloppe.headerCenter}>
+      //           <Image
+      //             style={stylesEnveloppe.logo}
+      //             src={`${
+      //               process.env.REACT_APP_API_URL
+      //             }/files/variableGlobaleFiles/logoRepubliqueFiles/${lastVariable?.logo_republique!}`}
+      //           />
+      //         </View>
+
+      //         {/* Right Section (Arabic) */}
+      //         <View style={stylesEnveloppe.headerRight}>
+      //           <Text style={stylesEnveloppe.headerText}>
+      //             الجمهورية التونسية
+      //           </Text>
+      //           <Text style={stylesEnveloppe.headerText}>
+      //             وزارة التعليم العالي و البحث العلمي
+      //           </Text>
+      //           <Text style={[stylesEnveloppe.headerText, { marginTop: 5 }]}>
+      //             {lastVariable?.universite_ar}
+      //           </Text>
+      //           <Text style={stylesEnveloppe.headerText}>
+      //             {lastVariable?.etablissement_ar}
+      //           </Text>
+      //         </View>
+      //       </View>
+      //     </View>
+
+      //     {/* Centered Exam Details */}
+      //     <View style={stylesEnveloppe.examDetails}>
+      //       <Text style={{ fontSize: 12 }}>
+      //         Année Universitaire {startYear} / {endYear}
+      //       </Text>
+      //       <Text style={{ fontSize: 11 }}>
+      //         Session de {calendrierState?.type_examen!}{" "}
+      //         {calendrierState?.session!} / {calendrierState?.semestre!}
+      //       </Text>
+      //     </View>
+
+      //     {/* New Section: Matière */}
+      //     <View style={stylesEnveloppe.section}>
+      //       <Text style={stylesEnveloppe.sectionTitle}>
+      //         Matière : {epreuve?.matiere?.matiere!}
+      //       </Text>
+      //       <Text style={stylesEnveloppe.sectionContent}>
+      //         Filière, niveau d’étude et groupe:{" "}
+      //         {epreuve?.classe?.nom_classe_fr!}
+      //       </Text>
+      //       <Text style={stylesEnveloppe.sectionContent}>
+      //         Salle: {epreuve?.salle?.salle!}
+      //       </Text>
+      //       <Text style={stylesEnveloppe.sectionContent}>
+      //         Date du déroulement de l’épreuve: {epreuve?.date!}
+      //       </Text>
+      //       <Text style={stylesEnveloppe.sectionContent}>
+      //         Horaire du déroulement de l’épreuve: {epreuve?.heure_debut!} -{" "}
+      //         {epreuve?.heure_fin!}
+      //       </Text>
+      //     </View>
+
+      //     {/* New Section: Mâles
+      //     <View style={stylesEnveloppe.section}>
+      //       <Text style={stylesEnveloppe.sectionTitle}>Mâles</Text>
+      //       <Text style={stylesEnveloppe.sectionContent}>
+      //         الشعبة، مستوى الدراسة والفريق: ......
+      //       </Text>
+      //       <Text style={stylesEnveloppe.sectionContent}>القاعة: ......</Text>
+      //       <Text style={stylesEnveloppe.sectionContent}>
+      //         تاريخ إجراء الامتحان: ......
+      //       </Text>
+      //       <Text style={stylesEnveloppe.sectionContent}>
+      //         توقيت إجراء الامتحان: ......
+      //       </Text>
+      //       <Text style={stylesEnveloppe.sectionContent}>
+      //         اسم، لقب واهضاء الأسئلة: ......
+      //       </Text>
+      //     </View> */}
+
+      //     {/* Footer Section */}
+      //     <View style={stylesEnveloppe.footer}>
+      //       <Text style={stylesEnveloppe.rightAlign}>
+      //         Noms, prénoms et signatures des enseignants surveillants
+      //       </Text>
+      //       {epreuve.group_surveillants.map((enseignant: any) => (
+      //         <Text key={enseignant._id} style={stylesEnveloppe.rightAlign}>
+      //           {enseignant.nom_fr} {enseignant.prenom_fr}
+      //         </Text>
+      //       ))}
+      //     </View>
+      //   </Page>
+      // </Document>
     );
   };
 
@@ -2228,10 +3940,9 @@ const CalendrierDetails: React.FC = () => {
                                   <br />
                                   {`${exam.salle?.salle || "Non attribuée"}`}
                                   <br />
-                                  {`${
-                                    exam.classe?.nom_classe_fr ||
+                                  {`${exam.classe?.nom_classe_fr ||
                                     "Non attribuée"
-                                  }`}
+                                    }`}
                                 </li>
                               ))}
                             </ul>
@@ -2373,6 +4084,25 @@ const CalendrierDetails: React.FC = () => {
                                   </PDFDownloadLink>
                                 </button>
                               </li>
+
+                              <li>
+                                <button
+                                  type="button"
+                                  className="btn bg-danger-subtle text-danger generatefile-btn btn-sm"
+                                  onClick={reactToPrintFn}
+                                >
+                                  <i className="ph ph-envelope fs-18"></i>
+                                  {/* <PDFDownloadLink
+                                    document={<EnvoloppePDF epreuve={ep} />}
+                                    fileName={`Enveloppe - ${ep?.classe
+                                      ?.nom_classe_fr!}.pdf`}
+                                    className="text-decoration-none"
+                                  >
+                                    <i className="ph ph-envelope"></i>{" "}
+                                  </PDFDownloadLink> */}
+                                </button>
+                                <EnvoloppePDF epreuve={ep} />
+                              </li>
                             </ul>
                           </td>
                         </tr>
@@ -2384,6 +4114,50 @@ const CalendrierDetails: React.FC = () => {
             </Row>
           )}
         </>
+
+        <Row className="justify-content-center" style={{ display: "none" }}>
+          <Col
+            xxl={9}
+          //   ref={componentRef}
+          >
+            <div ref={contentRef}>
+              <Card id="demo">
+                <Col lg={12}>
+                  <Card.Body className="p-4">
+                    <div>
+                      <Row className="g-3">
+                        <Col lg={12}>
+                          <Card.Header className="border-bottom-dashed p-4 text-end">
+                            <div className="d-flex justify-content-between">
+                              <div>
+                                <h6>جامعة قفصة</h6>
+                                <h6>المعهد العالي للعلوم</h6>
+                                <h6>التطبيقية و التكنلوجيا بقفصة</h6>
+                              </div>
+                              <div>
+                                <h6>الجمهورية التونسية</h6>
+                                <h6>وزارة التعليم العالي</h6>
+                                <h6>و البحث العلمي</h6>
+                              </div>
+                            </div>
+                          </Card.Header>
+                        </Col>
+                      </Row>
+                    </div>
+                  </Card.Body>
+                </Col>
+              </Card>
+              {/* Print button for generating PDF */}
+            </div>
+            <Button
+              onClick={() => reactToPrintFn()}
+              className="mt-4"
+              variant="primary"
+            >
+              Imprimer Pdf
+            </Button>
+          </Col>
+        </Row>
 
         {/* View Modal */}
         <Modal
@@ -2468,16 +4242,16 @@ const CalendrierDetails: React.FC = () => {
               <Col className="d-flex justify-content-center">
                 {(selectedEpreuve?.epreuveStatus === "Done" ||
                   selectedEpreuve?.epreuveStatus === "Faite") && (
-                  <span className="badge text-bg-success">
-                    {selectedEpreuve?.epreuveStatus}
-                  </span>
-                )}
+                    <span className="badge text-bg-success">
+                      {selectedEpreuve?.epreuveStatus}
+                    </span>
+                  )}
                 {(selectedEpreuve?.epreuveStatus === "Non Terminé" ||
                   selectedEpreuve?.epreuveStatus === "") && (
-                  <span className="badge text-bg-warning">
-                    {selectedEpreuve?.epreuveStatus}
-                  </span>
-                )}
+                    <span className="badge text-bg-warning">
+                      {selectedEpreuve?.epreuveStatus}
+                    </span>
+                  )}
               </Col>
             </Row>
           </Modal.Body>

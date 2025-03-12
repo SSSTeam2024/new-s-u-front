@@ -189,10 +189,7 @@ const ListNiveau = () => {
     <React.Fragment>
       <div className="page-content">
         <Container fluid={true}>
-          <Breadcrumb
-            title="Liste des niveaux"
-            pageTitle="Liste des niveaux"
-          />
+          <Breadcrumb title="Liste des niveaux" pageTitle="Liste des niveaux" />
 
           <Row id="sellersList">
             <Col lg={12}>
@@ -324,6 +321,7 @@ const ListNiveau = () => {
                       iscustomPageSize={false}
                       isBordered={false}
                       customPageSize={10}
+                      isPagination={true}
                       className="custom-header-css table align-middle table-nowrap"
                       tableClass="table-centered align-middle table-nowrap mb-0"
                       theadClass="text-muted table-light"

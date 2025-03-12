@@ -299,12 +299,6 @@ const ListClasses = () => {
         filterable: true,
       },
       {
-        Header: "Departement",
-        accessor: (row: any) => row.departement?.name_fr || "",
-        disableFilters: true,
-        filterable: true,
-      },
-      {
         Header: "Niveau",
         accessor: (row: any) => row.niveau_classe?.abreviation || "",
         disableFilters: true,
@@ -313,7 +307,18 @@ const ListClasses = () => {
       {
         Header: "Spécialité",
         accessor: (row: any) =>
-          row.niveau_classe?.sections[0]?.abreviation! || "",
+          row.niveau_classe?.abreviation ||
+          row.sections
+            ?.map((section: any) => section.abreviation)
+            .filter(Boolean)
+            .join(", ") ||
+          "",
+        disableFilters: true,
+        filterable: true,
+      },
+      {
+        Header: "Groupe",
+        accessor: (row: any) => (row.groupe_number ? row.groupe_number : "-"),
         disableFilters: true,
         filterable: true,
       },
@@ -323,6 +328,13 @@ const ListClasses = () => {
         disableFilters: true,
         filterable: true,
       },
+      {
+        Header: "Departement",
+        accessor: (row: any) => row.departement?.name_fr || "",
+        disableFilters: true,
+        filterable: true,
+      },
+
       {
         Header: "Parcours",
         accessor: (row: any) =>
@@ -341,12 +353,7 @@ const ListClasses = () => {
         disableFilters: true,
         filterable: true,
       },
-      {
-        Header: "Groupe",
-        accessor: (row: any) => (row.groupe_number ? row.groupe_number : "-"),
-        disableFilters: true,
-        filterable: true,
-      },
+
       // {
       //   Header: "Matieres",
       //   accessor: (row: any) =>
@@ -433,6 +440,28 @@ const ListClasses = () => {
         accessor: (classe: Classe) => {
           return (
             <ul className="hstack gap-2 list-unstyled mb-0">
+              <li>
+                <Link
+                  to="/departement/gestion-departements/classes/edit-classe"
+                  state={classe}
+                  className="badge bg-primary-subtle text-primary edit-item-btn"
+                >
+                  <i
+                    className="ph ph-pencil-line"
+                    style={{
+                      transition: "transform 0.3s ease-in-out",
+                      cursor: "pointer",
+                      fontSize: "1.5em",
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.transform = "scale(1.2)")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.transform = "scale(1)")
+                    }
+                  ></i>
+                </Link>
+              </li>
               <li>
                 <Link
                   to="#"

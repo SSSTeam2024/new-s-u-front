@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState, useMemo, useCallback, useEffect } from "react";
 import {
   Button,
   Card,
@@ -12,6 +12,7 @@ import Breadcrumb from "Common/BreadCrumb";
 import {
   CoursEnseignant,
   useAddCoursEnseignantMutation,
+  useUpdateCoursEnseignantMutation,
 } from "features/coursEnseignant/coursSlice";
 import {
   useFetchClassesByTeacherMutation,
@@ -19,7 +20,7 @@ import {
 } from "features/classe/classe";
 import Select, { OptionsOrGroups } from "react-select";
 import { useFetchEnseignantsQuery } from "features/enseignant/enseignantSlice";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function convertToBase64(
   file: File
@@ -41,10 +42,11 @@ function convertToBase64(
 
 export { convertToBase64 };
 
-const AjouterCours = () => {
-  document.title = "Ajouter Support | ENIGA";
-
-  const { data: AllClasse = [] } = useFetchClassesQuery();
+const EditCours = () => {
+  document.title = "Modifier Support | ENIGA";
+  const location = useLocation();
+  const coursDetails = location?.state?.coursDetails;
+  console.log("coursDetails edit page", coursDetails);
   const { data: AllEnseignants = [] } = useFetchEnseignantsQuery();
   const [getClassesByTeacherId] = useFetchClassesByTeacherMutation();
 
@@ -55,16 +57,27 @@ const AjouterCours = () => {
   const [optionColumnsTable, setOptionColumnsTable] = useState<any>(null);
   const [selectedColumnValues, setSelectedColumnValues] = useState<any[]>([]);
 
+  useEffect(() => {
+    if (coursDetails) {
+      console.log("Cours Details:", coursDetails); // Debugging
+
+      setCours({
+        classe: coursDetails.classe || [],
+        enseignant: coursDetails.enseignant || "",
+        nom_cours: coursDetails.nom_cours || "",
+        filesData: coursDetails.filesData || [],
+        trimestre: coursDetails.trimestre || "1",
+      });
+
+      setSelectedEnseignant(coursDetails.enseignant || "");
+      setSelectedTrimestre(coursDetails.trimestre || "1");
+      setSelectedColumnValues(coursDetails.classe || []);
+    }
+  }, [coursDetails]);
+
   const handleSelectValueColumnChange = (selectedOption: any) => {
     const values = selectedOption.map((option: any) => option.value);
     setSelectedColumnValues(values);
-  };
-
-  const handleSelectTrimestre = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const value = event.target.value;
-    setSelectedTrimestre(value);
   };
 
   const handleSelectEnseignant = async (
@@ -73,26 +86,30 @@ const AjouterCours = () => {
     const value = event.target.value;
     setSelectedEnseignant(value);
 
+    // Ensure that selectedTrimestre is updated before making the request
     let classesRequestData = {
       teacherId: value,
-      semestre: selectedTrimestre,
+      semestre: selectedTrimestre, // Ensure selectedTrimestre has the correct value
     };
 
-    let classes = await getClassesByTeacherId(classesRequestData).unwrap();
+    try {
+      let classes = await getClassesByTeacherId(classesRequestData).unwrap();
+      console.log("Fetched Classes:", classes);
 
-    console.log("classes", classes);
+      let classOptions = classes.map((classe: any) => ({
+        value: classe?._id!,
+        label: classe?.nom_classe_fr!,
+      }));
 
-    let classOptions = classes.map((classe: any) => ({
-      value: classe?._id!,
-      label: classe?.nom_classe_fr!,
-    }));
-
-    setOptionColumnsTable(classOptions);
+      setOptionColumnsTable(classOptions);
+    } catch (error) {
+      console.error("Error fetching classes:", error);
+    }
   };
 
   const navigate = useNavigate();
 
-  const [newCours] = useAddCoursEnseignantMutation();
+  const [editCours] = useUpdateCoursEnseignantMutation();
 
   function tog_AllAbsences() {
     navigate("/application-enseignant/lister-cours");
@@ -111,16 +128,6 @@ const AjouterCours = () => {
   };
 
   const [cours, setCours] = useState(initialCours);
-
-  // const {
-  //   classe,
-  //   enseignant,
-  //   nom_cours,
-  //   file_cours,
-  //   pdfBase64String,
-  //   pdfExtension,
-  //   trimestre,
-  // } = cours;
 
   const handleFileUploadFile = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -144,20 +151,6 @@ const AjouterCours = () => {
       ...cours,
       filesData: files_data,
     });
-    // return;
-    // const file = (
-    //   document.getElementById("fichier_base64_string") as HTMLFormElement
-    // ).files[0];
-    // if (file) {
-    //   const { base64Data, extension } = await convertToBase64(file);
-    //   const file_avis = base64Data + "." + extension;
-    //   setCours({
-    //     ...cours,
-    //     file_cours: file_avis,
-    //     pdfBase64String: base64Data,
-    //     pdfExtension: extension,
-    //   });
-    // }
   };
 
   const onChangeCours = (
@@ -174,14 +167,18 @@ const AjouterCours = () => {
 
     try {
       const coursData = {
-        ...cours,
         classe: selectedColumnValues,
         enseignant: selectedEnseignant,
         trimestre: selectedTrimestre,
+        nom_cours: cours.nom_cours,
+        filesData: cours.filesData,
       };
-      newCours(coursData);
-      // .then(() => notifySuccess())
-      // .then(() => setAbsence(initialAbsence));
+
+      editCours({
+        id: coursDetails?._id, // Ensure coursDetails is coming from useLocation()
+        data: coursData,
+      });
+
       tog_AllAbsences();
     } catch (error) {
       console.warn("Error", error);
@@ -231,6 +228,7 @@ const AjouterCours = () => {
                       name="enseignant"
                       id="enseignant"
                       onChange={handleSelectEnseignant}
+                      value={selectedEnseignant} // Pre-select the selected enseignant
                     >
                       <option value="">Select</option>
                       {AllEnseignants.map((enseignant) => (
@@ -251,6 +249,7 @@ const AjouterCours = () => {
                       isMulti
                       options={optionColumnsTable}
                       onChange={handleSelectValueColumnChange}
+                      value={selectedColumnValues} // Pre-select the selected classes
                       placeholder="Choisir..."
                     />
                   </Col>
@@ -301,4 +300,4 @@ const AjouterCours = () => {
   );
 };
 
-export default AjouterCours;
+export default EditCours;

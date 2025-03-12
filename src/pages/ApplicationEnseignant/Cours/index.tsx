@@ -5,39 +5,22 @@ import Breadcrumb from "Common/BreadCrumb";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import {
-  useAddAbsenceEtudiantMutation,
-  useFetchAbsenceEtudiantsQuery,
-} from "features/absenceEtudiant/absenceSlice";
-import { useFetchCoursEnseignantsQuery } from "features/coursEnseignant/coursSlice";
+  useDeleteCoursMutation,
+  useFetchCoursEnseignantsQuery,
+} from "features/coursEnseignant/coursSlice";
 
 const Cours = () => {
-  //! add this line just to push it in github !!
   const { data = [] } = useFetchCoursEnseignantsQuery();
+  console.log(data);
+  const [selectedCourse, setSelectedCourse] = useState<any>(null);
+  const [showObservation, setShowObservation] = useState(false);
+  const navigate = useNavigate();
 
-  //   const [deleteAbsence] = useDeleteAbsenceMutation();
+  function tog_AddAbsence() {
+    navigate("/application-enseignant/ajouter-cours");
+  }
 
-  const [showObservation, setShowObservation] = useState<boolean>(false);
-
-  const notifySuccess = () => {
-    Swal.fire({
-      position: "center",
-      icon: "success",
-      title: "Paramètre Absence SMS a été modifié avec succès",
-      showConfirmButton: false,
-      timer: 2500,
-    });
-  };
-
-  const notifyError = (err: any) => {
-    Swal.fire({
-      position: "center",
-      icon: "error",
-      title: `Sothing Wrong, ${err}`,
-      showConfirmButton: false,
-      timer: 2500,
-    });
-  };
-
+  const [deleteCours] = useDeleteCoursMutation();
   const swalWithBootstrapButtons = Swal.mixin({
     customClass: {
       confirmButton: "btn btn-success",
@@ -46,74 +29,34 @@ const Cours = () => {
     buttonsStyling: false,
   });
 
-  //   const AlertDelete = async (_id: any) => {
-  //     swalWithBootstrapButtons
-  //       .fire({
-  //         title: "Etes-vous sûr?",
-  //         text: "Vous ne pouvez pas revenir en arrière?",
-  //         icon: "warning",
-  //         showCancelButton: true,
-  //         confirmButtonText: "Oui, supprime-le !",
-  //         cancelButtonText: "Non, annuler !",
-  //         reverseButtons: true,
-  //       })
-  //       .then((result) => {
-  //         if (result.isConfirmed) {
-  //           deleteAbsence(_id);
-  //           swalWithBootstrapButtons.fire(
-  //             "Supprimé !",
-  //             "L'absence est supprimée.",
-  //             "success"
-  //           );
-  //         } else if (result.dismiss === Swal.DismissReason.cancel) {
-  //           swalWithBootstrapButtons.fire(
-  //             "Annulé",
-  //             "L'absence est en sécurité :)",
-  //             "info"
-  //           );
-  //         }
-  //       });
-  //   };
-
-  const navigate = useNavigate();
-
-  function tog_AddAbsence() {
-    navigate("/application-enseignant/ajouter-cours");
-  }
-
-  //   const [updateAbsenceSmsSetting] = useUpdateSmsSettingByIdMutation();
-  //   const [formData, setFormData] = useState({
-  //     id: "",
-  //     status: "",
-  //   });
-
-  //   useEffect(() => {
-  //     if (AllSmsSettings !== undefined && isLoading === false) {
-  //       const absence_sms_setting = AllSmsSettings?.filter(
-  //         (parametre) => parametre.service_name === "Absences"
-  //       );
-  //       setFormData((prevState) => ({
-  //         ...prevState,
-  //         id: absence_sms_setting[0]?._id!,
-  //         status: absence_sms_setting[0].sms_status,
-  //       }));
-  //     }
-  //   }, [AllSmsSettings, isLoading]);
-
-  //   const onChangeAbsenceSmsSetting = () => {
-  //     let updateData = {
-  //       id: formData.id,
-  //       status: formData.status === "1" ? "0" : "1",
-  //     };
-  //     updateAbsenceSmsSetting(updateData)
-  //       .then(() =>
-  //         setFormData((prevState) => ({
-  //           ...prevState,
-  //           status: formData.status === "1" ? "0" : "1",
-  //         }))
-  //       )
-  //       .then(() => notifySuccess());
-  //   };
+  const AlertDelete = async (_id: string) => {
+    swalWithBootstrapButtons
+      .fire({
+        title: "Êtes-vous sûr?",
+        text: "Vous ne pourrez pas revenir en arrière!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Oui, supprimez-le!",
+        cancelButtonText: "Non, annuler!",
+        reverseButtons: true,
+      })
+      .then((result) => {
+        if (result.isConfirmed) {
+          deleteCours(_id);
+          swalWithBootstrapButtons.fire(
+            "Supprimé!",
+            "Support Cours a été supprimé.",
+            "success"
+          );
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+          swalWithBootstrapButtons.fire(
+            "Annulé",
+            "Support Cours est en sécurité :)",
+            "error"
+          );
+        }
+      });
+  };
 
   const columns = [
     {
@@ -128,16 +71,6 @@ const Cours = () => {
       selector: (row: any) => row.nom_cours,
       sortable: true,
     },
-    // {
-    //   name: <span className="font-weight-bold fs-13">Heure</span>,
-    //   selector: (row: any) => row.heure,
-    //   sortable: true,
-    // },
-    // {
-    //   name: <span className="font-weight-bold fs-13">Matière</span>,
-    //   selector: (row: any) => row?.matiere?.matiere!,
-    //   sortable: true,
-    // },
     {
       name: <span className="font-weight-bold fs-13">Enseignant</span>,
       selector: (row: any) => (
@@ -153,19 +86,18 @@ const Cours = () => {
       cell: (row: any) => {
         return (
           <ul className="hstack gap-2 list-unstyled mb-0">
-            {/* <li>
+            <li>
               <Link
-                to="#"
+                to="/application-enseignant/visualiser-support-cours"
                 className="badge badge-soft-info edit-item-btn"
-                onClick={() => setShowObservation(!showObservation)}
-                state={row}
+                state={{ coursDetails: row }}
               >
                 <i
                   className="ri-eye-line"
                   style={{
                     transition: "transform 0.3s ease-in-out",
                     cursor: "pointer",
-                    fontSize: "1.2em",
+                    fontSize: "1.5em",
                   }}
                   onMouseEnter={(e) =>
                     (e.currentTarget.style.transform = "scale(1.3)")
@@ -175,19 +107,19 @@ const Cours = () => {
                   }
                 ></i>
               </Link>
-            </li> */}
-            {/* <li>
+            </li>
+            <li>
               <Link
-                to="/modifier-absence"
+                to="/application-enseignant/modifier-support-cours"
                 className="badge badge-soft-success edit-item-btn"
-                state={row}
+                state={{ coursDetails: row }}
               >
                 <i
                   className="ri-edit-2-line"
                   style={{
                     transition: "transform 0.3s ease-in-out",
                     cursor: "pointer",
-                    fontSize: "1.2em",
+                    fontSize: "1.5em",
                   }}
                   onMouseEnter={(e) =>
                     (e.currentTarget.style.transform = "scale(1.3)")
@@ -197,15 +129,16 @@ const Cours = () => {
                   }
                 ></i>
               </Link>
-            </li> */}
-            {/* <li>
+            </li>
+
+            <li>
               <Link to="#" className="badge badge-soft-danger remove-item-btn">
                 <i
                   className="ri-delete-bin-2-line"
                   style={{
                     transition: "transform 0.3s ease-in-out",
                     cursor: "pointer",
-                    fontSize: "1.2em",
+                    fontSize: "1.5em",
                   }}
                   onMouseEnter={(e) =>
                     (e.currentTarget.style.transform = "scale(1.3)")
@@ -216,7 +149,7 @@ const Cours = () => {
                   onClick={() => AlertDelete(row._id)}
                 ></i>
               </Link>
-            </li> */}
+            </li>
           </ul>
         );
       },
@@ -229,7 +162,6 @@ const Cours = () => {
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
   };
-
   const getFilteredAbsences = () => {
     let filteredAbsences = data;
 
@@ -258,7 +190,7 @@ const Cours = () => {
     <React.Fragment>
       <div className="page-content">
         <Container fluid>
-          <Breadcrumb title="Cours" pageTitle="Application Enseignant" />
+          <Breadcrumb title="Support" pageTitle="Application Enseignant" />
           <Col lg={12}>
             <Card id="shipmentsList">
               <Card.Header className="border-bottom-dashed">
@@ -269,8 +201,8 @@ const Cours = () => {
                         type="text"
                         className="form-control search"
                         placeholder="Rechercher ..."
-                        value={searchTerm}
-                        onChange={handleSearchChange}
+                        // value={searchTerm}
+                        // onChange={handleSearchChange}
                       />
                       <i className="ri-search-line search-icon"></i>
                     </div>
@@ -300,7 +232,7 @@ const Cours = () => {
                             (e.currentTarget.style.transform = "scale(1)")
                           }
                         ></i>{" "}
-                        <span>Ajouter Cour</span>
+                        <span>Ajouter Support</span>
                       </button>
                     </div>
                   </Col>
@@ -318,100 +250,121 @@ const Cours = () => {
         </Container>
         <Offcanvas
           show={showObservation}
-          onHide={() => setShowObservation(!showObservation)}
+          onHide={() => setShowObservation(false)}
           placement="end"
           style={{ width: "30%" }}
         >
           <Offcanvas.Header closeButton>
-            <Offcanvas.Title>Détails Absence</Offcanvas.Title>
+            <Offcanvas.Title>Détails Cours</Offcanvas.Title>
           </Offcanvas.Header>
           <Offcanvas.Body>
-            <Row className="mb-3">
-              <Col lg={3}>
-                <span className="fw-medium">Classe</span>
-              </Col>
-              <Col lg={9}>
-                <i>{observationLocation?.state?.classe?.nom_classe!} </i>
-              </Col>
-            </Row>
-            <Row className="mb-3">
-              <Col lg={3}>
-                <span className="fw-medium">Matiere</span>
-              </Col>
-              <Col lg={9}>
-                <i>{observationLocation?.state?.matiere!}</i>
-              </Col>
-            </Row>
-            <Row className="mb-3">
-              <Col lg={3}>
-                <span className="fw-medium">Date création</span>
-              </Col>
-              <Col lg={9}>
-                <i>{observationLocation?.state?.date!}</i>
-              </Col>
-            </Row>
-            <Row className="mb-3">
-              <Col lg={3}>
-                <span className="fw-medium">Heure</span>
-              </Col>
-              <Col lg={9}>
-                <i>{observationLocation?.state?.heure!}</i>
-              </Col>
-            </Row>
-            <Row className="mb-3">
-              <Col lg={3}>
-                <span className="fw-medium">Trimèstre</span>
-              </Col>
-              <Col lg={9}>
-                <i>{observationLocation?.state?.trimestre!}</i>
-              </Col>
-            </Row>
-            <Row className="mb-3">
-              <Col lg={3}>
-                <span className="fw-medium">Enseignant</span>
-              </Col>
-              <Col lg={9}>
-                <i>
-                  {observationLocation?.state?.enseignant?.nom_enseignant}{" "}
-                  {observationLocation?.state?.enseignant?.prenom_enseignant}
-                </i>
-              </Col>
-            </Row>
-            <Row>
-              <Col lg={8}>
-                <Row>
-                  <Col lg={5}>
-                    <Form.Label>Elève</Form.Label>
-                  </Col>
+            {selectedCourse ? (
+              <>
+                {/* Classe Information */}
+                <Row className="mb-3">
                   <Col lg={3}>
-                    <Form.Label>Type</Form.Label>
+                    <span className="fw-medium">Classe</span>
+                  </Col>
+                  <Col lg={9}>
+                    <i>{selectedCourse.classe[0]?.nom_classe_fr}</i>
                   </Col>
                 </Row>
 
-                {observationLocation?.state?.eleves!.length > 0 ? (
-                  observationLocation?.state?.eleves!.map((eleve: any) => (
-                    <Row key={eleve.eleve._id}>
-                      <Col lg={5} className="mb-1">
-                        {eleve?.eleve?.prenom!} {eleve?.eleve?.nom!}
+                {/* Course Information */}
+                <Row className="mb-3">
+                  <Col lg={3}>
+                    <span className="fw-medium">Matière</span>
+                  </Col>
+                  <Col lg={9}>
+                    <i>{selectedCourse.nom_cours}</i>
+                  </Col>
+                </Row>
+
+                {/* Trimester */}
+                <Row className="mb-3">
+                  <Col lg={3}>
+                    <span className="fw-medium">Trimèstre</span>
+                  </Col>
+                  <Col lg={9}>
+                    <i>{selectedCourse.trimestre}</i>
+                  </Col>
+                </Row>
+
+                {/* Teacher Information */}
+                <Row className="mb-3">
+                  <Col lg={3}>
+                    <span className="fw-medium">Enseignant</span>
+                  </Col>
+                  <Col lg={9}>
+                    <i>
+                      {selectedCourse.enseignant?.nom_fr}{" "}
+                      {selectedCourse.enseignant?.prenom_fr}
+                    </i>
+                  </Col>
+                </Row>
+
+                {/* Displaying file_cours links */}
+                {selectedCourse.file_cours &&
+                  selectedCourse.file_cours.length > 0 && (
+                    <Row className="mb-3">
+                      <Col lg={3}>
+                        <span className="fw-medium">Fichiers de Cours</span>
                       </Col>
-                      <Col lg={3} className="mb-1">
-                        {eleve.typeAbsent}
+                      <Col lg={9}>
+                        {selectedCourse.file_cours.map(
+                          (file: any, index: any) => {
+                            // Get the file extension to determine how to handle it
+                            const fileExtension = file
+                              .split(".")
+                              .pop()
+                              .toLowerCase();
+
+                            return (
+                              <div key={index}>
+                                {fileExtension === "pdf" ||
+                                fileExtension === "xlsx" ||
+                                fileExtension === "xls" ||
+                                fileExtension === "pptx" ||
+                                fileExtension === "ppt" ||
+                                fileExtension === "jpg" ||
+                                fileExtension === "jpeg" ||
+                                fileExtension === "png" ||
+                                fileExtension === "gif" ? (
+                                  <a
+                                    href={file}
+                                    download
+                                    className="btn btn-link"
+                                  >
+                                    {file.split("/").pop()}{" "}
+                                    {/* Display file name */}
+                                  </a>
+                                ) : (
+                                  // Default case for other file types
+                                  <a
+                                    href={file}
+                                    download
+                                    className="btn btn-link"
+                                  >
+                                    {file.split("/").pop()}{" "}
+                                    {/* Display file name */}
+                                  </a>
+                                )}
+                              </div>
+                            );
+                          }
+                        )}
                       </Col>
                     </Row>
-                  ))
-                ) : (
-                  <Row>
-                    <Col>
-                      <p>Aucun Absence pour le classe</p>
-                    </Col>
-                  </Row>
-                )}
-              </Col>
-            </Row>
+                  )}
+              </>
+            ) : (
+              <p>Loading details...</p>
+            )}
           </Offcanvas.Body>
         </Offcanvas>
       </div>
     </React.Fragment>
   );
 };
+
 export default Cours;

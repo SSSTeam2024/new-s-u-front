@@ -276,18 +276,17 @@ const ListeNotesPro = () => {
             pageTitle="Note profesionnelle"
           />
           <Row className="col-lg-auto ms-auto mb-3">
-            <Col lg={10}>
-            </Col>
+            <Col lg={10}></Col>
             <Col lg={2}>
-            <div className="hstack gap-2">
-              <Button
-                variant="primary"
-                className="add-btn"
-                onClick={() => tog_AddNewGrades()}
-              >
-                Ajouter une note professionnelle
-              </Button>
-            </div>
+              <div className="hstack gap-2">
+                <Button
+                  variant="primary"
+                  className="add-btn"
+                  onClick={() => tog_AddNewGrades()}
+                >
+                  Ajouter une note professionnelle
+                </Button>
+              </div>
             </Col>
           </Row>
           <Row id="usersList">
@@ -323,6 +322,7 @@ const ListeNotesPro = () => {
                     iscustomPageSize={false}
                     isBordered={false}
                     customPageSize={10}
+                    isPagination={true}
                     className="custom-header-css table align-middle table-nowrap"
                     tableClass="table-centered align-middle table-nowrap mb-0"
                     theadClass="text-muted table-light"

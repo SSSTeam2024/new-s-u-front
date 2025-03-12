@@ -9,7 +9,6 @@ import {
   Button,
   Offcanvas,
 } from "react-bootstrap";
-import DataTable from "react-data-table-component";
 import Breadcrumb from "Common/BreadCrumb";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
@@ -18,28 +17,22 @@ import { useFetchEnseignantsQuery } from "features/enseignant/enseignantSlice";
 
 // import UpdateAbsence from "./UpdateAbsence";
 import { French } from "flatpickr/dist/l10n/fr";
-// import { formatDate, formatTime } from "helpers/data_time_format";
-import {
-  Classe,
-  useFetchClassesByTeacherMutation,
-  useFetchClassesQuery,
-} from "features/classe/classe";
+
 import {
   AbsenceEtudiant,
   useAddAbsenceEtudiantMutation,
+  useUpdateAbsenceMutation,
 } from "features/absenceEtudiant/absenceSlice";
-import { useFetchParcoursQuery } from "features/parcours/parcours";
 import { useFetchEtudiantsByIdClasseQuery } from "features/etudiant/etudiantSlice";
 import { formatDate, formatTime } from "helpers/data_time_format";
 import { useGetTeacherPeriodsBySemesterAndIdTeacherV2Mutation } from "features/teachersPeriods/teachersPeriods";
 import { useGetPeriodicSessionsByTeacherV2Mutation } from "features/seance/seance";
 
-const AjouterAbsence = () => {
+const EditAbsence = () => {
+  const location = useLocation();
+  const absenceDetails = location?.state?.absenceDetails;
+  console.log(absenceDetails);
   const { data: AllEnseignants = [] } = useFetchEnseignantsQuery();
-
-  const { data: AllClasse = [] } = useFetchClassesQuery();
-
-  const { data: AllParcours = [] } = useFetchParcoursQuery();
 
   const [getTeacherPeriodicSchedules] =
     useGetTeacherPeriodsBySemesterAndIdTeacherV2Mutation();
@@ -49,17 +42,16 @@ const AjouterAbsence = () => {
   const [studentTypes, setStudentTypes] = useState<{ [key: string]: string }>(
     {}
   );
-  const [classesList, setClassesList] = useState<Classe[]>();
-  const [showObservation, setShowObservation] = useState<boolean>(false);
-
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedEnseignant, setSelectedEnseignant] = useState<string>("");
-  const [selectedTrimestre, setSelectedTrimestre] = useState<string>("1");
+  const [selectedTrimestre, setSelectedTrimestre] = useState<string>("");
 
   const [sessions, setSessions] = useState<any>([]);
   const [selectedSession, setSelectedSession] = useState<string>("");
 
   const [studentsList, setStudentsList] = useState<any[]>([]);
+
+  console.log("studentsList", studentsList)
 
   const [hasProcessed, setHasProcessed] = useState<boolean>(false);
 
@@ -68,27 +60,7 @@ const AjouterAbsence = () => {
   const { data: EtudiantsByClasseID = [], isSuccess: studentsLoaded } =
     useFetchEtudiantsByIdClasseQuery(selectedClasse);
 
-  console.log(EtudiantsByClasseID);
-
-  // useEffect(() => {
-  //   console.log("studentsLoaded", studentsLoaded);
-  //   console.log("hasProcessed", hasProcessed);
-  //   if (studentsLoaded && !hasProcessed) {
-  //     let students = EtudiantsByClasseID.map((student: any) => {
-  //       return {
-  //         student: student,
-  //         presence: true,
-  //       };
-  //     });
-  //     setStudentsList(students);
-  //     console.log(students);
-  //     setHasProcessed(true);
-  //   }
-  // }, [EtudiantsByClasseID, hasProcessed, studentsList]);
   useEffect(() => {
-    console.log("studentsLoaded", studentsLoaded);
-    console.log("hasProcessed", hasProcessed);
-
     if (studentsLoaded && !hasProcessed) {
       let students = EtudiantsByClasseID.map((student: any) => ({
         student: student,
@@ -101,6 +73,23 @@ const AjouterAbsence = () => {
     }
   }, [EtudiantsByClasseID, hasProcessed, selectedClasse]);
 
+  useEffect(() => {
+    if (absenceDetails) {
+      setSelectedDate(new Date(absenceDetails.date));
+      setSelectedTrimestre(absenceDetails.trimestre === 'S1' ? '1' : '2');
+      setSelectedEnseignant(absenceDetails.enseignant);
+      setSelectedClasse(absenceDetails.classe);
+      setSelectedSession(absenceDetails.seance);
+      setStudentsList(
+        absenceDetails.etudiants.map((etudiant: any) => ({
+          student: etudiant.etudiant,
+          presence: etudiant.typeAbsent !== "A",
+          typeAbsent: etudiant.typeAbsent
+        }))
+      );
+    }
+  }, [absenceDetails]);
+
   const handleDateChange = (selectedDates: Date[]) => {
     setSelectedDate(selectedDates[0]);
     setSelectedEnseignant("");
@@ -109,14 +98,6 @@ const AjouterAbsence = () => {
     setStudentsList([]);
     setHasProcessed(false);
   };
-
-  const [selectedTime, setSelectedTime] = useState<Date | null>(null);
-
-  const handleTimeChange = (selectedDates: Date[]) => {
-    const time = selectedDates[0];
-    setSelectedTime(time);
-  };
-
   const notifySuccess = () => {
     Swal.fire({
       position: "center",
@@ -135,20 +116,6 @@ const AjouterAbsence = () => {
       showConfirmButton: false,
       timer: 2500,
     });
-  };
-
-  const [selectedEleve, setSelectedEleve] = useState<string>("");
-
-  const handleSelectEleve = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = event.target.value;
-    setSelectedEleve(value);
-  };
-
-  const handleSelectTrimestre = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const value = event.target.value;
-    setSelectedTrimestre(value);
   };
 
   const toggleSemestre = () => {
@@ -181,13 +148,8 @@ const AjouterAbsence = () => {
       let schedules = await getTeacherPeriodicSchedules(
         periodicSchedulesRequestData
       ).unwrap();
-      console.log("schedules", schedules);
-
       const filteredSchedulesIds =
         filterTeacherSchedulesBasedOnSelectedDate(schedules);
-
-      console.log("filteredSchedulesIds", filteredSchedulesIds);
-
       let teacherSessionsRequestData = {
         teacher_id: value,
         emplois_periodiques_ids: filteredSchedulesIds,
@@ -196,8 +158,6 @@ const AjouterAbsence = () => {
       let allTeacherSessions = await getTeacherSessions(
         teacherSessionsRequestData
       ).unwrap();
-
-      console.log("allTeacherSessions", allTeacherSessions);
 
       const sessions = filterSessionsBasedOnSelectedWeekDay(allTeacherSessions);
       console.log(sessions);
@@ -287,8 +247,6 @@ const AjouterAbsence = () => {
     const start = new Date(startYear, startMonth - 1, startDay); // months are 0-based
     const end = new Date(endYear, endMonth - 1, endDay);
     const abs = new Date(absenceYear, absenceMonth - 1, absenceDay);
-
-    // Check if abs date is between start and end date
     return abs >= start && abs <= end;
   };
 
@@ -302,27 +260,6 @@ const AjouterAbsence = () => {
     );
     setSelectedClasse(selectedSession[0].classe._id);
     setHasProcessed(false);
-
-    console.log("studentTypes", studentTypes);
-  };
-
-  const [selectedMatiere, setSelectedMatiere] = useState<string>("");
-
-  const handleSelectMatiere = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = event.target.value;
-    setSelectedMatiere(value);
-  };
-
-  const handleSelectClasse = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = event.target.value;
-    setSelectedClasse(value);
-  };
-
-  const [selectedType, setSelectedType] = useState<string>("");
-
-  const handleSelectType = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = event.target.value;
-    setSelectedType(value);
   };
 
   const [modal_AddAbsence, setmodal_AddAbsence] = useState<boolean>(false);
@@ -330,59 +267,43 @@ const AjouterAbsence = () => {
     setmodal_AddAbsence(!modal_AddAbsence);
   }
 
-  const [modal_UpdateAbsence, setmodal_UpdateAbsence] =
-    useState<boolean>(false);
-  function tog_UpdateAbsence() {
-    setmodal_UpdateAbsence(!modal_UpdateAbsence);
-  }
+  const [updateAbsence] = useUpdateAbsenceMutation();
 
-  const [createAbsence] = useAddAbsenceEtudiantMutation();
-
-  const initialAbsence: AbsenceEtudiant = {
-    classe: "",
-    enseignant: "",
-    etudiants: [],
-    seance: "",
-    date: "",
-    trimestre: "",
-  };
-
-  const [absence, setAbsence] = useState(initialAbsence);
-
-  const { classe, enseignant, etudiants, seance, date, trimestre } = absence;
+  const [absence, setAbsence] = useState<AbsenceEtudiant>(
+    absenceDetails || {
+      classe: "",
+      enseignant: "",
+      etudiants: [],
+      seance: "",
+      date: "",
+      trimestre: "",
+    }
+  );
 
   const handleStudentTypeChange = (e: any, element: any, index: number) => {
-    let value = "";
-    let presenceState = false;
-    if (element.presence === true) {
-      value = "A";
-    } else {
-      presenceState = true;
-      value = "P";
-    }
+    console.log("element", element)
+    let isPresent = !element.presence;
+    let absenceType = isPresent ? "P" : "A";
+
+    console.log("absenceType", absenceType)
 
     setStudentTypes((prevState) => ({
       ...prevState,
-      [element.student._id]: value,
+      [element.student._id]: absenceType,
     }));
 
-    setAbsence((prevAbsence) => {
-      const updatedEleves = prevAbsence.etudiants.filter(
-        (eleve) => eleve.etudiant !== element.student._id
-      );
+    setAbsence((prevAbsence) => ({
+      ...prevAbsence,
+      etudiants: prevAbsence.etudiants.map((eleve) =>
+        eleve.etudiant === element.student._id
+          ? { etudiant: eleve.etudiant, typeAbsent: absenceType }
+          : eleve
+      ),
+    }));
 
-      return {
-        ...prevAbsence,
-        eleves: [
-          ...updatedEleves,
-          { etudiant: element.student._id, typeAbsent: value },
-        ],
-      };
-    });
-
-    let studentsListRef = [...studentsList];
-    studentsListRef[index].presence = presenceState;
-    setStudentsList(studentsListRef);
+    let updatedStudents = [...studentsList];
+    updatedStudents[index].presence = isPresent;
+    setStudentsList(updatedStudents);
   };
 
   const navigate = useNavigate();
@@ -390,29 +311,29 @@ const AjouterAbsence = () => {
   function tog_AllAbsences() {
     navigate("/application-enseignant/lister-absence");
   }
-  const onSubmitAbsence = (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmitAbsence = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {
-      const elevesWithTypes = EtudiantsByClasseID?.map((eleve) => ({
-        etudiant: eleve?._id!,
-        typeAbsent: studentTypes[eleve?._id!] || "P",
-      }));
-
-      const absenceData = {
+      const updatedAbsence = {
         ...absence,
+        _id: absenceDetails._id, // Ensure you're passing the correct ID
         classe: selectedClasse,
-        etudiants: elevesWithTypes,
-        date: formatDate(selectedDate),
-        trimestre: selectedTrimestre,
         enseignant: selectedEnseignant,
         seance: selectedSession,
+        date: formatDate(selectedDate),
+        trimestre: selectedTrimestre,
+        etudiants: studentsList.map((student) => ({
+          etudiant: student.student._id,
+          typeAbsent: studentTypes[student.student._id] || student.typeAbsent,
+        })),
       };
-      console.log(absenceData);
-      createAbsence(absenceData)
+
+      console.log("Updating Absence: ", updatedAbsence);
+
+      await updateAbsence(updatedAbsence)
         .then(() => notifySuccess())
-        .then(() => setAbsence(initialAbsence));
-      tog_AllAbsences();
+        .catch((error) => notifyError(error));
     } catch (error) {
       notifyError(error);
     }
@@ -488,8 +409,8 @@ const AjouterAbsence = () => {
                             <option value="">Select</option>
                             {AllEnseignants.map((enseignant) => (
                               <option
-                                value={enseignant?._id!}
-                                key={enseignant?._id!}
+                                value={enseignant._id}
+                                key={enseignant._id}
                               >
                                 {enseignant.prenom_fr} {enseignant.nom_fr}
                               </option>
@@ -506,15 +427,15 @@ const AjouterAbsence = () => {
                             className="form-select text-muted"
                             name="classe"
                             id="classe"
+                            value={selectedSession}
                             onChange={handleSelectSession}
                           >
                             <option value="">Choisir</option>
                             {sessions?.map((session: any) => (
-                              <option value={session?._id!} key={session?._id!}>
-                                {session?.matiere?.matiere!}{" "}
-                                {session?.heure_debut!} - {session?.heure_fin!}{" "}
-                                {session?.salle?.salle!}{" "}
-                                {session?.classe?.nom_classe_fr!}
+                              <option value={session._id} key={session._id}>
+                                {session.matiere.matiere} {session.heure_debut}{" "}
+                                - {session.heure_fin} {session.salle.salle}{" "}
+                                {session.classe.nom_classe_fr}
                               </option>
                             ))}
                           </select>
@@ -666,4 +587,4 @@ const AjouterAbsence = () => {
     </React.Fragment>
   );
 };
-export default AjouterAbsence;
+export default EditAbsence;

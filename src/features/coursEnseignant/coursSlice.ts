@@ -2,13 +2,16 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export interface CoursEnseignant {
   _id?: string;
-  classe: string[],
-  enseignant: string,
-  nom_cours: string,
-  file_cours: string,
-  pdfBase64String: string,
-  pdfExtension: string,
-  trimestre: string,
+  classe: string[];
+  enseignant: string;
+  nom_cours: string;
+  file_cours?: string[];
+  filesData?: {
+    fileName: string;
+    pdfBase64String: string;
+    pdfExtension: string;
+  }[];
+  trimestre: string;
 }
 
 export const courSlice = createApi({
@@ -35,12 +38,32 @@ export const courSlice = createApi({
         },
         invalidatesTags: ["CoursEnseignant"],
       }),
+      deleteCours: builder.mutation<void, string>({
+        query: (_id) => ({
+          url: `delete-cour`,
+          method: "DELETE",
+          body: { _id },
+        }),
+        invalidatesTags: ["CoursEnseignant"],
+      }),
+      updateCoursEnseignant: builder.mutation<
+        void,
+        { id: string; data: CoursEnseignant }
+      >({
+        query: ({ id, data }) => ({
+          url: `edit-cours/${id}`,
+          method: "PUT",
+          body: data,
+        }),
+        invalidatesTags: ["CoursEnseignant"],
+      }),
     };
   },
-  
 });
 
 export const {
-   useAddCoursEnseignantMutation,
-  useFetchCoursEnseignantsQuery
+  useAddCoursEnseignantMutation,
+  useFetchCoursEnseignantsQuery,
+  useDeleteCoursMutation,
+  useUpdateCoursEnseignantMutation,
 } = courSlice;
