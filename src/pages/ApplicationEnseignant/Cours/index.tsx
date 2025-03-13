@@ -11,7 +11,7 @@ import {
 
 const Cours = () => {
   const { data = [] } = useFetchCoursEnseignantsQuery();
-  console.log(data);
+  // console.log(data);
   const [selectedCourse, setSelectedCourse] = useState<any>(null);
   const [showObservation, setShowObservation] = useState(false);
   const navigate = useNavigate();
