@@ -1349,10 +1349,7 @@ const EditProfilEnseignant = () => {
                                     </div>
                                   </Col> */}
                                   <Col lg={3}>
-                                    <div
-                                      className="mb-3"
-                                      
-                                    >
+                                    <div className="mb-3">
                                       <Form.Label htmlFor="date_affectation">
                                         تاريخ الإنتداب / Date d'affectation
                                       </Form.Label>
@@ -1370,12 +1367,9 @@ const EditProfilEnseignant = () => {
                                   </Col>
 
                                   <Col lg={3}>
-                                    <div
-                                      className="mb-3"
-                                     
-                                    >
+                                    <div className="mb-3">
                                       <Form.Label htmlFor="grade">
-                                      الرتبة/ Grade
+                                        الرتبة/ Grade
                                       </Form.Label>
                                       <select
                                         className="form-select text-muted"
@@ -1433,11 +1427,11 @@ const EditProfilEnseignant = () => {
                                     </div>
                                   </Col>
                                   <Col lg={3}>
-                                    <div
-                                      className="mb-3"
-                                     
-                                    >
-                                      <Form.Label htmlFor="poste"> الوظيفة/ Poste</Form.Label>
+                                    <div className="mb-3">
+                                      <Form.Label htmlFor="poste">
+                                        {" "}
+                                        الوظيفة/ Poste
+                                      </Form.Label>
                                       <select
                                         className="form-select text-muted"
                                         name="poste"

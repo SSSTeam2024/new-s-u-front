@@ -9,19 +9,15 @@ import {
   Modal,
   Row,
   Spinner,
-  OverlayTrigger,
- Popover
 } from "react-bootstrap";
 import Breadcrumb from "Common/BreadCrumb";
 import CountUp from "react-countup";
 import { Link, useNavigate } from "react-router-dom";
 import TableContainer from "Common/TableContainer";
 import {
-  EtatCompte,
   Etudiant,
   EtudiantExcel,
   FileDetail,
-  GroupeClasse,
   useAddEtudiantMutation,
   useDeleteEtudiantMutation,
   useFetchEtudiantsQuery,
@@ -146,7 +142,7 @@ const ListEtudiants = () => {
   }
   const { data = [] } = useFetchEtudiantsQuery();
   const [studentCount, setStudentCount] = useState(0);
-
+  console.log("data", data);
   useEffect(() => {
     if (data) {
       setStudentCount(data.length);
@@ -330,12 +326,6 @@ const ListEtudiants = () => {
         filterable: true,
       },
       {
-        Header: "Nom et Prénom",
-        accessor: (row: any) => `${row?.prenom_fr!} ${row?.nom_fr!}`,
-        disableFilters: true,
-        filterable: true,
-      },
-      {
         Header: "Groupe Classe",
         accessor: (row: any) => row?.Groupe! || "",
         disableFilters: true,
@@ -356,7 +346,7 @@ const ListEtudiants = () => {
           format(new Date(value), "yyyy-MM-dd - HH:mm"),
       },
       {
-        Header: "Activation",
+        Header: "Etat Compte",
         disableFilters: true,
         filterable: true,
         accessor: (row: any) => row?.etat_compte?.etat_fr || "",
@@ -382,6 +372,13 @@ const ListEtudiants = () => {
         //       );
         //   }
         // },
+      },
+      {
+        Header: "Type inscription",
+        // accessor: "type_inscription",
+        accessor: (row: any) => row?.type_inscription?.type_fr || "",
+        disableFilters: true,
+        filterable: true,
       },
       {
         Header: "Action",
@@ -448,52 +445,51 @@ const ListEtudiants = () => {
               ) : (
                 <></>
               )}
-               {actionAuthorization(
+              {actionAuthorization(
                 "/gestion-etudiant/print-compte-etudiant",
                 user?.permissions!
               ) ? (
                 <li>
                   <Dropdown>
-                  <Dropdown.Toggle
-                  as="span"
-                  className="badge bg-secondary-subtle text-secondary"
-                 style={{ display: "inline-block", cursor: "pointer" }}
-                 >
-                <i
-                  className="bi bi-printer"
-                  style={{
-                    transition: "transform 0.3s ease-in-out",
-                    cursor: "pointer",
-                    fontSize: "1.5em",
-                  }}
-                  onMouseEnter={(e) =>
-                    (e.currentTarget.style.transform = "scale(1.4)")
-                  }
-                  onMouseLeave={(e) =>
-                    (e.currentTarget.style.transform = "scale(1)")
-                  }
-                ></i>
-              </Dropdown.Toggle>
+                    <Dropdown.Toggle
+                      as="span"
+                      className="badge bg-secondary-subtle text-secondary"
+                      style={{ display: "inline-block", cursor: "pointer" }}
+                    >
+                      <i
+                        className="bi bi-printer"
+                        style={{
+                          transition: "transform 0.3s ease-in-out",
+                          cursor: "pointer",
+                          fontSize: "1.5em",
+                        }}
+                        onMouseEnter={(e) =>
+                          (e.currentTarget.style.transform = "scale(1.4)")
+                        }
+                        onMouseLeave={(e) =>
+                          (e.currentTarget.style.transform = "scale(1)")
+                        }
+                      ></i>
+                    </Dropdown.Toggle>
 
-              <Dropdown.Menu>
-                <Dropdown.Item
-                  as={Link}
-                  to="/gestion-etudiant/print-compte-etudiant"
-                  state={students}
-                >
-                  📄Fiche renseignement
-                </Dropdown.Item>
-                <Dropdown.Item
-                  as={Link}
-                  to="/gestion-etudiant/ar-print-compte-etudiant"
-                  state={students}
-                >
-                  📄 بطاقة ارشادات
-                </Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
+                    <Dropdown.Menu>
+                      <Dropdown.Item
+                        as={Link}
+                        to="/gestion-etudiant/print-compte-etudiant"
+                        state={students}
+                      >
+                        📄Fiche renseignement
+                      </Dropdown.Item>
+                      <Dropdown.Item
+                        as={Link}
+                        to="/gestion-etudiant/ar-print-compte-etudiant"
+                        state={students}
+                      >
+                        📄 بطاقة ارشادات
+                      </Dropdown.Item>
+                    </Dropdown.Menu>
+                  </Dropdown>
                 </li>
-        
               ) : (
                 <></>
               )}
@@ -741,9 +737,7 @@ const ListEtudiants = () => {
             mention: items.Mention_Bac || "",
             session: items.Session_Bac || "",
             filiere: items.Section_Bac || "",
-            annee_scolaire: items["Année_ Bac"]
-              ? excelDateToJSDate(items["Année_ Bac"])
-              : "",
+            annee_scolaire: items["Année_ Bac"] || "",
             num_inscri: items.NumInscription || "",
             prenom_conjoint: items.Prénom_Conjoint || "",
             profesion_Conjoint: items.Profesion_Conjoint || "",
@@ -1099,7 +1093,7 @@ const ListEtudiants = () => {
                         />
                       </h4>
                       <p className="mb-0 fw-medium text-uppercase fs-14">
-                        Nombre d'etudiants
+                        Etudiants
                       </p>
                     </Card.Body>
                   </Card>

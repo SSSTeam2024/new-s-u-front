@@ -269,6 +269,20 @@ const Navdata = () => {
           parentId: "Gestion-des-Etudiants",
           icon: "bi bi-person-lines-fill",
         },
+        {
+          id: "RepartitionGroupes",
+          label: "Répartition des groupes",
+          link: "/gestion-etudiant/repartition-groupe",
+          parentId: "Gestion-des-Etudiants",
+          icon: "bi bi-person-plus-fill",
+        },
+        {
+          id: "RechercheAvance",
+          label: "Recherche avancé",
+          link: "/gestion-etudiant/recherche-avance",
+          parentId: "Gestion-des-Etudiants",
+          icon: "bi bi-person-plus-fill",
+        },
       ],
     },
     // gestion enseignant
@@ -298,6 +312,13 @@ const Navdata = () => {
           link: "/gestion-enseignant/liste-enseignants",
           parentId: "Gestion-enseignant",
           icon: "bi bi-person-lines-fill",
+        },
+        {
+          id: "RepartitionEnseignants",
+          label: "Répartition des enseignants",
+          link: "/gestion-enseignant/repartition-enseignant",
+          parentId: "Gestion-enseignant",
+          icon: "bi bi-person-plus-fill",
         },
         {
           id: "GestionEnseignant",
@@ -342,6 +363,13 @@ const Navdata = () => {
           link: "/gestion-personnel/liste-personnels",
           parentId: "Gestion-Personnel",
           icon: "bi bi-person-lines-fill",
+        },
+        {
+          id: "RepartitionPersonnels",
+          label: "Répartition des Personnels",
+          link: "/gestion-personnel/repartition-personnel",
+          parentId: "Gestion-Personnel",
+          icon: "bi bi-person-plus-fill",
         },
         {
           id: "GestionPersonnel",
@@ -687,7 +715,7 @@ const Navdata = () => {
     //! Application Enseignant
     {
       id: "application_enseignant",
-      label: "Application enseignant",
+      label: "Application Enseignant",
       icon: "bi bi-window-split",
       link: "/#",
       click: function (e: any) {
@@ -707,7 +735,7 @@ const Navdata = () => {
         },
         {
           id: "Cours",
-          label: "Cours",
+          label: "Supports",
           link: "/application-enseignant/lister-cours",
           parentId: "application_enseignant",
           icon: "bi bi-person-exclamation",

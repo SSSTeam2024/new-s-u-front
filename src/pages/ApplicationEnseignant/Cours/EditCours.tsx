@@ -125,18 +125,20 @@ const EditCours = () => {
     navigate("/application-enseignant/lister-cours");
   }
 
-  const toggleSemestre = async () => {
-    setSelectedTrimestre((prev) => (prev === "1" ? "2" : "1"));
+  // const toggleSemestre = async () => {
+  //   setSelectedTrimestre((prev) => (prev === "1" ? "2" : "1"));
+  //   setIsTouched(true);
+  // };
 
-    const newSemestre = selectedTrimestre === "1" ? "2" : "1";
-
+  const fetchClasses = async () => {
     let classesRequestData = {
       teacherId: coursDetails?.enseignant?._id!,
-      semestre: newSemestre,
+      semestre: coursDetails?.trimestre!,
     };
 
     try {
       let classes = await getClassesByTeacherId(classesRequestData).unwrap();
+      // console.log("classes", classes);
       let classOptions = classes.map((classe: any) => ({
         value: classe?._id!,
         label: classe?.nom_classe_fr!,
@@ -147,6 +149,10 @@ const EditCours = () => {
       console.error("Error fetching classes:", error);
     }
   };
+
+  useEffect(() => {
+    fetchClasses();
+  }, [coursDetails]);
 
   // const handleFileUploadFile = async (
   //   event: React.ChangeEvent<HTMLInputElement>
@@ -172,6 +178,37 @@ const EditCours = () => {
   //     deletedfile: "no",
   //   });
   // };
+
+  // useEffect(() => {
+  //   const fetchClasses = async () => {
+  //     const newSemestre = isTouched
+  //       ? selectedTrimestre === "1"
+  //         ? "2"
+  //         : "1"
+  //       : coursDetails?.trimestre;
+
+  //     const classesRequestData = {
+  //       teacherId: coursDetails?.enseignant?._id!,
+  //       semestre: newSemestre,
+  //     };
+
+  //     try {
+  //       const classes = await getClassesByTeacherId(
+  //         classesRequestData
+  //       ).unwrap();
+  //       const classOptions = classes.map((classe: any) => ({
+  //         value: classe?._id!,
+  //         label: classe?.nom_classe_fr!,
+  //       }));
+
+  //       setOptionColumnsTable(classOptions);
+  //     } catch (error) {
+  //       console.error("Error fetching classes:", error);
+  //     }
+  //   };
+
+  //   fetchClasses();
+  // }, [selectedTrimestre, isTouched, coursDetails]);
 
   const handleFileUploadFile = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -272,7 +309,7 @@ const EditCours = () => {
                       <Form.Label htmlFor="trimestre">Semestre</Form.Label>
                     </Col>
                     <Col lg={8}>
-                      <div className="form-check form-switch">
+                      {/* <div className="form-check form-switch">
                         <input
                           className="form-check-input"
                           type="checkbox"
@@ -286,7 +323,8 @@ const EditCours = () => {
                         >
                           {selectedTrimestre === "1" ? "S1" : "S2"}
                         </label>
-                      </div>
+                      </div> */}
+                      <h6>{coursDetails?.trimestre! === "1" ? "S1" : "S2"}</h6>
                     </Col>
                   </Row>
                   <Row className="mb-4">
@@ -311,10 +349,10 @@ const EditCours = () => {
                           </option>
                         ))}
                       </select> */}
-                      <h6>
+                      <h5>
                         {coursDetails.enseignant.prenom_fr}{" "}
                         {coursDetails.enseignant.nom_fr}
-                      </h6>
+                      </h5>
                     </Col>
                   </Row>
                   <Row className="mb-4">
@@ -645,11 +683,21 @@ const EditCours = () => {
               </Card.Body>
               <Card.Footer className="border-0">
                 <Row>
-                  <div className="hstack gap-2 justify-content-end">
+                  <Col className="d-flex justify-content-start">
+                    <Button
+                      type="button"
+                      variant="danger"
+                      id="retourbtn"
+                      onClick={() => navigate(-1)}
+                    >
+                      Retour
+                    </Button>
+                  </Col>
+                  <Col className="d-flex justify-content-end">
                     <Button type="submit" variant="success" id="addNew">
                       Modifier
                     </Button>
-                  </div>
+                  </Col>
                 </Row>
               </Card.Footer>
             </Card>

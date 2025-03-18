@@ -3,7 +3,11 @@ import { Button, Card, Col, Container, Form, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import "flatpickr/dist/flatpickr.min.css";
-import { useAddNewVaribaleGlobaleMutation, useFetchVaribaleGlobaleQuery, VaribaleGlobale } from "features/variableGlobale/variableGlobaleSlice";
+import {
+  useAddNewVaribaleGlobaleMutation,
+  useFetchVaribaleGlobaleQuery,
+  VaribaleGlobale,
+} from "features/variableGlobale/variableGlobaleSlice";
 
 function convertToBase64(
   file: File
@@ -28,14 +32,11 @@ const AjouterVariablesGlobales = () => {
   const navigate = useNavigate();
   const [newVariableGlobale] = useAddNewVaribaleGlobaleMutation();
 
-  const {data: globalVars} = useFetchVaribaleGlobaleQuery();
+  const { data: globalVars } = useFetchVaribaleGlobaleQuery();
   console.log(globalVars);
-// Function to get the last object
-
-
+  // Function to get the last object
 
   const initialVariableGlobale = {
-    
     directeur_ar: "",
     directeur_fr: "",
     secretaire_ar: "",
@@ -70,16 +71,16 @@ const AjouterVariablesGlobales = () => {
     logo_universite: "",
     logo_republique: "",
     createdAt: "",
-    places: [
-      { longitude: "", latitude: "", placeName: "", rayon:"" } 
-  ]
+    places: [{ longitude: "", latitude: "", placeName: "", rayon: "" }],
   };
-  const lastVariableGlobale = globalVars?.length ? globalVars[globalVars.length - 1] : initialVariableGlobale;
+  const lastVariableGlobale = globalVars?.length
+    ? globalVars[globalVars.length - 1]
+    : initialVariableGlobale;
   const [variableGlobale, setVariableGlobale] = useState(
     initialVariableGlobale
   );
-  
-console.log("last",lastVariableGlobale)
+
+  console.log("last", lastVariableGlobale);
 
   useEffect(() => {
     if (lastVariableGlobale) {
@@ -107,11 +108,11 @@ console.log("last",lastVariableGlobale)
     //   setYearControl("Année universitaire doit respecter la forme: yyyy/yyyy");
     // }
     // if(e.target.value.length === 9){
-      setYearControl("");
-      setVariableGlobale((prevState) => ({
-        ...prevState,
-        annee_universitaire: e.target.value,
-      }));
+    setYearControl("");
+    setVariableGlobale((prevState) => ({
+      ...prevState,
+      annee_universitaire: e.target.value,
+    }));
     // }
 
     // if(e.target.value.length > 9){
@@ -121,7 +122,6 @@ console.log("last",lastVariableGlobale)
     //   annee_universitaire: '',
     // }));
     // }
-
   };
 
   const handleFileUploadSignatureDirecteur = async (
@@ -205,7 +205,7 @@ console.log("last",lastVariableGlobale)
     if (file) {
       const { base64Data, extension } = await convertToBase64(file);
       const profileImage = `data:image/${extension};base64,${base64Data}`;
-      console.log(profileImage.includes('data:image'))
+      console.log(profileImage.includes("data:image"));
       setVariableGlobale({
         ...variableGlobale,
         logo_republique: profileImage,
@@ -215,30 +215,36 @@ console.log("last",lastVariableGlobale)
     }
   };
 
-
   const handlePlaceChange = (index: number, event: React.ChangeEvent<any>) => {
     const target = event.target as HTMLInputElement;
     const { name, value } = target;
-  
+
     setVariableGlobale((prevState) => {
       const updatedPlaces = [...prevState.places];
-  
+
       // Ensure the place exists at this index before modifying
       if (!updatedPlaces[index]) {
-        updatedPlaces[index] = { placeName: "", longitude: "", latitude: "", rayon: "" };
+        updatedPlaces[index] = {
+          placeName: "",
+          longitude: "",
+          latitude: "",
+          rayon: "",
+        };
       }
-  
+
       updatedPlaces[index] = { ...updatedPlaces[index], [name]: value };
-  
+
       return { ...prevState, places: updatedPlaces };
     });
   };
-  
 
   const addPlace = () => {
     setVariableGlobale({
       ...variableGlobale,
-      places: [...variableGlobale.places, { placeName: "", latitude: "", longitude:"", rayon: "" }],
+      places: [
+        ...variableGlobale.places,
+        { placeName: "", latitude: "", longitude: "", rayon: "" },
+      ],
     });
   };
   const removePlace = (index: number) => {
@@ -271,25 +277,24 @@ console.log("last",lastVariableGlobale)
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
-    const isModified = JSON.stringify(variableGlobale) !== JSON.stringify(lastVariableGlobale);
-  
+
+    const isModified =
+      JSON.stringify(variableGlobale) !== JSON.stringify(lastVariableGlobale);
+
     const newObject = isModified ? variableGlobale : lastVariableGlobale;
-  
-    console.log("submit",newObject); 
-  
+
+    console.log("submit", newObject);
+
     newVariableGlobale({ ...newObject, _id: undefined })
       .then(() => {
         setVariableGlobale(initialVariableGlobale);
       })
       .catch((error) => {
-       
         console.error("Error:", error);
       });
-  
-   
+
     notify();
-  
+
     navigate("/variable/liste-variables-globales");
   };
 
@@ -310,7 +315,6 @@ console.log("last",lastVariableGlobale)
           <Row>
             <Col lg={12}>
               <Card>
-               
                 <Card.Body>
                   <div className="mb-3">
                     <Form className="tablelist-form" onSubmit={onSubmit}>
@@ -381,27 +385,29 @@ console.log("last",lastVariableGlobale)
                               className="text-muted"
                               onChange={handleFileUploadSignatureDirecteur}
                             />
-                   
                           </div>
                         </Col>
                         <Col lg={2}>
-                        <div>
-                        {
-                            variableGlobale.signature_directeur.includes('data:image')? (
+                          <div>
+                            {variableGlobale.signature_directeur.includes(
+                              "data:image"
+                            ) ? (
                               <img
                                 src={`${variableGlobale.signature_directeur}`}
                                 alt="signature_directeur-img"
                                 id="signature_directeur"
                                 className="avatar-lg d-block mx-auto"
                               />
-                            ): (<img
-                              src={`${process.env.REACT_APP_API_URL}/files/variableGlobaleFiles/signatureDirecteurFiles/${variableGlobale.signature_directeur}`}
-                              alt="signature_directeur-img"
-                              id="signature_directeur"
-                              className="avatar-lg d-block mx-auto"
-                            />)
-                          }
-                      </div></Col>
+                            ) : (
+                              <img
+                                src={`${process.env.REACT_APP_API_URL}/files/variableGlobaleFiles/signatureDirecteurFiles/${variableGlobale.signature_directeur}`}
+                                alt="signature_directeur-img"
+                                id="signature_directeur"
+                                className="avatar-lg d-block mx-auto"
+                              />
+                            )}
+                          </div>
+                        </Col>
                       </Row>
                       <Row>
                         <Card.Header className="mb-3">
@@ -473,24 +479,26 @@ console.log("last",lastVariableGlobale)
                           </div>
                         </Col>
                         <Col lg={2}>
-                        <div>
-                        {
-                            variableGlobale.signature_secretaire.includes('data:image')? (
+                          <div>
+                            {variableGlobale.signature_secretaire.includes(
+                              "data:image"
+                            ) ? (
                               <img
                                 src={`${variableGlobale.signature_secretaire}`}
                                 alt="signature_secretaire-img"
                                 id="signature_secretaire"
                                 className="avatar-lg d-block mx-auto"
                               />
-                            ): (<img
-                              src={`${process.env.REACT_APP_API_URL}/files/variableGlobaleFiles/signatureSecretaireFiles/${variableGlobale.signature_secretaire}`}
-                              alt="signature_secretaire-img"
-                              id="signature_secretaire"
-                              className="avatar-lg d-block mx-auto"
-                            />)
-                          }
-
-  </div></Col>
+                            ) : (
+                              <img
+                                src={`${process.env.REACT_APP_API_URL}/files/variableGlobaleFiles/signatureSecretaireFiles/${variableGlobale.signature_secretaire}`}
+                                alt="signature_secretaire-img"
+                                id="signature_secretaire"
+                                className="avatar-lg d-block mx-auto"
+                              />
+                            )}
+                          </div>
+                        </Col>
                       </Row>
 
                       <Row>
@@ -561,23 +569,26 @@ console.log("last",lastVariableGlobale)
                           </div>
                         </Col>
                         <Col lg={2}>
-                        <div>
-                          {
-                            variableGlobale.logo_universite.includes('data:image')? (
+                          <div>
+                            {variableGlobale.logo_universite.includes(
+                              "data:image"
+                            ) ? (
                               <img
                                 src={`${variableGlobale.logo_universite}`}
                                 alt="logo_universite-img"
                                 id="logo_universite"
                                 className="avatar-lg d-block mx-auto"
                               />
-                            ): (<img
-                              src={`${process.env.REACT_APP_API_URL}/files/variableGlobaleFiles/logoUniversiteFiles/${variableGlobale.logo_universite}`}
-                              alt="logo_universite-img"
-                              id="logo_universite"
-                              className="avatar-lg d-block mx-auto"
-                            />)
-                          }
-  </div></Col>
+                            ) : (
+                              <img
+                                src={`${process.env.REACT_APP_API_URL}/files/variableGlobaleFiles/logoUniversiteFiles/${variableGlobale.logo_universite}`}
+                                alt="logo_universite-img"
+                                id="logo_universite"
+                                className="avatar-lg d-block mx-auto"
+                              />
+                            )}
+                          </div>
+                        </Col>
                         <Row>
                           <Card.Header className="mb-3">
                             <div className="d-flex">
@@ -631,9 +642,7 @@ console.log("last",lastVariableGlobale)
                           <Col lg={2}>
                             <div className="mb-3">
                               <Form.Label htmlFor="abreviation">
-                                <h4 className="card-title mb-0">
-                                  Abreviation
-                                </h4>
+                                <h4 className="card-title mb-0">Abreviation</h4>
                               </Form.Label>
                               <Form.Control
                                 type="text"
@@ -646,41 +655,44 @@ console.log("last",lastVariableGlobale)
                             </div>
                           </Col>
                           <Col lg={2}>
-                          <div className="mb-3">
-                            <Form.Label htmlFor="logo_etablissement_base64">
-                              <h4 className="card-title mb-0">
-                                Logo de l'établissement
-                              </h4>
-                            </Form.Label>
-                            <Form.Control
-                              name="logo_etablissement_base64"
-                              type="file"
-                              id="logo_etablissement_base64"
-                              accept="*"
-                              placeholder="Choose File"
-                              className="text-muted"
-                              onChange={handleFileUploadLogoEtablissement}
-                            />
-                          </div>
-                        </Col>
-                        <Col lg={2}>
-                        <div>
-                        {
-                            variableGlobale.logo_etablissement.includes('data:image')? (
-                              <img
-                                src={`${variableGlobale.logo_etablissement}`}
-                                alt="logo_etablissement-img"
-                                id="logo_etablissement"
-                                className="avatar-lg d-block mx-auto"
+                            <div className="mb-3">
+                              <Form.Label htmlFor="logo_etablissement_base64">
+                                <h4 className="card-title mb-0">
+                                  Logo de l'établissement
+                                </h4>
+                              </Form.Label>
+                              <Form.Control
+                                name="logo_etablissement_base64"
+                                type="file"
+                                id="logo_etablissement_base64"
+                                accept="*"
+                                placeholder="Choose File"
+                                className="text-muted"
+                                onChange={handleFileUploadLogoEtablissement}
                               />
-                            ): (<img
-                              src={`${process.env.REACT_APP_API_URL}/files/variableGlobaleFiles/logoEtablissementFiles/${variableGlobale.logo_etablissement}`}
-                              alt="logo_etablissement-img"
-                              id="logo_etablissement"
-                              className="avatar-lg d-block mx-auto"
-                            />)
-                          }
-  </div></Col>
+                            </div>
+                          </Col>
+                          <Col lg={2}>
+                            <div>
+                              {variableGlobale.logo_etablissement.includes(
+                                "data:image"
+                              ) ? (
+                                <img
+                                  src={`${variableGlobale.logo_etablissement}`}
+                                  alt="logo_etablissement-img"
+                                  id="logo_etablissement"
+                                  className="avatar-lg d-block mx-auto"
+                                />
+                              ) : (
+                                <img
+                                  src={`${process.env.REACT_APP_API_URL}/files/variableGlobaleFiles/logoEtablissementFiles/${variableGlobale.logo_etablissement}`}
+                                  alt="logo_etablissement-img"
+                                  id="logo_etablissement"
+                                  className="avatar-lg d-block mx-auto"
+                                />
+                              )}
+                            </div>
+                          </Col>
                         </Row>
                       </Row>
                       <Row>
@@ -793,40 +805,44 @@ console.log("last",lastVariableGlobale)
                             </div>
                           </Col>
                           <Col lg={2}>
-                          <div className="mb-3">
-                            <Form.Label htmlFor="logo_republique_base64">
-                              <h4 className="card-title mb-0">
-                                Logo de la république
-                              </h4>
-                            </Form.Label>
-                            <Form.Control
-                              name="logo_republique_base64"
-                              type="file"
-                              id="logo_republique_base64"
-                              accept="*"
-                              placeholder="Choose File"
-                              className="text-muted"
-                              onChange={handleFileUploadLogoEepublique}
-                            />
-                          </div>
-                        </Col>
-                        <Col lg={2}>
-                        <div>
-                          {variableGlobale.logo_republique.includes('data:image')? (
-                            <img
-                            src={`${variableGlobale.logo_republique}`}
-                            alt="logo_republique-img"
-                            id="logo_republique"
-                            className="avatar-lg d-block mx-auto"
-                          />
-                          ): (<img
-                            src={`${process.env.REACT_APP_API_URL}/files/variableGlobaleFiles/logoRepubliqueFiles/${variableGlobale.logo_republique}`}
-                            alt="logo_republique-img"
-                            id="logo_republique"
-                            className="avatar-lg d-block mx-auto"
-                          />)}
-    
-  </div></Col>
+                            <div className="mb-3">
+                              <Form.Label htmlFor="logo_republique_base64">
+                                <h4 className="card-title mb-0">
+                                  Logo de la république
+                                </h4>
+                              </Form.Label>
+                              <Form.Control
+                                name="logo_republique_base64"
+                                type="file"
+                                id="logo_republique_base64"
+                                accept="*"
+                                placeholder="Choose File"
+                                className="text-muted"
+                                onChange={handleFileUploadLogoEepublique}
+                              />
+                            </div>
+                          </Col>
+                          <Col lg={2}>
+                            <div>
+                              {variableGlobale.logo_republique.includes(
+                                "data:image"
+                              ) ? (
+                                <img
+                                  src={`${variableGlobale.logo_republique}`}
+                                  alt="logo_republique-img"
+                                  id="logo_republique"
+                                  className="avatar-lg d-block mx-auto"
+                                />
+                              ) : (
+                                <img
+                                  src={`${process.env.REACT_APP_API_URL}/files/variableGlobaleFiles/logoRepubliqueFiles/${variableGlobale.logo_republique}`}
+                                  alt="logo_republique-img"
+                                  id="logo_republique"
+                                  className="avatar-lg d-block mx-auto"
+                                />
+                              )}
+                            </div>
+                          </Col>
                         </Row>
                       </Row>
                       <Row>
@@ -894,7 +910,9 @@ console.log("last",lastVariableGlobale)
                         <Col lg={3}>
                           <div className="mb-3">
                             <Form.Label htmlFor="website">
-                              <h4 className="card-title mb-0">Année universitaire</h4>
+                              <h4 className="card-title mb-0">
+                                Année universitaire
+                              </h4>
                             </Form.Label>
                             <Form.Control
                               type="text"
@@ -910,97 +928,106 @@ console.log("last",lastVariableGlobale)
                         </Col>
                       </Row>
                       <Row>
-  <Card.Header className="mb-3">
-    <div className="d-flex">
-      <div className="flex-shrink-0 me-3">
-        <div className="avatar-sm">
-          <div className="avatar-title rounded-circle bg-light text-primary fs-20">
-            <i className="bi bi-geo-alt-fill"></i>
-          </div>
-        </div>
-      </div>
-      <div className="flex-grow-1">
-        <h5 className="card-title">Places</h5>
-      </div>
-    </div>
-  </Card.Header>
+                        <Card.Header className="mb-3">
+                          <div className="d-flex">
+                            <div className="flex-shrink-0 me-3">
+                              <div className="avatar-sm">
+                                <div className="avatar-title rounded-circle bg-light text-primary fs-20">
+                                  <i className="bi bi-geo-alt-fill"></i>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="flex-grow-1">
+                              <h5 className="card-title">Places</h5>
+                            </div>
+                          </div>
+                        </Card.Header>
 
-  {variableGlobale.places.map((place, index) => (
-    <Row key={index}>
-      <Col lg={2}>
-        <div className="mb-3">
-          <Form.Label htmlFor={`place-placeName-${index}`}>
-            <h4 className="card-title mb-0">Nom du Lieu</h4>
-          </Form.Label>
-          <Form.Control
-            type="text"
-            name="placeName"
-            id={`place-placeName-${index}`}
-            placeholder="Nom du Lieu"
-            value={place.placeName}
-            onChange={(e) => handlePlaceChange(index, e)}
-          />
-        </div>
-      </Col>
-      <Col lg={3}>
-        <div className="mb-3">
-          <Form.Label htmlFor={`place-longitude-${index}`}>
-            <h4 className="card-title mb-0">Longitude</h4>
-          </Form.Label>
-          <Form.Control
-            type="text"
-            name="longitude"
-            id={`place-longitude-${index}`}
-            placeholder="Longitude"
-            value={place.longitude}
-            onChange={(e) => handlePlaceChange(index, e)}
-          />
-        </div>
-      </Col>
-      <Col lg={3}>
-        <div className="mb-3">
-          <Form.Label htmlFor={`place-latitude-${index}`}>
-            <h4 className="card-title mb-0">Latitude</h4>
-          </Form.Label>
-          <Form.Control
-            type="text"
-            name="latitude"
-            id={`place-latitude-${index}`}
-            placeholder="Latitude"
-            value={place.latitude}
-            onChange={(e) => handlePlaceChange(index, e)}
-          />
-        </div>
-      </Col>
-      <Col lg={2}>
-        <div className="mb-3">
-          <Form.Label htmlFor={`place-rayon-${index}`}>
-            <h4 className="card-title mb-0">Rayon</h4>
-          </Form.Label>
-          <Form.Control
-            type="text"
-            name="rayon"
-            id={`place-rayon-${index}`}
-            placeholder="Rayon"
-            value={place.rayon}
-            onChange={(e) => handlePlaceChange(index, e)}
-          />
-        </div>
-      </Col>
-      <Col lg={2} className="d-flex align-items-center">
-        <Button variant="danger" onClick={() => removePlace(index)}>
-          <i className="bi bi-trash"></i> 
-        </Button>
-      </Col>
-    </Row>
-  ))}
+                        {variableGlobale.places.map((place, index) => (
+                          <Row key={index}>
+                            <Col lg={2}>
+                              <div className="mb-3">
+                                <Form.Label
+                                  htmlFor={`place-placeName-${index}`}
+                                >
+                                  <h4 className="card-title mb-0">
+                                    Nom du Lieu
+                                  </h4>
+                                </Form.Label>
+                                <Form.Control
+                                  type="text"
+                                  name="placeName"
+                                  id={`place-placeName-${index}`}
+                                  placeholder="Nom du Lieu"
+                                  value={place.placeName}
+                                  onChange={(e) => handlePlaceChange(index, e)}
+                                />
+                              </div>
+                            </Col>
+                            <Col lg={3}>
+                              <div className="mb-3">
+                                <Form.Label
+                                  htmlFor={`place-longitude-${index}`}
+                                >
+                                  <h4 className="card-title mb-0">Longitude</h4>
+                                </Form.Label>
+                                <Form.Control
+                                  type="text"
+                                  name="longitude"
+                                  id={`place-longitude-${index}`}
+                                  placeholder="Longitude"
+                                  value={place.longitude}
+                                  onChange={(e) => handlePlaceChange(index, e)}
+                                />
+                              </div>
+                            </Col>
+                            <Col lg={3}>
+                              <div className="mb-3">
+                                <Form.Label htmlFor={`place-latitude-${index}`}>
+                                  <h4 className="card-title mb-0">Latitude</h4>
+                                </Form.Label>
+                                <Form.Control
+                                  type="text"
+                                  name="latitude"
+                                  id={`place-latitude-${index}`}
+                                  placeholder="Latitude"
+                                  value={place.latitude}
+                                  onChange={(e) => handlePlaceChange(index, e)}
+                                />
+                              </div>
+                            </Col>
+                            <Col lg={2}>
+                              <div className="mb-3">
+                                <Form.Label htmlFor={`place-rayon-${index}`}>
+                                  <h4 className="card-title mb-0">Rayon</h4>
+                                </Form.Label>
+                                <Form.Control
+                                  type="text"
+                                  name="rayon"
+                                  id={`place-rayon-${index}`}
+                                  placeholder="Rayon"
+                                  value={place.rayon}
+                                  onChange={(e) => handlePlaceChange(index, e)}
+                                />
+                              </div>
+                            </Col>
+                            <Col lg={2} className="d-flex align-items-center">
+                              <Button
+                                variant="danger"
+                                onClick={() => removePlace(index)}
+                              >
+                                <i className="bi bi-trash"></i>
+                              </Button>
+                            </Col>
+                          </Row>
+                        ))}
 
-  <Col lg={12} className="mt-3">
-    <Button variant="primary" onClick={addPlace}>
-      Ajouter un Lieu
-    </Button>
-  </Col>
-</Row>
+                        <Col lg={12} className="mt-3">
+                          <Button variant="primary" onClick={addPlace}>
+                            Ajouter un Lieu
+                          </Button>
+                        </Col>
+                      </Row>
                       <Col lg={12}>
                         <div className="hstack gap-2 justify-content-end">
                           <Button variant="primary" id="add-btn" type="submit">
