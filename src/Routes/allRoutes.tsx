@@ -226,8 +226,19 @@ import ViewAbsence from "pages/ApplicationEnseignant/AbsenceEtudiant/ViewAbsence
 import EditAbsence from "pages/ApplicationEnseignant/AbsenceEtudiant/EditAbsence";
 import ViewCours from "pages/ApplicationEnseignant/Cours/ViewCours";
 import EditCours from "pages/ApplicationEnseignant/Cours/EditCours";
+import AddDemandeTirage from "pages/ServiceTirage/AddDemandeTirage";
+import DemandesTirage from "pages/ServiceTirage";
 const authProtectedRoutes = [
   { path: "/dashboard", component: <Dashboard /> },
+  //service Tirage
+  {
+    path: "/service-tirage/liste-tirages",
+    component: <DemandesTirage />,
+  },
+  {
+    path: "/service-tirage/ajouter-tirage",
+    component: <AddDemandeTirage />,
+  },
   // view parcours
   {
     path: "/parcours/gestion-parcours/view-parcours",

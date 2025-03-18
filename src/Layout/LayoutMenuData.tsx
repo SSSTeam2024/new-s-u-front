@@ -15,11 +15,11 @@ const Navdata = () => {
   useEffect(() => {
     if (error) {
       console.error("Error fetching user permissions:", error);
-    } else if (isLoading) {
+    }/*  else if (isLoading) {
       console.log("Fetching user permissions...");
     } else {
       // console.log('User permissions:', userPermissions);
-    }
+    } */
   }, [userPermissions, error, isLoading]);
 
   const [isEcommerce, setIsEcommerce] = useState(false);
@@ -1205,20 +1205,20 @@ const Navdata = () => {
           label: "Fiches des Voeux Enseignants",
           icon: "bi bi-postcard-heart",
           link: "/gestion-emplois/gestion-fiche-voeux/liste-fiche-voeux",
-          isChildItem: true,
+          // isChildItem: true,
           click: function (e: any) {
             e.preventDefault();
             setIsLevel7(!isLevel7);
           },
           stateVariables: isLevel7,
-          childItems: [
-            {
-              id: 1,
-              label: "Liste Des Voeux",
-              link: "/gestion-emplois/gestion-fiche-voeux/liste-fiche-voeux",
-              icon: "bi bi-list-task",
-            },
-          ],
+          // childItems: [
+          //   {
+          //     id: 1,
+          //     label: "Liste Des Voeux",
+          //     link: "/gestion-emplois/gestion-fiche-voeux/liste-fiche-voeux",
+          //     icon: "bi bi-list-task",
+          //   },
+          // ],
         },
       ],
     },
@@ -1615,6 +1615,12 @@ const Navdata = () => {
       //     icon: "bi bi-file-earmark-plus",
       //   },
       // ],
+    },
+    {
+      id: "tirage",
+      label: "Service Tirage",
+      icon: "bi bi-printer",
+      link: "/service-tirage/liste-tirages",
     },
   ];
   const filteredMenuItems = filterMenuItems(menuItems, routes);

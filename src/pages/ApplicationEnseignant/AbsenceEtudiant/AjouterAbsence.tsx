@@ -33,6 +33,7 @@ import { useFetchEtudiantsByIdClasseQuery } from "features/etudiant/etudiantSlic
 import { formatDate, formatTime } from "helpers/data_time_format";
 import { useGetTeacherPeriodsBySemesterAndIdTeacherV2Mutation } from "features/teachersPeriods/teachersPeriods";
 import { useGetPeriodicSessionsByTeacherV2Mutation } from "features/seance/seance";
+import { useFetchTimeTableParamsQuery } from "features/timeTableParams/timeTableParams";
 
 const AjouterAbsence = () => {
   const { data: AllEnseignants = [] } = useFetchEnseignantsQuery();
@@ -53,6 +54,9 @@ const AjouterAbsence = () => {
   const [showObservation, setShowObservation] = useState<boolean>(false);
 
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [max_date, setMaxDate] = useState<Date | undefined>(undefined);
+  const [min_date, setMinDate] = useState<Date | undefined>(undefined);
+
   const [selectedEnseignant, setSelectedEnseignant] = useState<string>("");
   const [selectedTrimestre, setSelectedTrimestre] = useState<string>("1");
 
@@ -62,32 +66,16 @@ const AjouterAbsence = () => {
   const [studentsList, setStudentsList] = useState<any[]>([]);
 
   const [hasProcessed, setHasProcessed] = useState<boolean>(false);
+  const [hasProcessed2, setHasProcessed2] = useState<boolean>(false);
 
   const [selectedClasse, setSelectedClasse] = useState<string>("");
 
   const { data: EtudiantsByClasseID = [], isSuccess: studentsLoaded } =
     useFetchEtudiantsByIdClasseQuery(selectedClasse);
 
-  console.log(EtudiantsByClasseID);
+  const { data: scheduleParams = [], isSuccess: paramsLoaded } = useFetchTimeTableParamsQuery();
 
-  // useEffect(() => {
-  //   console.log("studentsLoaded", studentsLoaded);
-  //   console.log("hasProcessed", hasProcessed);
-  //   if (studentsLoaded && !hasProcessed) {
-  //     let students = EtudiantsByClasseID.map((student: any) => {
-  //       return {
-  //         student: student,
-  //         presence: true,
-  //       };
-  //     });
-  //     setStudentsList(students);
-  //     console.log(students);
-  //     setHasProcessed(true);
-  //   }
-  // }, [EtudiantsByClasseID, hasProcessed, studentsList]);
   useEffect(() => {
-    console.log("studentsLoaded", studentsLoaded);
-    console.log("hasProcessed", hasProcessed);
 
     if (studentsLoaded && !hasProcessed) {
       let students = EtudiantsByClasseID.map((student: any) => ({
@@ -98,8 +86,46 @@ const AjouterAbsence = () => {
       setStudentsList(students);
       console.log(students);
       setHasProcessed(true);
+
     }
-  }, [EtudiantsByClasseID, hasProcessed, selectedClasse]);
+
+    if (paramsLoaded && !hasProcessed2) {
+      configureMinAndMaxCalendarDates('1');
+      setHasProcessed2(true);
+    }
+  }, [EtudiantsByClasseID, hasProcessed, selectedClasse, scheduleParams, hasProcessed2]);
+
+  const configureMinAndMaxCalendarDates = (semester: string) => {
+    if (semester === '1') {
+      const [day1, month1, year1] = scheduleParams[0].semestre1_start.split('-').map(Number);
+      const semesterOneStartDate = new Date(year1, month1 - 1, day1);
+      setMinDate(semesterOneStartDate);
+
+      const currentDate = new Date();
+      const [day2, month2, year2] = scheduleParams[0].semestre1_end.split('-').map(Number);
+      const semesterOneEndDate = new Date(year2, month2 - 1, day2);
+
+      if (semesterOneEndDate > currentDate) {
+        setMaxDate(currentDate);
+      } else {
+        setMaxDate(semesterOneEndDate);
+      }
+    } else {
+      const [day1, month1, year1] = scheduleParams[0].semestre2_start.split('-').map(Number);
+      const semesterTwoStartDate = new Date(year1, month1 - 1, day1);
+      setMinDate(semesterTwoStartDate);
+
+      const currentDate = new Date();
+      const [day2, month2, year2] = scheduleParams[0].semestre2_end.split('-').map(Number);
+      const semesterTwoEndDate = new Date(year2, month2 - 1, day2);
+
+      if (semesterTwoEndDate > currentDate) {
+        setMaxDate(currentDate);
+      } else {
+        setMaxDate(semesterTwoEndDate);
+      }
+    }
+  }
 
   const handleDateChange = (selectedDates: Date[]) => {
     setSelectedDate(selectedDates[0]);
@@ -152,7 +178,9 @@ const AjouterAbsence = () => {
   };
 
   const toggleSemestre = () => {
-    setSelectedTrimestre((prev) => (prev === "1" ? "2" : "1"));
+    const newSemester = selectedTrimestre === "1" ? "2" : "1";
+    configureMinAndMaxCalendarDates(newSemester);
+    setSelectedTrimestre(newSemester);
     setSelectedDate(null);
     setSelectedEnseignant("");
     setSessions([]);
@@ -464,7 +492,8 @@ const AjouterAbsence = () => {
                             options={{
                               dateFormat: "d M, Y",
                               locale: French,
-                              maxDate: new Date(),
+                              maxDate: max_date,
+                              minDate: min_date
                             }}
                             id="date"
                             name="date"

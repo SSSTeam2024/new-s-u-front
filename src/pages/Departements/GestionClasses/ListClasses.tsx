@@ -203,7 +203,7 @@ const ListClasses = () => {
   const [selectedParcours, setSelectedParcours] = useState<string | null>(null);
   const [selectedSemesters, setSelectedSemesters] = useState<string[]>([]);
   const [semesters, setSemesters] = useState<string[]>([]);
-  const [selectedClasse, setSelectedClasse] = useState<Classe | null>(null);
+  const [selectedClasse, setSelectedClasse] = useState<Classe>();
   const { data: AllParcours = [] } = useFetchParcoursQuery();
   const [assignParcours] = useAssignParcoursToClasseMutation();
   const [getSemestreByIdParcours] = useGetSemestreByIdParcoursMutation();
@@ -329,10 +329,11 @@ const ListClasses = () => {
         filterable: true,
       },
       {
-        Header: "Departement",
+        Header: "Département",
         accessor: (row: any) => row.departement?.name_fr || "",
         disableFilters: true,
         filterable: true,
+
       },
 
       {
@@ -910,7 +911,7 @@ const ListClasses = () => {
           >
             <Modal.Header className="px-4 pt-4" closeButton>
               <h5 className="modal-title" id="exampleModalLabel">
-                Affecter Parcours Pour Groupe
+                Affecter Parcours Pour Groupe {selectedClasse?.nom_classe_fr!}
               </h5>
             </Modal.Header>
             <Form className="tablelist-form" onSubmit={onSubmitParcours}>

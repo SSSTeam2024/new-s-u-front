@@ -21,18 +21,26 @@ const ViewAbsence = () => {
         <Col lg={10} className="mx-auto">
           <Card className="shadow-lg">
             <Card.Header className="bg-info text-white text-center">
-              <h4 className="mb-0">Détails de l'Absence</h4>
+              <h4 className="mb-0">Etat de présence pour groupe  {absenceDetails?.classe?.nom_classe_fr!}
+              </h4>
             </Card.Header>
             <Card.Body>
               <Row className="mb-3 border-bottom pb-2">
-                <Col lg={4}>
+                <Col lg={3}>
                   <strong className="text-muted">Semestre:</strong>
                 </Col>
-                <Col lg={8} className="fw-bold">
+                <Col lg={3} className="fw-bold">
                   {absenceDetails?.trimestre ?? "Aucune semestre assigné..."}
                 </Col>
-              </Row>
 
+                <Col lg={3}>
+                  <strong className="text-muted">Date:</strong>
+                </Col>
+                <Col lg={3} className="fw-bold">
+                  {absenceDetails?.date ?? "Aucune date assigné..."}
+                </Col>
+              </Row>
+              {/* 
               <Row className="mb-3 border-bottom pb-2">
                 <Col lg={4}>
                   <strong className="text-muted">Date:</strong>
@@ -40,19 +48,26 @@ const ViewAbsence = () => {
                 <Col lg={8} className="fw-bold">
                   {absenceDetails?.date ?? "Aucune date assigné..."}
                 </Col>
-              </Row>
+              </Row> */}
 
               <Row className="mb-3 border-bottom pb-2">
-                <Col lg={4}>
+                <Col lg={3}>
                   <strong className="text-muted">Enseignant:</strong>
                 </Col>
-                <Col lg={8} className="fw-bold">
+                <Col lg={3} className="fw-bold">
                   {absenceDetails?.enseignant?.prenom_fr ??
                     "Aucune enseignant assigné..."}{" "}
                   {absenceDetails?.enseignant?.nom_fr ?? ""}
                 </Col>
+                <Col lg={3}>
+                  <strong className="text-muted">Matière:</strong>
+                </Col>
+                <Col lg={3} className="fw-bold">
+                  {absenceDetails?.seance?.matiere?.matiere ??
+                    "Aucune matière assigné..."}
+                </Col>
               </Row>
-              <Row className="mb-3 border-bottom pb-2">
+              {/* <Row className="mb-3 border-bottom pb-2">
                 <Col lg={4}>
                   <strong className="text-muted">Matière:</strong>
                 </Col>
@@ -60,22 +75,29 @@ const ViewAbsence = () => {
                   {absenceDetails?.seance?.matiere?.matiere ??
                     "Aucune matière assigné..."}
                 </Col>
-              </Row>
+              </Row> */}
 
               <Row className="mb-3 border-bottom pb-2">
-                <Col lg={4}>
+                <Col lg={3}>
                   <strong className="text-muted">Horaire:</strong>
                 </Col>
-                <Col lg={8} className="fw-bold">
+                <Col lg={3} className="fw-bold">
                   {absenceDetails?.seance?.heure_debut ??
-                    "Aucune heure debt assigné..."}{" "}
+                    "Aucune heure debut assigné..."}{" "}
                   -{" "}
                   {absenceDetails?.seance?.heure_fin ??
                     "Aucune heure fin assigné..."}
                 </Col>
+                <Col lg={3}>
+                  <strong className="text-muted">Salle:</strong>
+                </Col>
+                <Col lg={3} className="fw-bold">
+                  {absenceDetails?.seance?.salle?.salle ??
+                    "Aucune salle assigné..."}
+                </Col>
               </Row>
 
-              <Row className="mb-3 border-bottom pb-2">
+              {/* <Row className="mb-3 border-bottom pb-2">
                 <Col lg={4}>
                   <strong className="text-muted">Salle:</strong>
                 </Col>
@@ -83,9 +105,9 @@ const ViewAbsence = () => {
                   {absenceDetails?.seance?.salle?.salle ??
                     "Aucune salle assigné..."}
                 </Col>
-              </Row>
+              </Row> */}
 
-              <Row className="mb-3 border-bottom pb-2">
+              {/* <Row className="mb-3 border-bottom pb-2">
                 <Col lg={4}>
                   <strong className="text-muted">Classe:</strong>
                 </Col>
@@ -93,11 +115,11 @@ const ViewAbsence = () => {
                   {absenceDetails?.classe?.nom_classe_fr ??
                     "Aucun classe assigné..."}
                 </Col>
-              </Row>
+              </Row> */}
 
               <h5 className="text-primary mt-4">Étudiants Absents</h5>
               {absenceDetails?.etudiants &&
-              absenceDetails.etudiants.length > 0 ? (
+                absenceDetails.etudiants.length > 0 ? (
                 <Table striped bordered hover className="mt-3">
                   <thead className="table-secondary">
                     <tr>
@@ -129,7 +151,7 @@ const ViewAbsence = () => {
 
               <h5 className="text-primary mt-4">Étudiants Présents</h5>
               {absenceDetails?.etudiants &&
-              absenceDetails.etudiants.length > 0 ? (
+                absenceDetails.etudiants.length > 0 ? (
                 <Table striped bordered hover className="mt-3">
                   <thead className="table-secondary">
                     <tr>
@@ -168,7 +190,7 @@ const ViewAbsence = () => {
           </Card>
         </Col>
       </Container>
-    </div>
+    </div >
   );
 };
 

@@ -357,8 +357,8 @@ const GestionEmploiClasse = () => {
       const selectedOption = formValues.tcCheckbox1
         ? "continuer"
         : formValues.tcCheckbox2
-        ? "annuler"
-        : "aucune sélection";
+          ? "annuler"
+          : "aucune sélection";
       Swal.fire(
         "Option sélectionnée",
         `Vous avez choisi de: ${selectedOption}`,
@@ -642,20 +642,25 @@ const GestionEmploiClasse = () => {
 
   let wishList: any[] = [];
   for (let element of allVoeux) {
-    let consernedVoeux;
+    let consernedVoeux = [];
     if (key === element.semestre) {
       for (let v of element.fiche_voeux_classes) {
-        if (classe?._id === v.classe?._id) {
-          consernedVoeux = v;
-          wishList.push({
-            teacher: element.enseignant,
-            voeux: consernedVoeux,
-          });
-          break;
+        let classExists = v.classe.filter(c => c?.class_id?._id === classe?._id);
+        if (classExists[0] !== undefined) {
+          consernedVoeux.push(classExists[0]);
         }
+      }
+      if (consernedVoeux.length > 0) {
+        wishList.push({
+          teacher: element.enseignant,
+          voeux: consernedVoeux,
+          jours: element.jours
+        });
       }
     }
   }
+
+  console.log(wishList);
 
   const selectChangeJour = async (
     event: React.ChangeEvent<HTMLSelectElement>
@@ -836,6 +841,12 @@ const GestionEmploiClasse = () => {
           heure_debut: "",
           heure_fin: "",
         },
+        matiere: "",
+        salle: "",
+        jour: "",
+        heure_debut: "",
+        heure_fin: "",
+        type_seance: "",
       }));
     } catch (error: any) {
       console.log(error);
@@ -1100,6 +1111,7 @@ const GestionEmploiClasse = () => {
   };
 
   const prepareWhishListDays = (currentWhishDays: any) => {
+    console.log(currentWhishDays)
     let preAvailableDays: any[] = [
       {
         day: "Lundi",
@@ -1137,6 +1149,7 @@ const GestionEmploiClasse = () => {
 
     setAvailableDays(preAvailableDays);
   };
+
   const handleChangeSelectedVoeuxEnseignant = (e: any) => {
     if (e.target.value !== "") {
       setDisabledIntervals([]);
@@ -1167,42 +1180,44 @@ const GestionEmploiClasse = () => {
 
       setPeriodicSchedulesIds(periodicIds);
 
-      let consernedVoeux0: any = voeux.filter(
-        (v) => v.enseignant._id === e.target.value
-      );
+      let consernedVoeux0: any = wishList.filter(
+        (w) => w.teacher._id === e.target.value
+      )[0];
 
-      let consernedVoeux: any[] = [];
-      for (const element of consernedVoeux0) {
-        if (classeDetails.semestre === "1") {
-          if (element.semestre === "S1") {
-            consernedVoeux.push(element);
-          }
-        } else {
-          if (element.semestre === "S2") {
-            consernedVoeux.push(element);
-          }
-        }
-      }
+      console.log("consernedVoeux0", consernedVoeux0)
 
-      let currentVoeux: any = consernedVoeux[0]?.fiche_voeux_classes!.filter(
-        (v: any) => v.classe._id === classe!._id
-      );
+      // let consernedVoeux: any[] = [];
+      // for (const element of consernedVoeux0.voeux) {
+      //   if (classeDetails.semestre === "1") {
+      //     if (element.semestre === "S1") {
+      //       consernedVoeux.push(element);
+      //     }
+      //   } else {
+      //     if (element.semestre === "S2") {
+      //       consernedVoeux.push(element);
+      //     }
+      //   }
+      // }
 
-      prepareWhishListDays(consernedVoeux[0].jours);
+      // let currentVoeux: any = consernedVoeux[0]?.fiche_voeux_classes!.filter(
+      //   (v: any) => v.classe._id === classe!._id
+      // );
+
+      prepareWhishListDays(consernedVoeux0.jours);
 
       setSelectedTeacher({
         name:
-          consernedVoeux[0]?.enseignant?.prenom_fr! +
+          consernedVoeux0?.teacher?.prenom_fr! +
           " " +
-          consernedVoeux[0]?.enseignant?.nom_fr!,
-        id: consernedVoeux[0]?.enseignant?._id!,
+          consernedVoeux0?.teacher?.nom_fr!,
+        id: consernedVoeux0?.teacher?._id!,
       });
 
       let tempMat = [];
-      for (let mat of currentVoeux[0]?.matieres!) {
+      for (let voeux of consernedVoeux0.voeux!) {
         tempMat.push({
-          name: mat.matiere + " " + mat.types[0].type,
-          id: mat._id,
+          name: voeux.subject_id.matiere + " " + voeux.subject_id.types[0].type,
+          id: voeux.subject_id._id,
         });
       }
       setFormData((prevState) => ({
@@ -1217,7 +1232,7 @@ const GestionEmploiClasse = () => {
 
       setSelectedVoeux(tempMat);
       let tempJour = [];
-      for (let jour of consernedVoeux[0]?.jours!) {
+      for (let jour of consernedVoeux0.jours) {
         tempJour.push(jour);
       }
       setSelectedJourVoeux(tempJour);
@@ -1348,7 +1363,7 @@ const GestionEmploiClasse = () => {
           });
         }
         previousEndTime = Math.max(previousEndTime, sessionEndTime);
-        if (session.type_seance === "1/15") {
+        if (session.type_seance === "1/15") { //TODO: Verify if to add third 1/15 session at the same time interval
           available_intervals.push({
             start: session.heure_debut,
             end: session.heure_fin,
@@ -1749,7 +1764,7 @@ const GestionEmploiClasse = () => {
           days={days}
           groupedSessions={groupedSessions}
           maxSessions={maxSessions}
-          //enseignant={}
+        //enseignant={}
         />
       );
       const pdfBlob = await pdfInstance.toBlob();
@@ -1837,7 +1852,7 @@ const GestionEmploiClasse = () => {
                         >
                           <Button
                             className="btn btn-soft-dark btn-border"
-                            onClick={() => {}}
+                            onClick={() => { }}
                           >
                             <i className="ri-edit-2-line align-bottom me-1"></i>{" "}
                             Gestion des séances
@@ -1883,9 +1898,9 @@ const GestionEmploiClasse = () => {
                                             isFortnight &&
                                             lastSession &&
                                             lastSession.heure_debut ===
-                                              session.heure_debut &&
+                                            session.heure_debut &&
                                             lastSession.heure_fin ===
-                                              session.heure_fin &&
+                                            session.heure_fin &&
                                             lastSession.type_seance === "1/15"
                                           ) {
                                             lastSession.sessions.push(session);
@@ -1948,7 +1963,7 @@ const GestionEmploiClasse = () => {
                                                 )
                                               )}
                                               {sessionGroup.type_seance ===
-                                              "1/15" ? (
+                                                "1/15" ? (
                                                 <div
                                                   className="position-absolute p-1 m-1 bottom-0 end-0 rounded"
                                                   style={{
@@ -1971,7 +1986,7 @@ const GestionEmploiClasse = () => {
                                       {[
                                         ...Array(
                                           maxSessions -
-                                            groupedSessions[day].length
+                                          groupedSessions[day].length
                                         ),
                                       ].map((_, idx) => (
                                         <td
@@ -2262,32 +2277,8 @@ const GestionEmploiClasse = () => {
                               </div>
                             </Col>
                           </Row>
-                          <Row>
-                            <Col lg={8}>
-                              {formData.jour != "" ? (
-                                <TimeRange
-                                  error={error}
-                                  ticksNumber={132}
-                                  selectedInterval={[
-                                    selectedStart,
-                                    selectedEnd,
-                                  ]}
-                                  timelineInterval={[startTime, endTime]}
-                                  onUpdateCallback={errorHandler}
-                                  onChangeCallback={onChangeCallback}
-                                  disabledIntervals={disabledIntervals}
-                                  step={5 * 60 * 1000}
-                                  formatTick={(ms) =>
-                                    new Date(ms).toLocaleTimeString([], {
-                                      hour: "2-digit",
-                                      minute: "2-digit",
-                                    })
-                                  }
-                                />
-                              ) : (
-                                <></>
-                              )}
-                            </Col>
+                          <Row className="mb-4">
+
                             <Col lg={2}>
                               <div className="mb-3">
                                 <Form.Label htmlFor="heure_debut">
@@ -2339,6 +2330,34 @@ const GestionEmploiClasse = () => {
                               </div>
                             </Col>
                           </Row>
+                          <Row>
+                            <Col lg={12}>
+                              {formData.jour != "" ? (
+                                <TimeRange
+                                  error={error}
+                                  ticksNumber={132}
+                                  selectedInterval={[
+                                    selectedStart,
+                                    selectedEnd,
+                                  ]}
+                                  timelineInterval={[startTime, endTime]}
+                                  onUpdateCallback={errorHandler}
+                                  onChangeCallback={onChangeCallback}
+                                  disabledIntervals={disabledIntervals}
+                                  step={5 * 60 * 1000}
+                                  formatTick={(ms) =>
+                                    new Date(ms).toLocaleTimeString([], {
+                                      hour: "2-digit",
+                                      minute: "2-digit",
+                                      hour12: false
+                                    })
+                                  }
+                                />
+                              ) : (
+                                <></>
+                              )}
+                            </Col>
+                          </Row>
                           <Row className="mt-5">
                             <Col lg={6}>
                               {disponibiliteSalles.length === 0 ? (
@@ -2349,7 +2368,7 @@ const GestionEmploiClasse = () => {
                                     disabled={formData.heure_fin === ""}
                                   >
                                     {roomsAvailabilityRequestStatus.isLoading ===
-                                    true ? (
+                                      true ? (
                                       <CustomLoaderForButton></CustomLoaderForButton>
                                     ) : (
                                       <>Salles disponibles?</>
@@ -2392,7 +2411,7 @@ const GestionEmploiClasse = () => {
                                   disabled={formData.salle === ""}
                                 >
                                   {sessionCreationRequestStatus.isLoading ===
-                                  true ? (
+                                    true ? (
                                     <CustomLoaderForButton></CustomLoaderForButton>
                                   ) : (
                                     <>Ajouter Séance</>
