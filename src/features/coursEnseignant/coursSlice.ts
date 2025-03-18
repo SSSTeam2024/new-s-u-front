@@ -12,6 +12,7 @@ export interface CoursEnseignant {
     pdfExtension: string;
   }[];
   trimestre: string;
+  deletedfile?: string
 }
 
 export const courSlice = createApi({

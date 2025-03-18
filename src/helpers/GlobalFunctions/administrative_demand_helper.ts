@@ -41,7 +41,7 @@ export const replaceShortCodes = (demandData: any, globalData: any, docNumber?: 
 
   if(piece_demande?.has_code! === '1'){
     console.log(generatedQrCode);
-    let qrData = `https://verify.eniga.tn/id=${generatedQrCode}`
+    let qrData = `http://verify.eniga.smartschools.tn/verify.html?id=${generatedQrCode}`
     newBody = newBody?.replace(
       "https://qrcg-free-editor.qr-code-generator.com/latest/assets/images/websiteQRCode_noFrame.png",
       `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${qrData}`

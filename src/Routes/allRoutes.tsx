@@ -228,6 +228,10 @@ import ViewCours from "pages/ApplicationEnseignant/Cours/ViewCours";
 import EditCours from "pages/ApplicationEnseignant/Cours/EditCours";
 import AddDemandeTirage from "pages/ServiceTirage/AddDemandeTirage";
 import DemandesTirage from "pages/ServiceTirage";
+import RepartitionGroupe from "pages/Gestion-etudiant/RepartitionGroupes";
+import RepartitionEnseignant from "pages/Gestion-enseignant/RepartitionEnseignant";
+import RechercheAvance from "pages/Gestion-etudiant/RechercheAvance";
+import RepartitionPersonnel from "pages/Gestion-personnel/RepartitionPersonnel";
 const authProtectedRoutes = [
   { path: "/dashboard", component: <Dashboard /> },
   //service Tirage
@@ -324,6 +328,14 @@ const authProtectedRoutes = [
   { path: "/gestion-etudiant/compte-etudiant", component: <MyAccount /> },
   { path: "/gestion-etudiant/liste-etudiants", component: <ListEtudiants /> },
   {
+    path: "/gestion-etudiant/repartition-groupe",
+    component: <RepartitionGroupe />,
+  },
+  {
+    path: "/gestion-etudiant/recherche-avance",
+    component: <RechercheAvance />,
+  },
+  {
     path: "/gestion-etudiant/ajouter-etudiant",
     component: <AjouterEtudiant />,
   },
@@ -398,6 +410,10 @@ const authProtectedRoutes = [
     component: <AccountEnseignant />,
   },
   {
+    path: "/gestion-enseignant/repartition-enseignant",
+    component: <RepartitionEnseignant />,
+  },
+  {
     path: "/gestion-enseignant/edit-compte-enseignant",
     component: <EditProfilEnseignant />,
   },
@@ -439,6 +455,10 @@ const authProtectedRoutes = [
   {
     path: "/gestion-personnel/liste-personnels",
     component: <ListPersonnels />,
+  },
+  {
+    path: "/gestion-personnel/repartition-personnel",
+    component: <RepartitionPersonnel />,
   },
   {
     path: "/gestion-personnel/compte-personnel",

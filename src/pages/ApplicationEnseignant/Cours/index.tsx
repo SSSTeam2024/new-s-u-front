@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { Container, Row, Card, Col, Form, Offcanvas } from "react-bootstrap";
+import React, { useState } from "react";
+import { Container, Row, Card, Col } from "react-bootstrap";
 import DataTable from "react-data-table-component";
 import Breadcrumb from "Common/BreadCrumb";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import {
   useDeleteCoursMutation,
@@ -10,10 +10,10 @@ import {
 } from "features/coursEnseignant/coursSlice";
 
 const Cours = () => {
+  document.title = "Supports | ENIGA";
+
   const { data = [] } = useFetchCoursEnseignantsQuery();
-  console.log(data);
-  const [selectedCourse, setSelectedCourse] = useState<any>(null);
-  const [showObservation, setShowObservation] = useState(false);
+
   const navigate = useNavigate();
 
   function tog_AddAbsence() {
@@ -156,57 +156,60 @@ const Cours = () => {
     },
   ];
 
-  const observationLocation = useLocation();
-
   const [searchTerm, setSearchTerm] = useState("");
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
   };
-  const getFilteredAbsences = () => {
-    let filteredAbsences = data;
+  const getFilteredCours = () => {
+    let filteredCours = [...data];
 
     if (searchTerm) {
-      filteredAbsences = filteredAbsences.filter(
-        (absence: any) =>
-          absence?.matiere!.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          absence?.heure!.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          absence?.date!.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          absence?.enseignant
-            ?.nom_enseignant!.toLowerCase()
-            .includes(searchTerm.toLowerCase()) ||
-          absence?.enseignant
-            ?.prenom_enseignant!.toLowerCase()
-            .includes(searchTerm.toLowerCase()) ||
-          absence?.classe
-            ?.nom_classe!.toLowerCase()
-            .includes(searchTerm.toLowerCase())
-      );
+      const lowerCaseSearch = searchTerm.toLowerCase();
+
+      filteredCours = filteredCours.filter((cours: any) => {
+        const nomCours = cours?.nom_cours?.toLowerCase() || "";
+        const enseignantNom = cours?.enseignant?.nom_fr?.toLowerCase() || "";
+        const enseignantPrenom =
+          cours?.enseignant?.prenom_fr?.toLowerCase() || "";
+
+        const classeMatch = cours?.classe?.some((c: any) =>
+          c?.nom_classe_fr?.toLowerCase().includes(lowerCaseSearch)
+        );
+
+        return (
+          nomCours.includes(lowerCaseSearch) ||
+          enseignantNom.includes(lowerCaseSearch) ||
+          enseignantPrenom.includes(lowerCaseSearch) ||
+          classeMatch
+        );
+      });
     }
 
-    return filteredAbsences;
+    return filteredCours.reverse();
   };
 
   return (
     <React.Fragment>
       <div className="page-content">
         <Container fluid>
-          <Breadcrumb title="Support" pageTitle="Application Enseignant" />
+          <Breadcrumb title="Supports" pageTitle="Application Enseignant" />
           <Col lg={12}>
-            <Card id="shipmentsList">
+            <Card>
               <Card.Header className="border-bottom-dashed">
                 <Row className="g-3">
                   <Col lg={3}>
-                    <div className="search-box">
+                    <label className="search-box">
                       <input
                         type="text"
                         className="form-control search"
                         placeholder="Rechercher ..."
-                        // value={searchTerm}
-                        // onChange={handleSearchChange}
+                        value={searchTerm}
+                        onChange={handleSearchChange}
                       />
                       <i className="ri-search-line search-icon"></i>
-                    </div>
+                    </label>
                   </Col>
+                  <Col lg={6}></Col>
                   <Col lg={3} className="d-flex justify-content-end">
                     <div
                       className="btn-group btn-group-sm"
@@ -241,127 +244,13 @@ const Cours = () => {
               <Card.Body>
                 <DataTable
                   columns={columns}
-                  data={getFilteredAbsences()}
+                  data={getFilteredCours()}
                   pagination
                 />
               </Card.Body>
             </Card>
           </Col>
         </Container>
-        <Offcanvas
-          show={showObservation}
-          onHide={() => setShowObservation(false)}
-          placement="end"
-          style={{ width: "30%" }}
-        >
-          <Offcanvas.Header closeButton>
-            <Offcanvas.Title>Détails Cours</Offcanvas.Title>
-          </Offcanvas.Header>
-          <Offcanvas.Body>
-            {selectedCourse ? (
-              <>
-                {/* Classe Information */}
-                <Row className="mb-3">
-                  <Col lg={3}>
-                    <span className="fw-medium">Classe</span>
-                  </Col>
-                  <Col lg={9}>
-                    <i>{selectedCourse.classe[0]?.nom_classe_fr}</i>
-                  </Col>
-                </Row>
-
-                {/* Course Information */}
-                <Row className="mb-3">
-                  <Col lg={3}>
-                    <span className="fw-medium">Matière</span>
-                  </Col>
-                  <Col lg={9}>
-                    <i>{selectedCourse.nom_cours}</i>
-                  </Col>
-                </Row>
-
-                {/* Trimester */}
-                <Row className="mb-3">
-                  <Col lg={3}>
-                    <span className="fw-medium">Trimèstre</span>
-                  </Col>
-                  <Col lg={9}>
-                    <i>{selectedCourse.trimestre}</i>
-                  </Col>
-                </Row>
-
-                {/* Teacher Information */}
-                <Row className="mb-3">
-                  <Col lg={3}>
-                    <span className="fw-medium">Enseignant</span>
-                  </Col>
-                  <Col lg={9}>
-                    <i>
-                      {selectedCourse.enseignant?.nom_fr}{" "}
-                      {selectedCourse.enseignant?.prenom_fr}
-                    </i>
-                  </Col>
-                </Row>
-
-                {/* Displaying file_cours links */}
-                {selectedCourse.file_cours &&
-                  selectedCourse.file_cours.length > 0 && (
-                    <Row className="mb-3">
-                      <Col lg={3}>
-                        <span className="fw-medium">Fichiers de Cours</span>
-                      </Col>
-                      <Col lg={9}>
-                        {selectedCourse.file_cours.map(
-                          (file: any, index: any) => {
-                            // Get the file extension to determine how to handle it
-                            const fileExtension = file
-                              .split(".")
-                              .pop()
-                              .toLowerCase();
-
-                            return (
-                              <div key={index}>
-                                {fileExtension === "pdf" ||
-                                fileExtension === "xlsx" ||
-                                fileExtension === "xls" ||
-                                fileExtension === "pptx" ||
-                                fileExtension === "ppt" ||
-                                fileExtension === "jpg" ||
-                                fileExtension === "jpeg" ||
-                                fileExtension === "png" ||
-                                fileExtension === "gif" ? (
-                                  <a
-                                    href={file}
-                                    download
-                                    className="btn btn-link"
-                                  >
-                                    {file.split("/").pop()}{" "}
-                                    {/* Display file name */}
-                                  </a>
-                                ) : (
-                                  // Default case for other file types
-                                  <a
-                                    href={file}
-                                    download
-                                    className="btn btn-link"
-                                  >
-                                    {file.split("/").pop()}{" "}
-                                    {/* Display file name */}
-                                  </a>
-                                )}
-                              </div>
-                            );
-                          }
-                        )}
-                      </Col>
-                    </Row>
-                  )}
-              </>
-            ) : (
-              <p>Loading details...</p>
-            )}
-          </Offcanvas.Body>
-        </Offcanvas>
       </div>
     </React.Fragment>
   );

@@ -9,19 +9,15 @@ import {
   Modal,
   Row,
   Spinner,
-  OverlayTrigger,
-  Popover
 } from "react-bootstrap";
 import Breadcrumb from "Common/BreadCrumb";
 import CountUp from "react-countup";
 import { Link, useNavigate } from "react-router-dom";
 import TableContainer from "Common/TableContainer";
 import {
-  EtatCompte,
   Etudiant,
   EtudiantExcel,
   FileDetail,
-  GroupeClasse,
   useAddEtudiantMutation,
   useDeleteEtudiantMutation,
   useFetchEtudiantsQuery,
@@ -146,7 +142,7 @@ const ListEtudiants = () => {
   }
   const { data = [] } = useFetchEtudiantsQuery();
   const [studentCount, setStudentCount] = useState(0);
-
+  console.log("data", data);
   useEffect(() => {
     if (data) {
       setStudentCount(data.length);
@@ -330,12 +326,6 @@ const ListEtudiants = () => {
         filterable: true,
       },
       {
-        Header: "Nom et Prénom",
-        accessor: (row: any) => `${row?.prenom_fr!} ${row?.nom_fr!}`,
-        disableFilters: true,
-        filterable: true,
-      },
-      {
         Header: "Groupe Classe",
         accessor: (row: any) => row?.Groupe! || "",
         disableFilters: true,
@@ -356,7 +346,7 @@ const ListEtudiants = () => {
           format(new Date(value), "yyyy-MM-dd - HH:mm"),
       },
       {
-        Header: "Activation",
+        Header: "Etat Compte",
         disableFilters: true,
         filterable: true,
         accessor: (row: any) => row?.etat_compte?.etat_fr || "",
@@ -382,6 +372,13 @@ const ListEtudiants = () => {
         //       );
         //   }
         // },
+      },
+      {
+        Header: "Type inscription",
+        // accessor: "type_inscription",
+        accessor: (row: any) => row?.type_inscription?.type_fr || "",
+        disableFilters: true,
+        filterable: true,
       },
       {
         Header: "Action",
@@ -493,7 +490,6 @@ const ListEtudiants = () => {
                     </Dropdown.Menu>
                   </Dropdown>
                 </li>
-
               ) : (
                 <></>
               )}
@@ -741,9 +737,7 @@ const ListEtudiants = () => {
             mention: items.Mention_Bac || "",
             session: items.Session_Bac || "",
             filiere: items.Section_Bac || "",
-            annee_scolaire: items["Année_ Bac"]
-              ? excelDateToJSDate(items["Année_ Bac"])
-              : "",
+            annee_scolaire: items["Année_ Bac"] || "",
             num_inscri: items.NumInscription || "",
             prenom_conjoint: items.Prénom_Conjoint || "",
             profesion_Conjoint: items.Profesion_Conjoint || "",
@@ -1099,7 +1093,7 @@ const ListEtudiants = () => {
                         />
                       </h4>
                       <p className="mb-0 fw-medium text-uppercase fs-14">
-                        Nombre d'etudiants
+                        Etudiants
                       </p>
                     </Card.Body>
                   </Card>

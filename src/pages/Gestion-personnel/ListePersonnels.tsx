@@ -179,12 +179,12 @@ const ListePersonnels = () => {
         },
       },
 
-      {
-        Header: "Nom et Prénom",
-        accessor: (row: any) => `${row.prenom_ar} ${row.nom_ar}`,
-        disableFilters: true,
-        filterable: true,
-      },
+      // {
+      //   Header: "Nom et Prénom",
+      //   accessor: (row: any) => `${row.prenom_ar} ${row.nom_ar}`,
+      //   disableFilters: true,
+      //   filterable: true,
+      // },
 
       {
         Header: "Service",

@@ -4,20 +4,17 @@ import {
   Card,
   Col,
   Container,
-  Dropdown,
   Form,
   Modal,
   Row,
 } from "react-bootstrap";
 import Breadcrumb from "Common/BreadCrumb";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import TableContainer from "Common/TableContainer";
 import { LienUtils } from "Common/data/lienUtils";
 
 const ListLienUtilst = () => {
   document.title = "Liste des liens utils | ENIGA";
-
-  const navigate = useNavigate();
 
   const [modal_AddParametreModals, setmodal_AddParametreModals] =
     useState<boolean>(false);
@@ -26,34 +23,6 @@ const ListLienUtilst = () => {
   }
   const columns = useMemo(
     () => [
-      {
-        Header: (
-          <div className="form-check">
-            {" "}
-            <input
-              className="form-check-input"
-              type="checkbox"
-              id="checkAll"
-              value="option"
-            />{" "}
-          </div>
-        ),
-        Cell: (cellProps: any) => {
-          return (
-            <div className="form-check">
-              {" "}
-              <input
-                className="form-check-input"
-                type="checkbox"
-                name="chk_child"
-                defaultValue="option1"
-              />{" "}
-            </div>
-          );
-        },
-        id: "#",
-      },
-
       {
         Header: "Titre",
         accessor: "titre",

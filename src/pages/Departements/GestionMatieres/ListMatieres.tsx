@@ -4,7 +4,6 @@ import {
   Card,
   Col,
   Container,
-  Dropdown,
   Form,
   Modal,
   Row,
@@ -19,6 +18,7 @@ import {
   useDeleteMatiereMutation,
   useFetchMatiereQuery,
 } from "features/matiere/matiere";
+import DataTable from "react-data-table-component";
 
 export interface Matiere {
   _id: string;
@@ -104,132 +104,117 @@ const ListMatieres = () => {
       });
   };
 
-  const columns = useMemo(
-    () => [
-      {
-        Header: "Code matière",
-        accessor: "code_matiere",
-        disableFilters: true,
-        filterable: true,
+  const columns = [
+    {
+      name: <span className="font-weight-bold fs-13">Code matière</span>,
+      selector: (row: any) => row?.code_matiere!,
+      sortable: true,
+    },
+    {
+      name: <span className="font-weight-bold fs-13">Matière</span>,
+      selector: (row: any) => row?.matiere!,
+      sortable: true,
+    },
+    {
+      name: <span className="font-weight-bold fs-13">Type</span>,
+      selector: (row: any) => {
+        const type = row.types && row.types[0] ? row.types[0].type : "---";
+        return type;
       },
-      {
-        Header: "Matière",
-        accessor: "matiere",
-        disableFilters: true,
-        filterable: true,
+      sortable: true,
+    },
+    {
+      name: <span className="font-weight-bold fs-13">Régime</span>,
+      selector: (row: any) => row?.regime_matiere!,
+      sortable: true,
+    },
+    {
+      name: <span className="font-weight-bold fs-13">Crédit</span>,
+      selector: (row: any) => row?.credit_matiere!,
+      sortable: true,
+    },
+    {
+      name: <span className="font-weight-bold fs-13">Coefficients</span>,
+      selector: (row: any) => row?.coefficient_matiere!,
+      sortable: true,
+    },
+    {
+      name: <span className="font-weight-bold fs-13">Semestre</span>,
+      selector: (row: any) => row?.semestre!,
+      sortable: true,
+    },
+    {
+      name: <span className="font-weight-bold fs-13">Volume</span>,
+      selector: (row: any) => {
+        const type = row.types && row.types[0] ? row.types[0].volume : "---";
+        return type;
       },
-      {
-        Header: "Type",
-        accessor: (row: Matiere) => {
-          const type = row.types && row.types[0] ? row.types[0].type : "---";
-          return type;
-        },
-        disableFilters: true,
-        filterable: true,
+      sortable: true,
+    },
+    {
+      name: <span className="font-weight-bold fs-13">Nbr élimination</span>,
+      selector: (row: any) => {
+        const nbrElimination =
+          row.types && row.types[0] ? row.types[0].nbr_elimination : "---";
+        return nbrElimination;
       },
-      {
-        Header: "Régime",
-        accessor: "regime_matiere",
-        disableFilters: true,
-        filterable: true,
+      sortable: true,
+    },
+    {
+      name: <span className="font-weight-bold fs-13">Actions</span>,
+      selector: (row: any) => {
+        return (
+          <ul className="hstack gap-2 list-unstyled mb-0">
+            <li>
+              <Link
+                to="/departement/gestion-matieres/edit-matiere"
+                state={row}
+                className="badge bg-primary-subtle text-primary edit-item-btn"
+              >
+                <i
+                  className="ph ph-pencil-line"
+                  style={{
+                    transition: "transform 0.3s ease-in-out",
+                    cursor: "pointer",
+                    fontSize: "1.5em",
+                  }}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.transform = "scale(1.2)")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.transform = "scale(1)")
+                  }
+                ></i>
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="#"
+                className="badge bg-danger-subtle text-danger remove-item-btn"
+              >
+                <i
+                  className="ph ph-trash"
+                  style={{
+                    transition: "transform 0.3s ease-in-out",
+                    cursor: "pointer",
+                    fontSize: "1.5em",
+                  }}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.transform = "scale(1.2)")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.transform = "scale(1)")
+                  }
+                  onClick={() => AlertDelete(row?._id!)}
+                ></i>
+              </Link>
+            </li>
+          </ul>
+        );
       },
-      {
-        Header: "Crédit",
-        accessor: "credit_matiere",
-        disableFilters: true,
-        filterable: true,
-      },
-      {
-        Header: "Coefficients",
-        accessor: "coefficient_matiere",
-        disableFilters: true,
-        filterable: true,
-      },
-      {
-        Header: "Semestre",
-        accessor: "semestre",
-        disableFilters: true,
-        filterable: true,
-      },
-      {
-        Header: "Volume",
-        accessor: (row: Matiere) => {
-          // Accessing the first item of types and handling missing values
-          const type = row.types && row.types[0] ? row.types[0].volume : "---";
-          return type;
-        },
-        disableFilters: true,
-        filterable: true,
-      },
-      {
-        Header: "Nbr élimination",
-        accessor: (row: Matiere) => {
-          // Accessing the first item of types and handling missing values
-          const nbrElimination =
-            row.types && row.types[0] ? row.types[0].nbr_elimination : "---";
-          return nbrElimination;
-        },
-        disableFilters: true,
-        filterable: true,
-      },
-      {
-        Header: "Action",
-        disableFilters: true,
-        filterable: true,
-        accessor: (matiere: Matiere) => {
-          return (
-            <ul className="hstack gap-2 list-unstyled mb-0">
-              <li>
-                <Link
-                  to="/departement/gestion-matieres/edit-matiere"
-                  state={matiere}
-                  className="badge bg-primary-subtle text-primary edit-item-btn"
-                >
-                  <i
-                    className="ph ph-pencil-line"
-                    style={{
-                      transition: "transform 0.3s ease-in-out",
-                      cursor: "pointer",
-                      fontSize: "1.5em",
-                    }}
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.transform = "scale(1.2)")
-                    }
-                    onMouseLeave={(e) =>
-                      (e.currentTarget.style.transform = "scale(1)")
-                    }
-                  ></i>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="#"
-                  className="badge bg-danger-subtle text-danger remove-item-btn"
-                >
-                  <i
-                    className="ph ph-trash"
-                    style={{
-                      transition: "transform 0.3s ease-in-out",
-                      cursor: "pointer",
-                      fontSize: "1.5em",
-                    }}
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.transform = "scale(1.2)")
-                    }
-                    onMouseLeave={(e) =>
-                      (e.currentTarget.style.transform = "scale(1)")
-                    }
-                    onClick={() => AlertDelete(matiere?._id!)}
-                  ></i>
-                </Link>
-              </li>
-            </ul>
-          );
-        },
-      },
-    ],
-    []
-  );
+      sortable: true,
+    },
+  ];
 
   const handleFileUpload = (event: any) => {
     const file = event.target.files[0];
@@ -282,14 +267,14 @@ const ListMatieres = () => {
                 <Card.Body>
                   <Row className="g-3">
                     <Col lg={3}>
-                      <div className="search-box">
+                      <label className="search-box">
                         <input
                           type="text"
                           className="form-control search"
                           placeholder="Chercher..."
                         />
                         <i className="ri-search-line search-icon"></i>
-                      </div>
+                      </label>
                     </Col>
 
                     <Col className="col-lg-auto ms-auto">
@@ -509,40 +494,9 @@ const ListMatieres = () => {
 
               <Card>
                 <Card.Body className="p-0">
-                  {/* <div className="table-responsive table-card mb-1"> */}
-                  <table
-                    className="table align-middle table-nowrap"
-                    id="customerTable"
-                  >
-                    <TableContainer
-                      columns={columns || []}
-                      data={data || []}
-                      // isGlobalFilter={false}
-                      iscustomPageSize={false}
-                      isBordered={false}
-                      customPageSize={10}
-                      isPagination={true}
-                      className="custom-header-css table align-middle table-nowrap"
-                      tableClass="table-centered align-middle table-nowrap mb-0"
-                      theadClass="text-muted table-light"
-                      SearchPlaceholder="Search Products..."
-                    />
-                  </table>
-                  <div className="noresult" style={{ display: "none" }}>
-                    <div className="text-center py-4">
-                      <div className="avatar-md mx-auto mb-4">
-                        <div className="avatar-title bg-primary-subtle text-primary rounded-circle fs-24">
-                          <i className="bi bi-search"></i>
-                        </div>
-                      </div>
-                      <h5 className="mt-2">Sorry! No Result Found</h5>
-                      <p className="text-muted mb-0">
-                        We've searched more than 150+ seller We did not find any
-                        seller for you search.
-                      </p>
-                    </div>
+                  <div>
+                    <DataTable columns={columns} data={data} pagination />
                   </div>
-                  {/* </div> */}
                 </Card.Body>
               </Card>
             </Col>
