@@ -51,16 +51,16 @@ export const teachersPeriodsSlice = createApi({
         },
         invalidatesTags: ["TeacherPeriod"],
       }),
-      // getTeacherPeriodsBySemesterAndIdTeacher: builder.mutation<void, any>({
-      //   query(payload) {
-      //     return {
-      //       url: "/periods",
-      //       method: "POST",
-      //       body: payload,
-      //     };
-      //   },
-      //   invalidatesTags: ["TeacherPeriod"],
-      // }),
+      getTeacherPeriodsBySemesterAndIdTeacherV2: builder.mutation<any, any>({
+        query(payload) {
+          return {
+            url: "/periods",
+            method: "POST",
+            body: payload,
+          };
+        },
+        invalidatesTags: ["TeacherPeriod"],
+      }),
 
       getTeacherPeriodsBySemesterAndIdTeacher: builder.query<any, any>({
         query: (payload) => ({
@@ -85,6 +85,6 @@ export const teachersPeriodsSlice = createApi({
 export const {
   useGetTeachersPeriodsMutation,
   useGetTeacherPeriodsByTeacherIdMutation,
-  // useGetTeacherPeriodsBySemesterAndIdTeacherMutation,
+  useGetTeacherPeriodsBySemesterAndIdTeacherV2Mutation,
   useGetTeacherPeriodsBySemesterAndIdTeacherQuery,
 } = teachersPeriodsSlice;

@@ -68,10 +68,16 @@ import { notesExamenSlice } from "features/notesExamen/notesExamenSlice";
 import { typeParcoursSlice } from "features/TypeParcours/TypeParcours";
 import { parcoursSlice } from "features/parcours/parcours";
 import { moduleParcoursSlice } from "features/moduleParcours/moduleParcours";
+import { absenceSlice } from "features/absenceEtudiant/absenceSlice";
+import { courSlice } from "features/coursEnseignant/coursSlice";
 import { generatedDocSlice } from "features/generatedDoc/generatedDocSlice";
 import { cycleSlice } from "features/cycle/cycle";
 import { messagesSlice } from "features/messagerie/messagerieSlice";
 import { messageSlice } from "features/messages/messagesSlice";
+import { demandeTirageSlice } from "features/demandeTirage/demandeTirageSlice";
+import { absencePersonnelSlice } from "features/absencePersonnel/absencePersonnel";
+import { personnelWorkingDaySlice } from "features/personnelWorkingDay/personnelWorkingDaySlice";
+
 export const store = configureStore({
   reducer: {
     [accountSlice.reducerPath]: accountSlice.reducer,
@@ -137,9 +143,16 @@ export const store = configureStore({
     [cycleSlice.reducerPath]: cycleSlice.reducer,
     //! Notes Examen
     [notesExamenSlice.reducerPath]: notesExamenSlice.reducer,
+    //! Absence Etudiant
+    [absenceSlice.reducerPath]: absenceSlice.reducer,
+    //! Cour Enseignant
+    [courSlice.reducerPath]: courSlice.reducer,
     [generatedDocSlice.reducerPath]: generatedDocSlice.reducer,
     [messagesSlice.reducerPath]: messagesSlice.reducer,
     [messageSlice.reducerPath]: messageSlice.reducer,
+    [demandeTirageSlice.reducerPath]: demandeTirageSlice.reducer,
+    [absencePersonnelSlice.reducerPath]: absencePersonnelSlice.reducer,
+    [personnelWorkingDaySlice.reducerPath]: personnelWorkingDaySlice.reducer,
     auth: authSlice,
     Layout: LayoutReducer,
     ForgetPassword: ForgetPasswordReducer,
@@ -206,10 +219,15 @@ export const store = configureStore({
       typeParcoursSlice.middleware,
       parcoursSlice.middleware,
       moduleParcoursSlice.middleware,
+      absenceSlice.middleware,
+      courSlice.middleware,
       generatedDocSlice.middleware,
       cycleSlice.middleware,
       messagesSlice.middleware,
-      messageSlice.middleware
+      messageSlice.middleware,
+      demandeTirageSlice.middleware,
+      absencePersonnelSlice.middleware,
+      personnelWorkingDaySlice.middleware
     ]);
   },
 });

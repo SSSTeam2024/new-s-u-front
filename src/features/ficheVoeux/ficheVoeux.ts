@@ -9,11 +9,12 @@ export interface FicheVoeux {
     jour: string,
     temps: string
   }[];
+  remarque?: string;
 }
 
 export interface ClasseFicheVoeux {
-  matieres: string[];
-  classe: any;
+  matieres: string;
+  classe: any[];
 }
 
 export const ficheVoeuxSlice = createApi({

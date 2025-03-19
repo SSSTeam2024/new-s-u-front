@@ -10,7 +10,7 @@ export interface Matiere {
   nbr_elimination?: string;
   regime_matiere?: string;
   classes?: any[];
-  types?: {
+  types: {
     type: string;
     volume: string;
     nbr_elimination: string;

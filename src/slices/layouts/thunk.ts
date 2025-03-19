@@ -68,7 +68,7 @@ export const changeSidebarTheme = (sidebarTheme: any) => async (dispatch: any) =
  */
 export const changeLayoutWidth = (layoutWidth: any) => async (dispatch: any) => {
     try {
-        console.log("layoutWidth", layoutWidth)
+       // console.log("layoutWidth", layoutWidth)
         if (layoutWidth === 'lg') {
             changeHTMLAttribute("data-layout-width", "fluid");
         } else {
@@ -139,7 +139,7 @@ export const changePreLoader = (preloaderTypes: any) => async (dispatch: any) =>
  * @param {*} param0
  */
 export const changeLeftsidebarSizeType = (leftsidebarSizetype: any) => async (dispatch: any) => {
-    console.log("leftsidebarSizetype", leftsidebarSizetype)
+    //console.log("leftsidebarSizetype", leftsidebarSizetype)
     try {
         switch (leftsidebarSizetype) {
             case 'lg':

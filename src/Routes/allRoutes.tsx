@@ -206,10 +206,17 @@ import ListeParcours from "pages/GestionParcours/Parcours/ListeParcours";
 import ListeModulesParcours from "pages/GestionParcours/ModulesParcours/ListeModulesParcours";
 import ListTypeParcours from "pages/GestionParcours/TypeParcours/ListTypeParcours";
 import AddPlanParcours from "pages/GestionParcours/Parcours/AddPlanParcours";
+
+//! Application Enseignant
+import AbsenceEtudiant from "pages/ApplicationEnseignant/AbsenceEtudiant";
+import Cours from "pages/ApplicationEnseignant/Cours";
+import AjouterAbsence from "pages/ApplicationEnseignant/AbsenceEtudiant/AjouterAbsence";
+
 import AjouterAbsencePersonnel from "pages/AbsencePersonnel/AjouterAbsencePersonnel";
 import ListeCycle from "pages/GestionParcours/Cycle/ListeCycle";
 import ViewParcours from "pages/GestionParcours/Parcours/ViewParcours";
 import ParametresEmploi from "pages/Departements/ParametresEmploi/ParametresEmploi";
+import AjouterCours from "pages/ApplicationEnseignant/Cours/AjouterCours";
 import FicheEtudiant from "pages/Accounts/AccountEtudiant/FicheEtudiant";
 import FicheEtudiantAr from "pages/Accounts/AccountEtudiant/FicheEtudiantAr";
 import FicheEnseignant from "pages/Accounts/AccountEnseignant/FicheEnseignant";
@@ -217,8 +224,29 @@ import FicheEnseignantAr from "pages/Accounts/AccountEnseignant/FicheEnseignantA
 import Messagerie from "pages/Messagerie/Messagerie";
 import Messages from "pages/Messages/Messages";
 import SingleMessage from "pages/Messages/SingleMessage";
+import EditClasse from "pages/Departements/GestionClasses/EditClasse";
+import ViewAbsence from "pages/ApplicationEnseignant/AbsenceEtudiant/ViewAbsence";
+import EditAbsence from "pages/ApplicationEnseignant/AbsenceEtudiant/EditAbsence";
+import ViewCours from "pages/ApplicationEnseignant/Cours/ViewCours";
+import EditCours from "pages/ApplicationEnseignant/Cours/EditCours";
+import AddDemandeTirage from "pages/ServiceTirage/AddDemandeTirage";
+import DemandesTirage from "pages/ServiceTirage";
+import RepartitionGroupe from "pages/Gestion-etudiant/RepartitionGroupes";
+import RepartitionEnseignant from "pages/Gestion-enseignant/RepartitionEnseignant";
+import RechercheAvance from "pages/Gestion-etudiant/RechercheAvance";
+import RepartitionPersonnel from "pages/Gestion-personnel/RepartitionPersonnel";
+import ListeAbsencePersonnel from "pages/Gestion-personnel/ListeAbsencePersonnel";
 const authProtectedRoutes = [
   { path: "/dashboard", component: <Dashboard /> },
+  //service Tirage
+  {
+    path: "/service-tirage/liste-tirages",
+    component: <DemandesTirage />,
+  },
+  {
+    path: "/service-tirage/ajouter-tirage",
+    component: <AddDemandeTirage />,
+  },
   // view parcours
   {
     path: "/parcours/gestion-parcours/view-parcours",
@@ -304,6 +332,14 @@ const authProtectedRoutes = [
   { path: "/gestion-etudiant/compte-etudiant", component: <MyAccount /> },
   { path: "/gestion-etudiant/liste-etudiants", component: <ListEtudiants /> },
   {
+    path: "/gestion-etudiant/repartition-groupe",
+    component: <RepartitionGroupe />,
+  },
+  {
+    path: "/gestion-etudiant/recherche-avance",
+    component: <RechercheAvance />,
+  },
+  {
     path: "/gestion-etudiant/ajouter-etudiant",
     component: <AjouterEtudiant />,
   },
@@ -330,6 +366,40 @@ const authProtectedRoutes = [
     component: <AjouterNotesExamen />,
   },
 
+  //! Application Enseignant
+  {
+    path: "/application-enseignant/lister-absence",
+    component: <AbsenceEtudiant />,
+  },
+  {
+    path: "/application-enseignant/ajouter-absence",
+    component: <AjouterAbsence />,
+  },
+
+  {
+    path: "/application-enseignant/visualiser-absence-etudiant",
+    component: <ViewAbsence />,
+  },
+  {
+    path: "/application-enseignant/modifier-absence-etudiant",
+    component: <EditAbsence />,
+  },
+  {
+    path: "/application-enseignant/lister-cours",
+    component: <Cours />,
+  },
+  {
+    path: "/application-enseignant/ajouter-cours",
+    component: <AjouterCours />,
+  },
+  {
+    path: "/application-enseignant/visualiser-support-cours",
+    component: <ViewCours />,
+  },
+  {
+    path: "/application-enseignant/modifier-support-cours",
+    component: <EditCours />,
+  },
   //gestion enseignant
   {
     path: "/gestion-enseignant/ajouter-enseignant",
@@ -342,6 +412,10 @@ const authProtectedRoutes = [
   {
     path: "/gestion-enseignant/compte-enseignant",
     component: <AccountEnseignant />,
+  },
+  {
+    path: "/gestion-enseignant/repartition-enseignant",
+    component: <RepartitionEnseignant />,
   },
   {
     path: "/gestion-enseignant/edit-compte-enseignant",
@@ -385,6 +459,10 @@ const authProtectedRoutes = [
   {
     path: "/gestion-personnel/liste-personnels",
     component: <ListPersonnels />,
+  },
+  {
+    path: "/gestion-personnel/repartition-personnel",
+    component: <RepartitionPersonnel />,
   },
   {
     path: "/gestion-personnel/compte-personnel",
@@ -707,6 +785,10 @@ const authProtectedRoutes = [
     component: <AddClasse />,
   },
   {
+    path: "/departement/gestion-departements/classes/edit-classe",
+    component: <EditClasse />,
+  },
+  {
     path: "/departement/gestion-classes/affecter-matiere",
     component: <AffecterMatiere />,
   },
@@ -968,7 +1050,10 @@ const authProtectedRoutes = [
   },
 
   // absence personnel
-
+  {
+    path: "/gestion-personnel/absence-personnel",
+    component: <ListeAbsencePersonnel />,
+  },
   {
     path: "/absence-personnel/ajouter-absence-personnel",
     component: <AjouterAbsencePersonnel />,

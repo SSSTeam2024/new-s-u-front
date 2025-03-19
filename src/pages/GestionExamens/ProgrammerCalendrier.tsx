@@ -316,6 +316,8 @@ const ProgrammerCalendrier = () => {
       (calendrierState?.type_examen! === "Examens" &&
         mat.regime_matiere === "Mx") ||
       (calendrierState?.type_examen! === "DS" && mat.regime_matiere === "CC") ||
+      (calendrierState?.type_examen! === "DS" && mat.regime_matiere === "MX") ||
+      (calendrierState?.type_examen! === "DS" && mat.regime_matiere === "Mx") ||
       (calendrierState?.type_examen! === "Examens" &&
         mat.regime_matiere === "Ex")
 
@@ -333,6 +335,8 @@ const ProgrammerCalendrier = () => {
     //   //   }
     //   // );
   );
+
+  console.log("filteredMat***", filteredMat);
 
   const filterAvailableSalles = () => {
     if (!selectedJour || !heureDebut || !heureFin) return AllSalles;

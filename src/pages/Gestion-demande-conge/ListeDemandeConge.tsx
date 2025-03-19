@@ -188,7 +188,7 @@ const ListeDemandeConge = () => {
                     to="/demande-conge/single-demande-conge"
                     state={cellProps}
                     className="badge bg-info-subtle text-info view-item-btn"
-                    data-bs-toggle="offcanvas"
+                    // data-bs-toggle="offcanvas"
                   >
                     <i
                       className="bi bi-file-earmark-arrow-down"
@@ -312,6 +312,7 @@ const ListeDemandeConge = () => {
                     data={demandeConge || []}
                     iscustomPageSize={false}
                     isBordered={false}
+                    isPagination={true}
                     customPageSize={10}
                     className="custom-header-css table align-middle table-nowrap"
                     tableClass="table-centered align-middle table-nowrap mb-0"

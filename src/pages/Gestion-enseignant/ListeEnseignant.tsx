@@ -18,7 +18,6 @@ import Swal from "sweetalert2";
 import userImage from "../../assets/images/users/user-dummy-img.jpg";
 import {
   Enseignant,
-  EnseignantExcel,
   useAddEnseignantMutation,
   useDeleteEnseignantMutation,
   useFetchEnseignantsQuery,
@@ -362,52 +361,51 @@ const ListEnseignants = () => {
               ) : (
                 <></>
               )}
-               {actionAuthorization(
+              {actionAuthorization(
                 "/gestion-etudiant/print-compte-etudiant",
                 user?.permissions!
               ) ? (
                 <li>
                   <Dropdown>
-                  <Dropdown.Toggle
-                  as="span"
-                  className="badge bg-secondary-subtle text-secondary"
-                 style={{ display: "inline-block", cursor: "pointer" }}
-                 >
-                <i
-                  className="bi bi-printer"
-                  style={{
-                    transition: "transform 0.3s ease-in-out",
-                    cursor: "pointer",
-                    fontSize: "1.5em",
-                  }}
-                  onMouseEnter={(e) =>
-                    (e.currentTarget.style.transform = "scale(1.4)")
-                  }
-                  onMouseLeave={(e) =>
-                    (e.currentTarget.style.transform = "scale(1)")
-                  }
-                ></i>
-              </Dropdown.Toggle>
+                    <Dropdown.Toggle
+                      as="span"
+                      className="badge bg-secondary-subtle text-secondary"
+                      style={{ display: "inline-block", cursor: "pointer" }}
+                    >
+                      <i
+                        className="bi bi-printer"
+                        style={{
+                          transition: "transform 0.3s ease-in-out",
+                          cursor: "pointer",
+                          fontSize: "1.5em",
+                        }}
+                        onMouseEnter={(e) =>
+                          (e.currentTarget.style.transform = "scale(1.4)")
+                        }
+                        onMouseLeave={(e) =>
+                          (e.currentTarget.style.transform = "scale(1)")
+                        }
+                      ></i>
+                    </Dropdown.Toggle>
 
-              <Dropdown.Menu>
-                <Dropdown.Item
-                  as={Link}
-                  to="/gestion-enseignant/print-compte-enseignant"
-                  state={enseignant}
-                >
-                  📄Fiche renseignement
-                </Dropdown.Item>
-                <Dropdown.Item
-                  as={Link}
-                  to="/gestion-enseignant/ar-print-compte-enseignant"
-                  state={enseignant}
-                >
-                  📄 بطاقة ارشادات
-                </Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
+                    <Dropdown.Menu>
+                      <Dropdown.Item
+                        as={Link}
+                        to="/gestion-enseignant/print-compte-enseignant"
+                        state={enseignant}
+                      >
+                        📄Fiche renseignement
+                      </Dropdown.Item>
+                      <Dropdown.Item
+                        as={Link}
+                        to="/gestion-enseignant/ar-print-compte-enseignant"
+                        state={enseignant}
+                      >
+                        📄 بطاقة ارشادات
+                      </Dropdown.Item>
+                    </Dropdown.Menu>
+                  </Dropdown>
                 </li>
-        
               ) : (
                 <></>
               )}

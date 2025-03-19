@@ -93,7 +93,7 @@ const TableauChargesHoraires = () => {
       if (outputElement.charge_s1 !== "0" && outputElement.charge_s2 !== "0") {
         outputElement.moyenne = String(
           (Number(outputElement.charge_s1) + Number(outputElement.charge_s2)) /
-            2
+          2
         );
       }
 
@@ -117,7 +117,7 @@ const TableauChargesHoraires = () => {
             outputElement.teacher.grade.charge_horaire.annualMaxHS;
           outputElement.charge_hx = String(
             rest -
-              Number(outputElement.teacher.grade.charge_horaire.annualMaxHS)
+            Number(outputElement.teacher.grade.charge_horaire.annualMaxHS)
           );
         }
       }
@@ -254,25 +254,27 @@ const TableauChargesHoraires = () => {
       } else if (teachingHours == annualVolume) {
         background = "#8cf78c";
       } else if (
-        teachingHours > annualVolume &&
-        teachingHours <= Number(charge_horaire?.s1MaxHE!)
+        teachingHours > annualVolume /* &&
+        teachingHours <= Number(charge_horaire?.s1MaxHE!) */
       ) {
-        background = "lightblue";
-      } else if (
-        teachingHours > Number(charge_horaire?.s1MaxHE!) &&
-        teachingHours <= HS_Max_S1
-      ) {
-        background = "#1717f5cc";
-        textColor = "white";
-      } else if (
-        teachingHours > HS_Max_S1 &&
-        teachingHours <= Number(charge_horaire?.totalS1Max!)
-      ) {
-        background = "#e1ae00a1";
-      } else {
-        background = "rgb(10 2 119 / 71%)";
-        textColor = "white";
+        // background = "lightblue";
+        background = "#1717f5cc"
       }
+      // else if (
+      //   teachingHours > Number(charge_horaire?.s1MaxHE!) &&
+      //   teachingHours <= HS_Max_S1
+      // ) {
+      //   background = "#1717f5cc";
+      //   textColor = "white";
+      // } else if (
+      //   teachingHours > HS_Max_S1 &&
+      //   teachingHours <= Number(charge_horaire?.totalS1Max!)
+      // ) {
+      //   background = "#e1ae00a1";
+      // } else {
+      //   background = "rgb(10 2 119 / 71%)";
+      //   textColor = "white";
+      // }
     } else {
       if (teachingHours <= Number(charge_horaire?.s2MinHE!)) {
         background = "#ff0000b5";
@@ -284,25 +286,27 @@ const TableauChargesHoraires = () => {
       } else if (teachingHours == annualVolume) {
         background = "#8cf78c";
       } else if (
-        teachingHours > annualVolume &&
-        teachingHours <= Number(charge_horaire?.s2MaxHE!)
+        teachingHours > annualVolume /* &&
+        teachingHours <= Number(charge_horaire?.s2MaxHE!) */
       ) {
-        background = "lightblue";
-      } else if (
-        teachingHours > Number(charge_horaire?.s2MaxHE!) &&
-        teachingHours <= HS_Max_S2
-      ) {
-        background = "#1717f5cc";
-        textColor = "white";
-      } else if (
-        teachingHours > HS_Max_S2 &&
-        teachingHours <= Number(charge_horaire?.totalS2Max!)
-      ) {
-        background = "#e1ae00a1";
-      } else {
-        background = "rgb(10 2 119 / 71%)";
-        textColor = "white";
+        // background = "lightblue";
+        background = "#1717f5cc"
       }
+      // else if (
+      //   teachingHours > Number(charge_horaire?.s2MaxHE!) &&
+      //   teachingHours <= HS_Max_S2
+      // ) {
+      //   background = "#1717f5cc";
+      //   textColor = "white";
+      // } else if (
+      //   teachingHours > HS_Max_S2 &&
+      //   teachingHours <= Number(charge_horaire?.totalS2Max!)
+      // ) {
+      //   background = "#e1ae00a1";
+      // } else {
+      //   background = "rgb(10 2 119 / 71%)";
+      //   textColor = "white";
+      // }
     }
     return { bg: background, textColor: textColor };
   };
@@ -461,12 +465,13 @@ const TableauChargesHoraires = () => {
                         <Col lg={6} className="legend-item">
                           <span
                             className="legend-icon"
-                            style={{ backgroundColor: "lightblue" }}
+                            style={{ backgroundColor: "#1717f5cc" }}
+                          //style={{ backgroundColor: "lightblue" }}
                           ></span>
                           Charge semestrielle en excès
                         </Col>
                       </Row>
-                      <Row className="legend-row">
+                      {/* <Row className="legend-row">
                         <Col lg={6} className="legend-item">
                           <span
                             className="legend-icon"
@@ -482,8 +487,8 @@ const TableauChargesHoraires = () => {
                           ></span>
                           Emploi Hyper-chargé
                         </Col>
-                      </Row>
-                      <Row className="legend-row">
+                      </Row> */}
+                      {/* <Row className="legend-row">
                         <Col lg={6} className="legend-item">
                           <span
                             className="legend-icon"
@@ -491,7 +496,7 @@ const TableauChargesHoraires = () => {
                           ></span>
                           Emploi saturé
                         </Col>
-                      </Row>
+                      </Row> */}
                     </Col>
                   </Row>
                 </Card.Body>
@@ -517,6 +522,7 @@ const TableauChargesHoraires = () => {
                           iscustomPageSize={false}
                           isBordered={false}
                           customPageSize={10}
+                          isPagination={true}
                           className="custom-header-css table align-middle table-nowrap"
                           tableClass="table-centered align-middle table-nowrap mb-0"
                           theadClass="text-muted table-light"

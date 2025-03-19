@@ -1,11 +1,5 @@
 import React, { useState, useMemo } from "react";
-import {
-  Button,
-  Card,
-  Col,
-  Container,
-  Row,
-} from "react-bootstrap";
+import { Button, Card, Col, Container, Row } from "react-bootstrap";
 import Breadcrumb from "Common/BreadCrumb";
 import { useNavigate } from "react-router-dom";
 import TableContainer from "Common/TableContainer";
@@ -277,6 +271,7 @@ const ListeMissions = () => {
                     iscustomPageSize={false}
                     isBordered={false}
                     customPageSize={10}
+                    isPagination={true}
                     className="custom-header-css table align-middle table-nowrap"
                     tableClass="table-centered align-middle table-nowrap mb-0"
                     theadClass="text-muted table-light"

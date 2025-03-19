@@ -127,7 +127,7 @@ const ListFicheVoeux = () => {
           }
         }
       }
-
+      console.log("Liste voeux", voeux)
       setListeVoeux(voeux);
     }
   }, [isSuccess, data]);
@@ -375,6 +375,7 @@ const ListFicheVoeux = () => {
                       iscustomPageSize={false}
                       isBordered={false}
                       customPageSize={10}
+                      isPagination={true}
                       className="custom-header-css table align-middle table-nowrap"
                       tableClass="table-centered align-middle table-nowrap mb-0"
                       theadClass="text-muted table-light"
@@ -408,7 +409,7 @@ const ListFicheVoeux = () => {
         placement="end"
       >
         <Offcanvas.Header closeButton>
-          <Offcanvas.Title>Fiche Voeux</Offcanvas.Title>
+          <Offcanvas.Title>Fiche Voeux pour {showFicheClasseDetails?.enseignant?.nom_fr! + " " + showFicheClasseDetails?.enseignant?.prenom_fr!}</Offcanvas.Title>
         </Offcanvas.Header>
         <Offcanvas.Body>
           <div>{showFicheClasseDetails?.semestre!}</div>
@@ -419,26 +420,24 @@ const ListFicheVoeux = () => {
                   <tbody>
                     <tr>
                       <td>
-                        <span className="text-muted">Classe</span>
+                        <span className="text-muted">Matière</span>
                       </td>
                       <td>
                         <span className="fw-medium">
-                          {voeux?.classe?.nom_classe_fr!}
+                          {voeux?.matieres!}
                         </span>
                       </td>
                     </tr>
                     <tr>
                       <td>
-                        <span className="text-muted">Matières</span>
+                        <span className="text-muted">Classes</span>
                       </td>
                       <td>
                         <ul>
-                          {voeux?.matieres?.map((matiere: any) => (
+                          {voeux?.classe?.map((classeElement: any) => (
                             <li>
                               <span className="fw-medium">
-                                {matiere?.matiere +
-                                  " " +
-                                  matiere?.types[0].type}
+                                {classeElement?.class_id?.nom_classe_fr!}
                               </span>
                             </li>
                           ))}
@@ -465,6 +464,16 @@ const ListFicheVoeux = () => {
                     </li>
                   ))}
                 </ul>
+              </div>
+            </div>
+          </Row>
+          <Row>
+            <div>
+              <div>
+                <span className="text-muted">Remarque</span>
+              </div>
+              <div>
+                <span className="fw-medium">{showFicheClasseDetails.remarque}</span>
               </div>
             </div>
           </Row>

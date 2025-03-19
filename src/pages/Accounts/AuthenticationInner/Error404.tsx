@@ -4,13 +4,15 @@ import { Card, Col, Container, Row } from 'react-bootstrap';
 // Import Images
 import logoDark from 'assets/images/logo-dark.png'
 import logoLight from 'assets/images/logo-light.png'
+import enigaLogo from 'assets/images/logo.png'
 import error404 from 'assets/images/error400.png'
 import { Link } from 'react-router-dom';
+import Footer from 'Layout/Footer';
 
 const Error404 = () => {
 
-    document.title = "404 | Toner eCommerce + Admin React Template";
-    
+    document.title = "404 | Page introuvable!";
+
     return (
         <React.Fragment>
             <section className="auth-page-wrapper position-relative bg-light min-vh-100 d-flex align-items-center justify-content-between">
@@ -19,14 +21,14 @@ const Error404 = () => {
                         <Row className="justify-content-between align-items-center">
                             <Col className="col-2">
                                 <Link to="/" className="navbar-brand mb-2 mb-sm-0">
-                                <img src={logoDark} alt="" height="24" className="card-logo card-logo-dark"/>
-                                <img src={logoLight} alt="" height="24" className="card-logo card-logo-light"/>
+                                    <img src={enigaLogo} alt="" height="50" className="card-logo card-logo-dark" />
+                                    <img src={enigaLogo} alt="" height="50" className="card-logo card-logo-light" />
                                 </Link>
                             </Col>
-                            
-                            
+
+
                             <Col className="col-auto">
-                                <ul className="list-unstyled hstack gap-2 mb-0">
+                                {/* <ul className="list-unstyled hstack gap-2 mb-0">
                                     <li className="me-md-3">
                                         <Link to="#!" className="text-body fw-medium fs-15">Become a Selling</Link>
                                     </li>
@@ -40,12 +42,12 @@ const Error404 = () => {
                                             <i className="bi bi-apple align-middle me-1"></i> Download App
                                         </Link>
                                     </li>
-                                </ul>
+                                </ul> */}
                             </Col>
                         </Row>
                     </Container>
                 </div>
-                <div style={{width: "100%"}}>
+                <div style={{ width: "100%" }}>
                     <Container>
                         <Row className="justify-content-center">
                             <Col lg={6}>
@@ -54,15 +56,14 @@ const Error404 = () => {
                                         <Card.Body className="text-center p-4">
 
                                             <div className="text-center px-sm-5 mx-5">
-                                                <img src={error404} className="img-fluid" alt=""/>
+                                                <img src={error404} className="img-fluid" alt="" />
                                             </div>
                                             <div className="mt-4 text-center pt-3">
                                                 <div className="position-relative">
-                                                    <h4 className="fs-18 error-subtitle text-uppercase mb-0">Opps, page not found</h4>
-                                                    <p className="fs-15 text-muted mt-3">It will be as simple as Occidental in fact,
-                                                        it will Occidental to an English person</p>
+                                                    <h4 className="fs-18 error-subtitle text-uppercase mb-0">Opps, page introuvable</h4>
+
                                                     <div className="mt-4">
-                                                        <Link to="/" className="btn btn-primary"><i className="mdi mdi-home me-1"></i>Back to home</Link>
+                                                        <Link to="/" className="btn btn-primary"><i className="mdi mdi-home me-1"></i>Revenir à la page d'accueil</Link>
                                                     </div>
                                                 </div>
                                             </div>
@@ -73,19 +74,21 @@ const Error404 = () => {
                         </Row>
                     </Container>
 
-                    <footer className="footer">
+                    {/* <footer className="footer">
                         <Container>
                             <Row>
                                 <Col lg={12}>
                                     <div className="text-center">
                                         <p className="mb-0 text-muted">©
-                                            {(new Date().getFullYear())} Toner. Crafted with <i className="mdi mdi-heart text-danger"></i> by Themesbrand
+                                            2025 © École nationale d'ingénieurs de Gafsa.
+                                            Conception et développement par 3S
                                         </p>
                                     </div>
                                 </Col>
                             </Row>
                         </Container>
-                    </footer>
+                    </footer> */}
+                    <Footer />
                 </div>
             </section>
         </React.Fragment>

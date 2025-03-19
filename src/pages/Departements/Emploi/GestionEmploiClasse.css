@@ -58,8 +58,12 @@
       -45deg,
       transparent,
       transparent 3px,
-      /* #fcbb08 4px,
-      #b87d00 2px */ #fc0808 4px,
+       #fc0808 4px,
       #b80000 2px
     ) !important;
+  }
+
+  .react_time_range__time_range_container{
+    width: 100% !important;
+    padding: 0 !important;
   }
