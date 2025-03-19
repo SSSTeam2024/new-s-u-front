@@ -214,6 +214,9 @@ import FicheEtudiant from "pages/Accounts/AccountEtudiant/FicheEtudiant";
 import FicheEtudiantAr from "pages/Accounts/AccountEtudiant/FicheEtudiantAr";
 import FicheEnseignant from "pages/Accounts/AccountEnseignant/FicheEnseignant";
 import FicheEnseignantAr from "pages/Accounts/AccountEnseignant/FicheEnseignantAr";
+import Messagerie from "pages/Messagerie/Messagerie";
+import Messages from "pages/Messages/Messages";
+import SingleMessage from "pages/Messages/SingleMessage";
 const authProtectedRoutes = [
   { path: "/dashboard", component: <Dashboard /> },
   // view parcours
@@ -970,6 +973,15 @@ const authProtectedRoutes = [
     path: "/absence-personnel/ajouter-absence-personnel",
     component: <AjouterAbsencePersonnel />,
   },
+  // Messagerie
+
+  {
+    path: "/messagerie/liste-message",component: <Messages />,
+  },
+  {
+    path: "/messagerie/single-message",component: <SingleMessage />,
+  },
+ 
 
   // Accounts
   { path: "/account", component: <MyAccount /> },

@@ -285,7 +285,7 @@ const FicheEnseignantAr: React.FC = () => {
                  
                 </div>
                 {/* Cin images */}
-                <Row>
+                {/* <Row>
                   <Col xs="auto" className="m-2">
                     <Image
                       src={`${
@@ -306,7 +306,7 @@ const FicheEnseignantAr: React.FC = () => {
                       style={{ maxHeight: "220px" }}
                     />
                   </Col>
-                </Row>
+                </Row> */}
               </div>
 
               {/* Print Button */}
