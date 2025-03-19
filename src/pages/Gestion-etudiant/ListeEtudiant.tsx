@@ -327,7 +327,7 @@ const ListEtudiants = () => {
       },
       {
         Header: "Groupe Classe",
-        accessor: (row: any) => row?.Groupe! || "",
+        accessor: (row: any) => row?.groupe_classe?.nom_classe_fr! || "",
         disableFilters: true,
         filterable: true,
       },
