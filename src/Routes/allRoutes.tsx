@@ -230,6 +230,7 @@ import RepartitionGroupe from "pages/Gestion-etudiant/RepartitionGroupes";
 import RepartitionEnseignant from "pages/Gestion-enseignant/RepartitionEnseignant";
 import RechercheAvance from "pages/Gestion-etudiant/RechercheAvance";
 import RepartitionPersonnel from "pages/Gestion-personnel/RepartitionPersonnel";
+import ListeAbsencePersonnel from "pages/Gestion-personnel/ListeAbsencePersonnel";
 const authProtectedRoutes = [
   { path: "/dashboard", component: <Dashboard /> },
   // view parcours
@@ -1035,7 +1036,10 @@ const authProtectedRoutes = [
   },
 
   // absence personnel
-
+  {
+    path: "/gestion-personnel/absence-personnel",
+    component: <ListeAbsencePersonnel />,
+  },
   {
     path: "/absence-personnel/ajouter-absence-personnel",
     component: <AjouterAbsencePersonnel />,

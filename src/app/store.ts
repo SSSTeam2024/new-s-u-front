@@ -72,6 +72,8 @@ import { absenceSlice } from "features/absenceEtudiant/absenceSlice";
 import { courSlice } from "features/coursEnseignant/coursSlice";
 import { generatedDocSlice } from "features/generatedDoc/generatedDocSlice";
 import { cycleSlice } from "features/cycle/cycle";
+import { absencePersonnelSlice } from "features/absencePersonnel/absencePersonnel";
+import { personnelWorkingDaySlice } from "features/personnelWorkingDay/personnelWorkingDaySlice";
 
 export const store = configureStore({
   reducer: {
@@ -143,6 +145,8 @@ export const store = configureStore({
     //! Cour Enseignant
     [courSlice.reducerPath]: courSlice.reducer,
     [generatedDocSlice.reducerPath]: generatedDocSlice.reducer,
+    [absencePersonnelSlice.reducerPath]: absencePersonnelSlice.reducer,
+    [personnelWorkingDaySlice.reducerPath]: personnelWorkingDaySlice.reducer,
     auth: authSlice,
     Layout: LayoutReducer,
     ForgetPassword: ForgetPasswordReducer,
@@ -213,6 +217,8 @@ export const store = configureStore({
       courSlice.middleware,
       generatedDocSlice.middleware,
       cycleSlice.middleware,
+      absencePersonnelSlice.middleware,
+      personnelWorkingDaySlice.middleware
     ]);
   },
 });
