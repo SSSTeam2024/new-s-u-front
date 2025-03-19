@@ -372,6 +372,13 @@ const Navdata = () => {
           icon: "bi bi-person-plus-fill",
         },
         {
+          id: "AbsencePersonnels",
+          label: "Absence des Personnels",
+          link: "/gestion-personnel/absence-personnel",
+          parentId: "Gestion-Personnel",
+          icon: "bi bi-person-plus-fill",
+        },
+        {
           id: "GestionPersonnel",
           label: "Dossier Administratif",
           link: "/gestion-personnel/liste-dossier-administartif",

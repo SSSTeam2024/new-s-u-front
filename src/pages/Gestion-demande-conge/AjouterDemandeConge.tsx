@@ -90,7 +90,7 @@ const AjouterDemandeConge = () => {
     );
     const filteredLeaveBalances = leaveBalances.filter(
       (leaveBalance: any) =>
-        leaveBalance.personnelId._id === selectedPersonnel?._id
+        leaveBalance?.personnelId?._id! === selectedPersonnel?._id!
     );
     setPersonnelLeaveBalance(filteredLeaveBalances);
 
