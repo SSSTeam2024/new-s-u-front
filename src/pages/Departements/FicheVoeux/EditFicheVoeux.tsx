@@ -46,8 +46,8 @@ const EditFicheVoeux = () => {
     _id: voeuxDetails?._id,
     fiche_voeux_classes: [
       {
-        matieres: [""],
-        classe: "",
+        matieres: "",
+        classe: [],
         //Temporary data for subjects selection
         consernedClasses: [],
         selectedSubjectOptions: [],
@@ -139,7 +139,7 @@ const EditFicheVoeux = () => {
           let selectedSubjects = uniqueMatieres;
 
           updatedFicheVoeux.push({
-            classe: consernedClass[0]?._id!,
+            classe:/*  consernedClass[0]?._id! */[], //! TO BE REVIEWED
             //  jours: [],
             matieres: selectedSubjectOptions,
             // temps: "",
@@ -272,9 +272,9 @@ const EditFicheVoeux = () => {
 
         updatedFicheVoeux.splice(0, updatedFicheVoeux.length);
         updatedFicheVoeux.push({
-          classe: "",
+          classe: [],
           //  jours: [],
-          matieres: [],
+          matieres: '',
           // temps: "",
           //Temporary data for days selection
           //allDays: allJours,
@@ -377,10 +377,10 @@ const EditFicheVoeux = () => {
         ...prevState,
         fiche_voeux_classes: [
           {
-            matieres: [""],
+            matieres: "",
             jours: [""],
             temps: "",
-            classe: "",
+            classe: [],
             allDays: [],
             selectedJourOptions: [],
             selectedJours: [],
@@ -502,8 +502,8 @@ const EditFicheVoeux = () => {
           );
           alert(
             "Classe " +
-              consernedClass[0].nom_classe_fr +
-              " est déja séléctionnée!"
+            consernedClass[0].nom_classe_fr +
+            " est déja séléctionnée!"
           );
           exist = true;
           break;
@@ -619,9 +619,9 @@ const EditFicheVoeux = () => {
       fiche_voeux_classes: [
         ...prevState.fiche_voeux_classes,
         {
-          classe: "",
+          classe: [],
           jours: [],
-          matieres: [],
+          matieres: "",
           temps: "",
           //Temporary data for days selection
           allDays: allJours,
@@ -734,7 +734,7 @@ const EditFicheVoeux = () => {
                         name="etat_compte"
                         id="etat_compte"
                         value={voeuxDetails?.enseignant?.nom_fr}
-                        //onChange={handleTeacherChange}
+                      //onChange={handleTeacherChange}
                       >
                         <option value={voeuxDetails?.enseignant?.nom_fr}>
                           {voeuxDetails?.enseignant?.nom_fr}{" "}

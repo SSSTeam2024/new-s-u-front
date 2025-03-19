@@ -3559,38 +3559,42 @@ const CalendrierDetails: React.FC = () => {
                       </Col>
                     </Row>
                     <Row style={{ marginBottom: '10px' }}>
-                      <Col lg={4} className="text-sart pt-2 ml-2">
+                      <Col lg={6} className="text-sart pt-2 ml-2">
                         <h6>
                           Nom, prénom et signature des enseignants surveillants:
                         </h6>
                       </Col>
-                      <Col lg={4} className="text-center pt-2">
-                        <div>
-                          {epreuve.group_surveillants.map((enseignant: any, index: number) => {
-                            if (index % 2 === 0) {
-                              return (
-                                <Row key={index} style={{ border: '1px solid #ededed' }}>
-                                  <Col className="pb-5" style={{ borderRight: '1px solid #ededed' }}>
-                                    {enseignant.nom_fr} {enseignant.prenom_fr}
-                                  </Col>
-                                  {epreuve.group_surveillants[index + 1] ? (
-                                    <Col className="pb-5">
-                                      {epreuve.group_surveillants[index + 1].nom_fr}{" "}
-                                      {epreuve.group_surveillants[index + 1].prenom_fr}
-                                    </Col>
-                                  ) : (
-                                    <Col className="pb-5"></Col> // Empty cell for odd numbers
-                                  )}
-                                </Row>
-                              );
-                            }
-                          })}
-                        </div>
-                      </Col>
 
-                      <Col lg={4} className="text-end pt-2 mr-2">
+
+                      <Col lg={6} className="text-end pt-2 mr-2">
                         <h6> :إسم ، لقب و إمضاء الأساتذة المراقبين</h6>
                       </Col>
+                    </Row>
+
+                    <Row className="mt-5 text-center">
+                      {epreuve.group_surveillants.map((enseignant: any, index: number) => {
+
+                        return (
+                          <div className="pb-5 text-center" style={{ border: '1px solid #ededed' }}>
+                            {enseignant.nom_fr} {enseignant.prenom_fr}
+                          </div>
+
+                          // <Row key={index} style={{ border: '1px solid #ededed' }}>
+                          //   <Col className="pb-5" style={{ borderRight: '1px solid #ededed' }}>
+                          //     {enseignant.nom_fr} {enseignant.prenom_fr}
+                          //   </Col>
+                          //   {epreuve.group_surveillants[index + 1] ? (
+                          //     <Col className="pb-5">
+                          //       {epreuve.group_surveillants[index + 1].nom_fr}{" "}
+                          //       {epreuve.group_surveillants[index + 1].prenom_fr}
+                          //     </Col>
+                          //   ) : (
+                          //     <Col className="pb-5"></Col> // Empty cell for odd numbers
+                          //   )}
+                          // </Row>
+                        );
+
+                      })}
                     </Row>
 
                   </div>

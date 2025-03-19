@@ -25,7 +25,7 @@ import "swiper/css/navigation";
 import "swiper/css/scrollbar";
 import "swiper/css/effect-fade";
 import "swiper/css/effect-flip";
-import userImage from "assets/images/etudiant.png";
+import userImage from "assets/images/userImage.jpg";
 
 const ProfilEnseignant = () => {
   const [showModal, setShowModal] = useState(false);

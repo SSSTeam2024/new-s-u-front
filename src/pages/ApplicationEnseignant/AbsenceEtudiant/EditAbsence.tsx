@@ -102,7 +102,7 @@ const EditAbsence = () => {
     Swal.fire({
       position: "center",
       icon: "success",
-      title: "L'absence a été créée avec succès",
+      title: "L'absence a été modifié avec succès",
       showConfirmButton: false,
       timer: 2500,
     });
@@ -332,7 +332,10 @@ const EditAbsence = () => {
       console.log("Updating Absence: ", updatedAbsence);
 
       await updateAbsence(updatedAbsence)
-        .then(() => notifySuccess())
+        .then(() => {
+          notifySuccess()
+          navigate("/application-enseignant/lister-absence");
+        })
         .catch((error) => notifyError(error));
     } catch (error) {
       notifyError(error);
@@ -343,13 +346,13 @@ const EditAbsence = () => {
     <React.Fragment>
       <div className="page-content">
         <Container fluid>
-          <Breadcrumb title="Ajouter Absence" pageTitle="Tableau de bord" />
+          <Breadcrumb title="Modifier Absence" pageTitle="Tableau de bord" />
           <Col lg={12}>
             <Card id="shipmentsList">
               <Card.Body>
                 <Form className="create-form" onSubmit={onSubmitAbsence}>
                   <Row>
-                    <Col lg={7}>
+                    {/* <Col lg={7}>
                       <Row className="mb-4">
                         <Col lg={3}>
                           <Form.Label htmlFor="trimestre">Semestre</Form.Label>
@@ -441,79 +444,7 @@ const EditAbsence = () => {
                           </select>
                         </Col>
                       </Row>
-                      {/* <Row className="mb-4">
-                        <Col lg={3}>
-                          <Form.Label htmlFor="classe">Classe</Form.Label>
-                        </Col>
-                        <Col lg={8}>
-                          <select
-                            className="form-select text-muted"
-                            name="classe"
-                            id="classe"
-                            onChange={handleSelectClasse}
-                          >
-                            <option value="">Choisir</option>
-                            {classesList?.map((classe) => (
-                              <option value={classe?._id!} key={classe?._id!}>
-                                {classe.nom_classe_fr}
-                              </option>
-                            ))}
-                          </select>
-                        </Col>
-                      </Row>
-                      <Row className="mb-4">
-                        <Col lg={3}>
-                          <Form.Label htmlFor="mat">Matière</Form.Label>
-                        </Col>
-                        <Col lg={8}>
-                          <select
-                            className="form-select text-muted"
-                            name="mat"
-                            id="mat"
-                            onChange={handleSelectMatiere}
-                          >
-                            <option value="">Choisir</option>
-                            {classesList?.map((classe) =>
-                              classe.parcours.modules
-                                .filter((modul: any) => {
-                                  let sem;
-                                  if (modul.semestre_module === "S5") {
-                                    sem = "1";
-                                  }
-                                  if (modul.semestre_module === "S6") {
-                                    sem = "2";
-                                  }
-                                  return sem === selectedTrimestre;
-                                })
-                                .map((matieres: any) =>
-                                  matieres.matiere.map((mat: any) => (
-                                    <option value={mat?._id!} key={mat?._id!}>
-                                      {mat.matiere}
-                                    </option>
-                                  ))
-                                )
-                            )}
-                          </select>
-                        </Col>
-                      </Row>
-                      <Row className="mb-4">
-                        <Col lg={3}>
-                          <Form.Label htmlFor="date">Heure</Form.Label>
-                        </Col>
-                        <Col lg={8}>
-                          <Flatpickr
-                            className="form-control"
-                            options={{
-                              enableTime: true,
-                              noCalendar: true,
-                              dateFormat: "H:i",
-                              time_24hr: true,
-                            }}
-                            onChange={handleTimeChange}
-                          />
-                        </Col>
-                      </Row> */}
-                    </Col>
+                    </Col> */}
                     <Col lg={5}>
                       <Row>
                         <Col lg={4}>
@@ -529,17 +460,7 @@ const EditAbsence = () => {
                             {element.student.prenom_fr} {element.student.nom_fr}
                           </Col>
                           <Col lg={4} className="mb-1">
-                            {/* <select
-                              className="form-select text-muted"
-                              name="par"
-                              id="par"
-                              onChange={(e) =>
-                                handleStudentTypeChange(e, element.student?._id!)
-                              }
-                            >
-                              <option value="P">Présent(e)</option>
-                              <option value="A">Absent(e)</option>
-                            </select> */}
+
                             <div className="form-check form-switch">
                               <input
                                 className="form-check-input"
@@ -574,7 +495,7 @@ const EditAbsence = () => {
                         variant="success"
                         id="addNew"
                       >
-                        Ajouter
+                        Modifier
                       </Button>
                     </div>
                   </Row>
