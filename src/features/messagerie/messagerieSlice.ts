@@ -10,6 +10,7 @@ export interface Message {
 export const messagesSlice = createApi({
   reducerPath: "messagesApi",
   baseQuery: fetchBaseQuery({ baseUrl: `${process.env.REACT_APP_API_URL}/api/messagerie/` }),
+  tagTypes: ["Message"],
   endpoints: (builder) => ({
     sendMessage: builder.mutation<void, { senderId: string; senderType: string; receiverId: string; receiverType: string; text?: string; image?: string }>({
       query: (message) => ({

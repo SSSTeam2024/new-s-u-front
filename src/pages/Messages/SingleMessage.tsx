@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { Button, Spinner  } from "react-bootstrap";
-import{ Message, useSendMessageMutation, useFetchRepliesByParentIdQuery} from "features/messages/messagesSlice"
+import { Button, Spinner } from "react-bootstrap";
+import { Message, useSendMessageMutation, useFetchRepliesByParentIdQuery } from "features/messages/messagesSlice"
 import DOMPurify from "dompurify";
 
 
@@ -15,11 +15,11 @@ const SingleMessage = () => {
   const [showReply, setShowReply] = useState(false);
   const [replyContent, setReplyContent] = useState("");
 
-   // Fetch replies using parentMessageId
-   const { data: replies, isLoading } = useFetchRepliesByParentIdQuery(message?._id, {
-    skip: !message?._id, 
+  // Fetch replies using parentMessageId
+  const { data: replies, isLoading } = useFetchRepliesByParentIdQuery(message?._id, {
+    skip: !message?._id,
   });
-console.log("replies",replies)
+  console.log("replies", replies)
   if (!message) {
     return (
       <div className="container text-center mt-5">
@@ -32,17 +32,17 @@ console.log("replies",replies)
 
   const handleReplySubmit = async () => {
     if (!replyContent.trim()) return alert("Le message ne peut pas être vide.");
-  
+
     const replyMessage: Partial<Message> = {
       sender: {
-        userId: message.receiver.userId, 
+        userId: message.receiver.userId,
         userType: message.receiver.userType,
         nom_fr: message.receiver.nom_fr,
         prenom_fr: message.receiver.prenom_fr,
         email: message.receiver.email,
       },
       receiver: {
-        userId: message.sender.userId, 
+        userId: message.sender.userId,
         userType: message.sender.userType,
         nom_fr: message.sender.nom_fr,
         prenom_fr: message.sender.prenom_fr,
@@ -55,13 +55,13 @@ console.log("replies",replies)
       status: "sent",
       receiverStatus: "sent",
       senderStatus: "sent",
-      attachments: [], 
+      attachments: [],
       attachmentsBase64Strings: [],
       attachmentsExtensions: [],
     };
-  
+
     try {
-      await sendMessage(replyMessage); // Ensure sendMessage accepts Partial<Message>
+      await sendMessage(replyMessage);
       alert("Réponse envoyée !");
       setShowReply(false);
       setReplyContent("");
@@ -113,7 +113,7 @@ console.log("replies",replies)
           <hr />
           <p className="fs-5 lh-lg">{message.content}</p>
           {/* <div className="fs-5 lh-lg"    dangerouslySetInnerHTML={{ __html: message.content }}>   </div> */}
- 
+
           {/* Attachments Section */}
           {message.attachments && message.attachments.length > 0 && (
             <div className="mt-4">
@@ -135,16 +135,22 @@ console.log("replies",replies)
           )}
         </div>
 
- {/* Replies Section */}
- <div className="card-footer">
+        {/* Replies Section */}
+        <div >
           <h6><i className="bi bi-chat-left-text me-2"></i> Réponses</h6>
           {isLoading ? (
             <Spinner animation="border" />
           ) : (
             replies?.map((reply) => (
               <div key={reply._id} className="card mt-2">
+                <div className="card-header bg-light d-flex justify-content-between align-items-center">
+                  <small>
+                    <strong>{reply.sender.nom_fr} {reply.sender.prenom_fr}</strong>
+                    <span className="text-muted"> → {reply.receiver.nom_fr} {reply.receiver.prenom_fr}</span>
+                  </small>
+                  <span className="badge bg-secondary">{new Date(reply?.createdAt!).toLocaleString()}</span>
+                </div>
                 <div className="card-body">
-                  <p className="mb-1"><strong>{reply.sender.nom_fr} {reply.sender.prenom_fr}</strong></p>
                   <p>{reply.content}</p>
                 </div>
               </div>
@@ -152,25 +158,25 @@ console.log("replies",replies)
           )}
         </div>
 
-       
+
         {/* Footer */}
         <div className="card-footer  d-flex justify-content-between">
           <Button variant="danger" >
-            <i className="bi bi-trash me-2"></i> Supprimer
+            <i className="bi bi-trash me-5"></i> Supprimer
           </Button>
-          
+
           <Button variant="secondary" >
             <i className="bi bi-archive me-2"></i> Archiver
           </Button>
           <div>
-          {/* Reply Button */}
-          <Button variant="primary" className="ms-2" onClick={() => setShowReply(!showReply)}>
-            <i className="bi bi-reply me-2"></i> Répondre
-          </Button>
+            {/* Reply Button */}
+            <Button variant="primary" className="ms-2" onClick={() => setShowReply(!showReply)}>
+              <i className="bi bi-reply me-2"></i> Répondre
+            </Button>
           </div>
         </div>
       </div>
-   
+
       {/* Reply Form */}
       {showReply && (
         <div className="card mt-3">
