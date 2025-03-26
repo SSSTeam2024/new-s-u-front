@@ -1555,6 +1555,12 @@ const Navdata = () => {
       link: "/liens-utils",
     },
     {
+      id: "messagerie",
+      label: "Messagerie",
+      icon: "bi bi-envelope",
+      link: "/messagerie/liste-message",
+    },
+    {
       id: "variable-globales",
       label: "Variables Globales",
       icon: "bi bi-cloud-arrow-down-fill",
