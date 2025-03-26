@@ -151,8 +151,8 @@ const AjouterRattrapage = () => {
       const selectedOption = formValues.tcCheckbox1
         ? "continuer"
         : formValues.tcCheckbox2
-        ? "annuler"
-        : "aucune sélection";
+          ? "annuler"
+          : "aucune sélection";
       Swal.fire(
         "Option sélectionnée",
         `Vous avez choisi de: ${selectedOption}`,
@@ -428,6 +428,7 @@ const AjouterRattrapage = () => {
   };
 
   const extractSubjectsBasedOnSemester = (classe: any) => {
+    console.log("classe extractSubjectsBasedOnSemester", classe)
     let filtredMatieres: any = [];
 
     for (let module of classe?.parcours?.modules!) {
@@ -1557,13 +1558,13 @@ const AjouterRattrapage = () => {
                         id="enseignant"
                         value={formData?.enseignant.nom_fr}
                         onChange={handleChangeTeacher}
-                        // onClick={(e) => {
-                        //   if (formData.enseignant.nom_fr === "") {
-                        //     showSelectionWarning(
-                        //       "Veuillez sélectionner un enseignant à partir du liste des voeux!"
-                        //     );
-                        //   }
-                        // }}
+                      // onClick={(e) => {
+                      //   if (formData.enseignant.nom_fr === "") {
+                      //     showSelectionWarning(
+                      //       "Veuillez sélectionner un enseignant à partir du liste des voeux!"
+                      //     );
+                      //   }
+                      // }}
                       >
                         <option value="">Sélectionner Enseignant</option>
                         {allTeachers?.map((teacher: any) => (

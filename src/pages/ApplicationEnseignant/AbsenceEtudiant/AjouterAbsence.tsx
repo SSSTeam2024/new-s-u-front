@@ -418,7 +418,7 @@ const AjouterAbsence = () => {
   function tog_AllAbsences() {
     navigate("/application-enseignant/lister-absence");
   }
-  const onSubmitAbsence = (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmitAbsence = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {
@@ -437,7 +437,7 @@ const AjouterAbsence = () => {
         seance: selectedSession,
       };
       console.log(absenceData);
-      createAbsence(absenceData)
+      await createAbsence(absenceData)
         .then(() => notifySuccess())
         .then(() => setAbsence(initialAbsence));
       tog_AllAbsences();

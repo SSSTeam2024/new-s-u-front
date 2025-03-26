@@ -583,19 +583,6 @@ const AddFicheVoeux = () => {
     });
   };
 
-  const getAvailableJours = () => {
-    const allJours = [
-      "Lundi",
-      "Mardi",
-      "Mercredi",
-      "Jeudi",
-      "Vendredi",
-      "Samedi",
-    ];
-    return allJours.filter(
-      (jour) => !formData.jours.some((selected) => selected.jour === jour)
-    );
-  };
 
   const handleSelectSubject = (subject: any, index: number) => {
 
