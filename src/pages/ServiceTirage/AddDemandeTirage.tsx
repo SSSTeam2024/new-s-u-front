@@ -34,6 +34,11 @@ import { RootState } from "app/store";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "features/account/authSlice";
 
+interface MiniSession {
+    classId: string;
+    subject: string;
+}
+
 const AddDemandeTirage = () => {
     const { data: AllEnseignants = [] } = useFetchEnseignantsQuery();
 
@@ -342,38 +347,17 @@ const AddDemandeTirage = () => {
 
     const handleSelectValueColumnChange = (selectedOptions: any) => {
         const classIds = selectedOptions.map((option: any) => option.value);
-        console.log(classIds);
+        console.log("classIds", classIds);
 
-        const uniqueSessions = sessions.filter((session: any, index: number, self: any) =>
-            index === self.findIndex((s: any) => s.matiere.matiere === session.matiere.matiere && s.matiere.types[0].type === session.matiere.types[0].type)
-        );
+        const miniSessions: MiniSession[] = sessions.map((s: any) => ({
+            classId: s.classe._id,
+            subject: s.matiere.matiere + " " + s.matiere.types[0].type
+        }));
 
-        console.log(uniqueSessions);
+        console.log(getCommonSubjectsForClasses(miniSessions, classIds));
 
-        let fileteredSubjects = [];
+        let fileteredSubjects = getCommonSubjectsForClasses(miniSessions, classIds);
 
-        for (const session of uniqueSessions) {
-            let subjectCounterExistence = 0;
-            for (const classId of classIds) {
-                let classe = AllClasse.filter(c => c._id === classId)[0];
-                let modules = classe.parcours.modules.filter((m: any) => m.semestre_module === session.matiere.semestre);
-                if (modules.length > 0) {
-                    const subjects = modules.map((module: any) => {
-                        let subjectsResult = module.matiere.filter((m: any) => m.matiere === session.matiere.matiere);
-                        return subjectsResult;
-                    })
-                    const validSubjects = subjects.filter((subjectArray: any) => subjectArray.length > 0);
-                    if (validSubjects.length > 0) {
-                        subjectCounterExistence++;
-                    }
-                }
-            }
-            if (subjectCounterExistence === classIds.length && subjectCounterExistence > 0) {
-                fileteredSubjects.push(session.matiere);
-            }
-        }
-
-        console.log("fileteredSubjects", fileteredSubjects);
         setFilteredSubjects(fileteredSubjects)
         setSelectedMatiere('');
         setSelectedColumnValues(selectedOptions);
@@ -383,6 +367,30 @@ const AddDemandeTirage = () => {
             matiere: ''
         }))
     };
+
+    function getCommonSubjectsForClasses(sessions: MiniSession[], selectedClassIds: string[]): string[] {
+        if (selectedClassIds.length === 0) return [];
+
+        // Step 1: Filter sessions by selected class IDs
+        const filteredSessions = sessions.filter(session => selectedClassIds.includes(session.classId));
+
+        // Step 2: Group subjects by classId
+        const subjectsByClass = selectedClassIds.map(classId => {
+            const subjectsForClass = filteredSessions
+                .filter(session => session.classId === classId)
+                .map(session => session.subject);
+            return new Set(subjectsForClass); // Remove duplicates
+        });
+
+        // Step 3: Find common subjects (intersection of all selected classes)
+        let commonSubjects = subjectsByClass[0] ? Array.from(subjectsByClass[0]) : [];
+
+        for (const subjects of subjectsByClass.slice(1)) {
+            commonSubjects = commonSubjects.filter(subject => subjects.has(subject));
+        }
+
+        return commonSubjects;
+    }
 
     const checkForFormValidation = () => {
         let notValid = true;
@@ -501,9 +509,8 @@ const AddDemandeTirage = () => {
                                                     >
                                                         <option value="">Choisir</option>
                                                         {filteredSubjects?.map((subject: any) => (
-                                                            <option value={subject?.matiere! + " " + subject?.types[0].type} key={subject?.matiere!}>
-                                                                {subject?.matiere!}{" "}
-                                                                {subject?.types[0].type}
+                                                            <option value={subject} key={subject}>
+                                                                {subject}
                                                             </option>
                                                         ))}
                                                     </select>
