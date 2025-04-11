@@ -4,24 +4,11 @@ import DataTable from "react-data-table-component";
 import Breadcrumb from "Common/BreadCrumb";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-<<<<<<< HEAD
-import {
-  useDeleteAbsenceMutation,
-  useFetchAbsenceEtudiantsQuery,
-} from "features/absenceEtudiant/absenceSlice";
-
-const DemandesTirage = () => {
-  const { data = [] } = useFetchAbsenceEtudiantsQuery();
-
-  const [showObservation, setShowObservation] = useState<boolean>(false);
-
-=======
 import { useFetchDemandeTiragesQuery } from "features/demandeTirage/demandeTirageSlice";
 
 const DemandesTirage = () => {
   const { data = [] } = useFetchDemandeTiragesQuery();
   console.log(data);
-
 
   const [showObservation, setShowObservation] = useState<boolean>(false);
 
@@ -45,17 +32,12 @@ const DemandesTirage = () => {
     });
   };
 
->>>>>>> 324dae79b2a08308b75028ff555e796ece7a5c98
   const navigate = useNavigate();
 
   function tog_AddAbsence() {
     navigate("/service-tirage/ajouter-tirage");
   }
 
-<<<<<<< HEAD
-  const [deleteAbsence] = useDeleteAbsenceMutation();
-=======
->>>>>>> 324dae79b2a08308b75028ff555e796ece7a5c98
   const swalWithBootstrapButtons = Swal.mixin({
     customClass: {
       confirmButton: "btn btn-success",
@@ -63,7 +45,6 @@ const DemandesTirage = () => {
     },
     buttonsStyling: false,
   });
-
 
   const AlertDelete = async (_id: string) => {
     swalWithBootstrapButtons
@@ -78,13 +59,9 @@ const DemandesTirage = () => {
       })
       .then((result) => {
         if (result.isConfirmed) {
-          console.log('Delete api');
+          console.log("Delete api");
         } else if (result.dismiss === Swal.DismissReason.cancel) {
-          swalWithBootstrapButtons.fire(
-            "Annulé",
-            "",
-            "error"
-          );
+          swalWithBootstrapButtons.fire("Annulé", "", "error");
         }
       });
   };
@@ -127,20 +104,24 @@ const DemandesTirage = () => {
 
     {
       name: <span className="font-weight-bold fs-13">Etat</span>,
-      selector: (row: any) =>
-        row?.etat!,
+      selector: (row: any) => row?.etat!,
       sortable: true,
     },
     {
       name: <span className="font-weight-bold fs-13">Ajouté par</span>,
       selector: (row: any) => {
         return row?.added_by !== null ? (
-          row?.added_by?.enseignantId !== null ? (<
-            div>
-            {row?.added_by?.enseignantId?.prenom_fr} {row?.added_by?.enseignantId?.nom_fr}
-          </div>
-          ) : (<div>{row?.added_by?.personnelId?.prenom_fr} {row?.added_by?.enseignantId?.nom_fr}</div>)
-
+          row?.added_by?.enseignantId !== null ? (
+            <div>
+              {row?.added_by?.enseignantId?.prenom_fr}{" "}
+              {row?.added_by?.enseignantId?.nom_fr}
+            </div>
+          ) : (
+            <div>
+              {row?.added_by?.personnelId?.prenom_fr}{" "}
+              {row?.added_by?.enseignantId?.nom_fr}
+            </div>
+          )
         ) : (
           <div>
             {row?.enseignant?.prenom_fr} {row?.enseignant?.nom_fr}
@@ -148,8 +129,7 @@ const DemandesTirage = () => {
         );
       },
       sortable: true,
-    }
-    ,
+    },
     {
       name: <span className="font-weight-bold fs-13">Actions</span>,
       sortable: false,
