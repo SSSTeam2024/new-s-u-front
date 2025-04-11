@@ -917,6 +917,13 @@ const Navdata = () => {
         },
       ],
     },
+    //! Messagerie
+    {
+      id: "messagerie",
+      label: "Messagerie",
+      icon: "bi bi-envelope",
+      link: "/messagerie/liste-message",
+    },
     {
       id: "tirage",
       label: "Service Tirage",

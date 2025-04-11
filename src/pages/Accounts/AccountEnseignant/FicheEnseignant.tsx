@@ -1,23 +1,9 @@
 import React, { useRef } from "react";
-import {
-  Button,
-  Card,
-  Col,
-  Container,
-  Row,
-  Table,
-  Image,
-} from "react-bootstrap";
+import { Button, Col, Container, Row, Table, Image } from "react-bootstrap";
 import Breadcrumb from "Common/BreadCrumb";
 import { useLocation } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
-import { useSelector } from "react-redux";
-import { selectCurrentUser } from "features/account/authSlice";
-import { RootState } from "app/store";
-import {
-  useFetchVaribaleGlobaleQuery,
-  VaribaleGlobale,
-} from "features/variableGlobale/variableGlobaleSlice";
+import { useFetchVaribaleGlobaleQuery } from "features/variableGlobale/variableGlobaleSlice";
 import "./hover.css";
 
 const FicheEnseignant: React.FC = () => {
@@ -26,22 +12,20 @@ const FicheEnseignant: React.FC = () => {
   const location = useLocation();
   const detailsEnseignant = location.state;
 
-  const user = useSelector((state: RootState) => selectCurrentUser(state));
-
   const contentRef = useRef<HTMLDivElement>(null);
   const reactToPrintFn = useReactToPrint({ contentRef });
 
   // Get the last variable
   const lastVariable =
     Variables.length > 0 ? Variables[Variables.length - 1] : null;
-  console.log("lastVariable", lastVariable);
+
   return (
     <React.Fragment>
       <div className="page-content">
         <Container fluid={true}>
           <Breadcrumb
-            title="Fiche de l'étudiant"
-            pageTitle="Détails de l'étudiant"
+            title="Fiche de l'enseignant"
+            pageTitle="Détails de l'enseignant"
           />
 
           <Row className="justify-content-center">
