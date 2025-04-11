@@ -6,7 +6,7 @@ import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 
 const SingleAvisEtudiant = () => {
-  document.title = "Avis Etudiant | Smart Institute";
+  document.title = "Avis Etudiant | ENIGA";
   const location = useLocation();
   const { title, gallery, description, auteurId, date_avis, createdAt, lien } =
     location.state;

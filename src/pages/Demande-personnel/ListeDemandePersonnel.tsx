@@ -9,9 +9,7 @@ import {
   Row,
 } from "react-bootstrap";
 import Breadcrumb from "Common/BreadCrumb";
-import CountUp from "react-countup";
 import TableContainer from "Common/TableContainer";
-
 import Flatpickr from "react-flatpickr";
 import dummyImg from "../../assets/images/users/user-dummy-img.jpg";
 import { Link, useNavigate } from "react-router-dom";
@@ -23,27 +21,19 @@ import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import {
   useFetchDemandePersonnelQuery,
-  useAddDemandePersonnelMutation,
-  useUpdateDemandePersonnelMutation,
   useDeleteDemandePersonnelMutation,
 } from "features/demandePersonnel/demandePersonnelSlice";
 
 const ListeDemandePersonnel = () => {
-  document.title = "Demande Personnel | Smart Institute";
+  document.title = "Demandes Personnel | ENIGA";
 
   const user = useSelector((state: RootState) => selectCurrentUser(state));
   const MySwal = withReactContent(Swal);
 
   // Fetch reclamations query hook
-  const {
-    data: demandesPersonnel,
-    error,
-    isLoading,
-  } = useFetchDemandePersonnelQuery();
+  const { data: demandesPersonnel } = useFetchDemandePersonnelQuery();
 
   // Mutation hooks
-  const [addReclamation] = useAddDemandePersonnelMutation();
-  const [updateReclamation] = useUpdateDemandePersonnelMutation();
   const [deleteDemandeEtudiant] = useDeleteDemandePersonnelMutation();
   const navigate = useNavigate();
 
@@ -300,14 +290,14 @@ const ListeDemandePersonnel = () => {
                 <Card.Body>
                   <Row className="g-lg-2 g-4">
                     <Col lg={3}>
-                      <div className="search-box">
+                      <label className="search-box">
                         <input
                           type="text"
                           className="form-control search"
                           placeholder="Chercher une demande..."
                         />
                         <i className="ri-search-line search-icon"></i>
-                      </div>
+                      </label>
                     </Col>
 
                     {isMultiDeleteButton && (
@@ -341,7 +331,7 @@ const ListeDemandePersonnel = () => {
                     isPagination={true}
                     className="custom-header-css table align-middle table-nowrap"
                     tableClass="table-centered align-middle table-nowrap mb-0"
-                    theadClass="text-muted table-light"
+                    theadClass="text-muted"
                     SearchPlaceholder="Search Products..."
                   />
                   <div className="noresult" style={{ display: "none" }}>

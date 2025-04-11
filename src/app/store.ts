@@ -74,6 +74,10 @@ import { generatedDocSlice } from "features/generatedDoc/generatedDocSlice";
 import { cycleSlice } from "features/cycle/cycle";
 import { absencePersonnelSlice } from "features/absencePersonnel/absencePersonnel";
 import { personnelWorkingDaySlice } from "features/personnelWorkingDay/personnelWorkingDaySlice";
+import { voieEnvoiSlice } from "features/voieEnvoi/voieEnvoiSlice";
+import { courrierEntrantSlice } from "features/courrierEntrant/courrierEntrant";
+import { courrierSortantSlice } from "features/courrierSortant/courrierSortantSlice";
+import { intervenantsSlice } from "features/intervenants/intervenantsSlice";
 
 export const store = configureStore({
   reducer: {
@@ -147,6 +151,11 @@ export const store = configureStore({
     [generatedDocSlice.reducerPath]: generatedDocSlice.reducer,
     [absencePersonnelSlice.reducerPath]: absencePersonnelSlice.reducer,
     [personnelWorkingDaySlice.reducerPath]: personnelWorkingDaySlice.reducer,
+    [voieEnvoiSlice.reducerPath]: voieEnvoiSlice.reducer,
+    [courrierEntrantSlice.reducerPath]: courrierEntrantSlice.reducer,
+    [courrierSortantSlice.reducerPath]: courrierSortantSlice.reducer,
+    //! Intervenants
+    [intervenantsSlice.reducerPath]: intervenantsSlice.reducer,
     auth: authSlice,
     Layout: LayoutReducer,
     ForgetPassword: ForgetPasswordReducer,
@@ -218,7 +227,11 @@ export const store = configureStore({
       generatedDocSlice.middleware,
       cycleSlice.middleware,
       absencePersonnelSlice.middleware,
-      personnelWorkingDaySlice.middleware
+      personnelWorkingDaySlice.middleware,
+      voieEnvoiSlice.middleware,
+      courrierEntrantSlice.middleware,
+      courrierSortantSlice.middleware,
+      intervenantsSlice.middleware
     ]);
   },
 });

@@ -7,7 +7,7 @@ import { useAddMatiereMutation } from "features/matiere/matiere";
 import { useAddDepartementMutation } from "features/departement/departement";
 
 const AddDepartement = () => {
-  document.title = " Ajouter Département | Application Smart Institute";
+  document.title = " Ajouter Département | ENIGA";
   const navigate = useNavigate();
 
   function tog_retourParametres() {

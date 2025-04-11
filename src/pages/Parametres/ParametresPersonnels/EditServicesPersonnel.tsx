@@ -7,7 +7,7 @@ import Swal from "sweetalert2";
 import { useUpdateServicePersonnelMutation } from "features/servicePersonnel/servicePersonnel";
 
 const EditServicesPersonnel = () => {
-  document.title = " Modifier Service Personnel | Application Smart Institute";
+  document.title = " Modifier Service Personnel | ENIGA";
   const navigate = useNavigate();
   const { state: servicePersonnel } = useLocation();
   const [editServicePersonnel] = useUpdateServicePersonnelMutation();
@@ -45,7 +45,9 @@ const EditServicesPersonnel = () => {
       timer: 2000,
     });
   };
-  const onSubmitServicePersonnel = async (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmitServicePersonnel = async (
+    e: React.FormEvent<HTMLFormElement>
+  ) => {
     e.preventDefault();
     try {
       await editServicePersonnel(formData).unwrap();
@@ -85,7 +87,10 @@ const EditServicesPersonnel = () => {
         <Container fluid={true}>
           <Row>
             <Col lg={12}>
-              <Form className="tablelist-form" onSubmit={onSubmitServicePersonnel}>
+              <Form
+                className="tablelist-form"
+                onSubmit={onSubmitServicePersonnel}
+              >
                 <div
                   id="alert-error-msg"
                   className="d-none alert alert-danger py-2"
@@ -109,7 +114,9 @@ const EditServicesPersonnel = () => {
 
                   <Col lg={4}>
                     <div className="mb-3">
-                      <Form.Label htmlFor="service_fr">Service Personnel</Form.Label>
+                      <Form.Label htmlFor="service_fr">
+                        Service Personnel
+                      </Form.Label>
                       <Form.Control
                         type="text"
                         id="service_fr"
@@ -129,7 +136,9 @@ const EditServicesPersonnel = () => {
                         textAlign: "right",
                       }}
                     >
-                      <Form.Label htmlFor="service_ar">إدارة شؤون الموظفين</Form.Label>
+                      <Form.Label htmlFor="service_ar">
+                        إدارة شؤون الموظفين
+                      </Form.Label>
                       <Form.Control
                         type="text"
                         id="service_ar"

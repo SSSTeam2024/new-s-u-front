@@ -1,15 +1,5 @@
 import React, { useState, useMemo, useCallback } from "react";
-import {
-  Button,
-  Card,
-  Col,
-  Container,
-  Form,
-  Image,
-  Modal,
-  Offcanvas,
-  Row,
-} from "react-bootstrap";
+import { Button, Card, Col, Container, Offcanvas, Row } from "react-bootstrap";
 import Breadcrumb from "Common/BreadCrumb";
 import TableContainer from "Common/TableContainer";
 import { Link, useNavigate } from "react-router-dom";
@@ -19,10 +9,6 @@ import {
   useDeleteUserMutation,
 } from "features/account/accountSlice";
 import { useFetchUserPermissionsHistoryByUserIdQuery } from "features/userPermissions/userPermissionSlice";
-import dummyImg from "../../assets/images/users/user-dummy-img.jpg";
-// import Images
-import avatar1 from "assets/images/users/avatar-1.jpg";
-import avatar6 from "assets/images/users/avatar-6.jpg";
 
 interface Permission {
   _id: string;
@@ -30,15 +16,6 @@ interface Permission {
   path: string;
   section: string;
   sub_section: string;
-  __v: number;
-}
-
-interface UserPermissionHistoryItem {
-  _id: string;
-  user_id: string;
-  permissions: Permission[];
-  assigned_at: string; // Assuming this is a string date in ISO format
-  removed_at: string; // Assuming this is a string date in ISO format
   __v: number;
 }
 
@@ -50,8 +27,6 @@ const ListeAdmin = () => {
   const { data: usersResponse = [] } = useFetchAllUsersQuery();
   const [deleteUser] = useDeleteUserMutation();
 
-  const [modal_AddUserModals, setmodal_AddUserModals] =
-    useState<boolean>(false);
   const [isMultiDeleteButton, setIsMultiDeleteButton] =
     useState<boolean>(false);
   const [show, setShow] = useState(false);
@@ -71,10 +46,6 @@ const ListeAdmin = () => {
     userId: selectedUserId?.userId || "", // Use empty string or handle default value as per your logic
   });
   const handleClose = () => setShow(false);
-
-  const tog_AddUserModals = () => {
-    setmodal_AddUserModals(!modal_AddUserModals);
-  };
 
   const checkedAll = useCallback(() => {
     const checkall = document.getElementById("checkAll") as HTMLInputElement;
@@ -304,7 +275,7 @@ const ListeAdmin = () => {
     <React.Fragment>
       <div className="page-content">
         <Container fluid={true}>
-          <Breadcrumb title="Liste des admins" pageTitle="More" />
+          <Breadcrumb title="Liste des admins" pageTitle="Gestion des admins" />
 
           <Row id="usersList">
             <Col lg={12}>
@@ -312,14 +283,14 @@ const ListeAdmin = () => {
                 <Card.Body>
                   <Row className="g-lg-2 g-4">
                     <Col lg={3}>
-                      <div className="search-box">
+                      <label className="search-box">
                         <input
                           type="text"
                           className="form-control search"
                           placeholder="Chercher un admin..."
                         />
                         <i className="ri-search-line search-icon"></i>
-                      </div>
+                      </label>
                     </Col>
                     <Col className="col-lg-auto ms-auto">
                       <div className="hstack gap-2">
@@ -351,7 +322,7 @@ const ListeAdmin = () => {
                     customPageSize={10}
                     className="custom-header-css"
                     tableClass="align-middle table-nowrap mb-0"
-                    theadClass="table-light"
+                    theadClass="text-muted"
                     SearchPlaceholder="Search Admins..."
                   />
                 </Card.Body>

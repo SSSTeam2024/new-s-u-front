@@ -39,13 +39,13 @@ const ListeAbsencePersonnel = () => {
           deleteAbsence(_id);
           swalWithBootstrapButtons.fire(
             "Supprimé!",
-            "Absence Etudiant a été supprimé.",
+            "Absence Personnel a été supprimé.",
             "success"
           );
         } else if (result.dismiss === Swal.DismissReason.cancel) {
           swalWithBootstrapButtons.fire(
             "Annulé",
-            "Absence Etudiant est en sécurité :)",
+            "Absence Personnel est en sécurité :)",
             "error"
           );
         }
@@ -62,7 +62,19 @@ const ListeAbsencePersonnel = () => {
       name: <span className="font-weight-bold fs-13">Personnels Absents</span>,
       selector: (row: any) =>
         row.personnels.filter(
-          (e: any) => e?.evening! === "Absent" && e?.morning! === "Absent"
+          (e: any) =>
+            (e?.evening! === "Absent" && e?.morning! === "Absent") ||
+            e?.fullDay! === "Absent"
+        ).length,
+      sortable: true,
+    },
+    {
+      name: <span className="font-weight-bold fs-13">Personnels En Congé</span>,
+      selector: (row: any) =>
+        row.personnels.filter(
+          (e: any) =>
+            (e?.evening! === "En congé" && e?.morning! === "En congé") ||
+            e?.fullDay! === "En congé"
         ).length,
       sortable: true,
     },
@@ -74,10 +86,9 @@ const ListeAbsencePersonnel = () => {
           <ul className="hstack gap-2 list-unstyled mb-0">
             <li>
               <Link
-                to="#"
+                to="/gestion-personnel/details-absence-personnel"
                 className="badge badge-soft-info edit-item-btn"
-                //   onClick={() => setShowObservation(!showObservation)}
-                // state={{ absenceDetails: row }}
+                state={row}
               >
                 <i
                   className="ri-eye-line"
@@ -98,9 +109,9 @@ const ListeAbsencePersonnel = () => {
 
             <li>
               <Link
-                to="#"
+                to="/gestion-personnel/modifier-absence-personnel"
                 className="badge badge-soft-success edit-item-btn"
-                // state={{ absenceDetails: row }}
+                state={{ absenceDetails: row }}
               >
                 <i
                   className="ri-edit-2-line"
@@ -177,7 +188,12 @@ const ListeAbsencePersonnel = () => {
                   </Col>
                 </Card.Header>
                 <Card.Body>
-                  <DataTable columns={columns} data={data} pagination />
+                  <DataTable
+                    columns={columns}
+                    data={data}
+                    pagination
+                    noDataComponent="Il n'y a aucun enregistrement à afficher"
+                  />
                 </Card.Body>
               </Card>
             </Col>

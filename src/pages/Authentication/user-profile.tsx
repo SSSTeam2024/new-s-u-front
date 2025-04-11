@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Container, Row, Col, Card, Alert, Button, Form } from "react-bootstrap";
+import {
+  Container,
+  Row,
+  Col,
+  Card,
+  Alert,
+  Button,
+  Form,
+} from "react-bootstrap";
 
 // Formik Validation
 import * as Yup from "yup";
@@ -7,158 +15,154 @@ import { useFormik } from "formik";
 
 //redux
 import { useSelector, useDispatch } from "react-redux";
-import { createSelector } from 'reselect';
+import { createSelector } from "reselect";
 
 import withRouter from "Common/withRouter";
 
 //Import Breadcrumb
-import Breadcrumb from 'Common/BreadCrumb';
-
-import avatar from "../../assets/images/users/avatar-1.jpg";
+import Breadcrumb from "Common/BreadCrumb";
 
 // actions
 import { editProfile, resetProfileFlag } from "slices/thunk";
 
 const UserProfile = () => {
+  document.title = "User Profile | Toner eCommerce + Admin React Template";
 
-    document.title = "User Profile | Toner eCommerce + Admin React Template";
+  const dispatch = useDispatch<any>();
 
-    const dispatch = useDispatch<any>();
+  const [email, setemail] = useState("admin@gmail.com");
+  const [name, setname] = useState("Admin");
+  const [idx, setidx] = useState("1");
 
-    const [email, setemail] = useState("admin@gmail.com");
-    const [name, setname] = useState("Admin");
-    const [idx, setidx] = useState("1");
+  const selectLayoutState = (state: any) => state.Profile;
+  const selectProperties = createSelector(selectLayoutState, (state: any) => ({
+    user: state.user,
+    success: state.success,
+    error: state.error,
+  }));
 
-    const selectLayoutState = (state: any) => state.Profile;
-    const selectProperties = createSelector(
-        selectLayoutState,
-        (state: any) => ({
-            user: state.user,
-            success: state.success,
-            error: state.error
-        })
-    );
+  const { error, success } = useSelector(selectProperties);
 
-    const { error, success } = useSelector(selectProperties);
+  useEffect(() => {
+    if (localStorage.getItem("authUser")) {
+      const obj = JSON.parse(localStorage.getItem("authUser") || "{}");
+      if (process.env.REACT_APP_DEFAULTAUTH === "firebase") {
+        setname(obj.displayName);
+        setemail(obj.email);
+        setidx(obj.uid);
+      } else if (
+        process.env.REACT_APP_DEFAULTAUTH === "fake" ||
+        process.env.REACT_APP_DEFAULTAUTH === "jwt"
+      ) {
+        setname(obj.username);
+        setemail(obj.email);
+        setidx(obj.uid);
+      }
 
-    useEffect(() => {
+      setTimeout(() => {
+        dispatch(resetProfileFlag());
+      }, 3000);
+    }
+  }, [dispatch, success, error]);
 
-        if (localStorage.getItem("authUser")) {
-            const obj = JSON.parse(localStorage.getItem("authUser") || "{}");
-            if (process.env.REACT_APP_DEFAULTAUTH === "firebase") {
-                setname(obj.displayName);
-                setemail(obj.email);
-                setidx(obj.uid);
-            } else if (
-                process.env.REACT_APP_DEFAULTAUTH === "fake" ||
-                process.env.REACT_APP_DEFAULTAUTH === "jwt"
-            ) {
-                setname(obj.username);
-                setemail(obj.email);
-                setidx(obj.uid);
-            }
+  const validation = useFormik({
+    // enableReinitialize : use this flag when initial values needs to be changed
+    enableReinitialize: true,
 
-            setTimeout(() => {
-                dispatch(resetProfileFlag());
-            }, 3000);
-        }
-    }, [dispatch, success, error]);
+    initialValues: {
+      username: name || "Admin",
+      idx: idx || "1",
+    },
+    validationSchema: Yup.object({
+      username: Yup.string().required("Please Enter Your UserName"),
+    }),
+    onSubmit: (values) => {
+      dispatch(editProfile(values));
+    },
+  });
 
-    const validation = useFormik({
-        // enableReinitialize : use this flag when initial values needs to be changed
-        enableReinitialize: true,
+  return (
+    <React.Fragment>
+      <div className="page-content">
+        <Container fluid>
+          {/* Render Breadcrumb */}
+          <Breadcrumb title="Toner" pageTitle="Accounts" />
 
-        initialValues: {
-            username: name || 'Admin',
-            idx: idx || '1',
-        },
-        validationSchema: Yup.object({
-            username: Yup.string().required("Please Enter Your UserName"),
-        }),
-        onSubmit: (values) => {
-            dispatch(editProfile(values));
-        }
-    });
+          <Row>
+            <Col lg="12">
+              {error && error ? <Alert variant="danger">{error}</Alert> : null}
+              {success ? <Alert variant="success">{success}</Alert> : null}
 
-
-    return (
-        <React.Fragment>
-            <div className="page-content">
-                <Container fluid>
-                    {/* Render Breadcrumb */}
-                    <Breadcrumb title="Toner" pageTitle="Accounts" />
-
-                    <Row>
-                        <Col lg="12">
-                            {error && error ? <Alert variant="danger">{error}</Alert> : null}
-                            {success ? <Alert variant="success">{success}</Alert> : null}
-
-                            <Card>
-                                <Card.Body>
-                                    <div className="d-flex">
-                                        <div className="mx-3">
-                                            <img
+              <Card>
+                <Card.Body>
+                  <div className="d-flex">
+                    <div className="mx-3">
+                      {/* <img
                                                 src={avatar}
                                                 alt=""
                                                 className="avatar-md rounded-circle img-thumbnail"
-                                            />
-                                        </div>
-                                        <div className="flex-grow-1 align-self-center">
-                                            <div className="text-muted">
-                                                <h5>{name}</h5>
-                                                <p className="mb-1">{email}</p>
-                                                <p className="mb-0">Id no: #{idx}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </Card.Body>
-                            </Card>
-                        </Col>
-                    </Row>
+                                            /> */}
+                    </div>
+                    <div className="flex-grow-1 align-self-center">
+                      <div className="text-muted">
+                        <h5>{name}</h5>
+                        <p className="mb-1">{email}</p>
+                        <p className="mb-0">Id no: #{idx}</p>
+                      </div>
+                    </div>
+                  </div>
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
 
-                    <h4 className="card-title mb-4">Change User Name</h4>
+          <h4 className="card-title mb-4">Change User Name</h4>
 
-                    <Card>
-                        <Card.Body>
-                            <Form
-                                className="form-horizontal"
-                                onSubmit={(e) => {
-                                    e.preventDefault();
-                                    validation.handleSubmit();
-                                    return false;
-                                }}
-                            >
-                                <div className="form-group">
-                                    <Form.Label>User Name</Form.Label>
-                                    <Form.Control
-                                        name="username"
-                                        className="form-control"
-                                        placeholder="Enter User Name"
-                                        type="text"
-                                        onChange={validation.handleChange}
-                                        onBlur={validation.handleBlur}
-                                        value={validation.values.username || ""}
-                                        isInvalid={
-                                            validation.touched.username && validation.errors.username ? true : false
-                                        }
-                                    />
-                                    {validation.touched.username && validation.errors.username ? (
-                                        <Form.Control.Feedback type="invalid">{validation.errors.username}</Form.Control.Feedback>
-                                    ) : null}
-                                    <Form.Control name="idx" value={idx} type="hidden" />
-                                </div>
-                                <div className="text-center mt-4">
-                                    <Button type="submit" variant="danger">
-                                        Update User Name
-                                    </Button>
-                                </div>
-                            </Form>
-                        </Card.Body>
-                    </Card>
-                </Container>
-            </div>
-        </React.Fragment>
-    );
+          <Card>
+            <Card.Body>
+              <Form
+                className="form-horizontal"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  validation.handleSubmit();
+                  return false;
+                }}
+              >
+                <div className="form-group">
+                  <Form.Label>User Name</Form.Label>
+                  <Form.Control
+                    name="username"
+                    className="form-control"
+                    placeholder="Enter User Name"
+                    type="text"
+                    onChange={validation.handleChange}
+                    onBlur={validation.handleBlur}
+                    value={validation.values.username || ""}
+                    isInvalid={
+                      validation.touched.username && validation.errors.username
+                        ? true
+                        : false
+                    }
+                  />
+                  {validation.touched.username && validation.errors.username ? (
+                    <Form.Control.Feedback type="invalid">
+                      {validation.errors.username}
+                    </Form.Control.Feedback>
+                  ) : null}
+                  <Form.Control name="idx" value={idx} type="hidden" />
+                </div>
+                <div className="text-center mt-4">
+                  <Button type="submit" variant="danger">
+                    Update User Name
+                  </Button>
+                </div>
+              </Form>
+            </Card.Body>
+          </Card>
+        </Container>
+      </div>
+    </React.Fragment>
+  );
 };
 
 export default withRouter(UserProfile);

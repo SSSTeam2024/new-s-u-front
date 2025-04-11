@@ -6,7 +6,7 @@ import Swal from "sweetalert2";
 import { useUpdateDepartementMutation } from "features/departement/departement";
 
 const EditDepartement = () => {
-  document.title = " Modifier Département | Application Smart Institute";
+  document.title = " Modifier Département | ENIGA";
   const navigate = useNavigate();
   const { state: departement } = useLocation();
   const [editDepartement] = useUpdateDepartementMutation();

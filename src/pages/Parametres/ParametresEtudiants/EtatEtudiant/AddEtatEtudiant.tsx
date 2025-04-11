@@ -1,18 +1,12 @@
-import React, {useState } from "react";
-import {
-  Button,
-  Col,
-  Container,
-  Form,
-  Row,
-} from "react-bootstrap";
-import {useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { Button, Col, Container, Form, Row } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 import "flatpickr/dist/flatpickr.min.css";
 import Swal from "sweetalert2";
 import { useAddEtatEtudiantMutation } from "features/etatEtudiants/etatEtudiants";
 
 const AddEtatEtudiant = () => {
-  document.title = " Ajouter état compte Etudiant | Application Smart Institute";
+  document.title = " Ajouter état compte Etudiant | ENIGA";
   const navigate = useNavigate();
 
   function tog_retourParametres() {
@@ -91,7 +85,9 @@ const AddEtatEtudiant = () => {
                 <Row>
                   <Col lg={4}>
                     <div className="mb-3">
-                      <Form.Label htmlFor="value_etat_etudiant">Valeur</Form.Label>
+                      <Form.Label htmlFor="value_etat_etudiant">
+                        Valeur
+                      </Form.Label>
                       <Form.Control
                         type="text"
                         id="value_etat_etudiant"
@@ -105,7 +101,9 @@ const AddEtatEtudiant = () => {
 
                   <Col lg={4}>
                     <div className="mb-3">
-                      <Form.Label htmlFor="etat_fr">Etat Compte Etudiant</Form.Label>
+                      <Form.Label htmlFor="etat_fr">
+                        Etat Compte Etudiant
+                      </Form.Label>
                       <Form.Control
                         type="text"
                         id="etat_fr"
@@ -125,7 +123,9 @@ const AddEtatEtudiant = () => {
                         textAlign: "right",
                       }}
                     >
-                      <Form.Label htmlFor="etat_ar">حالة  حساب الطالب</Form.Label>
+                      <Form.Label htmlFor="etat_ar">
+                        حالة حساب الطالب
+                      </Form.Label>
                       <Form.Control
                         type="text"
                         id="etat_ar"

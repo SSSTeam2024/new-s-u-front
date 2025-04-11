@@ -1,12 +1,8 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { Button, Card, Col, Container, Form, Row } from "react-bootstrap";
-import { Link, useLocation } from "react-router-dom";
+import React, { useState } from "react";
+import { Button, Col, Container, Form, Row } from "react-bootstrap";
+import { useLocation } from "react-router-dom";
 import "flatpickr/dist/flatpickr.min.css";
-import {
-  useGetPeriodicSessionsByTeacherQuery,
-  useGetSeancesByIdTeacherAndSemestreQuery,
-} from "features/seance/seance";
-
+import { useGetPeriodicSessionsByTeacherQuery } from "features/seance/seance";
 import CustomLoader from "Common/CustomLoader/CustomLoader";
 import "jspdf-autotable";
 import "../Emploi/GestionEmploiClasse.css";
@@ -15,13 +11,13 @@ import {
   Image,
   Page,
   pdf,
-  PDFDownloadLink,
   StyleSheet,
   Text,
   View,
 } from "@react-pdf/renderer";
 import { useFetchVaribaleGlobaleQuery } from "features/variableGlobale/variableGlobaleSlice";
-import { useFetchTypeSeancesQuery } from "features/typeSeance/typeSeance";
+
+import { differenceInMinutes, parse } from "date-fns";
 
 const styles = StyleSheet.create({
   page: {
@@ -236,7 +232,7 @@ interface TimetablePDFProps {
 }
 
 const GestionEmploiEnseignant = () => {
-  document.title = " Gestion emploi enseignant | Application Smart Institute";
+  document.title = "Gestion emploi enseignant | ENIGA";
 
   const [canAddSession, setCanAddSession] = useState<boolean>(false);
 
@@ -244,7 +240,7 @@ const GestionEmploiEnseignant = () => {
   const [showAlertMessage, setAlertMessage] = useState("");
   const location = useLocation();
   const { teacher, ids, semestre, interval } = location?.state! || {};
-  console.log("teacherLocation", teacher);
+
   const { data: seances = [], isSuccess: sessionClassFetched } =
     useGetPeriodicSessionsByTeacherQuery({
       teacher_id: teacher?._id!,
@@ -252,166 +248,40 @@ const GestionEmploiEnseignant = () => {
     });
 
   const { data: variableGlobales = [] } = useFetchVaribaleGlobaleQuery();
-  console.log("variableGlobales", variableGlobales);
-  const { data: typeSeances = [] } = useFetchTypeSeancesQuery();
 
-  // const typesFromSeances = useMemo(() => {
-  //   if (
-  //     !sessionClassFetched ||
-  //     seances.length === 0 ||
-  //     typeSeances.length === 0
-  //   ) {
-  //     return [];
-  //   }
+  const typeDurations: any = {
+    C: 0,
+    CI: 0,
+    TD: 0,
+    TP: 0,
+  };
 
-  //   const matchedTypes = seances.flatMap((seance: any) => {
-  //     const typeMatiere = seance?.matiere?.type;
+  if (sessionClassFetched && Array.isArray(seances)) {
+    seances.forEach((seance) => {
+      const start = parse(seance.heure_debut, "HH:mm", new Date());
+      const end = parse(seance.heure_fin, "HH:mm", new Date());
+      const duration = differenceInMinutes(end, start) / 60;
 
-  //     if (!typeMatiere) return [];
-
-  //     // Find matching typeSeances based on abbreviation
-  //     const matches = typeSeances.filter(
-  //       (typeSeance: any) => typeSeance.abreviation === typeMatiere
-  //     );
-
-  //     return matches;
-  //   });
-  //   return matchedTypes;
-  // }, [seances, typeSeances, sessionClassFetched]);
-
-  // const [cours, setCours] = useState("");
-  // const [tp, setTp] = useState("");
-  // const [td, setTd] = useState("");
-  // const [ci, setCi] = useState("");
-
-  // useEffect(() => {
-  //   let tempCours = 0;
-  //   let tempTp = 0;
-  //   let tempTd = 0;
-  //   let tempCi = 0;
-
-  // typesFromSeances.forEach((types: any) => {
-  //   seances.forEach((seance: any) => {
-  //     const heureDebut = new Date(`1970-01-01T${seance?.heure_debut}`);
-  //     const heureFin = new Date(`1970-01-01T${seance?.heure_fin}`);
-  //     const duration =
-  //       (heureFin.getTime() - heureDebut.getTime()) / (60 * 1000); // minutes
-
-  //     if (types?.abreviation === "C" && seance.matiere.type === "C") {
-  //       tempCours = 1.83 * (duration / 60);
-  //     }
-  //     if (types?.abreviation === "CI" && seance.matiere.type === "CI") {
-  //       tempCi = 1.55 * (duration / 60);
-  //     }
-  //     if (types?.abreviation === "TP" && seance.matiere.type === "TP") {
-  //       tempTp = 0.86 * (duration / 60);
-  //     }
-  //     if (types?.abreviation === "TD" && seance.matiere.type === "TD") {
-  //       tempTd = 1 * (duration / 60);
-  //     }
-  //   });
-  // });
-  //   typesFromSeances.forEach((types: { abreviation: string }) => {
-  //     seances.forEach((seance: Session) => {
-  //       if (!seance.matiere.types) return; // Ensure types exist
-
-  //       const heureDebut = new Date(`1970-01-01T${seance.heure_debut}`);
-  //       const heureFin = new Date(`1970-01-01T${seance.heure_fin}`);
-  //       const duration =
-  //         (heureFin.getTime() - heureDebut.getTime()) / (60 * 1000); // Convert to minutes
-
-  //       // Check for matching type inside the types array
-  //       seance.matiere.types.forEach((matiereType) => {
-  //         if (types.abreviation === "C" && matiereType.type === "C") {
-  //           tempCours += 1.83 * (duration / 60);
-  //         }
-  //         if (types.abreviation === "CI" && matiereType.type === "CI") {
-  //           tempCi += 1.55 * (duration / 60);
-  //         }
-  //         if (types.abreviation === "TP" && matiereType.type === "TP") {
-  //           tempTp += 0.86 * (duration / 60);
-  //         }
-  //         if (types.abreviation === "TD" && matiereType.type === "TD") {
-  //           tempTd += 1 * (duration / 60);
-  //         }
-  //       });
-  //     });
-  //   });
-
-  //   // Update the state once after all calculations
-  //   setCours(tempCours.toFixed(2));
-  //   setTp(tempTp.toFixed(2));
-  //   setTd(tempTd.toFixed(2));
-  //   setCi(tempCi.toFixed(2));
-  // }, [typesFromSeances, seances]);
-  const typesFromSeances = useMemo(() => {
-    if (
-      !sessionClassFetched ||
-      seances.length === 0 ||
-      typeSeances.length === 0
-    ) {
-      return [];
-    }
-
-    const matchedTypes = seances.flatMap((seance: Session) => {
-      if (!seance.matiere.types) return [];
-
-      // Loop through all types in the `matiere.types` array
-      return seance.matiere.types.flatMap((matiereType) => {
-        return typeSeances.filter(
-          (typeSeance: { abreviation: string }) =>
-            typeSeance.abreviation === matiereType.type
-        );
+      seance.matiere.types.forEach((t: any) => {
+        const type = t.type;
+        if (typeDurations.hasOwnProperty(type)) {
+          typeDurations[type] += duration;
+        }
       });
     });
+  }
 
-    return matchedTypes;
-  }, [seances, typeSeances, sessionClassFetched]);
+  const totalheurecours = typeDurations["C"];
+  const totalheurecoursintegre = typeDurations["CI"];
+  const totalheuretd = typeDurations["TD"];
+  const totalheuretp = typeDurations["TP"];
 
-  const [cours, setCours] = useState(0);
-  const [tp, setTp] = useState(0);
-  const [td, setTd] = useState(0);
-  const [ci, setCi] = useState(0);
+  const coef_cours = totalheurecours * 1.83;
+  const coef_ci = totalheurecoursintegre * 1.55;
+  const coef_td = totalheuretd * 1;
+  const coef_tp = totalheuretp * 0.86;
 
-  useEffect(() => {
-    let tempCours = 0;
-    let tempTp = 0;
-    let tempTd = 0;
-    let tempCi = 0;
-
-    typesFromSeances.forEach((types: { abreviation: string }) => {
-      seances.forEach((seance: Session) => {
-        if (!seance.matiere.types) return; // Ensure types exist
-
-        const heureDebut = new Date(`1970-01-01T${seance.heure_debut}`);
-        const heureFin = new Date(`1970-01-01T${seance.heure_fin}`);
-        const duration =
-          (heureFin.getTime() - heureDebut.getTime()) / (60 * 1000); // Convert to minutes
-
-        // Check for matching type inside the types array
-        seance.matiere.types.forEach((matiereType) => {
-          if (types.abreviation === "C" && matiereType.type === "C") {
-            tempCours += 1.83 * (duration / 60);
-          }
-          if (types.abreviation === "CI" && matiereType.type === "CI") {
-            tempCi += 1.55 * (duration / 60);
-          }
-          if (types.abreviation === "TP" && matiereType.type === "TP") {
-            tempTp += 0.86 * (duration / 60);
-          }
-          if (types.abreviation === "TD" && matiereType.type === "TD") {
-            tempTd += 1 * (duration / 60);
-          }
-        });
-      });
-    });
-
-    // Update the state once after all calculations
-    setCours(parseFloat(tempCours.toFixed(2)));
-    setTp(parseFloat(tempTp.toFixed(2)));
-    setTd(parseFloat(tempTd.toFixed(2)));
-    setCi(parseFloat(tempCi.toFixed(2)));
-  }, [typesFromSeances, seances]);
+  const total_coef = coef_cours + coef_ci + coef_td + coef_tp;
 
   const timeSlotsDynamic: any = [];
   for (let i = 16; i < 38; i++) {
@@ -478,13 +348,7 @@ const GestionEmploiEnseignant = () => {
   const closeAlert = () => {
     setShowAlert(false);
   };
-  const courseLoad = {
-    c: Number(cours),
-    ci: Number(ci),
-    tp: Number(tp),
-    td: Number(td),
-    total: Number(cours) + Number(ci) + Number(tp) + Number(td),
-  };
+
   const currentDate = new Date();
   const currentYear = currentDate.getFullYear();
   const currentMonth = currentDate.getMonth(); // January = 0, December = 11
@@ -583,18 +447,16 @@ const GestionEmploiEnseignant = () => {
                 <Text style={styles.courseLoadHeader}>TOTAL</Text>
               </View>
               <View style={styles.courseLoadRow}>
-                <Text style={styles.courseLoadCell}>{courseLoad.c || "0"}</Text>
                 <Text style={styles.courseLoadCell}>
-                  {courseLoad.ci || "0"}
+                  {totalheurecours || "0"}
                 </Text>
                 <Text style={styles.courseLoadCell}>
-                  {courseLoad.tp || "0"}
+                  {totalheurecoursintegre || "0"}
                 </Text>
+                <Text style={styles.courseLoadCell}>{totalheuretp || "0"}</Text>
+                <Text style={styles.courseLoadCell}>{totalheuretd || "0"}</Text>
                 <Text style={styles.courseLoadCell}>
-                  {courseLoad.td || "0"}
-                </Text>
-                <Text style={styles.courseLoadCell}>
-                  {courseLoad.total || "0"}
+                  {total_coef.toFixed(3) || "0"}
                 </Text>
               </View>
             </View>
@@ -771,7 +633,7 @@ const GestionEmploiEnseignant = () => {
                                             <div>
                                               {session?.matiere?.matiere!}
                                               {" | "}
-                                              {session.matiere?.type}
+                                              {session.matiere?.types[0].type}
                                             </div>
                                             <div>{session?.salle?.salle!}</div>
                                             <div>

@@ -23,7 +23,7 @@ interface MatiereOption {
 }
 
 const EditFicheVoeux = () => {
-  document.title = " Ajouter fiche de voeux | Application Smart Institute";
+  document.title = " Ajouter fiche de voeux | ENIGA";
   const navigate = useNavigate();
 
   function tog_retourParametres() {
@@ -139,7 +139,7 @@ const EditFicheVoeux = () => {
           let selectedSubjects = uniqueMatieres;
 
           updatedFicheVoeux.push({
-            classe:/*  consernedClass[0]?._id! */[], //! TO BE REVIEWED
+            classe: /*  consernedClass[0]?._id! */ [], //! TO BE REVIEWED
             //  jours: [],
             matieres: selectedSubjectOptions,
             // temps: "",
@@ -274,7 +274,7 @@ const EditFicheVoeux = () => {
         updatedFicheVoeux.push({
           classe: [],
           //  jours: [],
-          matieres: '',
+          matieres: "",
           // temps: "",
           //Temporary data for days selection
           //allDays: allJours,
@@ -502,8 +502,8 @@ const EditFicheVoeux = () => {
           );
           alert(
             "Classe " +
-            consernedClass[0].nom_classe_fr +
-            " est déja séléctionnée!"
+              consernedClass[0].nom_classe_fr +
+              " est déja séléctionnée!"
           );
           exist = true;
           break;
@@ -734,7 +734,7 @@ const EditFicheVoeux = () => {
                         name="etat_compte"
                         id="etat_compte"
                         value={voeuxDetails?.enseignant?.nom_fr}
-                      //onChange={handleTeacherChange}
+                        //onChange={handleTeacherChange}
                       >
                         <option value={voeuxDetails?.enseignant?.nom_fr}>
                           {voeuxDetails?.enseignant?.nom_fr}{" "}

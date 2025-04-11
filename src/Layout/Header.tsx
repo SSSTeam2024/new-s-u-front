@@ -1,19 +1,14 @@
 import React from "react";
-
-import SearchModal from "../Common/SearchModal";
-import BrowseAppsDropdown from "../Common/BrowseAppsDropdown";
-import MyCartDropdown from "../Common/MyCartDropdown";
 import FullScreenDropdown from "../Common/FullScreenDropdown";
-import NotificationDropdown from "../Common/NotificationDropdown";
 import ProfileDropdown from "../Common/ProfileDropdown";
 import LayoutModeDropdown from "Common/LayoutModeDropdown";
 import { Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 //import images
-import logosm from "../assets/images/logo-sm.png";
-import logodark from "../assets/images/logo-dark.png";
-import logolight from "../assets/images/logo-light.png";
+import logosm from "../assets/images/logo.png";
+import logodark from "../assets/images/logo.png";
+import logolight from "../assets/images/logo.png";
 
 const toogleMenuBtn = () => {
   var windowSize = document.documentElement.clientWidth;

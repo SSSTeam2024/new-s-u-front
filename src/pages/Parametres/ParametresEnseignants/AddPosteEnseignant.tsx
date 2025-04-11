@@ -8,7 +8,7 @@ import Swal from "sweetalert2";
 import { useAddPosteEnseignantMutation } from "features/posteEnseignant/posteEnseignant";
 
 const AddPosteEnseignant = () => {
-  document.title = " Ajouter Poste Enseignant | Application Smart Institute";
+  document.title = " Ajouter Poste Enseignant | ENIGA";
   const navigate = useNavigate();
 
   function tog_retourParametres() {

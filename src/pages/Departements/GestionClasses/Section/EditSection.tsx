@@ -7,7 +7,7 @@ import { useFetchDepartementsQuery } from "features/departement/departement";
 import { useFetchMentionsClasseQuery } from "features/mentionClasse/mentionClasse";
 
 const EditSection = () => {
-  document.title = "Modifier Spécialités | Application Smart Institute";
+  document.title = "Modifier Spécialités | ENIGA";
   const navigate = useNavigate();
   const { state: section } = useLocation();
 

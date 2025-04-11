@@ -9,7 +9,6 @@ import {
   Row,
 } from "react-bootstrap";
 import Breadcrumb from "Common/BreadCrumb";
-import CountUp from "react-countup";
 import TableContainer from "Common/TableContainer";
 import Flatpickr from "react-flatpickr";
 import dummyImg from "../../assets/images/users/user-dummy-img.jpg";
@@ -22,24 +21,19 @@ import withReactContent from "sweetalert2-react-content";
 import { selectCurrentUser } from "features/account/authSlice";
 import {
   useFetchReclamationsQuery,
-  Reclamation,
-  useAddReclamationMutation,
-  useUpdateReclamationMutation,
   useDeleteReclamationMutation,
 } from "features/reclamationEtudiant/recalamationEtudiantSlice";
 
 const ListeReclamationEtudiant = () => {
-  document.title = "Réclamation Etudiant | ENIGA";
+  document.title = "Réclamations Etudiant | ENIGA";
 
   const user = useSelector((state: RootState) => selectCurrentUser(state));
   const MySwal = withReactContent(Swal);
 
   // Fetch reclamations query hook
-  const { data: reclamations, error, isLoading } = useFetchReclamationsQuery();
+  const { data: reclamations } = useFetchReclamationsQuery();
 
   // Mutation hooks
-  const [addReclamation] = useAddReclamationMutation();
-  const [updateReclamation] = useUpdateReclamationMutation();
   const [deleteReclamation] = useDeleteReclamationMutation();
 
   const navigate = useNavigate();
@@ -288,7 +282,7 @@ const ListeReclamationEtudiant = () => {
       <div className="page-content">
         <Container fluid={true}>
           <Breadcrumb
-            title="Réclamation Etudiant"
+            title="Réclamations Etudiant"
             pageTitle="Liste des réclamations"
           />
 
@@ -298,14 +292,14 @@ const ListeReclamationEtudiant = () => {
                 <Card.Body>
                   <Row className="g-lg-2 g-4">
                     <Col lg={3}>
-                      <div className="search-box">
+                      <label className="search-box">
                         <input
                           type="text"
                           className="form-control search"
-                          placeholder="Chercher une demande..."
+                          placeholder="Chercher réclamation..."
                         />
                         <i className="ri-search-line search-icon"></i>
-                      </div>
+                      </label>
                     </Col>
 
                     {isMultiDeleteButton && (
@@ -350,7 +344,7 @@ const ListeReclamationEtudiant = () => {
                     isPagination={true}
                     className="custom-header-css table align-middle table-nowrap"
                     tableClass="table-centered align-middle table-nowrap mb-0"
-                    theadClass="text-muted table-light"
+                    theadClass="text-muted"
                     SearchPlaceholder="Search Products..."
                   />
                   <div className="noresult" style={{ display: "none" }}>

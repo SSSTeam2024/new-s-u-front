@@ -7,8 +7,9 @@ export interface AbsencePersonnel {
     personnel: string;
     typeAbsent: string;
     evening: string;
-        morning: string;
-        duree: string;
+    morning: string;
+    fullDay: string;
+    duree: string;
   }[];
   added_by?: string;
 }
@@ -45,14 +46,14 @@ export const absencePersonnelSlice = createApi({
         }),
         invalidatesTags: ["AbsencePersonnel"],
       }),
-    //   updateAbsence: builder.mutation<void, AbsenceEtudiant>({
-    //     query: ({ _id, ...rest }) => ({
-    //       url: `/update-absence-etudiant/${_id}`,
-    //       method: "PUT",
-    //       body: rest,
-    //     }),
-    //     invalidatesTags: ["AbsenceEtudiant"],
-    //   }),
+        updateAbsence: builder.mutation<void, AbsencePersonnel>({
+          query: ({ _id, ...rest }) => ({
+            url: `/edit-absence-personnel/${_id}`,
+            method: "PUT",
+            body: rest,
+          }),
+          invalidatesTags: ["AbsencePersonnel"],
+        }),
     };
   },
 });
@@ -61,5 +62,5 @@ export const {
   useAddAbsencePersonnelMutation,
   useFetchAbsencePersonnelsQuery,
   useDeleteAbsenceMutation,
-//   useUpdateAbsenceMutation,
+  useUpdateAbsenceMutation
 } = absencePersonnelSlice;

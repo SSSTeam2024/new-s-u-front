@@ -8,7 +8,7 @@ import Swal from "sweetalert2";
 import { useAddPostePersonnelMutation } from "features/postePersonnel/postePersonnel";
 
 const AddPostePersonnel = () => {
-  document.title = " Ajouter Poste Personnel | Application Smart Institute";
+  document.title = " Ajouter Poste Personnel | ENIGA";
   const navigate = useNavigate();
 
   function tog_retourParametres() {

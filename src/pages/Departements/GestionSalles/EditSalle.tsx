@@ -1,19 +1,13 @@
-import React, {useEffect, useState } from "react";
-import {
-  Button,
-  Col,
-  Container,
-  Form,
-  Row,
-} from "react-bootstrap";
-import {useLocation, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Button, Col, Container, Form, Row } from "react-bootstrap";
+import { useLocation, useNavigate } from "react-router-dom";
 import "flatpickr/dist/flatpickr.min.css";
 import Swal from "sweetalert2";
 import { useUpdateSalleMutation } from "features/salles/salles";
 import { useFetchDepartementsQuery } from "features/departement/departement";
 
 const EditSalle = () => {
-  document.title = " Modifier Salle | Application Smart Institute";
+  document.title = " Modifier Salle | ENIGA";
   const navigate = useNavigate();
   const { state: salle } = useLocation();
   const [editsalle] = useUpdateSalleMutation();
@@ -52,7 +46,8 @@ const EditSalle = () => {
           name_ar: salle.departement.name_ar,
           name_fr: salle.departement.name_fr,
           SignatureFileExtension: salle.departement.SignatureFileExtension,
-          SignatureFileBase64String: salle.departement.SignatureFileBase64String,
+          SignatureFileBase64String:
+            salle.departement.SignatureFileBase64String,
           signature: salle.departement.signature,
         },
       });
@@ -188,7 +183,6 @@ const EditSalle = () => {
                       </select>
                     </div>
                   </Col>
-             
                 </Row>
 
                 <div className="modal-footer">
@@ -196,7 +190,7 @@ const EditSalle = () => {
                     <Button
                       className="btn-ghost-danger"
                       onClick={() => {
-                        navigate("/departement/gestion-salles/liste-salles")
+                        navigate("/departement/gestion-salles/liste-salles");
                       }}
                     >
                       Retour

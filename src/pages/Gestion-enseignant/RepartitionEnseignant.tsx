@@ -274,6 +274,7 @@ const RepartitionEnseignant = () => {
                     columns={columns}
                     data={getFilteredEnseignants()}
                     pagination
+                    noDataComponent="Il n'y a aucun enregistrement à afficher"
                   />
                 </Card.Body>
               </Card>
@@ -299,6 +300,7 @@ const RepartitionEnseignant = () => {
                           src={`${
                             process.env.REACT_APP_API_URL
                           }/files/variableGlobaleFiles/logoRepubliqueFiles/${lastVariable?.logo_republique!}`}
+                          alt={lastVariable?.etablissement_fr!}
                         />
                       </Col>
                       <Col lg={4} className="text-center pt-2">

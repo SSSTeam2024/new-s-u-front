@@ -1,36 +1,29 @@
 import { useAddNewShortCodeMutation } from "features/shortCode/shortCodeSlice";
 import { useAddNewTemplateBodyMutation } from "features/templateBody/templateBodySlice";
 import React, { useState } from "react";
-import {
-  Button,
-  Card,
-  Col,
-  Container,
-  Form,
-  Row,
-} from "react-bootstrap";
+import { Button, Card, Col, Container, Form, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
 const NewShortCode = () => {
-  document.title = "Ajouter Code Court | Smart Institute";
-const [newShortCode] = useAddNewShortCodeMutation()
+  document.title = "Ajouter Code Court | ENIGA";
+  const [newShortCode] = useAddNewShortCodeMutation();
 
-const navigate = useNavigate()
-const initialShortCode = {
-  _id:"",
-    titre: "", 
-    body: "", 
-    langue:"",
-    intended_for:""
-}
+  const navigate = useNavigate();
+  const initialShortCode = {
+    _id: "",
+    titre: "",
+    body: "",
+    langue: "",
+    intended_for: "",
+  };
 
-const [shortCode, setShortCode] = useState(initialShortCode)
-const {titre,
-    body
-} = shortCode
+  const [shortCode, setShortCode] = useState(initialShortCode);
+  const { titre, body } = shortCode;
 
-const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const onChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setShortCode((prevState) => ({
       ...prevState,
       [e.target.id]: e.target.value,
@@ -92,27 +85,24 @@ const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) 
                                 id="titre"
                                 name="titre"
                                 placeholder="Entrer titre"
-                               value={shortCode.titre}
-                               onChange={onChange}
+                                value={shortCode.titre}
+                                onChange={onChange}
                               />
                             </div>
                           </Col>
                         </Row>
                         <Row>
                           <Col lg={12} className="mb-3">
-                          <Form.Label
-                              htmlFor="body"
-                              className="form-label"
-                            >
+                            <Form.Label htmlFor="body" className="form-label">
                               <h4 className="card-title mb-0">Corps</h4>
                             </Form.Label>
                             <textarea
-                                id="body"
-                                name="body"
-                            rows={3}
-                            value={shortCode.body}
-                               onChange={onChange}
-                               className="form-control"
+                              id="body"
+                              name="body"
+                              rows={3}
+                              value={shortCode.body}
+                              onChange={onChange}
+                              className="form-control"
                             />
                           </Col>
                         </Row>

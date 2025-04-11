@@ -1,19 +1,7 @@
 import React, { useState, useMemo, useCallback } from "react";
-import {
-  Button,
-  Card,
-  Col,
-  Container,
-  Form,
-  Modal,
-  Row,
-} from "react-bootstrap";
+import { Button, Card, Col, Container, Modal, Row } from "react-bootstrap";
 import Breadcrumb from "Common/BreadCrumb";
-import CountUp from "react-countup";
 import TableContainer from "Common/TableContainer";
-import { userList } from "Common/data";
-import Flatpickr from "react-flatpickr";
-import dummyImg from "../../assets/images/users/user-dummy-img.jpg";
 import { Link, useNavigate } from "react-router-dom";
 import { RootState } from "app/store";
 import { useSelector } from "react-redux";
@@ -21,7 +9,6 @@ import { selectCurrentUser } from "features/account/authSlice";
 import { actionAuthorization } from "utils/pathVerification";
 import {
   useFetchAvisPersonnelQuery,
-  AvisPersonnel,
   useDeleteAvisPersonnelMutation,
 } from "features/avisPersonnel/avisPersonnelSlice";
 import Swal from "sweetalert2";
@@ -31,26 +18,16 @@ const ListeAvisEtudiant = () => {
 
   const user = useSelector((state: RootState) => selectCurrentUser(state));
 
-  const {
-    data: avisPersonnel,
-    error,
-    isLoading,
-  } = useFetchAvisPersonnelQuery();
-  console.log("avisenseignat", avisPersonnel);
+  const { data: avisPersonnel } = useFetchAvisPersonnelQuery();
+
   const { refetch } = useFetchAvisPersonnelQuery();
   const [deleteAvisPersonnel] = useDeleteAvisPersonnelMutation();
 
-  const [modal_AddUserModals, setmodal_AddUserModals] =
-    useState<boolean>(false);
   const [isMultiDeleteButton, setIsMultiDeleteButton] =
     useState<boolean>(false);
   // State for PDF modal
   const [showPdfModal, setShowPdfModal] = useState<boolean>(false);
   const [pdfUrl, setPdfUrl] = useState<string>("");
-
-  function tog_AddUserModals() {
-    setmodal_AddUserModals(!modal_AddUserModals);
-  }
 
   // Checked All
   const checkedAll = useCallback(() => {
@@ -285,14 +262,14 @@ const ListeAvisEtudiant = () => {
                 <Card.Body>
                   <Row className="g-lg-2 g-4">
                     <Col lg={3}>
-                      <div className="search-box">
+                      <label className="search-box">
                         <input
                           type="text"
                           className="form-control search"
                           placeholder="Chercher un avis..."
                         />
                         <i className="ri-search-line search-icon"></i>
-                      </div>
+                      </label>
                     </Col>
                     <Col className="col-lg-auto ms-auto">
                       <div className="hstack gap-2">
@@ -325,7 +302,7 @@ const ListeAvisEtudiant = () => {
                     isPagination={true}
                     className="custom-header-css table align-middle table-nowrap"
                     tableClass="table-centered align-middle table-nowrap mb-0"
-                    theadClass="text-muted table-light"
+                    theadClass="text-muted"
                     SearchPlaceholder="Search Products..."
                   />
                   <div className="noresult" style={{ display: "none" }}>

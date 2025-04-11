@@ -57,7 +57,7 @@ interface FormData {
 }
 
 const EditClasse = () => {
-  document.title = " Modifier groupe | Application Smart Institute";
+  document.title = " Modifier groupe | ENIGA";
   const navigate = useNavigate();
   const location = useLocation();
   const classe = location.state;

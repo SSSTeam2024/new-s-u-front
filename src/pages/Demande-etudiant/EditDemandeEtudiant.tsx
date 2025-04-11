@@ -16,7 +16,6 @@ import img4 from "assets/images/small/img-4.jpg";
 import avatar1 from "assets/images/users/avatar-1.jpg";
 import Swal from "sweetalert2";
 
-
 // Define types for location state and update payload
 type DemandeState = {
   _id: string;
@@ -37,10 +36,10 @@ type UpdateDemandePayload = {
 };
 
 const EditDemandeEtudiant = () => {
-  document.title = "Modifier demande Etudiant | Smart Institute";
+  document.title = "Modifier demande Etudiant | ENIGA";
   const navigate = useNavigate();
   const location = useLocation();
-  const studentId= location.state?.studentId?._id!
+  const studentId = location.state?.studentId?._id!;
   const state = location.state as DemandeState; // Adjust based on your type
   const [status, setStatus] = useState(state?.status || "");
   const [updateDemande] = useUpdateDemandeEtudiantMutation();
@@ -55,10 +54,10 @@ const EditDemandeEtudiant = () => {
         _id: state._id,
         status: status,
       } as UpdateDemandePayload).unwrap();
-  
+
       // Show notification
       notify();
-  
+
       // Delay navigation to allow the notification to be visible
       setTimeout(() => {
         navigate("/demandes-etudiant/Liste-demandes-etudiant");
@@ -74,7 +73,7 @@ const EditDemandeEtudiant = () => {
       });
     }
   };
-  
+
   const notify = () => {
     Swal.fire({
       position: "center",
@@ -104,9 +103,14 @@ const EditDemandeEtudiant = () => {
                     <Card.Body>
                       <div className="mt-n5">
                         <Image
-                           src={`${process.env.REACT_APP_API_URL}/files/etudiantFiles/PhotoProfil/${location.state?.studentId!.photo_profil}`}
+                          src={`${
+                            process.env.REACT_APP_API_URL
+                          }/files/etudiantFiles/PhotoProfil/${
+                            location.state?.studentId!.photo_profil
+                          }`}
                           alt=""
-                          className="rounded-circle p-1 bg-body mt-n5" width="150"
+                          className="rounded-circle p-1 bg-body mt-n5"
+                          width="150"
                         />
                       </div>
                     </Card.Body>
@@ -115,14 +119,15 @@ const EditDemandeEtudiant = () => {
                         <Col xl={3} md={5}>
                           <h5 className="fs-20">{state?.etudiant}</h5>
                           <div className="mb-3 text-muted">
-                            <i className="bi bi-geo-alt"></i>{" "}
-                            {state?.classe}
+                            <i className="bi bi-geo-alt"></i> {state?.classe}
                           </div>
                           <h6 className="fs-16">
-                            CIN: <span className="text-muted">{state?.CIN}</span>
+                            CIN:{" "}
+                            <span className="text-muted">{state?.CIN}</span>
                           </h6>
                           <h6 className="fs-16">
-                            Tél: <span className="text-muted">{state?.phone}</span>
+                            Tél:{" "}
+                            <span className="text-muted">{state?.phone}</span>
                           </h6>
                         </Col>
                         <Col xl={4} md={7}>
@@ -133,8 +138,7 @@ const EditDemandeEtudiant = () => {
                                 <h6 className="fs-16">
                                   Type:{" "}
                                   <span className="text-muted">
-                                    {state?.type}/
-                                    {state?.soustype}
+                                    {state?.type}/{state?.soustype}
                                   </span>
                                 </h6>
                                 <h6 className="fs-16">
@@ -163,7 +167,9 @@ const EditDemandeEtudiant = () => {
                                     value={status}
                                     onChange={(e) => setStatus(e.target.value)}
                                   >
-                                    <option value="en attente">En attente</option>
+                                    <option value="en attente">
+                                      En attente
+                                    </option>
                                     <option value="traité">Traité</option>
                                     <option value="rejeté">Rejeté</option>
                                   </Form.Select>
@@ -182,11 +188,7 @@ const EditDemandeEtudiant = () => {
           <Row>
             <Col lg={12}>
               <div className="hstack gap-2 justify-content-end">
-                <Button
-                  variant="primary"
-                  id="add-btn"
-                  onClick={handleSubmit}
-                >
+                <Button variant="primary" id="add-btn" onClick={handleSubmit}>
                   Modifier la Demande
                 </Button>
               </div>
@@ -199,5 +201,3 @@ const EditDemandeEtudiant = () => {
 };
 
 export default EditDemandeEtudiant;
-
-

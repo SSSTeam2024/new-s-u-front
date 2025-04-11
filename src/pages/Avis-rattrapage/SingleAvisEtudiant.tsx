@@ -13,7 +13,7 @@ import img5 from "assets/images/small/img-5.jpg";
 import img6 from "assets/images/small/img-6.jpg";
 
 const SingleAvisEtudiant = () => {
-  document.title = "Avis Etudiant | Smart Institute";
+  document.title = "Avis Etudiant | ENIGA";
   const state = useLocation();
 
   return (

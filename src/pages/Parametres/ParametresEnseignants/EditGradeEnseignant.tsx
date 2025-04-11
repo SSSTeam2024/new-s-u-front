@@ -6,7 +6,7 @@ import Swal from "sweetalert2";
 import { useUpdateGradeEnseignantMutation } from "features/gradeEnseignant/gradeEnseignant";
 
 const EditGradeEnseignant = () => {
-  document.title = " Modifier Grade Enseignant | Application Smart Institute";
+  document.title = " Modifier Grade Enseignant | ENIGA";
   const navigate = useNavigate();
   const { state: gradeEnseignant } = useLocation();
   const [editGradeEnseignant] = useUpdateGradeEnseignantMutation();

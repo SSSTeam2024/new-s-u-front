@@ -1,20 +1,9 @@
 import React, { useState, useMemo, useCallback } from "react";
-import {
-  Button,
-  Card,
-  Col,
-  Container,
-  Form,
-  Modal,
-  Row,
-} from "react-bootstrap";
+import { Button, Card, Col, Container, Modal, Row } from "react-bootstrap";
 import Breadcrumb from "Common/BreadCrumb";
-import CountUp from "react-countup";
 import TableContainer from "Common/TableContainer";
 import Swal from "sweetalert2";
-import { userList } from "Common/data";
-import Flatpickr from "react-flatpickr";
-import dummyImg from "../../assets/images/users/user-dummy-img.jpg";
+
 import { Link, useNavigate } from "react-router-dom";
 import { RootState } from "app/store";
 import { useSelector } from "react-redux";
@@ -22,25 +11,21 @@ import { selectCurrentUser } from "features/account/authSlice";
 import { actionAuthorization } from "utils/pathVerification";
 import {
   useFetchAvisEtudiantQuery,
-  Avis,
   useDeleteAvisEtudiantMutation,
 } from "features/avisEtudiant/avisEtudiantSlice";
 const ListeAvisEtudiant = () => {
-  document.title = "Avis Etudiant | Smart Institute";
+  document.title = "Avis Etudiant | ENIGA";
   const user = useSelector((state: RootState) => selectCurrentUser(state));
-  const { data: avisEtudiant, error, isLoading } = useFetchAvisEtudiantQuery();
+  const { data: avisEtudiant } = useFetchAvisEtudiantQuery();
   const { refetch } = useFetchAvisEtudiantQuery();
   const [deleteAvisEtudiant] = useDeleteAvisEtudiantMutation();
-  const [modal_AddUserModals, setmodal_AddUserModals] =
-    useState<boolean>(false);
+
   const [isMultiDeleteButton, setIsMultiDeleteButton] =
     useState<boolean>(false);
   // State for PDF modal
   const [showPdfModal, setShowPdfModal] = useState<boolean>(false);
   const [pdfUrl, setPdfUrl] = useState<string>("");
-  function tog_AddUserModals() {
-    setmodal_AddUserModals(!modal_AddUserModals);
-  }
+
   const handleDeleteAvisEtudiant = async (id: string) => {
     try {
       const result = await Swal.fire({
@@ -110,6 +95,8 @@ const ListeAvisEtudiant = () => {
         accessor: "title",
         disableFilters: true,
         filterable: true,
+        Cell: ({ value }: { value: string }) =>
+          value.length > 80 ? value.slice(0, 80) + "..." : value,
       },
       {
         Header: "Auteur",
@@ -248,21 +235,21 @@ const ListeAvisEtudiant = () => {
     <React.Fragment>
       <div className="page-content">
         <Container fluid={true}>
-          <Breadcrumb title="Liste des Avis" pageTitle="More" />
+          <Breadcrumb title="Liste des Avis" pageTitle="Avis Etudiant" />
           <Row id="usersList">
             <Col lg={12}>
               <Card>
                 <Card.Body>
                   <Row className="g-lg-2 g-4">
                     <Col lg={3}>
-                      <div className="search-box">
+                      <label className="search-box">
                         <input
                           type="text"
                           className="form-control search"
                           placeholder="Chercher un avis..."
                         />
                         <i className="ri-search-line search-icon"></i>
-                      </div>
+                      </label>
                     </Col>
 
                     <Col className="col-lg-auto ms-auto">
@@ -296,7 +283,7 @@ const ListeAvisEtudiant = () => {
                     isPagination={true}
                     className="custom-header-css table align-middle table-nowrap"
                     tableClass="table-centered align-middle table-nowrap mb-0"
-                    theadClass="text-muted table-light"
+                    theadClass="text-muted"
                     SearchPlaceholder="Search Products..."
                   />
                   <div className="noresult" style={{ display: "none" }}>

@@ -16,7 +16,7 @@ interface SectionsOption {
   mention_classe: any;
 }
 const EditNiveau = () => {
-  document.title = " Modifier Niveau | Application Smart Institute";
+  document.title = " Modifier Niveau | ENIGA";
   const navigate = useNavigate();
   const { state: niveau } = useLocation();
   const [editNiveau] = useUpdateNiveauMutation();

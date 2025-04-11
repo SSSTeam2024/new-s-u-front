@@ -1,15 +1,13 @@
 import React from "react";
-import { Col, Container, Row } from "react-bootstrap";
-import CustomerSatisfaction from "./CustomerSatisfaction";
-import NewCustomers from "./NewCustomers";
-import ProductDelivery from "./ProductDelivery";
-import Revenue from "./Revenue";
-import StockReport from "./StockReport";
-import TopCategories from "./TopCategories";
-import TopProducts from "./TopProducts";
-import TopSalesLocation from "./TopSalesLocation";
-import Widgets from "./Widgets";
-import RecentOrders from "./RecentOrders";
+import { Card, Col, Container, Row } from "react-bootstrap";
+import {
+  BasicColumn,
+  ColorRangeTreemap,
+  Groupes,
+  MonochromePie,
+} from "./DashboardCharts";
+import KeyCards from "./KeyCards";
+import ReclamationCards from "./ReclamationCards";
 
 const Dashboard = () => {
   document.title = "Dashboard | ENIGA";
@@ -18,24 +16,55 @@ const Dashboard = () => {
     <React.Fragment>
       <div className="page-content">
         <Container fluid>
+          <KeyCards />
+          <ReclamationCards />
           <Row>
-            <Col xxl={12} lg={6} className="order-first">
-              <h2>Dashboard ENIGA</h2>
+            <Col xl={6}>
+              <Card>
+                <Card.Header>
+                  <h4 className="card-title mb-0">Etudiants</h4>
+                </Card.Header>
+                <Card.Body>
+                  <Groupes dataColors='["--tb-success", "--tb-danger", "--tb-primary"]' />
+                </Card.Body>
+              </Card>
             </Col>
-            {/* <Revenue />
-            <TopSalesLocation /> */}
+            <Col xl={6}>
+              <Card>
+                <Card.Header>
+                  <h4 className="card-title mb-0">Enseignants</h4>
+                </Card.Header>
+
+                <Card.Body>
+                  <MonochromePie dataColors='["--tb-primary"]' />
+                </Card.Body>
+              </Card>
+            </Col>
           </Row>
-          {/* <Row>
-            <RecentOrders />
-          </Row> */}
-          {/* <Row className="widget-responsive-fullscreen">
-            <CustomerSatisfaction />
-            <StockReport />
-            <ProductDelivery />
-            <TopCategories />
-            <NewCustomers />
-            <TopProducts />
-          </Row> */}
+          <Row>
+            <Col>
+              <Card>
+                <Card.Header>
+                  <h4 className="card-title mb-0">Absences Personnel</h4>
+                </Card.Header>
+                <Card.Body>
+                  <BasicColumn dataColors='["--tb-danger", "--tb-primary", "--tb-success"]' />
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <Card>
+                <Card.Header>
+                  <h4 className="card-title mb-0">Grade des Personnels</h4>
+                </Card.Header>
+                <Card.Body>
+                  <ColorRangeTreemap dataColors='["--tb-info","--tb-danger"]' />
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
         </Container>
       </div>
     </React.Fragment>

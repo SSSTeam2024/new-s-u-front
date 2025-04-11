@@ -388,7 +388,7 @@ const delegationOptions: DelegationOptions = {
 };
 
 const EditProfilEnseignant = () => {
-  document.title = " Modifier Profil Enseignant | Application Smart Institute";
+  document.title = " Modifier Profil Enseignant | ENIGA";
   const navigate = useNavigate();
   const { state: enseignant } = useLocation();
   const [editEnseignant] = useUpdateEnseignantMutation();

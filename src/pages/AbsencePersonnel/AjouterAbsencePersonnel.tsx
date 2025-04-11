@@ -22,15 +22,23 @@ const AjouterAbsencePersonnel = () => {
 
   const user = useSelector((state: RootState) => selectCurrentUser(state));
 
-  const workingHours = AllPersonnelWorkingDay.map((day) => ({
-    morningTime: `${day.day_start_time} - ${day.daily_pause_start}`,
-    eveningTime: `${day.daily_pause_end} - ${day.day_end_time}`,
-  }));
-
-  const [createAbsence] = useAddAbsencePersonnelMutation();
-
   const today = new Date().toISOString().split("T")[0];
   const [date, setDate] = useState(today);
+
+  const filteredWorkingHour = AllPersonnelWorkingDay.find((day) => {
+    const periodStart = day.period_start;
+    const periodEnd = day.period_end;
+
+    return date >= periodStart && date <= periodEnd;
+  });
+
+  const [createAbsence] = useAddAbsencePersonnelMutation();
+  const [selectedDuree, setSelectedDuree] = useState<string>("");
+
+  const handleSelectedDuree = (e: any) => {
+    setSelectedDuree(e.target.value);
+  };
+
   const [attendance, setAttendance] = useState<any[]>([]);
 
   const filtredCongés = AllCongés.filter(
@@ -51,6 +59,7 @@ const AjouterAbsencePersonnel = () => {
           name: `${personnel.prenom_fr} ${personnel.nom_fr}`,
           morning: "Present",
           evening: "Present",
+          fullDay: "Present",
           duree: "",
         }))
       );
@@ -68,6 +77,7 @@ const AjouterAbsencePersonnel = () => {
         name: `${congé.personnelId.prenom_fr} ${congé.personnelId.nom_fr}`,
         isCongé: true,
         evening: "En congé",
+        fullDay: "En congé",
         morning: "En congé",
       });
     }
@@ -83,7 +93,9 @@ const AjouterAbsencePersonnel = () => {
               ...entry,
               [field]: value,
               duree:
-                field === "morning" || field === "evening"
+                field === "morning" ||
+                field === "evening" ||
+                field === "fullDay"
                   ? value === "Autorisation"
                     ? entry.duree
                     : ""
@@ -94,7 +106,7 @@ const AjouterAbsencePersonnel = () => {
     );
   };
 
-  const handleDureeChange = (id: string, value: string) => {
+  const handleDureeChange = (id: string, type: string, value: string) => {
     setAttendance((prev) =>
       prev?.map((entry) =>
         entry.personnel === id ? { ...entry, duree: value } : entry
@@ -179,31 +191,50 @@ const AjouterAbsencePersonnel = () => {
               </Form.Group>
               <Table bordered hover responsive className="text-center">
                 <thead className="table-dark">
-                  <tr>
-                    <th>#</th>
-                    <th>Nom du personnel</th>
-                    <th>{workingHours[0]?.morningTime!}</th>
-                    <th>{workingHours[0]?.eveningTime!}</th>
-                  </tr>
+                  {filteredWorkingHour && (
+                    <tr>
+                      <th>#</th>
+                      <th>Nom du personnel</th>
+                      {filteredWorkingHour.daily_pause_start === "--:--" &&
+                      filteredWorkingHour.daily_pause_end === "--:--" ? (
+                        <th>
+                          {filteredWorkingHour.day_start_time} -{" "}
+                          {filteredWorkingHour.day_end_time}
+                        </th>
+                      ) : (
+                        <>
+                          <th>
+                            {filteredWorkingHour.day_start_time} -{" "}
+                            {filteredWorkingHour.daily_pause_start}
+                          </th>
+                          <th>
+                            {filteredWorkingHour.daily_pause_end} -{" "}
+                            {filteredWorkingHour.day_end_time}
+                          </th>
+                        </>
+                      )}
+                    </tr>
+                  )}
                 </thead>
                 <tbody>
                   {finalList.map((person, index) => (
                     <tr key={person.personnel}>
                       <td>{index + 1}</td>
                       <td>{person.name}</td>
-                      <td>
-                        {person.isCongé ? (
-                          <span className="badge badge-soft-success fs-18">
-                            Congé
-                          </span>
-                        ) : (
-                          <>
+                      {filteredWorkingHour?.daily_pause_start === "--:--" &&
+                      filteredWorkingHour?.daily_pause_end === "--:--" ? (
+                        <td>
+                          {person.isCongé ? (
+                            <span className="badge badge-soft-success fs-18">
+                              Congé
+                            </span>
+                          ) : (
                             <Form.Select
-                              value={person.morning}
+                              value={person.fullDay}
                               onChange={(e) =>
                                 handleChange(
                                   person.personnel,
-                                  "morning",
+                                  "fullDay",
                                   e.target.value
                                 )
                               }
@@ -212,61 +243,119 @@ const AjouterAbsencePersonnel = () => {
                               <option value="Absent">Absent</option>
                               <option value="Autorisation">Autorisation</option>
                             </Form.Select>
-                            {person.morning === "Autorisation" && (
-                              <input
-                                type="text"
-                                className="form-control mt-2"
-                                placeholder="Durée"
-                                value={person.duree}
-                                onChange={(e) =>
-                                  handleDureeChange(
-                                    person.personnel,
-                                    e.target.value
-                                  )
-                                }
-                              />
-                            )}
-                          </>
-                        )}
-                      </td>
-                      <td>
-                        {person.isCongé ? (
-                          <span className="badge badge-soft-success fs-18">
-                            Congé
-                          </span>
-                        ) : (
-                          <>
-                            <Form.Select
-                              value={person.evening}
+                          )}
+                          {person.fullDay === "Autorisation" && (
+                            <select
+                              className="form-control mt-2"
+                              value={person.duree}
                               onChange={(e) =>
-                                handleChange(
+                                handleDureeChange(
                                   person.personnel,
-                                  "evening",
+                                  "dureeEvening",
                                   e.target.value
                                 )
                               }
                             >
-                              <option value="Present">Present</option>
-                              <option value="Absent">Absent</option>
-                              <option value="Autorisation">Autorisation</option>
-                            </Form.Select>
-                            {person.evening === "Autorisation" && (
-                              <input
-                                type="text"
-                                className="form-control mt-2"
-                                placeholder="Durée"
-                                value={person.duree}
-                                onChange={(e) =>
-                                  handleDureeChange(
-                                    person.personnel,
-                                    e.target.value
-                                  )
-                                }
-                              />
+                              <option value="">Sélectionner la durée</option>
+                              <option value="1H">1H</option>
+                              <option value="2H">2H</option>
+                            </select>
+                          )}
+                        </td>
+                      ) : (
+                        <>
+                          <td>
+                            {person.isCongé ? (
+                              <span className="badge badge-soft-success fs-18">
+                                Congé
+                              </span>
+                            ) : (
+                              <>
+                                <Form.Select
+                                  value={person.morning}
+                                  onChange={(e) =>
+                                    handleChange(
+                                      person.personnel,
+                                      "morning",
+                                      e.target.value
+                                    )
+                                  }
+                                >
+                                  <option value="Present">Present</option>
+                                  <option value="Absent">Absent</option>
+                                  <option value="Autorisation">
+                                    Autorisation
+                                  </option>
+                                </Form.Select>
+                                {person.morning === "Autorisation" && (
+                                  <select
+                                    className="form-control mt-2"
+                                    value={person.duree}
+                                    onChange={(e) =>
+                                      handleDureeChange(
+                                        person.personnel,
+                                        "dureeMorning",
+                                        e.target.value
+                                      )
+                                    }
+                                  >
+                                    <option value="">
+                                      Sélectionner la durée
+                                    </option>
+                                    <option value="1H">1H</option>
+                                    <option value="2H">2H</option>
+                                  </select>
+                                )}
+                              </>
                             )}
-                          </>
-                        )}
-                      </td>
+                          </td>
+                          <td>
+                            {person.isCongé ? (
+                              <span className="badge badge-soft-success fs-18">
+                                Congé
+                              </span>
+                            ) : (
+                              <>
+                                <Form.Select
+                                  value={person.evening}
+                                  onChange={(e) =>
+                                    handleChange(
+                                      person.personnel,
+                                      "evening",
+                                      e.target.value
+                                    )
+                                  }
+                                >
+                                  <option value="Present">Present</option>
+                                  <option value="Absent">Absent</option>
+                                  <option value="Autorisation">
+                                    Autorisation
+                                  </option>
+                                </Form.Select>
+                                {person.evening === "Autorisation" && (
+                                  <select
+                                    className="form-control mt-2"
+                                    value={person.duree}
+                                    onChange={(e) =>
+                                      handleDureeChange(
+                                        person.personnel,
+                                        "dureeEvening",
+                                        e.target.value
+                                      )
+                                    }
+                                  >
+                                    <option value="">
+                                      Sélectionner la durée
+                                    </option>
+                                    <option value="1H">1H</option>
+                                    <option value="2H">2H</option>
+                                  </select>
+                                )}
+                              </>
+                            )}
+                          </td>
+                        </>
+                      )}
                     </tr>
                   ))}
                 </tbody>

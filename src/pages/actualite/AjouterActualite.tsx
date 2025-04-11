@@ -32,7 +32,7 @@ import { selectCurrentUser } from "features/account/authSlice";
 import Select from "react-select";
 
 const AjouterActualite = () => {
-  document.title = "Ajouter Actualité | Smart Institute";
+  document.title = "Ajouter Actualité | ENIGA";
   const navigate = useNavigate();
 
   const user = useSelector((state: RootState) => selectCurrentUser(state));

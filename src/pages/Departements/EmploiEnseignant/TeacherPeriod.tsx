@@ -1,27 +1,8 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-
-import Swal from "sweetalert2";
-import {
-  ClassePeriod,
-  useAddClassePeriodMutation,
-  useFetchClassePeriodsByClassIdQuery,
-  useUpdateClassePeriodMutation,
-} from "features/classPeriod/classPeriod";
-import {
-  Button,
-  Card,
-  Col,
-  Container,
-  Form,
-  Modal,
-  Row,
-} from "react-bootstrap";
+import React, { useMemo, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { Card, Col, Container, Form, Row } from "react-bootstrap";
 import BreadCrumb from "Common/BreadCrumb";
 import TableContainer from "Common/TableContainer";
-import { format } from "date-fns";
-import Flatpickr from "react-flatpickr";
-import { useFetchTimeTableParamsQuery } from "features/timeTableParams/timeTableParams";
 import { useGetTeacherPeriodsBySemesterAndIdTeacherQuery } from "features/teachersPeriods/teachersPeriods";
 
 const TeacherPeriod = () => {
@@ -40,13 +21,6 @@ const TeacherPeriod = () => {
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value.toLowerCase());
-  };
-
-  const formatDate = (date: any) => {
-    const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-indexed
-    const year = date.getFullYear();
-    return `${day}-${month}-${year}`;
   };
 
   const columns = useMemo(
@@ -121,8 +95,8 @@ const TeacherPeriod = () => {
       <div className="page-content">
         <Container fluid={true}>
           <BreadCrumb
-            title="Paramètres des emplois"
-            pageTitle="Liste periodes de classe"
+            title="Périodes des emplois enseignants"
+            pageTitle="Paramètres des emplois"
           />
 
           <Row id="sellersList">
@@ -139,7 +113,7 @@ const TeacherPeriod = () => {
                     </Col>
 
                     <Col className="col-lg-auto ms-auto d-flex justify-content-around">
-                      <div className="search-box m-2">
+                      <label className="search-box m-2">
                         <input
                           type="text"
                           className="form-control search"
@@ -148,7 +122,7 @@ const TeacherPeriod = () => {
                           onChange={handleSearchChange}
                         />
                         <i className="ri-search-line search-icon"></i>
-                      </div>
+                      </label>
                     </Col>
                   </Row>
                 </Card.Body>
@@ -170,7 +144,7 @@ const TeacherPeriod = () => {
                       customPageSize={10}
                       className="custom-header-css table align-middle table-nowrap"
                       tableClass="table-centered align-middle table-nowrap mb-0"
-                      theadClass="text-muted table-light"
+                      theadClass="text-muted"
                       SearchPlaceholder="Search Products..."
                     />
                   </table>

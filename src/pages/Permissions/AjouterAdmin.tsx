@@ -42,7 +42,7 @@ interface SubmissionData extends Partial<AddUser> {
   personnelId?: string; // Optional
 }
 const CreateAdmin = () => {
-  document.title = "Ajouter Utilisateur | Smart Institute";
+  document.title = "Ajouter Utilisateur | ENIGA";
   const navigate = useNavigate();
   const [addUser] = useAddUserMutation<AddUser>();
   const { data: enseignants = [] } = useFetchEnseignantsQuery();

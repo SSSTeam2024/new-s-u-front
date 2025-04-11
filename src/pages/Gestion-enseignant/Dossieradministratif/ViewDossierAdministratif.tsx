@@ -10,7 +10,7 @@ import {
 import Swal from "sweetalert2";
 
 const ViewDossierAdministratif = () => {
-  document.title = "Visualiser dossier enseignant | Smart Institute";
+  document.title = "Visualiser dossier enseignant | ENIGA";
 
   const location = useLocation();
   const dossierAdministratif = location.state;
@@ -22,12 +22,11 @@ const ViewDossierAdministratif = () => {
     return String(currentEnseignantId).trim() === String(enseignantId).trim();
   });
 
-
   console.log("filteredDossiers", filteredDossiers);
   const [deleteSpecificPaper] = useRemoveSpecificPaperMutation();
 
   const AlertDelete = async (dossierId: string, paper: any) => {
-    console.log(dossierId)
+    console.log(dossierId);
     const swalWithBootstrapButtons = Swal.mixin({
       customClass: {
         confirmButton: "btn btn-success",
@@ -55,7 +54,7 @@ const ViewDossierAdministratif = () => {
               remarques: paper.remarque ?? "",
               file: paper.file ?? "",
             };
-            
+
             try {
               console.log(
                 "Attempting to delete paper with dossierId:",
@@ -63,7 +62,11 @@ const ViewDossierAdministratif = () => {
               );
               console.log("Paper details:", paperDetails);
               if (!paperDetails.paperId) {
-                Swal.fire("Erreur", "Le papier à supprimer est invalide.", "error");
+                Swal.fire(
+                  "Erreur",
+                  "Le papier à supprimer est invalide.",
+                  "error"
+                );
                 return;
               }
               await deleteSpecificPaper({
@@ -114,7 +117,6 @@ const ViewDossierAdministratif = () => {
       });
     });
   }, [filteredDossiers]);
-  
 
   const columns = useMemo(
     () => [
@@ -252,8 +254,8 @@ const ViewDossierAdministratif = () => {
             <div className="text-center">
               <h5 className="mt-2">Désolé ! Aucun résultat trouvé</h5>
               <p className="text-muted mb-0">
-              Nous avons cherché dans plus de 150+ dossiers, mais
-              aucun résultat ne correspond à votre recherche.
+                Nous avons cherché dans plus de 150+ dossiers, mais aucun
+                résultat ne correspond à votre recherche.
               </p>
             </div>
           </div>
