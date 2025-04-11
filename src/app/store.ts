@@ -72,6 +72,9 @@ import { absenceSlice } from "features/absenceEtudiant/absenceSlice";
 import { courSlice } from "features/coursEnseignant/coursSlice";
 import { generatedDocSlice } from "features/generatedDoc/generatedDocSlice";
 import { cycleSlice } from "features/cycle/cycle";
+import { messagesSlice } from "features/messagerie/messagerieSlice";
+import { messageSlice } from "features/messages/messagesSlice";
+import { demandeTirageSlice } from "features/demandeTirage/demandeTirageSlice";
 import { absencePersonnelSlice } from "features/absencePersonnel/absencePersonnel";
 import { personnelWorkingDaySlice } from "features/personnelWorkingDay/personnelWorkingDaySlice";
 import { voieEnvoiSlice } from "features/voieEnvoi/voieEnvoiSlice";
@@ -149,6 +152,9 @@ export const store = configureStore({
     //! Cour Enseignant
     [courSlice.reducerPath]: courSlice.reducer,
     [generatedDocSlice.reducerPath]: generatedDocSlice.reducer,
+    [messagesSlice.reducerPath]: messagesSlice.reducer,
+    [messageSlice.reducerPath]: messageSlice.reducer,
+    [demandeTirageSlice.reducerPath]: demandeTirageSlice.reducer,
     [absencePersonnelSlice.reducerPath]: absencePersonnelSlice.reducer,
     [personnelWorkingDaySlice.reducerPath]: personnelWorkingDaySlice.reducer,
     [voieEnvoiSlice.reducerPath]: voieEnvoiSlice.reducer,
@@ -226,6 +232,9 @@ export const store = configureStore({
       courSlice.middleware,
       generatedDocSlice.middleware,
       cycleSlice.middleware,
+      messagesSlice.middleware,
+      messageSlice.middleware,
+      demandeTirageSlice.middleware,
       absencePersonnelSlice.middleware,
       personnelWorkingDaySlice.middleware,
       voieEnvoiSlice.middleware,

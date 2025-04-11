@@ -1420,6 +1420,101 @@ const GestionEmploiClasse = () => {
     return common_itervals;
   };
 
+  //* More than two 1/15 sessions solution
+  // const findCommonIntervals = async ( // TODO
+  //   classIntervals: any[],
+  //   teacherIntervals: any[]
+  // ) => {
+  //   const common_intervals: { start: string; end: string; count: number }[] = [];
+
+  //   let i = 0,
+  //     j = 0;
+
+  //   while (i < classIntervals.length && j < teacherIntervals.length) {
+  //     const classStart = timeToMinutes(classIntervals[i].start);
+  //     const classEnd = timeToMinutes(classIntervals[i].end);
+  //     const teacherStart = timeToMinutes(teacherIntervals[j].start);
+  //     const teacherEnd = timeToMinutes(teacherIntervals[j].end);
+
+  //     const overlapStart = Math.max(classStart, teacherStart);
+  //     const overlapEnd = Math.min(classEnd, teacherEnd);
+
+  //     if (overlapStart < overlapEnd) {
+  //       // Find if this interval already exists in common_intervals
+  //       let existingInterval = common_intervals.find(
+  //         (slot) => slot.start === minutesToTime(overlapStart)
+  //       );
+
+  //       if (existingInterval) {
+  //         existingInterval.count += 1; // Increment the count
+  //       } else {
+  //         common_intervals.push({
+  //           start: minutesToTime(overlapStart),
+  //           end: minutesToTime(overlapEnd),
+  //           count: 1, // Start count
+  //         });
+  //       }
+  //     }
+
+  //     if (classEnd < teacherEnd) {
+  //       i++;
+  //     } else {
+  //       j++;
+  //     }
+  //   }
+
+  //   return common_intervals;
+  // };
+
+  //* More than two 1/15 sessions solution
+  // const extractUnavailability = async ( // TODO
+  //   commonIntervals: any[],
+  //   dayStart: string,
+  //   dayEnd: string
+  // ) => {
+  //   const unavailable_intervals: any[] = [];
+  //   let lastEndTime = timeToMinutes(dayStart);
+
+  //   for (const interval of commonIntervals) {
+  //     const currentStartTime = timeToMinutes(interval.start);
+
+  //     if (lastEndTime < currentStartTime) {
+  //       unavailable_intervals.push({
+  //         start: minutesToTime(lastEndTime),
+  //         end: minutesToTime(currentStartTime),
+  //       });
+  //     }
+
+  //     lastEndTime = timeToMinutes(interval.end);
+
+  //     if (interval.count >= 2) {
+  //       console.log("Blocking interval due to 2+ '1/15' sessions:", interval);
+  //       unavailable_intervals.push({
+  //         start: interval.start,
+  //         end: interval.end,
+  //       });
+  //     }
+  //   }
+
+  //   const dayEndTime = timeToMinutes(dayEnd);
+  //   if (lastEndTime < dayEndTime) {
+  //     unavailable_intervals.push({
+  //       start: minutesToTime(lastEndTime),
+  //       end: minutesToTime(dayEndTime),
+  //     });
+  //   }
+
+  //   setDisabledIntervals(
+  //     unavailable_intervals.map((interval) => ({
+  //       start: convertTimeStringToMs(interval.start),
+  //       end: convertTimeStringToMs(interval.end),
+  //     }))
+  //   );
+
+  //   return unavailable_intervals;
+  // };
+
+
   const extractUnavailability = async (
     commonIntervals: any[],
     dayStart: string,
@@ -1454,6 +1549,7 @@ const GestionEmploiClasse = () => {
     );
     return unavailable_intervals;
   };
+
   const closeAddSessionForm = () => {
     setCanAddSession(false);
     setDisabledIntervals([]);

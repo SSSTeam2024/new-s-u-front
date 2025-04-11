@@ -259,7 +259,7 @@ const ListFicheVoeux = () => {
               </li>
               <li>
                 <Link
-                  to="/gestion-fiche-voeux/edit-fiche-voeux"
+                  to="/gestion-emplois/gestion-fiche-voeux/edit-fiche-voeux"
                   state={cell?.voeux_s2!}
                   className="badge bg-primary-subtle text-primary edit-item-btn"
                 >

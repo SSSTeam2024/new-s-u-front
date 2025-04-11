@@ -4,12 +4,9 @@ import {
     Row,
     Card,
     Col,
-    Modal,
     Form,
     Button,
-    Offcanvas,
 } from "react-bootstrap";
-import DataTable from "react-data-table-component";
 import Breadcrumb from "Common/BreadCrumb";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
@@ -26,12 +23,21 @@ import {
     useAddAbsenceEtudiantMutation,
 } from "features/absenceEtudiant/absenceSlice";
 import { useFetchParcoursQuery } from "features/parcours/parcours";
-import { useFetchEtudiantsByIdClasseQuery } from "features/etudiant/etudiantSlice";
+import { useFetchEtudiantsByClassIdsQuery, useFetchEtudiantsByIdClasseQuery } from "features/etudiant/etudiantSlice";
 import { formatDate, formatTime } from "helpers/data_time_format";
 import { useGetTeacherPeriodsBySemesterAndIdTeacherV2Mutation } from "features/teachersPeriods/teachersPeriods";
 import { useGetPeriodicSessionsByTeacherV2Mutation } from "features/seance/seance";
 import { useFetchTimeTableParamsQuery } from "features/timeTableParams/timeTableParams";
 import Select, { OptionsOrGroups } from "react-select";
+import { DemandeTirage, useAddDemandeTirageMutation } from "features/demandeTirage/demandeTirageSlice";
+import { RootState } from "app/store";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "features/account/authSlice";
+
+interface MiniSession {
+    classId: string;
+    subject: string;
+}
 
 const AddDemandeTirage = () => {
     const { data: AllEnseignants = [] } = useFetchEnseignantsQuery();
@@ -40,6 +46,8 @@ const AddDemandeTirage = () => {
 
     const { data: AllParcours = [] } = useFetchParcoursQuery();
 
+    const user = useSelector((state: RootState) => selectCurrentUser(state));
+
     const [getTeacherPeriodicSchedules] =
         useGetTeacherPeriodsBySemesterAndIdTeacherV2Mutation();
 
@@ -47,101 +55,13 @@ const AddDemandeTirage = () => {
 
     const [getClassesByTeacherId] = useFetchClassesByTeacherMutation();
 
-    const [studentTypes, setStudentTypes] = useState<{ [key: string]: string }>(
-        {}
-    );
-    const [classesList, setClassesList] = useState<Classe[]>();
-    const [showObservation, setShowObservation] = useState<boolean>(false);
+    const [createDemand] = useAddDemandeTirageMutation();
 
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-    const [max_date, setMaxDate] = useState<Date | undefined>(undefined);
-    const [min_date, setMinDate] = useState<Date | undefined>(undefined);
 
     const [selectedEnseignant, setSelectedEnseignant] = useState<string>("");
-    const [selectedSemestre, setSelectedSemestre] = useState<string>("1");
 
     const [sessions, setSessions] = useState<any>([]);
-    const [selectedSession, setSelectedSession] = useState<string>("");
-
-    const [studentsList, setStudentsList] = useState<any[]>([]);
-
-    const [hasProcessed, setHasProcessed] = useState<boolean>(false);
-    const [hasProcessed2, setHasProcessed2] = useState<boolean>(false);
-
-    const [selectedClasse, setSelectedClasse] = useState<string>("");
-
-    const { data: EtudiantsByClasseID = [], isSuccess: studentsLoaded } =
-        useFetchEtudiantsByIdClasseQuery(selectedClasse);
-
-    const { data: scheduleParams = [], isSuccess: paramsLoaded } = useFetchTimeTableParamsQuery();
-
-    useEffect(() => {
-
-        if (studentsLoaded && !hasProcessed) {
-            let students = EtudiantsByClasseID.map((student: any) => ({
-                student: student,
-                presence: true,
-            }));
-
-            setStudentsList(students);
-            console.log(students);
-            setHasProcessed(true);
-
-        }
-
-        if (paramsLoaded && !hasProcessed2) {
-            configureMinAndMaxCalendarDates('1');
-            setHasProcessed2(true);
-        }
-    }, [EtudiantsByClasseID, hasProcessed, selectedClasse, scheduleParams, hasProcessed2]);
-
-    const configureMinAndMaxCalendarDates = (semester: string) => {
-        if (semester === '1') {
-            const [day1, month1, year1] = scheduleParams[0].semestre1_start.split('-').map(Number);
-            const semesterOneStartDate = new Date(year1, month1 - 1, day1);
-            setMinDate(semesterOneStartDate);
-
-            const currentDate = new Date();
-            const [day2, month2, year2] = scheduleParams[0].semestre1_end.split('-').map(Number);
-            const semesterOneEndDate = new Date(year2, month2 - 1, day2);
-
-            if (semesterOneEndDate > currentDate) {
-                setMaxDate(currentDate);
-            } else {
-                setMaxDate(semesterOneEndDate);
-            }
-        } else {
-            const [day1, month1, year1] = scheduleParams[0].semestre2_start.split('-').map(Number);
-            const semesterTwoStartDate = new Date(year1, month1 - 1, day1);
-            setMinDate(semesterTwoStartDate);
-
-            const currentDate = new Date();
-            const [day2, month2, year2] = scheduleParams[0].semestre2_end.split('-').map(Number);
-            const semesterTwoEndDate = new Date(year2, month2 - 1, day2);
-
-            if (semesterTwoEndDate > currentDate) {
-                setMaxDate(currentDate);
-            } else {
-                setMaxDate(semesterTwoEndDate);
-            }
-        }
-    }
-
-    const handleDateChange = (selectedDates: Date[]) => {
-        setSelectedDate(selectedDates[0]);
-        setSelectedEnseignant("");
-        setSessions([]);
-        setSelectedClasse("");
-        setStudentsList([]);
-        setHasProcessed(false);
-    };
-
-    const [selectedTime, setSelectedTime] = useState<Date | null>(null);
-
-    const handleTimeChange = (selectedDates: Date[]) => {
-        const time = selectedDates[0];
-        setSelectedTime(time);
-    };
 
     const notifySuccess = () => {
         Swal.fire({
@@ -163,31 +83,38 @@ const AddDemandeTirage = () => {
         });
     };
 
-    const [selectedEleve, setSelectedEleve] = useState<string>("");
-
-    const handleSelectEleve = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        const value = event.target.value;
-        setSelectedEleve(value);
-    };
-
-    const handleSelectTrimestre = (
-        event: React.ChangeEvent<HTMLSelectElement>
-    ) => {
-        const value = event.target.value;
-        setSelectedSemestre(value);
-    };
-
     const toggleSemestre = () => {
-        const newSemester = selectedSemestre === "1" ? "2" : "1";
-        configureMinAndMaxCalendarDates(newSemester);
-        setSelectedSemestre(newSemester);
+        const newSemester = formData.semestre === "1" ? "2" : "1";
+        setFormData((prev) => ({
+            ...prev,
+            classes: [],
+            enseignant: '',
+            docFileBase64String: '',
+            docFileExtension: '',
+            titre: '',
+            nbr_page: '',
+            recto_verso: '',
+            nbr_copies: '',
+            format: '',
+            heure_envoi_demande: '',
+            date_limite: '',
+            heure_limite: '',
+            semestre: newSemester,
+            couleur: 'Noir',
+            note: '',
+            matiere: ''
+        }))
         setSelectedDate(null);
-        setSelectedEnseignant("");
-        setSessions([]);
-        setSelectedClasse("");
-        setStudentsList([]);
-        setHasProcessed(false);
+        setSelectedColumnValues([]);
     };
+
+    const toggleColor = () => {
+        const newColor = formData.couleur === "Noir" ? "Couleur" : "Noir";
+        setFormData((prev) => ({
+            ...prev,
+            couleur: newColor
+        }))
+    }
 
     const handleSelectEnseignant = async (
         event: React.ChangeEvent<HTMLSelectElement>
@@ -195,10 +122,14 @@ const AddDemandeTirage = () => {
 
         const value = event.target.value;
         setSelectedEnseignant(value);
+        setFormData((prev) => ({
+            ...prev,
+            enseignant: value
+        }))
 
         let periodicSchedulesRequestData = {
             teacherId: value,
-            semester: selectedSemestre,
+            semester: formData.semestre,
         };
 
         console.log(periodicSchedulesRequestData);
@@ -227,13 +158,10 @@ const AddDemandeTirage = () => {
         const sessions = filterSessionsBasedOnPeriodicScheduleState(allTeacherSessions);
         console.log(sessions);
         setSessions(sessions);
-        setSelectedClasse("");
-        setStudentsList([]);
-        setHasProcessed(false);
 
         let classesRequestData = {
             teacherId: value,
-            semestre: selectedSemestre,
+            semestre: formData.semestre,
         };
 
         let classes = await getClassesByTeacherId(classesRequestData).unwrap();
@@ -281,116 +209,134 @@ const AddDemandeTirage = () => {
     ) => {
         const value = event.target.value;
         setSelectedMatiere(value);
+        setFormData((prev) => ({
+            ...prev,
+            matiere: value,
+        }))
     };
 
     const [selectedMatiere, setSelectedMatiere] = useState<string>("");
     const [filteredSubjects, setFilteredSubjects] = useState<any[]>([]);
 
-    const handleSelectMatiere = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        const value = event.target.value;
-        setSelectedMatiere(value);
-    };
-
-    const handleSelectClasse = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        const value = event.target.value;
-        setSelectedClasse(value);
-    };
-
-    const [selectedType, setSelectedType] = useState<string>("");
-
-    const handleSelectType = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        const value = event.target.value;
-        setSelectedType(value);
-    };
-
-    const [modal_AddAbsence, setmodal_AddAbsence] = useState<boolean>(false);
-    function tog_AddAbsence() {
-        setmodal_AddAbsence(!modal_AddAbsence);
-    }
-
-    const [modal_UpdateAbsence, setmodal_UpdateAbsence] =
-        useState<boolean>(false);
-    function tog_UpdateAbsence() {
-        setmodal_UpdateAbsence(!modal_UpdateAbsence);
-    }
-
-    const [createAbsence] = useAddAbsenceEtudiantMutation();
-
-    const initialAbsence: AbsenceEtudiant = {
-        classe: "",
-        enseignant: "",
-        etudiants: [],
-        seance: "",
-        date: "",
-        trimestre: "",
-    };
-
-    const [absence, setAbsence] = useState(initialAbsence);
-
-    const { classe, enseignant, etudiants, seance, date, trimestre } = absence;
-
-    const handleStudentTypeChange = (e: any, element: any, index: number) => {
-        let value = "";
-        let presenceState = false;
-        if (element.presence === true) {
-            value = "A";
-        } else {
-            presenceState = true;
-            value = "P";
-        }
-
-        setStudentTypes((prevState) => ({
-            ...prevState,
-            [element.student._id]: value,
-        }));
-
-        setAbsence((prevAbsence) => {
-            const updatedEleves = prevAbsence.etudiants.filter(
-                (eleve) => eleve.etudiant !== element.student._id
-            );
-
-            return {
-                ...prevAbsence,
-                eleves: [
-                    ...updatedEleves,
-                    { etudiant: element.student._id, typeAbsent: value },
-                ],
-            };
-        });
-
-        let studentsListRef = [...studentsList];
-        studentsListRef[index].presence = presenceState;
-        setStudentsList(studentsListRef);
-    };
+    const [formData, setFormData] = useState<DemandeTirage>({
+        classes: [''],
+        enseignant: '',
+        matiere: '',
+        docFileBase64String: '',
+        docFileExtension: '',
+        titre: '',
+        nbr_page: '',
+        recto_verso: '',
+        nbr_copies: '',
+        format: '',
+        date_envoi_demande: formatDate(new Date()),
+        heure_envoi_demande: '',
+        date_limite: '',
+        heure_limite: '',
+        date_recuperation: '',
+        heure_recuperation: '',
+        heure_impression: '',
+        date_impression: '',
+        etat: 'En cours',
+        semestre: '1',
+        added_by: user?._id,
+        couleur: 'Noir',
+        note: ''
+    });
 
     const navigate = useNavigate();
 
-    function tog_AllAbsences() {
-        navigate("/application-enseignant/lister-absence");
+    const onChange = (e: any) => {
+        const { id, value } = e.target;
+        setFormData((prevState) => ({
+            ...prevState,
+            [id]: value,
+        }));
+    };
+
+    const handleDateChange = (selectedDates: Date[]) => {
+        const selectedDate = selectedDates[0];
+        setSelectedDate(selectedDate);
+        if (selectedDate) {
+            const formattedDate = formatDate(selectedDate);
+            setFormData((prevState) => ({
+                ...prevState,
+                date_limite: formattedDate,
+            }));
+        } else {
+            setFormData((prevState) => ({
+                ...prevState,
+                date_limite: "",
+            }));
+        }
+    };
+
+    const handleLimite = (selectedDates: any) => {
+        const formattedTime = selectedDates[0];
+
+        const heure_minute =
+            String(formattedTime.getHours()).padStart(2, "0") +
+            ":" +
+            String(formattedTime.getMinutes()).padStart(2, "0");
+
+        setFormData((prevState) => ({
+            ...prevState,
+            heure_limite: heure_minute,
+        }));
+    };
+
+    const handleFileUpload = async (
+        event: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        const file = (
+            document.getElementById("pdfBase64String") as HTMLFormElement
+        ).files[0];
+        if (file) {
+            const { base64Data, extension } = await convertToBase64(file);
+
+            setFormData({
+                ...formData,
+                docFileBase64String: base64Data,
+                docFileExtension: extension
+            });
+        }
+    };
+
+    function convertToBase64(
+        file: File
+    ): Promise<{ base64Data: string; extension: string }> {
+        return new Promise((resolve, reject) => {
+            const fileReader = new FileReader();
+            fileReader.onload = () => {
+                const base64String = fileReader.result as string;
+                const [, base64Data] = base64String.split(",");
+                const extension = file.name.split(".").pop() ?? "";
+                resolve({ base64Data, extension });
+            };
+            fileReader.onerror = (error) => {
+                reject(error);
+            };
+            fileReader.readAsDataURL(file);
+        });
     }
-    const onSubmitAbsence = (e: React.FormEvent<HTMLFormElement>) => {
+
+    const onSubmitDemandeTirage = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         try {
-            const elevesWithTypes = EtudiantsByClasseID?.map((eleve) => ({
-                etudiant: eleve?._id!,
-                typeAbsent: studentTypes[eleve?._id!] || "P",
-            }));
+            const d = new Date();
+            const heure_minute =
+                String(d.getHours()).padStart(2, "0") +
+                ":" +
+                String(d.getMinutes()).padStart(2, "0");
 
-            const absenceData = {
-                ...absence,
-                classe: selectedClasse,
-                etudiants: elevesWithTypes,
-                date: formatDate(selectedDate),
-                trimestre: selectedSemestre,
-                enseignant: selectedEnseignant,
-                seance: selectedSession,
+            const demandeTirage = {
+                ...formData,
+                heure_envoi_demande: heure_minute,
             };
-            console.log(absenceData);
-            createAbsence(absenceData)
-                .then(() => notifySuccess())
-                .then(() => setAbsence(initialAbsence));
-            tog_AllAbsences();
+            console.log(demandeTirage)
+            createDemand(demandeTirage)
+                .then(() => notifySuccess()).then(() => navigate('/service-tirage/liste-tirages'))
         } catch (error) {
             notifyError(error);
         }
@@ -401,42 +347,61 @@ const AddDemandeTirage = () => {
 
     const handleSelectValueColumnChange = (selectedOptions: any) => {
         const classIds = selectedOptions.map((option: any) => option.value);
-        console.log(classIds);
+        console.log("classIds", classIds);
 
-        const uniqueSessions = sessions.filter((session: any, index: number, self: any) =>
-            index === self.findIndex((s: any) => s.matiere.matiere === session.matiere.matiere && s.matiere.types[0].type === session.matiere.types[0].type)
-        );
+        const miniSessions: MiniSession[] = sessions.map((s: any) => ({
+            classId: s.classe._id,
+            subject: s.matiere.matiere + " " + s.matiere.types[0].type
+        }));
 
-        console.log(uniqueSessions);
+        console.log(getCommonSubjectsForClasses(miniSessions, classIds));
 
-        let fileteredSubjects = [];
+        let fileteredSubjects = getCommonSubjectsForClasses(miniSessions, classIds);
 
-        for (const session of uniqueSessions) {
-            let subjectCounterExistence = 0;
-            for (const classId of classIds) {
-                let classe = AllClasse.filter(c => c._id === classId)[0];
-                let modules = classe.parcours.modules.filter((m: any) => m.semestre_module === session.matiere.semestre);
-                if (modules.length > 0) {
-                    const subjects = modules.map((module: any) => {
-                        let subjectsResult = module.matiere.filter((m: any) => m.matiere === session.matiere.matiere);
-                        return subjectsResult;
-                    })
-                    const validSubjects = subjects.filter((subjectArray: any) => subjectArray.length > 0);
-                    if (validSubjects.length > 0) {
-                        subjectCounterExistence++;
-                    }
-                }
-            }
-            if (subjectCounterExistence === classIds.length && subjectCounterExistence > 0) {
-                fileteredSubjects.push(session.matiere);
-            }
-        }
-
-        console.log("fileteredSubjects", fileteredSubjects);
         setFilteredSubjects(fileteredSubjects)
         setSelectedMatiere('');
         setSelectedColumnValues(selectedOptions);
+        setFormData((prev) => ({
+            ...prev,
+            classes: classIds,
+            matiere: ''
+        }))
     };
+
+    function getCommonSubjectsForClasses(sessions: MiniSession[], selectedClassIds: string[]): string[] {
+        if (selectedClassIds.length === 0) return [];
+
+        // Step 1: Filter sessions by selected class IDs
+        const filteredSessions = sessions.filter(session => selectedClassIds.includes(session.classId));
+
+        // Step 2: Group subjects by classId
+        const subjectsByClass = selectedClassIds.map(classId => {
+            const subjectsForClass = filteredSessions
+                .filter(session => session.classId === classId)
+                .map(session => session.subject);
+            return new Set(subjectsForClass); // Remove duplicates
+        });
+
+        // Step 3: Find common subjects (intersection of all selected classes)
+        let commonSubjects = subjectsByClass[0] ? Array.from(subjectsByClass[0]) : [];
+
+        for (const subjects of subjectsByClass.slice(1)) {
+            commonSubjects = commonSubjects.filter(subject => subjects.has(subject));
+        }
+
+        return commonSubjects;
+    }
+
+    const checkForFormValidation = () => {
+        let notValid = true;
+        if (formData.classes.length > 0 && formData.docFileBase64String !== ''
+            && formData.enseignant !== '' && formData.format !== '' && formData.date_limite !== ''
+            && formData.heure_limite !== '' && formData.matiere !== '' && formData.nbr_copies !== ''
+            && formData.nbr_page !== '' && formData.recto_verso !== '' && formData.titre !== '') {
+            notValid = false;
+        }
+        return notValid;
+    }
 
     return (
         <React.Fragment>
@@ -446,9 +411,9 @@ const AddDemandeTirage = () => {
                     <Col lg={12}>
                         <Card id="shipmentsList">
                             <Card.Body>
-                                <Form className="create-form" onSubmit={onSubmitAbsence}>
+                                <Form className="create-form" onSubmit={onSubmitDemandeTirage}>
                                     <Row>
-                                        <Col lg={7}>
+                                        <Col lg={6}>
                                             <Row className="mb-4">
                                                 <Col lg={3}>
                                                     <Form.Label htmlFor="trimestre">Semestre</Form.Label>
@@ -459,16 +424,34 @@ const AddDemandeTirage = () => {
                                                             className="form-check-input"
                                                             type="checkbox"
                                                             id="SwitchCheck6"
-                                                            checked={selectedSemestre === "2"}
+                                                            checked={formData.semestre === "2"}
                                                             onChange={toggleSemestre}
                                                         />
                                                         <label
                                                             className="form-check-label"
                                                             htmlFor="SwitchCheck6"
                                                         >
-                                                            {selectedSemestre === "1" ? "S1" : "S2"}
+                                                            {formData.semestre === "1" ? "S1" : "S2"}
                                                         </label>
                                                     </div>
+                                                </Col>
+                                            </Row>
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        <Col lg={6}>
+                                            <Row className="mb-4">
+                                                <Col lg={3}>
+                                                    <Form.Label htmlFor="titre">Titre</Form.Label>
+                                                </Col>
+                                                <Col lg={8}>
+                                                    <Form.Control
+                                                        type="text"
+                                                        id="titre"
+                                                        placeholder=""
+                                                        onChange={onChange}
+                                                        value={formData.titre}
+                                                    />
                                                 </Col>
                                             </Row>
                                             <Row className="mb-4">
@@ -482,7 +465,7 @@ const AddDemandeTirage = () => {
                                                         className="form-select text-muted"
                                                         name="enseignant"
                                                         id="enseignant"
-                                                        value={selectedEnseignant}
+                                                        value={formData.enseignant}
                                                         onChange={handleSelectEnseignant}
                                                     >
                                                         <option value="">Select</option>
@@ -499,7 +482,7 @@ const AddDemandeTirage = () => {
                                             </Row>
                                             <Row className="mb-4">
                                                 <Col lg={3}>
-                                                    <Form.Label htmlFor="classe">Classe(s)</Form.Label>
+                                                    <Form.Label htmlFor="classe">Groupe(s)</Form.Label>
                                                 </Col>
                                                 <Col lg={8}>
                                                     <Select
@@ -522,150 +505,220 @@ const AddDemandeTirage = () => {
                                                         name="classe"
                                                         id="classe"
                                                         onChange={handleSelectSubject}
-                                                        value={selectedMatiere}
+                                                        value={formData.matiere}
                                                     >
                                                         <option value="">Choisir</option>
                                                         {filteredSubjects?.map((subject: any) => (
-                                                            <option value={subject?.matiere!} key={subject?.matiere!}>
-                                                                {subject?.matiere!}{" "}
-                                                                {subject?.types[0].type}
+                                                            <option value={subject} key={subject}>
+                                                                {subject}
                                                             </option>
                                                         ))}
                                                     </select>
                                                 </Col>
                                             </Row>
-                                            {/* <Row className="mb-4">
-                        <Col lg={3}>
-                          <Form.Label htmlFor="classe">Classe</Form.Label>
-                        </Col>
-                        <Col lg={8}>
-                          <select
-                            className="form-select text-muted"
-                            name="classe"
-                            id="classe"
-                            onChange={handleSelectClasse}
-                          >
-                            <option value="">Choisir</option>
-                            {classesList?.map((classe) => (
-                              <option value={classe?._id!} key={classe?._id!}>
-                                {classe.nom_classe_fr}
-                              </option>
-                            ))}
-                          </select>
-                        </Col>
-                      </Row>
-                      <Row className="mb-4">
-                        <Col lg={3}>
-                          <Form.Label htmlFor="mat">Matière</Form.Label>
-                        </Col>
-                        <Col lg={8}>
-                          <select
-                            className="form-select text-muted"
-                            name="mat"
-                            id="mat"
-                            onChange={handleSelectMatiere}
-                          >
-                            <option value="">Choisir</option>
-                            {classesList?.map((classe) =>
-                              classe.parcours.modules
-                                .filter((modul: any) => {
-                                  let sem;
-                                  if (modul.semestre_module === "S5") {
-                                    sem = "1";
-                                  }
-                                  if (modul.semestre_module === "S6") {
-                                    sem = "2";
-                                  }
-                                  return sem === selectedTrimestre;
-                                })
-                                .map((matieres: any) =>
-                                  matieres.matiere.map((mat: any) => (
-                                    <option value={mat?._id!} key={mat?._id!}>
-                                      {mat.matiere}
-                                    </option>
-                                  ))
-                                )
-                            )}
-                          </select>
-                        </Col>
-                      </Row>
-                      <Row className="mb-4">
-                        <Col lg={3}>
-                          <Form.Label htmlFor="date">Heure</Form.Label>
-                        </Col>
-                        <Col lg={8}>
-                          <Flatpickr
-                            className="form-control"
-                            options={{
-                              enableTime: true,
-                              noCalendar: true,
-                              dateFormat: "H:i",
-                              time_24hr: true,
-                            }}
-                            onChange={handleTimeChange}
-                          />
-                        </Col>
-                      </Row> */}
-                                        </Col>
-                                        <Col lg={5}>
-                                            <Row>
-                                                <Col lg={4}>
-                                                    <Form.Label>Etudiants</Form.Label>
+                                            <Row className="mb-4">
+                                                <Col lg={3}>
+                                                    <Form.Label htmlFor="recto_verso">Type d'impression</Form.Label>
                                                 </Col>
-                                                <Col lg={4}>
-                                                    <Form.Label></Form.Label>
+                                                <Col lg={8}>
+                                                    <select
+                                                        className="form-select text-muted"
+                                                        name="recto_verso"
+                                                        id="recto_verso"
+                                                        onChange={onChange}
+                                                        value={formData.recto_verso}
+                                                    >
+                                                        <option value="">Choisir</option>
+                                                        <option value="Recto">Recto
+                                                        </option>
+                                                        <option value="Recto Verso">Recto Verso
+
+                                                        </option>
+
+                                                    </select>
                                                 </Col>
                                             </Row>
-                                            {studentsList.map((element: any, index: number) => (
-                                                <Row key={element.student._id}>
-                                                    <Col lg={4} className="mb-1">
-                                                        {element.student.prenom_fr} {element.student.nom_fr}
-                                                    </Col>
-                                                    <Col lg={4} className="mb-1">
-                                                        {/* <select
-                              className="form-select text-muted"
-                              name="par"
-                              id="par"
-                              onChange={(e) =>
-                                handleStudentTypeChange(e, element.student?._id!)
-                              }
-                            >
-                              <option value="P">Présent(e)</option>
-                              <option value="A">Absent(e)</option>
-                            </select> */}
-                                                        <div className="form-check form-switch">
-                                                            <input
-                                                                className="form-check-input"
-                                                                type="checkbox"
-                                                                id="SwitchCheck6"
-                                                                checked={element.presence}
-                                                                onChange={(e) =>
-                                                                    handleStudentTypeChange(e, element!, index)
-                                                                }
-                                                            />
-                                                            <label
-                                                                className="form-check-label"
-                                                                htmlFor="SwitchCheck6"
-                                                            >
-                                                                {element.presence === true
-                                                                    ? "Présent"
-                                                                    : "Absent"}
-                                                            </label>
-                                                        </div>
-                                                    </Col>
-                                                </Row>
-                                            ))}
+                                            <Row className="mb-4">
+                                                <Col lg={3}>
+                                                    <Form.Label htmlFor="format">Format</Form.Label>
+                                                </Col>
+                                                <Col lg={8}>
+                                                    <select
+                                                        className="form-select text-muted"
+                                                        name="format"
+                                                        id="format"
+                                                        onChange={onChange}
+                                                        value={formData.format}
+                                                    >
+                                                        <option value="">Choisir</option>
+                                                        <option value="A5">A5
+                                                        </option>
+                                                        <option value="A4">A4
+                                                        </option>
+                                                        <option value="A3">A3
+                                                        </option>
+                                                        <option value="A2">A2
+                                                        </option>
+                                                        <option value="A1">A1
+                                                        </option>
+
+                                                    </select>
+                                                </Col>
+                                            </Row>
+
+                                        </Col>
+                                        <Col lg={6}>
+                                            <Row className="mb-4">
+                                                <Col lg={3}>
+                                                    <Form.Label htmlFor="date_limite">
+                                                        Date et Heure Limite
+                                                    </Form.Label>
+                                                </Col>
+                                                <Col lg={8} className="d-flex">
+                                                    <Flatpickr
+                                                        value={selectedDate!}
+                                                        onChange={handleDateChange}
+                                                        className="form-control flatpickr-input"
+                                                        style={{ marginRight: '10px' }}
+                                                        placeholder="Choisir date"
+                                                        options={{
+                                                            dateFormat: "d M, Y",
+                                                            minDate: new Date()
+
+                                                        }}
+                                                        id="date_limite"
+                                                    />
+                                                    <Flatpickr
+                                                        className="form-control"
+                                                        id="heure_limite"
+                                                        placeholder="--:--"
+                                                        options={{
+                                                            enableTime: true,
+                                                            noCalendar: true,
+                                                            dateFormat: "H:i",
+                                                            time_24hr: true,
+                                                            onChange: handleLimite,
+                                                        }}
+                                                        value={formData.heure_limite}
+                                                    />
+                                                </Col>
+                                            </Row>
+                                            <Row className="mb-4">
+                                                <Col lg={3}>
+                                                    <Form.Label htmlFor="note">Note</Form.Label>
+                                                </Col>
+                                                <Col lg={8}>
+                                                    {/* <Form.Control
+                                                        type="text"
+                                                        id="note"
+                                                        placeholder=""
+                                                        onChange={onChange}
+                                                        value={formData.note}
+                                                    /> */}
+                                                    <textarea onChange={onChange} className="form-control" id="note" rows={4} value={formData.note}></textarea>
+                                                </Col>
+                                            </Row>
+                                            <Row className="mb-4">
+                                                <Col lg={3}>
+                                                    <Form.Label htmlFor="couleur">Couleur</Form.Label>
+                                                </Col>
+                                                <Col lg={3}>
+                                                    {/* <select
+                                                        className="form-select text-muted"
+                                                        name="couleur"
+                                                        id="couleur"
+                                                        onChange={onChange}
+                                                        value={formData.couleur}
+                                                    >
+                                                        <option value="">Choisir</option>
+                                                        <option value="Noir">Noir
+                                                        </option>
+                                                        <option value="Couleur">Couleur
+                                                        </option>
+
+                                                    </select> */}
+                                                    <div className="form-check form-switch">
+                                                        <input
+                                                            className="form-check-input"
+                                                            type="checkbox"
+                                                            id="SwitchCheck6"
+                                                            checked={formData.couleur === "Couleur"}
+                                                            onChange={toggleColor}
+                                                        />
+                                                        <label
+                                                            className="form-check-label"
+                                                            htmlFor="SwitchCheck6"
+                                                        >
+                                                            {formData.couleur}
+                                                        </label>
+                                                    </div>
+                                                </Col>
+                                                <Col lg={3}>
+                                                    <Form.Label htmlFor="nbr_copies">Nombre de copies</Form.Label>
+                                                </Col>
+                                                <Col lg={2}>
+                                                    <Form.Control
+                                                        type="number"
+                                                        id="nbr_copies"
+                                                        placeholder=""
+                                                        onChange={onChange}
+                                                        value={formData.nbr_copies}
+                                                    />
+                                                </Col>
+                                            </Row>
+                                            {/* <Row className="mb-4">
+                                                <Col lg={3}>
+                                                    <Form.Label htmlFor="nbr_copies">Nombre de copies</Form.Label>
+                                                </Col>
+                                                <Col lg={8}>
+                                                    <Form.Control
+                                                        type="number"
+                                                        id="nbr_copies"
+                                                        placeholder=""
+                                                        onChange={onChange}
+                                                        value={formData.nbr_copies}
+                                                    />
+                                                </Col>
+                                            </Row> */}
+                                            <Row className="mb-4">
+                                                <Col lg={3}>
+                                                    <Form.Label htmlFor="title">Document</Form.Label>
+                                                </Col>
+                                                <Col lg={8}>
+                                                    <input
+                                                        className="form-control"
+                                                        type="file"
+                                                        name="pdfBase64String"
+                                                        id="pdfBase64String"
+                                                        accept="pdf*"
+                                                        multiple={true}
+                                                        onChange={(e) => handleFileUpload(e)}
+                                                    />
+                                                </Col>
+                                            </Row>
+                                            <Row className="mb-4">
+                                                <Col lg={3}>
+                                                    <Form.Label htmlFor="nbr_page">Nombre de pages</Form.Label>
+                                                </Col>
+                                                <Col lg={8}>
+                                                    <Form.Control
+                                                        type="number"
+                                                        id="nbr_page"
+                                                        placeholder=""
+                                                        onChange={onChange}
+                                                        value={formData.nbr_page}
+                                                    />
+                                                </Col>
+                                            </Row>
                                         </Col>
                                     </Row>
                                     <Row>
                                         <div className="hstack gap-2 justify-content-end">
                                             <Button
-                                                onClick={() => {
-                                                    tog_AddAbsence();
-                                                }}
                                                 type="submit"
                                                 variant="success"
                                                 id="addNew"
+                                                disabled={checkForFormValidation()}
                                             >
                                                 Ajouter
                                             </Button>

@@ -142,7 +142,14 @@ const FicheEnseignant: React.FC = () => {
                           <td>
                             <tr>
                               <td className="fw-bold">Etat civil:</td>
-                              <td>{detailsEnseignant.etat_civil}</td>
+                              {/* <td>{detailsEnseignant.etat_civil}</td> */}
+                              <td>
+                                {detailsEnseignant.etat_civil === "متزوج"
+                                  ? "  Marié(e)"
+                                  : detailsEnseignant.etat_civil === "أعزب "
+                                  ? "Celibataire"
+                                  : ""}
+                              </td>
                             </tr>
                           </td>
                           <td>
@@ -221,11 +228,11 @@ const FicheEnseignant: React.FC = () => {
                         </tr>
                         <tr>
                           <td className="fw-bold">poste:</td>
-                          <td>{detailsEnseignant.poste.poste_ar}</td>
+                          <td>{detailsEnseignant.poste.poste_fr}</td>
                         </tr>
                         <tr>
                           <td className="fw-bold">grade</td>
-                          <td>{detailsEnseignant?.grade?.grade_ar!}</td>
+                          <td>{detailsEnseignant?.grade?.grade_fr!}</td>
                         </tr>
                       </tbody>
                     </Table>

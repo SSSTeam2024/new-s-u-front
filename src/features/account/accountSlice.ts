@@ -3,6 +3,7 @@ import { RootState } from "app/store";
 
 export interface UserResponse {
   user: {
+    role: string;
     _id?: string;
     personnelId?: string;
     enseignantId: string;
@@ -24,6 +25,8 @@ export interface AddUser {
   password: string;
   app_name: string;
   status: string;
+  nom_fr:string;
+  prenom_fr: string
 }
 export interface LoginRequest {
   login: string;

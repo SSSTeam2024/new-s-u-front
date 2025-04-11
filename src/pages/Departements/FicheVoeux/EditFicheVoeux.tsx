@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Col, Container, Form, Row } from "react-bootstrap";
+import { Button, Col, Container, Form, ListGroup, Row } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
 import "flatpickr/dist/flatpickr.min.css";
 import Swal from "sweetalert2";
@@ -7,6 +7,7 @@ import { Matiere, useFetchMatiereQuery } from "features/matiere/matiere";
 import {
   useAddFicheVoeuxMutation,
   useFetchFicheVoeuxsQuery,
+  useUpdateFicheVoeuxMutation,
 } from "features/ficheVoeux/ficheVoeux";
 import Select, { MultiValue } from "react-select";
 import { useFetchClassesQuery } from "features/classe/classe";
@@ -23,51 +24,192 @@ interface MatiereOption {
 }
 
 const EditFicheVoeux = () => {
+<<<<<<< HEAD
   document.title = " Ajouter fiche de voeux | ENIGA";
+=======
+  document.title = " Modifier fiche de voeux | Application Smart Institute";
+>>>>>>> 324dae79b2a08308b75028ff555e796ece7a5c98
   const navigate = useNavigate();
 
   function tog_retourParametres() {
-    navigate("/gestion-fiche-voeux/liste-fiche-voeux");
+    navigate("/gestion-emplois/gestion-fiche-voeux/liste-fiche-voeux");
   }
 
-  const [createFicheVoeux] = useAddFicheVoeuxMutation();
+  const { data: allClasses = [], isSuccess: allClassesLoaded } = useFetchClassesQuery();
 
-  const { data: allTeachers = [] } = useFetchEnseignantsQuery();
-  const { data: allVoeux = [] } = useFetchFicheVoeuxsQuery();
-  const { data: allClasses = [], isSuccess: allClassesFetched } =
-    useFetchClassesQuery();
-  const [hasProcessed, setHasProcessed] = useState(false);
   const location = useLocation();
   const voeuxDetails = location.state;
+
+  const { data: subjects = [], isSuccess: subjectsLoaded } = useFetchMatiereQuery();
+
+  const { data: allTeachers = [] } = useFetchEnseignantsQuery();
+  const { data: allVoeux = [], isSuccess: allVoeuxLoaded } = useFetchFicheVoeuxsQuery();
 
   const [selectedTeacherId, setSelectedTeacherId] = useState<string>("");
 
   const [formData, setFormData] = useState({
-    _id: voeuxDetails?._id,
+    _id: "",
     fiche_voeux_classes: [
       {
         matieres: "",
-        classe: [],
+        classe: [{
+          subject_id: "",
+          class_id: ""
+        }],
         //Temporary data for subjects selection
         consernedClasses: [],
-        selectedSubjectOptions: [],
-        selectedSubjects: [],
-        filteredSubjectsOptions: [],
-        filtredSubjects: [],
+        selectedClasseOptions: [],
+        selectedClasses: [],
+        filteredClassesOptions: [],
+        filtredClasses: [],
+        selectionDisabled: true
       },
     ],
-    jours: voeuxDetails?.jours!,
-    enseignant: voeuxDetails?.enseignant!,
-    semestre: voeuxDetails?.semestre!,
+    jours: [
+      {
+        jour: "",
+        temps: "",
+      },
+    ],
+    enseignant: {
+      _id: "",
+      nom_fr: "",
+      nom_ar: "",
+      prenom_fr: "",
+      prenom_ar: "",
+    },
+    semestre: "S1",
+    remarque: ""
   });
 
-  useEffect(() => {
-    if (allClassesFetched && !hasProcessed) {
-      setSelectedTeacherId(voeuxDetails.enseignant._id);
+  const [cleanSubjectsBySemester, setCleanSubjectsBySemester] = useState<Matiere[]>([]);
+  const [hasProcessed, setHasProcessed] = useState<boolean>(false);
 
-      /*---------------- Days selection ---------------- */
+  const [searchTerm, setSearchTerm] = useState<string[]>(['']);
+  const [filteredSubjects, setFilteredSubjects] = useState<any[][]>([[]]);
+  const [showSuggestions, setShowSuggestions] = useState<boolean[]>([false]);
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>, fiche_index: number) => {
+    console.log(selectedTeacherId)
+    console.log(cleanSubjectsBySemester)
+    const query = e.target.value.toLowerCase();
+    let searchTermRef = [...searchTerm];
+    searchTermRef[fiche_index] = query
+    setSearchTerm(searchTermRef);
+
+    if (query.length > 0) {
+      const results = cleanSubjectsBySemester.filter((subject) =>
+        subject?.matiere!.toLowerCase().includes(query)
+      );
+      let filteredSubjectsRef = [...filteredSubjects];
+      filteredSubjectsRef[fiche_index] = results;
+      setFilteredSubjects(filteredSubjectsRef);
+      let showSuggestionsRef = [...showSuggestions];
+      showSuggestionsRef[fiche_index] = true;
+      setShowSuggestions(showSuggestionsRef);
+    } else {
+      let filteredSubjectsRef = [...filteredSubjects];
+      filteredSubjectsRef[fiche_index] = [];
+      setFilteredSubjects(filteredSubjectsRef);
+      let showSuggestionsRef = [...showSuggestions];
+      showSuggestionsRef[fiche_index] = false;
+      setShowSuggestions(showSuggestionsRef);
+    }
+
+    setFormData((prevState) => {
+      let updatedFicheVoeux = [...prevState.fiche_voeux_classes];
+      updatedFicheVoeux[fiche_index].selectionDisabled = false;
+      updatedFicheVoeux[fiche_index].selectedClasseOptions = [];
+      return {
+        ...prevState,
+        fiche_voeux_classes: updatedFicheVoeux,
+      };
+    });
+  };
+
+  useEffect(() => {
+    if (allClassesLoaded && subjectsLoaded && !hasProcessed) {
+      const subjectsBySemester = subjects.filter(subject => subject.semestre !== undefined && Number(subject.semestre[1]) % 2 !== 0).filter((subject, index, self) =>
+        index === self.findIndex(s => s.matiere === subject.matiere && s.types[0].type === subject.types[0].type)
+      );
+
+      let listeVouex: any[] = [];
+      let searchTermRef = [];
+      let filteredSubjectsRef = [];
+      let showSuggestionsRef = [];
+
+      for (const voeux of voeuxDetails.fiche_voeux_classes) {
+        //************************CONSERNED CLASSES LIST */
+
+
+        searchTermRef.push(voeux.matieres);
+        filteredSubjectsRef.push([]);
+        showSuggestionsRef.push(false);
+
+
+        //*Step 1: Filter all classes based on subject semester and class semesters (Could be S1 or S2)
+        const filteredClassesBySubjectSemester = allClasses.filter(c => c.semestres[0] === voeux?.classe[0]?.subject_id?.semestre || c.semestres[1] === voeux?.classe[0]?.subject_id?.semestre);
+        console.log('Step1 classes', filteredClassesBySubjectSemester);
+
+        //*Step 2: Filter from the above result all classes based on subject semester module semester and subject id
+        let fileteredClasses = [];
+        for (const classElement of filteredClassesBySubjectSemester) {
+          let modules = classElement.parcours.modules.filter((m: any) => m.semestre_module === voeux?.classe[0]?.subject_id?.semestre);
+          if (modules.length > 0) {
+            const subjects = modules.map((module: any) => {
+              let subjectsResult = module.matiere.filter((m: any) => m.matiere === voeux?.classe[0]?.subject_id?.matiere!);
+              return subjectsResult;
+            })
+            console.log('subjects', subjects)
+            const validSubjects = subjects.filter((subjectArray: any) => subjectArray.length > 0);
+            if (validSubjects.length > 0) {
+              console.log('classElement', classElement);
+              fileteredClasses.push(classElement);
+
+            }
+          }
+        }
+
+        console.log('Step2 classes', fileteredClasses);
+
+        let options = fileteredClasses.map((classe: any) => ({
+          value: classe?._id!,
+          label: classe?.nom_classe_fr!,
+        }));
+
+        //************************CONSERNED CLASSES LIST */
+
+        //************************SELECTED CLASSES LIST */
+
+        const classes_options = voeux.classe.map((classe: any) => ({
+          _id: classe.class_id._id,
+          label: classe.class_id.nom_classe_fr
+        }));
+
+        const classes = voeux.classe.map((classe: any) => ({
+          class_id: classe.class_id._id,
+          subject_id: classe.subject_id._id
+        }));
+
+        //************************SELECTED CLASSES LIST */
+
+        listeVouex.push(
+          {
+            matieres: voeux.matieres,
+            classe: classes,
+            //Temporary data for subjects selection
+            consernedClasses: [],
+            selectedClasseOptions: classes_options,
+            selectedClasses: [],
+            filteredClassesOptions: options,
+            filtredClasses: [],
+            selectionDisabled: true
+          },
+        )
+      }
 
       setFormData((prevState) => {
+<<<<<<< HEAD
         const updatedFicheVoeux = [...prevState.fiche_voeux_classes];
 
         /*---------------- Days selection ---------------- */
@@ -161,24 +303,29 @@ const EditFicheVoeux = () => {
         }
         updatedFicheVoeux.splice(0, 1);
 
+=======
+        let updatedFicheVoeux = [...prevState.fiche_voeux_classes];
+        updatedFicheVoeux = listeVouex;
+>>>>>>> 324dae79b2a08308b75028ff555e796ece7a5c98
         return {
           ...prevState,
+          _id: voeuxDetails._id,
           fiche_voeux_classes: updatedFicheVoeux,
+          enseignant: voeuxDetails.enseignant,
+          jours: voeuxDetails.jours,
+          remarque: voeuxDetails.remarque,
+          semestre: voeuxDetails.semestre
         };
       });
 
+      setSearchTerm(searchTermRef);
+      setFilteredSubjects(filteredSubjectsRef);
+      setShowSuggestions(showSuggestionsRef);
+
+      setCleanSubjectsBySemester(subjectsBySemester);
       setHasProcessed(true);
     }
-  }, [allClasses, allClassesFetched, hasProcessed]);
-
-  const teachersWithoutWishCard = allTeachers.filter(
-    (teacher) =>
-      !allVoeux.some(
-        (voeux) =>
-          voeux.enseignant._id === teacher._id &&
-          formData?.semestre! === voeux?.semestre!
-      )
-  );
+  }, [subjects, hasProcessed, searchTerm, filteredSubjects, showSuggestions, allClasses]);
 
   const handleTempsChange = (e: any, index: number) => {
     if (e.target.value !== "") {
@@ -216,6 +363,7 @@ const EditFicheVoeux = () => {
     }
   };
 
+<<<<<<< HEAD
   const handleTeacherChange = (e: any) => {
     if (e.target.value !== "") {
       setSelectedTeacherId(e.target.value);
@@ -310,6 +458,9 @@ const EditFicheVoeux = () => {
       timer: 2000,
     });
   };
+=======
+  const [updateFicheVoeux] = useUpdateFicheVoeuxMutation();
+>>>>>>> 324dae79b2a08308b75028ff555e796ece7a5c98
 
   const clearTemporaryDaysData = (element: any) => {
     delete (element as any).allDays;
@@ -321,11 +472,12 @@ const EditFicheVoeux = () => {
     delete (element as any).filteredJoursOptions;
   };
 
-  const clearTemporarySubjectsData = (element: any) => {
-    delete (element as any).selectedSubjectOptions;
-    delete (element as any).selectedSubjects;
-    delete (element as any).filteredSubjectsOptions;
-    delete (element as any).filtredSubjects;
+  const clearTemporaryClassesData = (element: any) => {
+    delete (element as any).selectedClasseOptions;
+    delete (element as any).selectedClasses;
+    delete (element as any).filteredClassesOptions;
+    delete (element as any).filtredClasses;
+    delete (element as any).consernedClasses;
   };
 
   const onSubmitFicheVoeux = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -334,8 +486,9 @@ const EditFicheVoeux = () => {
       setFormData((prevState) => {
         const updatedFicheVoeux = [...prevState.fiche_voeux_classes];
         for (let element of updatedFicheVoeux) {
+
           clearTemporaryDaysData(element);
-          clearTemporarySubjectsData(element);
+          clearTemporaryClassesData(element);
         }
         return {
           ...prevState,
@@ -343,9 +496,11 @@ const EditFicheVoeux = () => {
         };
       });
 
-      await createFicheVoeux(formData).unwrap();
+      console.log(formData);
+
+      await updateFicheVoeux(formData).unwrap();
       notify();
-      navigate("/gestion-fiche-voeux/liste-fiche-voeux");
+      navigate("/gestion-emplois/gestion-fiche-voeux/liste-fiche-voeux");
     } catch (error: any) {
       console.log(error);
     }
@@ -371,80 +526,53 @@ const EditFicheVoeux = () => {
     });
   };
 
-  const toggleSemestre = () => {
-    setFormData((prevState) => {
-      return {
-        ...prevState,
-        fiche_voeux_classes: [
-          {
-            matieres: "",
-            jours: [""],
-            temps: "",
-            classe: [],
-            allDays: [],
-            selectedJourOptions: [],
-            selectedJours: [],
-            joursArray: [],
-            filtredJours: [],
-            jourOptions: [],
-            filteredJoursOptions: [],
-            consernedClasses: [],
-            selectedSubjectOptions: [],
-            selectedSubjects: [],
-            filteredSubjectsOptions: [],
-            filtredSubjects: [],
-          },
-        ],
-
-        enseignant: {
-          _id: "",
-          nom_fr: "",
-          nom_ar: "",
-          prenom_fr: "",
-          prenom_ar: "",
-        },
-        semestre: prevState.semestre === "S1" ? "S2" : "S1",
-      };
-    });
-  };
-
-  const { data: allMatieres = [] } = useFetchMatiereQuery();
-
-  const [consernedClasses, setConsernedClasses] = useState<any[]>([]);
-  const [selectedOptions, setSelectedOptions] = useState<any[]>([]);
-  const [selectedMatieres, setSelectedMatieres] = useState<Matiere[]>([]);
-  const [filteredOptions, setFiltredOptions] = useState<any[]>([]);
-
   const handleSelectChange = (selectedOptions: any, index: number) => {
+    console.log("selectedOptions", selectedOptions)
     setFormData((prevState) => {
       const updatedFicheVoeux = [...prevState.fiche_voeux_classes];
-      updatedFicheVoeux[index].selectedSubjectOptions = selectedOptions;
-      const matieres = selectedOptions.map((option: any) => ({
+      updatedFicheVoeux[index].selectedClasseOptions = selectedOptions;
+
+      const classes = selectedOptions.map((option: any) => ({
         _id: option.value,
-        code_matiere: option.code_matiere,
-        matiere: option.label,
-        type: option.type,
-        semestre: option.semestre,
-        volume: option.volume,
-        nbr_elimination: option.nbr_elimination,
+        label: option.nom_classe_fr
       }));
 
-      const uniqueMatieres: any = [
-        ...updatedFicheVoeux[index].selectedSubjects,
-        ...matieres,
-      ].reduce((acc, current) => {
-        const x = acc.find((item: any) => item._id === current._id);
-        if (!x) {
-          return acc.concat([current]);
-        } else {
-          return acc;
-        }
-      }, [] as Matiere[]);
+      // const uniqueClasses: any = [
+      //   ...updatedFicheVoeux[index].selectedClasses,
+      //   ...classes,
+      // ].reduce((acc, current) => {
+      //   const x = acc.find((item: any) => item._id === current._id);
+      //   if (!x) {
+      //     return acc.concat([current]);
+      //   } else {
+      //     return acc;
+      //   }
+      // }, [] as Matiere[]);
 
-      updatedFicheVoeux[index].selectedSubjects = uniqueMatieres;
-      updatedFicheVoeux[index].matieres = selectedOptions.map(
-        (item: any) => item.value
+      // updatedFicheVoeux[index].selectedClasses = uniqueClasses;
+      updatedFicheVoeux[index].classe = selectedOptions.map(
+        (item: any) => {
+          let classElement = allClasses.filter(c => c._id === item.value);
+
+          let modules = classElement[0].parcours.modules;
+          if (modules.length > 0) {
+            const subjects = modules.map((module: any) => {
+              let subjectsResult = module.matiere.filter((m: any) => m.matiere + " " + m.types[0].type === updatedFicheVoeux[index].matieres);
+              return subjectsResult;
+            })
+
+            const validSubjects = subjects.filter((subjectArray: any) => subjectArray.length > 0);
+
+            return {
+              class_id: item.value,
+              subject_id: validSubjects[0][0]._id
+            }
+
+          }
+        }
       );
+
+      console.log("handleSelectChange Class updatedFicheVoeux", updatedFicheVoeux)
 
       return {
         ...prevState,
@@ -453,6 +581,7 @@ const EditFicheVoeux = () => {
     });
   };
 
+<<<<<<< HEAD
   /*-------------------------------------------------------------------------- */
 
   // const handleSelectJourChange = (selectedJourOptions: any, index: number) => {
@@ -553,6 +682,8 @@ const EditFicheVoeux = () => {
     }
   };
 
+=======
+>>>>>>> 324dae79b2a08308b75028ff555e796ece7a5c98
   const customStyles = {
     multiValue: (styles: any, { data }: any) => ({
       ...styles,
@@ -595,25 +726,6 @@ const EditFicheVoeux = () => {
       (option: any) => !arr.some((jour: any) => jour === option.value)
     );
 
-    /*---------------- Subjects selection ---------------- */
-    let selectedTeacher = teachersWithoutWishCard.filter(
-      (teacher) => teacher._id === selectedTeacherId
-    );
-
-    let classes: any;
-    classes = allClasses;
-
-    // if (selectedTeacher[0].departements?.name_fr === "Tous les départements") {
-    //   classes = allClasses;
-    // } else {
-    //   classes = allClasses.filter(
-    //     (classItem) =>
-    //       classItem.departement._id === selectedTeacher[0].departements?._id
-    //   );
-    // }
-
-    /*---------------- Subjects selection ---------------- */
-
     setFormData((prevState) => ({
       ...prevState,
       fiche_voeux_classes: [
@@ -632,14 +744,30 @@ const EditFicheVoeux = () => {
           jourOptions: jourOptions,
           filteredJoursOptions: filteredJoursOptions,
           //Temporary data for subjects selection
-          consernedClasses: classes,
-          selectedSubjectOptions: [],
-          selectedSubjects: [],
-          filteredSubjectsOptions: [],
-          filtredSubjects: [],
+          consernedClasses: [],
+          selectedClasseOptions: [],
+          selectedClasses: [],
+          filteredClassesOptions: [],
+          filtredClasses: [],
+          selectionDisabled: false
         },
       ],
     }));
+
+    let searchTermRef = [...searchTerm];
+    console.log(searchTermRef);
+    searchTermRef.push('');
+    setSearchTerm(searchTermRef);
+
+    let filteredSubjectsRef = [...filteredSubjects];
+    console.log(filteredSubjectsRef);
+    filteredSubjectsRef.push([]);
+    setFilteredSubjects(filteredSubjectsRef);
+
+    let showSuggestionsRef = [...showSuggestions];
+    console.log(showSuggestionsRef);
+    showSuggestionsRef.push(false);
+    setShowSuggestions(showSuggestionsRef);
   };
 
   const addNewDayLine = () => {
@@ -661,6 +789,21 @@ const EditFicheVoeux = () => {
         fiche_voeux_classes: updatedFicheVoeux,
       };
     });
+
+    let searchTermRef = [...searchTerm];
+    console.log(searchTermRef);
+    searchTermRef.splice(index, 1);
+    setSearchTerm(searchTermRef);
+
+    let filteredSubjectsRef = [...filteredSubjects];
+    console.log(filteredSubjectsRef);
+    filteredSubjectsRef.splice(index, 1);
+    setFilteredSubjects(filteredSubjectsRef);
+
+    let showSuggestionsRef = [...showSuggestions];
+    console.log(showSuggestionsRef);
+    showSuggestionsRef.splice(index, 1);
+    setShowSuggestions(showSuggestionsRef);
   };
 
   const removeDayLine = (index: number) => {
@@ -684,9 +827,101 @@ const EditFicheVoeux = () => {
       "Samedi",
     ];
     return allJours.filter(
-      (jour) => !formData.jours.some((selected: any) => selected.jour === jour)
+      (jour) => !formData.jours.some((selected) => selected.jour === jour)
     );
   };
+
+  const handleSelectSubject = (subject: any, index: number) => {
+
+    let searchTermRef = [...searchTerm];
+    searchTermRef[index] = subject?.matiere! + " " + subject?.types[0].type;
+    setSearchTerm(searchTermRef);
+
+    let filteredSubjectsRef = [...filteredSubjects];
+    filteredSubjectsRef[index] = [];
+    setFilteredSubjects(filteredSubjectsRef);
+
+    let showSuggestionsRef = [...showSuggestions];
+    showSuggestionsRef[index] = false;
+    setShowSuggestions(showSuggestionsRef);
+
+    console.log(subject);
+    console.log(allClasses);
+
+    //*Step 1: Filter all classes based on subject semester and class semesters (Could be S1 or S2)
+    const filteredClassesBySubjectSemester = allClasses.filter(c => c.semestres[0] === subject.semestre || c.semestres[1] === subject.semestre);
+    console.log('Step1 classes', filteredClassesBySubjectSemester);
+
+    //*Step 2: Filter from the above result all classes based on subject semester module semester and subject id
+    let fileteredClasses = [];
+    for (const classElement of filteredClassesBySubjectSemester) {
+      let modules = classElement.parcours.modules.filter((m: any) => m.semestre_module === subject.semestre);
+      if (modules.length > 0) {
+        const subjects = modules.map((module: any) => {
+          let subjectsResult = module.matiere.filter((m: any) => m.matiere === subject.matiere);
+          return subjectsResult;
+        })
+        console.log('subjects', subjects)
+        const validSubjects = subjects.filter((subjectArray: any) => subjectArray.length > 0);
+        if (validSubjects.length > 0) {
+          console.log('classElement', classElement);
+          fileteredClasses.push(classElement);
+        }
+      }
+    }
+
+    console.log('Step2 classes', fileteredClasses);
+
+    let options = fileteredClasses.map((classe: any) => ({
+      value: classe?._id!,
+      label: classe?.nom_classe_fr!,
+    }));
+
+    setFormData((prevState) => {
+      const updatedFicheVoeux = [...prevState.fiche_voeux_classes];
+      updatedFicheVoeux[index].classe = [];
+      updatedFicheVoeux[index].selectedClasses = [];
+      updatedFicheVoeux[index].selectedClasseOptions = [];
+      updatedFicheVoeux[index].matieres = subject.matiere + " " + subject.types[0].type;
+
+      let filtredOptions: any = options.filter(
+        (option: any) =>
+          !updatedFicheVoeux[index].selectedClasses.some(
+            (classe: any) => classe._id === option.value
+          )
+      );
+
+      console.log("filtredOptions", filtredOptions);
+
+      updatedFicheVoeux[index].filteredClassesOptions = filtredOptions;
+      return {
+        ...prevState,
+        fiche_voeux_classes: updatedFicheVoeux,
+      };
+    });
+
+  };
+
+  const onChangeObservation = (e: any) => {
+    const { id, value } = e.target;
+    setFormData((prevState) => ({
+      ...prevState,
+      remarque: value,
+    }));
+  };
+
+  const resetClassSelection = (fiche_index: number) => {
+    setFormData((prevState) => {
+      let updatedFicheVoeux = [...prevState.fiche_voeux_classes];
+      updatedFicheVoeux[fiche_index].selectionDisabled = false;
+      updatedFicheVoeux[fiche_index].selectedClasseOptions = [];
+      return {
+        ...prevState,
+        fiche_voeux_classes: updatedFicheVoeux,
+      };
+    });
+  }
+
 
   return (
     <React.Fragment>
@@ -701,31 +936,16 @@ const EditFicheVoeux = () => {
                 ></div>
                 <input type="hidden" id="id-field" />
                 <Row>
-                  <Col lg={3}>
-                    <div className="mb-3">
-                      <Form.Label htmlFor="semestre">
-                        Semestre {formData.semestre === "S2" ? <>2</> : <>1</>}
-                      </Form.Label>
-                      <div className="form-check form-switch form-switch-lg from-switch-info">
-                        {/* <input
-                          className="form-check-input"
-                          type="checkbox"
-                          role="switch"
-                          id="SwitchCheck6"
-                          checked={formData.semestre === "S2"}
-                          onChange={toggleSemestre}
-                        /> */}
-                        {/* <label
-                          className="form-check-label"
-                          htmlFor="SwitchCheck6"
-                        >
-                          {formData.semestre}
-                        </label> */}
-                      </div>
+                  <Col lg={12}>
+                    <div className="mb-3 text-center">
+                      <h2>
+                        Fiche de Voeux - {voeuxDetails.enseignant.prenom_fr} {voeuxDetails.enseignant.nom_fr} - {voeuxDetails.semestre}
+                      </h2>
                     </div>
                   </Col>
                 </Row>
                 <Row>
+<<<<<<< HEAD
                   <Col lg={2}>
                     <div className="mb-3">
                       <Form.Label htmlFor="classe">Enseignant</Form.Label>
@@ -750,29 +970,67 @@ const EditFicheVoeux = () => {
                   </Col>
                   <Col lg={5}>
                     {formData.fiche_voeux_classes.map((data, index) => (
+=======
+                  <Col lg={7}>
+                    {formData.fiche_voeux_classes.map((data, fiche_index) => (
+>>>>>>> 324dae79b2a08308b75028ff555e796ece7a5c98
                       <Row>
-                        <Col lg={4}>
-                          <div className="mb-3">
-                            <Form.Label htmlFor="classe">Classe</Form.Label>
-                            <select
-                              className="form-select text-muted"
-                              name="classe"
-                              id="classe"
-                              value={formData.fiche_voeux_classes[index].classe}
-                              onChange={(e) => {
-                                handleChangeClasse(e, index);
+                        <Col lg={5}>
+                          <div className="position-relative">
+                            <Form.Label className="text-muted">Matière</Form.Label>
+                            <Form.Control
+                              placeholder="Chercher matière..."
+                              type="text"
+                              dir="ltr"
+                              spellCheck={false}
+                              autoComplete="off"
+                              autoCapitalize="off"
+                              value={searchTerm[fiche_index]}
+                              onChange={(e: any) => handleSearch(e, fiche_index)}
+                              onFocus={() => {
+                                let showSuggestionsRef = [...showSuggestions];
+                                showSuggestionsRef[fiche_index] = true;
+                                setShowSuggestions(showSuggestionsRef);
                               }}
-                            >
-                              <option value="">Sélectionner Classe</option>
-                              {data?.consernedClasses?.map((classe: any) => (
-                                <option key={classe._id} value={classe._id}>
-                                  {`${classe.nom_classe_fr}`}
-                                </option>
-                              ))}
-                            </select>
+                            />
+                            {showSuggestions[fiche_index] && filteredSubjects[fiche_index]?.length > 0 && (
+                              <ListGroup className="mt-2 w-100 shadow">
+                                {filteredSubjects[fiche_index]?.map((subject, index) => (
+                                  <ListGroup.Item
+                                    key={index}
+                                    action
+                                    onClick={() => handleSelectSubject(subject, fiche_index)}
+                                  >
+                                    {subject?.matiere! + " " + subject.types[0].type}
+                                  </ListGroup.Item>
+                                ))}
+                              </ListGroup>
+                            )}
                           </div>
                         </Col>
-                        <Col lg={6}>
+                        <Col lg={3}>
+                          <div className="mb-3">
+                            <Form.Label
+                              htmlFor="choices-multiple-remove-button"
+                              className="text-muted"
+                            >
+                              Sélectionner Classe
+                            </Form.Label>
+
+                            <Select
+                              closeMenuOnSelect={false}
+                              isMulti
+                              options={data.filteredClassesOptions}
+                              value={data.selectedClasseOptions}
+                              styles={customStyles}
+                              isDisabled={data.selectionDisabled}
+                              onChange={(e) => {
+                                handleSelectChange(e, fiche_index);
+                              }}
+                            />
+                          </div>
+                        </Col>
+                        {/* <Col lg={6}>
                           <div className="mb-3">
                             <Form.Label
                               htmlFor="choices-multiple-remove-button"
@@ -792,13 +1050,22 @@ const EditFicheVoeux = () => {
                               }}
                             />
                           </div>
-                        </Col>
+                        </Col> */}
 
                         <Col lg={2}>
                           <Button
                             className="mt-4"
+                            style={{ marginRight: '5px' }}
+                            variant="warning"
+                            disabled={!data.selectionDisabled}
+                            onClick={() => resetClassSelection(fiche_index)}
+                          >
+                            <i className="bi bi-pencil-fill"></i>
+                          </Button>
+                          <Button
+                            className="mt-4"
                             variant="danger"
-                            onClick={() => removeClassLine(index)}
+                            onClick={() => removeClassLine(fiche_index)}
                           >
                             <i className="bi bi-trash-fill"></i>
                           </Button>
@@ -807,11 +1074,12 @@ const EditFicheVoeux = () => {
                     ))}
 
                     <Row>
-                      <Col lg={12}>
+                      <Col lg={12} className="text-end">
                         <Button
                           variant="info"
                           disabled={formData.enseignant.nom_ar === ""}
                           onClick={addNewClassLine}
+                          style={{ marginRight: '20%' }}
                         >
                           <i
                             className="bi bi-plus"
@@ -822,7 +1090,7 @@ const EditFicheVoeux = () => {
                     </Row>
                   </Col>
                   <Col lg={5}>
-                    {formData.jours.map((j: any, index: any) => (
+                    {formData.jours.map((j, index) => (
                       <Row>
                         <Col lg={5}>
                           <div className="mb-3">
@@ -889,7 +1157,6 @@ const EditFicheVoeux = () => {
                       <Col lg={12}>
                         <Button
                           variant="info"
-                          //disabled={formData.enseignant.nom_ar === ""}
                           onClick={addNewDayLine}
                         >
                           <i
@@ -897,6 +1164,14 @@ const EditFicheVoeux = () => {
                             style={{ fontSize: "15px" }}
                           ></i>
                         </Button>
+                      </Col>
+                    </Row>
+                    <Row className="mt-3">
+                      <Col lg={8}>
+                        <div>
+                          <label className="form-label">Remarque</label>
+                          <textarea onChange={onChangeObservation} value={formData.remarque} className="form-control" id="exampleFormControlTextarea5" rows={3}></textarea>
+                        </div>
                       </Col>
                     </Row>
                   </Col>
@@ -912,7 +1187,7 @@ const EditFicheVoeux = () => {
                       Retour
                     </Button>
                     <Button variant="success" id="add-btn" type="submit">
-                      Ajouter
+                      Modifier
                     </Button>
                   </div>
                 </div>

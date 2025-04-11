@@ -256,6 +256,16 @@ export const etudiantSlice = createApi({
         },
         invalidatesTags: ["Etudiant"],
       }),
+      fetchEtudiantsByClassIds: builder.query<any, string[]>({
+        query(payload) {
+          return {
+            url: "/get-nbr-etudiants-by-classes",
+            method: "POST",
+            body: payload,
+          };
+        },
+        providesTags: ["Etudiant"],
+      }),
       updateEtudiant: builder.mutation<void, EtudiantExcel>({
         query: ({ _id, ...rest }) => {
           // console.log("Payload being sent to the backend:", { id: _id, ...rest });
@@ -313,4 +323,5 @@ export const {
   useGetTypeInscriptionByIdStudentMutation,
   useUpdateGroupeClasseMutation,
   useFetchEtudiantsByIdClasseQuery,
+  useFetchEtudiantsByClassIdsQuery
 } = etudiantSlice;
