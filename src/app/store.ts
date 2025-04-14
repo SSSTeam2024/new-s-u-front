@@ -81,6 +81,7 @@ import { voieEnvoiSlice } from "features/voieEnvoi/voieEnvoiSlice";
 import { courrierEntrantSlice } from "features/courrierEntrant/courrierEntrant";
 import { courrierSortantSlice } from "features/courrierSortant/courrierSortantSlice";
 import { intervenantsSlice } from "features/intervenants/intervenantsSlice";
+import { pointageSlice } from "features/pointageEnseignant/pointageEnseignantSlice";
 
 export const store = configureStore({
   reducer: {
@@ -162,6 +163,8 @@ export const store = configureStore({
     [courrierSortantSlice.reducerPath]: courrierSortantSlice.reducer,
     //! Intervenants
     [intervenantsSlice.reducerPath]: intervenantsSlice.reducer,
+     //! Pointage Enseignant
+     [pointageSlice.reducerPath]: pointageSlice.reducer,
     auth: authSlice,
     Layout: LayoutReducer,
     ForgetPassword: ForgetPasswordReducer,
@@ -240,7 +243,8 @@ export const store = configureStore({
       voieEnvoiSlice.middleware,
       courrierEntrantSlice.middleware,
       courrierSortantSlice.middleware,
-      intervenantsSlice.middleware
+      intervenantsSlice.middleware,
+      pointageSlice.middleware
     ]);
   },
 });

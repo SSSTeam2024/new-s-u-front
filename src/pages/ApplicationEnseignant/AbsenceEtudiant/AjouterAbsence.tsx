@@ -15,6 +15,10 @@ import { formatDate } from "helpers/data_time_format";
 import { useGetTeacherPeriodsBySemesterAndIdTeacherV2Mutation } from "features/teachersPeriods/teachersPeriods";
 import { useGetPeriodicSessionsByTeacherV2Mutation } from "features/seance/seance";
 import { useFetchTimeTableParamsQuery } from "features/timeTableParams/timeTableParams";
+import {
+  PointageEnseignant,
+  useAddPointageEnseignantMutation,
+} from "features/pointageEnseignant/pointageEnseignantSlice";
 
 const AjouterAbsence = () => {
   const { data: AllEnseignants = [] } = useFetchEnseignantsQuery();
@@ -303,6 +307,8 @@ const AjouterAbsence = () => {
 
   const [createAbsence] = useAddAbsenceEtudiantMutation();
 
+  const [createPointage] = useAddPointageEnseignantMutation();
+
   const initialAbsence: AbsenceEtudiant = {
     classe: "",
     enseignant: "",
@@ -312,7 +318,15 @@ const AjouterAbsence = () => {
     trimestre: "",
   };
 
+  const initialPointage: PointageEnseignant = {
+    id_enseignant: "",
+    id_seance: "",
+    date_pointage: "",
+  };
+
   const [absence, setAbsence] = useState(initialAbsence);
+
+  const [pointage, setPointage] = useState(initialPointage);
 
   const handleStudentTypeChange = (e: any, element: any, index: number) => {
     let value = "";
@@ -372,9 +386,17 @@ const AjouterAbsence = () => {
         seance: selectedSession,
       };
 
+      const pointageData = {
+        ...pointage,
+        id_enseignant: selectedEnseignant,
+        id_seance: selectedSession,
+        date_pointage: formatDate(selectedDate),
+      };
+
       await createAbsence(absenceData)
         .then(() => notifySuccess())
         .then(() => setAbsence(initialAbsence));
+      await createPointage(pointageData);
       tog_AllAbsences();
     } catch (error) {
       notifyError(error);
