@@ -24,7 +24,7 @@ interface MatiereOption {
 }
 
 const EditFicheVoeux = () => {
-  document.title = " Modifier fiche de voeux | Application Smart Institute";
+  document.title = "Modifier fiche de voeux | ENIGA";
   const navigate = useNavigate();
 
   function tog_retourParametres() {

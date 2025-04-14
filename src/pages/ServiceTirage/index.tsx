@@ -7,30 +7,10 @@ import Swal from "sweetalert2";
 import { useFetchDemandeTiragesQuery } from "features/demandeTirage/demandeTirageSlice";
 
 const DemandesTirage = () => {
+  document.title = "Service Tirage | ENIGA";
+
   const { data = [] } = useFetchDemandeTiragesQuery();
-  console.log(data);
-
   const [showObservation, setShowObservation] = useState<boolean>(false);
-
-  const notifySuccess = () => {
-    Swal.fire({
-      position: "center",
-      icon: "success",
-      title: "Paramètre Absence SMS a été modifié avec succès",
-      showConfirmButton: false,
-      timer: 2500,
-    });
-  };
-
-  const notifyError = (err: any) => {
-    Swal.fire({
-      position: "center",
-      icon: "error",
-      title: `Sothing Wrong, ${err}`,
-      showConfirmButton: false,
-      timer: 2500,
-    });
-  };
 
   const navigate = useNavigate();
 
@@ -252,7 +232,7 @@ const DemandesTirage = () => {
               <Card.Header className="border-bottom-dashed">
                 <Row className="g-3">
                   <Col lg={3}>
-                    <div className="search-box">
+                    <label className="search-box">
                       <input
                         type="text"
                         className="form-control search"
@@ -261,8 +241,9 @@ const DemandesTirage = () => {
                         onChange={handleSearchChange}
                       />
                       <i className="ri-search-line search-icon"></i>
-                    </div>
+                    </label>
                   </Col>
+                  <Col lg={6}></Col>
                   <Col lg={3} className="d-flex justify-content-end">
                     <div
                       className="btn-group btn-group-sm"

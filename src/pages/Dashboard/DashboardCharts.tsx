@@ -512,7 +512,7 @@ const BasicColumn = ({ dataColors }: any) => {
       }
 
       record.personnels?.forEach((p) => {
-        if (p.morning === "En congé" && p.evening === "En congé") {
+        if (p.en_conge === "yes") {
           result[month].fullDay += 1;
         }
       });

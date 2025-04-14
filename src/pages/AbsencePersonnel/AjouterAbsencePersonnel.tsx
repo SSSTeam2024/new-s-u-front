@@ -33,11 +33,6 @@ const AjouterAbsencePersonnel = () => {
   });
 
   const [createAbsence] = useAddAbsencePersonnelMutation();
-  const [selectedDuree, setSelectedDuree] = useState<string>("");
-
-  const handleSelectedDuree = (e: any) => {
-    setSelectedDuree(e.target.value);
-  };
 
   const [attendance, setAttendance] = useState<any[]>([]);
 
@@ -55,12 +50,13 @@ const AjouterAbsencePersonnel = () => {
       setAttendance(
         data.map((personnel) => ({
           personnel: personnel._id,
-          typeAbsent: "",
+          autorisation: "",
           name: `${personnel.prenom_fr} ${personnel.nom_fr}`,
           morning: "Present",
           evening: "Present",
           fullDay: "Present",
           duree: "",
+          en_conge: "",
         }))
       );
     }
@@ -76,9 +72,10 @@ const AjouterAbsencePersonnel = () => {
         personnel: congé.personnelId?._id!,
         name: `${congé.personnelId.prenom_fr} ${congé.personnelId.nom_fr}`,
         isCongé: true,
-        evening: "En congé",
-        fullDay: "En congé",
-        morning: "En congé",
+        evening: "",
+        fullDay: "",
+        morning: "",
+        en_conge: "yes",
       });
     }
   });
@@ -150,18 +147,62 @@ const AjouterAbsencePersonnel = () => {
 
   const { jour, added_by, personnels } = absence;
 
+  const createAbsencePayload = (): AbsencePersonnel => {
+    const personnelsFormatted = finalList.map((person) => {
+      const isCongé = person.en_conge === "yes";
+
+      let morning = person.morning;
+      let evening = person.evening;
+      let fullDay = person.fullDay;
+      let autorisation = "";
+      if (
+        filteredWorkingHour?.daily_pause_start === "--:--" &&
+        filteredWorkingHour?.daily_pause_end === "--:--"
+      ) {
+        if (fullDay === "Autorisation") {
+          autorisation = "yes";
+          morning = "Present";
+          evening = "Present";
+          fullDay = "Autorisation";
+        } else if (fullDay !== "Present") {
+          morning = "";
+          evening = "";
+        }
+      } else {
+        if (morning === "Autorisation") {
+          autorisation = "matin";
+          if (morning === "Autorisation") morning = "Present";
+        }
+        if (evening === "Autorisation") {
+          autorisation = "apres_midi";
+          if (evening === "Autorisation") evening = "Present";
+        }
+      }
+
+      return {
+        personnel: person.personnel,
+        autorisation,
+        morning: isCongé ? "" : morning,
+        evening: isCongé ? "" : evening,
+        fullDay: isCongé ? "" : fullDay,
+        duree: person.duree || "",
+        en_conge: isCongé ? "yes" : "",
+      };
+    });
+
+    return {
+      jour: date,
+      personnels: personnelsFormatted,
+      added_by: user?._id!,
+    };
+  };
+
   const onSubmitAbsence = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {
-      const absenceData = {
-        ...absence,
-        added_by: user?._id!,
-        personnels: finalList,
-        jour: date,
-      };
-
-      createAbsence(absenceData)
+      const payload = createAbsencePayload();
+      createAbsence(payload)
         .then(() => notifySuccess())
         .then(() => setAbsence(initialAbsencePersonnel));
       tog_AllAbsences();

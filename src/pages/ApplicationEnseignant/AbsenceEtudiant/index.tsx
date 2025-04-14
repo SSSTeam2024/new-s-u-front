@@ -312,7 +312,7 @@ const AbsenceEtudiant = () => {
       Matiere: "",
       // Enseignant: "",
       Enseignant: "Total Absence",
-      // Total: totalAbsences,
+      Total: totalAbsences,
     });
 
     const worksheet = XLSX.utils.json_to_sheet(worksheetData);

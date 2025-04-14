@@ -44,7 +44,7 @@ export const replaceShortCodes = (
   }
   // UNIVERSITY FR
   if (newBody?.includes("nom_directeur")) {
-    console.log(allVariables);
+
     newBody = newBody?.replace("nom_directeur", allVariables.directeur_fr);
   }
 
@@ -119,7 +119,7 @@ export const replaceShortCodes = (
   }
   // personnel FR
 
-  console.log(newBody);
+
   newUpdateBody = JSON.parse(newBody);
 
   return newUpdateBody;

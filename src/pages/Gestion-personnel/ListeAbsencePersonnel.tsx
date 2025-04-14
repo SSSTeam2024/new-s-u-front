@@ -14,6 +14,7 @@ const ListeAbsencePersonnel = () => {
 
   const { data = [] } = useFetchAbsencePersonnelsQuery();
 
+  console.log("data", data);
   const [deleteAbsence] = useDeleteAbsenceMutation();
 
   const swalWithBootstrapButtons = Swal.mixin({
@@ -62,20 +63,14 @@ const ListeAbsencePersonnel = () => {
       name: <span className="font-weight-bold fs-13">Personnels Absents</span>,
       selector: (row: any) =>
         row.personnels.filter(
-          (e: any) =>
-            (e?.evening! === "Absent" && e?.morning! === "Absent") ||
-            e?.fullDay! === "Absent"
+          (e: any) => e?.evening! === "Absent" || e?.morning! === "Absent"
         ).length,
       sortable: true,
     },
     {
       name: <span className="font-weight-bold fs-13">Personnels En Congé</span>,
       selector: (row: any) =>
-        row.personnels.filter(
-          (e: any) =>
-            (e?.evening! === "En congé" && e?.morning! === "En congé") ||
-            e?.fullDay! === "En congé"
-        ).length,
+        row.personnels.filter((e: any) => e?.en_conge! === "yes").length,
       sortable: true,
     },
     {

@@ -6,7 +6,10 @@ import Swal from "sweetalert2";
 import { useFetchPersonnelWorkingDayQuery } from "features/personnelWorkingDay/personnelWorkingDaySlice";
 import Lottie, { LottieRefCurrentProps } from "lottie-react";
 import absenceAnimation from "../../assets/images/Animation - 1742900291397.json";
-import { AbsencePersonnel } from "features/absencePersonnel/absencePersonnel";
+import {
+  AbsencePersonnel,
+  useUpdateAbsenceMutation,
+} from "features/absencePersonnel/absencePersonnel";
 
 const ModifierAbsencePersonnel = () => {
   document.title = "Modifier Absence Personnels | ENIGA";
@@ -28,7 +31,7 @@ const ModifierAbsencePersonnel = () => {
       personnels: [],
     }
   );
-
+  const navigate = useNavigate();
   const filteredWorkingHour = AllPersonnelWorkingDay.find((day) => {
     const periodStart = day.period_start;
     const periodEnd = day.period_end;
@@ -64,24 +67,94 @@ const ModifierAbsencePersonnel = () => {
     }
   }, [absenceDetails, hasProcessed, filteredWorkingHour]);
 
-  const start: any = new Date(filteredWorkingHour?.period_start!);
-  const end: any = new Date(filteredWorkingHour?.period_end!);
-  const diffInDays = (end - start) / (1000 * 60 * 60 * 24) + 1;
+  // const start: any = new Date(filteredWorkingHour?.period_start!);
+  // const end: any = new Date(filteredWorkingHour?.period_end!);
+  // const diffInDays = (end - start) / (1000 * 60 * 60 * 24) + 1;
 
-  let periodType = "Temps Régulier";
+  // let periodType = "Temps Régulier";
 
-  if (diffInDays === 30) {
-    periodType = "Calendrier Ramadan";
-  } else if (diffInDays === 62) {
-    periodType = "Séance unique";
-  }
+  // if (diffInDays === 30) {
+  //   periodType = "Calendrier Ramadan";
+  // } else if (diffInDays === 62) {
+  //   periodType = "Séance unique";
+  // }
+
+  const notifySuccess = () => {
+    Swal.fire({
+      position: "center",
+      icon: "success",
+      title: "L'absence a été modifié avec succès",
+      showConfirmButton: false,
+      timer: 2500,
+    });
+  };
+
+  const notifyError = (err: any) => {
+    Swal.fire({
+      position: "center",
+      icon: "error",
+      title: `Sothing Wrong, ${err}`,
+      showConfirmButton: false,
+      timer: 2500,
+    });
+  };
+
+  const [updatedPersonnels, setUpdatedPersonnels] = useState(
+    absenceDetails?.personnels || []
+  );
+
+  const handleChange = (index: number, field: string, value: string) => {
+    setUpdatedPersonnels((prev: any) => {
+      const updated = [...prev];
+      const current = { ...updated[index] };
+
+      if (field === "morning" && value === "Autorisation") {
+        current.autorisation = "matin";
+      } else if (field === "evening" && value === "Autorisation") {
+        current.autorisation = "apres_midi";
+      } else if (field === "morning" && current.autorisation === "matin") {
+        current.autorisation = "";
+      } else if (field === "evening" && current.autorisation === "apres_midi") {
+        current.autorisation = "";
+      }
+
+      current[field] = value;
+      updated[index] = current;
+      return updated;
+    });
+  };
+
+  const handleDureeChange = (index: number, value: string) => {
+    setUpdatedPersonnels((prev: any) => {
+      const updated = [...prev];
+      updated[index].duree = value;
+      return updated;
+    });
+  };
+
+  const [updateAbsence] = useUpdateAbsenceMutation();
+
+  const handleSubmit = () => {
+    try {
+      updateAbsence({
+        _id: absenceDetails._id,
+        jour: absenceDetails.jour,
+        personnels: updatedPersonnels,
+        added_by: absenceDetails.added_by,
+      });
+      notifySuccess();
+      navigate("/gestion-personnel/absence-personnel");
+    } catch (error) {
+      notifyError(error);
+    }
+  };
 
   return (
     <React.Fragment>
       <div className="page-content">
         <Container fluid>
           <Breadcrumb
-            title="Modifier Absence Personnels"
+            title="Modifiér Absence Personnels"
             pageTitle="Gestion des Personnels"
           />
           <Col lg={12}>
@@ -110,88 +183,103 @@ const ModifierAbsencePersonnel = () => {
                 <Form>
                   <Row>
                     <Col lg={6}>
-                      {absenceDetails?.personnels.map(
-                        (element: any, index: number) => {
-                          const { morning, evening, fullDay } = element;
-
-                          const getDisplayElement = (period: string) => {
-                            if (period === "Present") {
-                              return (
-                                <select>
-                                  <option value="">Choisir ...</option>
+                      {updatedPersonnels.map((person: any, index: number) => (
+                        <Row key={person.personnel}>
+                          <Col className="mb-3">
+                            {person.personnel.prenom_fr}
+                            {person.personnel.nom_fr}
+                          </Col>
+                          <Col className="mb-3">
+                            {person.en_conge === "yes" ? (
+                              <span className="badge bg-success">En Congé</span>
+                            ) : (
+                              <>
+                                <Form.Select
+                                  value={
+                                    person.autorisation === "matin"
+                                      ? "Autorisation"
+                                      : person.morning
+                                  }
+                                  onChange={(e) =>
+                                    handleChange(
+                                      index,
+                                      "morning",
+                                      e.target.value
+                                    )
+                                  }
+                                >
                                   <option value="Present">Présent</option>
                                   <option value="Absent">Absent</option>
                                   <option value="Autorisation">
                                     Autorisation
                                   </option>
-                                </select>
-                              );
-                            } else if (period === "Absent") {
-                              return (
-                                <select>
-                                  <option value="">Choisir ...</option>
+                                </Form.Select>
+                                {person.autorisation === "matin" && (
+                                  <Form.Select
+                                    className="mt-2"
+                                    value={person.duree}
+                                    onChange={(e) =>
+                                      handleDureeChange(index, e.target.value)
+                                    }
+                                  >
+                                    <option value="">
+                                      Sélectionner la durée
+                                    </option>
+                                    <option value="1H">1H</option>
+                                    <option value="2H">2H</option>
+                                  </Form.Select>
+                                )}
+                              </>
+                            )}
+                          </Col>
+                          <Col className="mb-3">
+                            {person.en_conge === "yes" ? (
+                              <span className="badge bg-success">En Congé</span>
+                            ) : (
+                              <>
+                                <Form.Select
+                                  value={
+                                    person.autorisation === "apres_midi"
+                                      ? "Autorisation"
+                                      : person.evening
+                                  }
+                                  onChange={(e) =>
+                                    handleChange(
+                                      index,
+                                      "evening",
+                                      e.target.value
+                                    )
+                                  }
+                                >
                                   <option value="Present">Présent</option>
                                   <option value="Absent">Absent</option>
                                   <option value="Autorisation">
                                     Autorisation
                                   </option>
-                                </select>
-                              );
-                            } else if (period === "Autorisation") {
-                              return (
-                                <select>
-                                  <option value="">Choisir ...</option>
-                                  <option value="Present">Présent</option>
-                                  <option value="Absent">Absent</option>
-                                  <option value="Autorisation">
-                                    Autorisation
-                                  </option>
-                                </select>
-                              );
-                            } else if (period === "En congé") {
-                              return (
-                                <span className="text-primary">En Congé</span>
-                              );
-                            }
-                          };
+                                </Form.Select>
 
-                          const displayElementMorning =
-                            getDisplayElement(morning);
-                          const displayElementEvening =
-                            getDisplayElement(evening);
-
-                          const displayElement = getDisplayElement(fullDay);
-
-                          return filteredWorkingHour?.daily_pause_start ===
-                            "--:--" &&
-                            filteredWorkingHour?.daily_pause_end === "--:--" ? (
-                            <Row
-                              key={element?.personnel?._id!}
-                              className="mb-1"
-                            >
-                              <Col lg={6}>
-                                {element.personnel.prenom_fr}{" "}
-                                {element.personnel.nom_fr}
-                              </Col>
-                              <Col>{displayElement}</Col>
-                            </Row>
-                          ) : (
-                            <Row
-                              key={element?.personnel?._id!}
-                              className="mb-1"
-                            >
-                              <Col lg={6}>
-                                {element.personnel.prenom_fr}{" "}
-                                {element.personnel.nom_fr}
-                              </Col>
-                              <Col>{displayElementMorning}</Col>
-                              <Col>{displayElementEvening}</Col>
-                            </Row>
-                          );
-                        }
-                      )}
+                                {person.autorisation === "apres_midi" && (
+                                  <Form.Select
+                                    className="mt-2"
+                                    value={person.duree}
+                                    onChange={(e) =>
+                                      handleDureeChange(index, e.target.value)
+                                    }
+                                  >
+                                    <option value="">
+                                      Sélectionner la durée
+                                    </option>
+                                    <option value="1H">1H</option>
+                                    <option value="2H">2H</option>
+                                  </Form.Select>
+                                )}
+                              </>
+                            )}
+                          </Col>
+                        </Row>
+                      ))}
                     </Col>
-                    <Col className="d-flex justify-content-center align-items-center">
+                    <Col>
                       <Lottie
                         lottieRef={lottieRef3}
                         onComplete={() => {
@@ -205,7 +293,12 @@ const ModifierAbsencePersonnel = () => {
                   </Row>
                   <Row>
                     <div className="hstack gap-2 justify-content-end">
-                      <Button type="submit" variant="success" id="addNew">
+                      <Button
+                        type="button"
+                        variant="success"
+                        id="updateAbsence"
+                        onClick={handleSubmit}
+                      >
                         Modifier
                       </Button>
                     </div>

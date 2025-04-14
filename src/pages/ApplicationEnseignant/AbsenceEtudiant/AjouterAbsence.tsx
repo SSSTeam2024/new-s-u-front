@@ -102,7 +102,7 @@ const AjouterAbsence = () => {
       }));
 
       setStudentsList(students);
-      console.log(students);
+
       setHasProcessed(true);
     }
 
@@ -371,7 +371,7 @@ const AjouterAbsence = () => {
         enseignant: selectedEnseignant,
         seance: selectedSession,
       };
-      console.log(absenceData);
+
       await createAbsence(absenceData)
         .then(() => notifySuccess())
         .then(() => setAbsence(initialAbsence));

@@ -5,11 +5,12 @@ export interface AbsencePersonnel {
   jour: string;
   personnels: {
     personnel: string;
-    typeAbsent: string;
+    autorisation: string;
     evening: string;
     morning: string;
     fullDay: string;
     duree: string;
+    en_conge: string
   }[];
   added_by?: string;
 }

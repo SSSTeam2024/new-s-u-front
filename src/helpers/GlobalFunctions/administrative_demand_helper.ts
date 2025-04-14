@@ -13,16 +13,16 @@ export const replaceShortCodes = (demandData: any, globalData: any, docNumber?: 
   // let departement = demandData.studentId.groupe_classe.departement;
   let allVariables = globalData[globalData.length - 1];
 
-  console.log(allVariables);
+ 
 
   const [an1, an2] = allVariables?.annee_universitaire!.split('/');
 
-  console.log(an1, an2); 
+  
 
   const [part1an1, part2an1] = an1.split('0');
   const [part1an2, part2an2] = an2.split('0');
 
-  console.log(part2an1, part2an2); 
+ 
 
   let anneeScolaire = "";
   let newUpdateBody = piece_demande?.body!;
@@ -40,7 +40,7 @@ export const replaceShortCodes = (demandData: any, globalData: any, docNumber?: 
   }
 
   if(piece_demande?.has_code! === '1'){
-    console.log(generatedQrCode);
+
     let qrData = `http://verify.eniga.smartschools.tn/verify.html?id=${generatedQrCode}`
     newBody = newBody?.replace(
       "https://qrcg-free-editor.qr-code-generator.com/latest/assets/images/websiteQRCode_noFrame.png",
@@ -322,7 +322,7 @@ export const replaceShortCodes = (demandData: any, globalData: any, docNumber?: 
   }
   // UNIVERSITY FR
   if (newBody?.includes("nom_directeur")) {
-    console.log(allVariables);
+
     newBody = newBody?.replace("nom_directeur", allVariables?.directeur_fr!);
   }
 
@@ -761,7 +761,7 @@ export const replaceShortCodes = (demandData: any, globalData: any, docNumber?: 
       enseignantId.specilaite.specialite_ar
     );
   }
-  // console.log(newBody);
+
   newUpdateBody = JSON.parse(newBody);
 
   return newUpdateBody;
