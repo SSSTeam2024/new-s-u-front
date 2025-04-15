@@ -93,7 +93,7 @@ const TableauChargesHoraires = () => {
       if (outputElement.charge_s1 !== "0" && outputElement.charge_s2 !== "0") {
         outputElement.moyenne = String(
           (Number(outputElement.charge_s1) + Number(outputElement.charge_s2)) /
-          2
+            2
         );
       }
 
@@ -117,7 +117,7 @@ const TableauChargesHoraires = () => {
             outputElement.teacher.grade.charge_horaire.annualMaxHS;
           outputElement.charge_hx = String(
             rest -
-            Number(outputElement.teacher.grade.charge_horaire.annualMaxHS)
+              Number(outputElement.teacher.grade.charge_horaire.annualMaxHS)
           );
         }
       }
@@ -258,7 +258,7 @@ const TableauChargesHoraires = () => {
         teachingHours <= Number(charge_horaire?.s1MaxHE!) */
       ) {
         // background = "lightblue";
-        background = "#1717f5cc"
+        background = "#1717f5cc";
       }
       // else if (
       //   teachingHours > Number(charge_horaire?.s1MaxHE!) &&
@@ -290,7 +290,7 @@ const TableauChargesHoraires = () => {
         teachingHours <= Number(charge_horaire?.s2MaxHE!) */
       ) {
         // background = "lightblue";
-        background = "#1717f5cc"
+        background = "#1717f5cc";
       }
       // else if (
       //   teachingHours > Number(charge_horaire?.s2MaxHE!) &&
@@ -424,7 +424,7 @@ const TableauChargesHoraires = () => {
                   <Row className="g-3 align-items-center">
                     {/* Search Box */}
                     <Col lg={3}>
-                      <div className="search-box">
+                      <label className="search-box">
                         <input
                           type="text"
                           className="form-control search"
@@ -433,7 +433,7 @@ const TableauChargesHoraires = () => {
                           onChange={handleSearchChange}
                         />
                         <i className="ri-search-line search-icon"></i>
-                      </div>
+                      </label>
                     </Col>
 
                     {/* Legend Section */}
@@ -466,7 +466,7 @@ const TableauChargesHoraires = () => {
                           <span
                             className="legend-icon"
                             style={{ backgroundColor: "#1717f5cc" }}
-                          //style={{ backgroundColor: "lightblue" }}
+                            //style={{ backgroundColor: "lightblue" }}
                           ></span>
                           Charge semestrielle en excès
                         </Col>
@@ -525,7 +525,7 @@ const TableauChargesHoraires = () => {
                           isPagination={true}
                           className="custom-header-css table align-middle table-nowrap"
                           tableClass="table-centered align-middle table-nowrap mb-0"
-                          theadClass="text-muted table-light"
+                          theadClass="text-muted"
                           SearchPlaceholder="Search Products..."
                         />
                       </table>

@@ -6,7 +6,7 @@ import Swal from "sweetalert2";
 import { useUpdatePostePersonnelMutation } from "features/postePersonnel/postePersonnel";
 
 const EditPostePersonnel = () => {
-  document.title = " Modifier Poste Personnel | Application Smart Institute";
+  document.title = " Modifier Poste Personnel | ENIGA";
   const navigate = useNavigate();
   const { state: postePersonnel } = useLocation();
   const [editPostePersonnel] = useUpdatePostePersonnelMutation();

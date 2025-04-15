@@ -30,7 +30,7 @@ import {
 type VisibleSubcategories = Record<string, boolean>;
 
 const ListeLeaveType = () => {
-  document.title = "Liste solde Congés | Smart Institute";
+  document.title = "Liste solde Congés | ENIGA";
 
   const user = useSelector((state: RootState) => selectCurrentUser(state));
 

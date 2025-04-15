@@ -1260,7 +1260,7 @@ const ListParcours = () => {
                       customPageSize={10}
                       className="custom-header-css table align-middle table-nowrap"
                       tableClass="table-centered align-middle table-nowrap mb-0"
-                      theadClass="text-muted table-light"
+                      theadClass="text-muted"
                       SearchPlaceholder="Search Products..."
                     />
                   </table>

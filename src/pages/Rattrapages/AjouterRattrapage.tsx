@@ -47,7 +47,7 @@ import { useGetPeriodByClassMutation } from "features/classPeriod/classPeriod";
 import DatePicker from "react-datepicker";
 
 const AjouterRattrapage = () => {
-  document.title = " Gestion des rattrapages | Application Smart Institute";
+  document.title = " Gestion des rattrapages | ENIGA";
   const { data: paramsData = [] } = useFetchTimeTableParamsQuery();
 
   const convertTimeStringToMs = (timeString: string) => {

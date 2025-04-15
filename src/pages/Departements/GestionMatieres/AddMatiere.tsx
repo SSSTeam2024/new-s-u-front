@@ -13,7 +13,7 @@ import Swal from "sweetalert2";
 import { useAddMatiereMutation } from "features/matiere/matiere";
 
 const AddMatiere = () => {
-  document.title = " Ajouter Matière | Application Smart Institute";
+  document.title = " Ajouter Matière | ENIGA";
   const navigate = useNavigate();
 
   const [createMatiere] = useAddMatiereMutation();

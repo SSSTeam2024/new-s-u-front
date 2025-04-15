@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Container, Row, Card, Col, Form, Offcanvas } from "react-bootstrap";
 import DataTable from "react-data-table-component";
 import Breadcrumb from "Common/BreadCrumb";
@@ -7,31 +7,10 @@ import Swal from "sweetalert2";
 import { useFetchDemandeTiragesQuery } from "features/demandeTirage/demandeTirageSlice";
 
 const DemandesTirage = () => {
+  document.title = "Service Tirage | ENIGA";
+
   const { data = [] } = useFetchDemandeTiragesQuery();
-  console.log(data);
-
-
   const [showObservation, setShowObservation] = useState<boolean>(false);
-
-  const notifySuccess = () => {
-    Swal.fire({
-      position: "center",
-      icon: "success",
-      title: "Paramètre Absence SMS a été modifié avec succès",
-      showConfirmButton: false,
-      timer: 2500,
-    });
-  };
-
-  const notifyError = (err: any) => {
-    Swal.fire({
-      position: "center",
-      icon: "error",
-      title: `Sothing Wrong, ${err}`,
-      showConfirmButton: false,
-      timer: 2500,
-    });
-  };
 
   const navigate = useNavigate();
 
@@ -47,7 +26,6 @@ const DemandesTirage = () => {
     buttonsStyling: false,
   });
 
-
   const AlertDelete = async (_id: string) => {
     swalWithBootstrapButtons
       .fire({
@@ -61,13 +39,9 @@ const DemandesTirage = () => {
       })
       .then((result) => {
         if (result.isConfirmed) {
-          console.log('Delete api');
+          console.log("Delete api");
         } else if (result.dismiss === Swal.DismissReason.cancel) {
-          swalWithBootstrapButtons.fire(
-            "Annulé",
-            "",
-            "error"
-          );
+          swalWithBootstrapButtons.fire("Annulé", "", "error");
         }
       });
   };
@@ -110,20 +84,24 @@ const DemandesTirage = () => {
 
     {
       name: <span className="font-weight-bold fs-13">Etat</span>,
-      selector: (row: any) =>
-        row?.etat!,
+      selector: (row: any) => row?.etat!,
       sortable: true,
     },
     {
       name: <span className="font-weight-bold fs-13">Ajouté par</span>,
       selector: (row: any) => {
         return row?.added_by !== null ? (
-          row?.added_by?.enseignantId !== null ? (<
-            div>
-            {row?.added_by?.enseignantId?.prenom_fr} {row?.added_by?.enseignantId?.nom_fr}
-          </div>
-          ) : (<div>{row?.added_by?.personnelId?.prenom_fr} {row?.added_by?.enseignantId?.nom_fr}</div>)
-
+          row?.added_by?.enseignantId !== null ? (
+            <div>
+              {row?.added_by?.enseignantId?.prenom_fr}{" "}
+              {row?.added_by?.enseignantId?.nom_fr}
+            </div>
+          ) : (
+            <div>
+              {row?.added_by?.personnelId?.prenom_fr}{" "}
+              {row?.added_by?.enseignantId?.nom_fr}
+            </div>
+          )
         ) : (
           <div>
             {row?.enseignant?.prenom_fr} {row?.enseignant?.nom_fr}
@@ -131,8 +109,7 @@ const DemandesTirage = () => {
         );
       },
       sortable: true,
-    }
-    ,
+    },
     {
       name: <span className="font-weight-bold fs-13">Actions</span>,
       sortable: false,
@@ -246,13 +223,16 @@ const DemandesTirage = () => {
     <React.Fragment>
       <div className="page-content">
         <Container fluid>
-          <Breadcrumb title="Liste Des Demandes Tirage" pageTitle="Service Tirage" />
+          <Breadcrumb
+            title="Liste Des Demandes Tirage"
+            pageTitle="Service Tirage"
+          />
           <Col lg={12}>
             <Card id="shipmentsList">
               <Card.Header className="border-bottom-dashed">
                 <Row className="g-3">
                   <Col lg={3}>
-                    <div className="search-box">
+                    <label className="search-box">
                       <input
                         type="text"
                         className="form-control search"
@@ -261,8 +241,9 @@ const DemandesTirage = () => {
                         onChange={handleSearchChange}
                       />
                       <i className="ri-search-line search-icon"></i>
-                    </div>
+                    </label>
                   </Col>
+                  <Col lg={6}></Col>
                   <Col lg={3} className="d-flex justify-content-end">
                     <div
                       className="btn-group btn-group-sm"
@@ -299,6 +280,7 @@ const DemandesTirage = () => {
                   columns={columns}
                   data={getFilteredAbsences()}
                   pagination
+                  noDataComponent="Il n'y a aucun enregistrement à afficher"
                 />
               </Card.Body>
             </Card>

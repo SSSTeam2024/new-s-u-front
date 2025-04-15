@@ -23,7 +23,7 @@ interface MatiereOption {
 }
 
 const AddFicheVoeux = () => {
-  document.title = " Ajouter fiche de voeux | Application Smart Institute";
+  document.title = " Ajouter fiche de voeux | ENIGA";
   const navigate = useNavigate();
 
   function tog_retourParametres() {
@@ -391,8 +391,8 @@ const AddFicheVoeux = () => {
           );
           alert(
             "Classe " +
-            consernedClass[0].nom_classe_fr +
-            " est déja séléctionnée!"
+              consernedClass[0].nom_classe_fr +
+              " est déja séléctionnée!"
           );
           exist = true;
           break;
@@ -413,8 +413,8 @@ const AddFicheVoeux = () => {
         if (consernedClass[0]?.parcours! === null) {
           alert(
             "Assigner un parcours pour la classe " +
-            consernedClass[0].nom_classe_fr +
-            " tout d'abord"
+              consernedClass[0].nom_classe_fr +
+              " tout d'abord"
           );
           return;
         }

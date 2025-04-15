@@ -9,7 +9,6 @@ import {
   Row,
 } from "react-bootstrap";
 import Breadcrumb from "Common/BreadCrumb";
-import CountUp from "react-countup";
 import TableContainer from "Common/TableContainer";
 import Flatpickr from "react-flatpickr";
 import dummyImg from "../../assets/images/users/user-dummy-img.jpg";
@@ -24,8 +23,6 @@ import withReactContent from "sweetalert2-react-content";
 
 import {
   useFetchDemandeEnseignantQuery,
-  useAddDemandeEnseignantMutation,
-  useUpdateDemandeEnseignantMutation,
   useDeleteDemandeEnseignantMutation,
 } from "features/demandeEnseignant/demandeEnseignantSlice";
 
@@ -36,16 +33,8 @@ const ListeDemandeEnseignant = () => {
 
   const MySwal = withReactContent(Swal);
 
-  // Fetch reclamations query hook
-  const {
-    data: demandesEnseignant,
-    error,
-    isLoading,
-  } = useFetchDemandeEnseignantQuery();
+  const { data: demandesEnseignant } = useFetchDemandeEnseignantQuery();
 
-  // Mutation hooks
-  const [addReclamation] = useAddDemandeEnseignantMutation();
-  const [updateReclamation] = useUpdateDemandeEnseignantMutation();
   const [deleteDemandeEnseignant] = useDeleteDemandeEnseignantMutation();
   const navigate = useNavigate();
 
@@ -118,7 +107,6 @@ const ListeDemandeEnseignant = () => {
         disableFilters: true,
         filterable: true,
       },
-
       {
         Header: "Enseignant",
         accessor: (row: any) =>
@@ -286,7 +274,7 @@ const ListeDemandeEnseignant = () => {
       <div className="page-content">
         <Container fluid={true}>
           <Breadcrumb
-            title="Demande Enseignant"
+            title="Demandes Enseignant"
             pageTitle="Liste des demandes"
           />
 
@@ -296,14 +284,14 @@ const ListeDemandeEnseignant = () => {
                 <Card.Body>
                   <Row className="g-lg-2 g-4">
                     <Col lg={3}>
-                      <div className="search-box">
+                      <label className="search-box">
                         <input
                           type="text"
                           className="form-control search"
                           placeholder="Chercher une demande..."
                         />
                         <i className="ri-search-line search-icon"></i>
-                      </div>
+                      </label>
                     </Col>
 
                     {isMultiDeleteButton && (
@@ -348,7 +336,7 @@ const ListeDemandeEnseignant = () => {
                     isPagination={true}
                     className="custom-header-css table align-middle table-nowrap"
                     tableClass="table-centered align-middle table-nowrap mb-0"
-                    theadClass="text-muted table-light"
+                    theadClass="text-muted"
                     SearchPlaceholder="Search Products..."
                   />
                   <div className="noresult" style={{ display: "none" }}>

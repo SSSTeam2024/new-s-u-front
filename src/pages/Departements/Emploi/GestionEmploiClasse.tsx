@@ -257,7 +257,7 @@ interface TimetablePDFProps {
 }
 
 const GestionEmploiClasse = () => {
-  document.title = " Gestion emploi classe | Application Smart Institute";
+  document.title = " Gestion emploi classe | ENIGA";
   const { data: paramsData = [] } = useFetchTimeTableParamsQuery();
   const { data: variableGlobales = [] } = useFetchVaribaleGlobaleQuery();
   console.log("variableGlobales", variableGlobales);
@@ -357,8 +357,8 @@ const GestionEmploiClasse = () => {
       const selectedOption = formValues.tcCheckbox1
         ? "continuer"
         : formValues.tcCheckbox2
-          ? "annuler"
-          : "aucune sélection";
+        ? "annuler"
+        : "aucune sélection";
       Swal.fire(
         "Option sélectionnée",
         `Vous avez choisi de: ${selectedOption}`,
@@ -645,7 +645,9 @@ const GestionEmploiClasse = () => {
     let consernedVoeux = [];
     if (key === element.semestre) {
       for (let v of element.fiche_voeux_classes) {
-        let classExists = v.classe.filter(c => c?.class_id?._id === classe?._id);
+        let classExists = v.classe.filter(
+          (c) => c?.class_id?._id === classe?._id
+        );
         if (classExists[0] !== undefined) {
           consernedVoeux.push(classExists[0]);
         }
@@ -654,7 +656,7 @@ const GestionEmploiClasse = () => {
         wishList.push({
           teacher: element.enseignant,
           voeux: consernedVoeux,
-          jours: element.jours
+          jours: element.jours,
         });
       }
     }
@@ -1111,7 +1113,7 @@ const GestionEmploiClasse = () => {
   };
 
   const prepareWhishListDays = (currentWhishDays: any) => {
-    console.log(currentWhishDays)
+    console.log(currentWhishDays);
     let preAvailableDays: any[] = [
       {
         day: "Lundi",
@@ -1184,7 +1186,7 @@ const GestionEmploiClasse = () => {
         (w) => w.teacher._id === e.target.value
       )[0];
 
-      console.log("consernedVoeux0", consernedVoeux0)
+      console.log("consernedVoeux0", consernedVoeux0);
 
       // let consernedVoeux: any[] = [];
       // for (const element of consernedVoeux0.voeux) {
@@ -1363,7 +1365,8 @@ const GestionEmploiClasse = () => {
           });
         }
         previousEndTime = Math.max(previousEndTime, sessionEndTime);
-        if (session.type_seance === "1/15") { //TODO: Verify if to add third 1/15 session at the same time interval
+        if (session.type_seance === "1/15") {
+          //TODO: Verify if to add third 1/15 session at the same time interval
           available_intervals.push({
             start: session.heure_debut,
             end: session.heure_fin,
@@ -1860,7 +1863,7 @@ const GestionEmploiClasse = () => {
           days={days}
           groupedSessions={groupedSessions}
           maxSessions={maxSessions}
-        //enseignant={}
+          //enseignant={}
         />
       );
       const pdfBlob = await pdfInstance.toBlob();
@@ -1948,7 +1951,7 @@ const GestionEmploiClasse = () => {
                         >
                           <Button
                             className="btn btn-soft-dark btn-border"
-                            onClick={() => { }}
+                            onClick={() => {}}
                           >
                             <i className="ri-edit-2-line align-bottom me-1"></i>{" "}
                             Gestion des séances
@@ -1994,9 +1997,9 @@ const GestionEmploiClasse = () => {
                                             isFortnight &&
                                             lastSession &&
                                             lastSession.heure_debut ===
-                                            session.heure_debut &&
+                                              session.heure_debut &&
                                             lastSession.heure_fin ===
-                                            session.heure_fin &&
+                                              session.heure_fin &&
                                             lastSession.type_seance === "1/15"
                                           ) {
                                             lastSession.sessions.push(session);
@@ -2059,7 +2062,7 @@ const GestionEmploiClasse = () => {
                                                 )
                                               )}
                                               {sessionGroup.type_seance ===
-                                                "1/15" ? (
+                                              "1/15" ? (
                                                 <div
                                                   className="position-absolute p-1 m-1 bottom-0 end-0 rounded"
                                                   style={{
@@ -2082,7 +2085,7 @@ const GestionEmploiClasse = () => {
                                       {[
                                         ...Array(
                                           maxSessions -
-                                          groupedSessions[day].length
+                                            groupedSessions[day].length
                                         ),
                                       ].map((_, idx) => (
                                         <td
@@ -2374,7 +2377,6 @@ const GestionEmploiClasse = () => {
                             </Col>
                           </Row>
                           <Row className="mb-4">
-
                             <Col lg={2}>
                               <div className="mb-3">
                                 <Form.Label htmlFor="heure_debut">
@@ -2445,7 +2447,7 @@ const GestionEmploiClasse = () => {
                                     new Date(ms).toLocaleTimeString([], {
                                       hour: "2-digit",
                                       minute: "2-digit",
-                                      hour12: false
+                                      hour12: false,
                                     })
                                   }
                                 />
@@ -2464,7 +2466,7 @@ const GestionEmploiClasse = () => {
                                     disabled={formData.heure_fin === ""}
                                   >
                                     {roomsAvailabilityRequestStatus.isLoading ===
-                                      true ? (
+                                    true ? (
                                       <CustomLoaderForButton></CustomLoaderForButton>
                                     ) : (
                                       <>Salles disponibles?</>
@@ -2507,7 +2509,7 @@ const GestionEmploiClasse = () => {
                                   disabled={formData.salle === ""}
                                 >
                                   {sessionCreationRequestStatus.isLoading ===
-                                    true ? (
+                                  true ? (
                                     <CustomLoaderForButton></CustomLoaderForButton>
                                   ) : (
                                     <>Ajouter Séance</>

@@ -7,7 +7,7 @@ import { useUpdatePosteEnseignantMutation } from "features/posteEnseignant/poste
 import { useUpdateSpecialiteEnseignantMutation } from "features/specialiteEnseignant/specialiteEnseignant";
 
 const EditSpecialiteEnseignant = () => {
-  document.title = " Modifier Spécialité Enseignant | Application Smart Institute";
+  document.title = " Modifier Spécialité Enseignant | ENIGA";
   const navigate = useNavigate();
   const { state: specialiteEnseignant } = useLocation();
   const [editSpecialiteEnseignant] = useUpdateSpecialiteEnseignantMutation();
@@ -23,7 +23,8 @@ const EditSpecialiteEnseignant = () => {
     if (specialiteEnseignant) {
       setFormData({
         _id: specialiteEnseignant._id,
-        value_specialite_enseignant: specialiteEnseignant.value_specialite_enseignant,
+        value_specialite_enseignant:
+          specialiteEnseignant.value_specialite_enseignant,
         specialite_ar: specialiteEnseignant.specialite_ar,
         specialite_fr: specialiteEnseignant.specialite_fr,
       });
@@ -100,7 +101,9 @@ const EditSpecialiteEnseignant = () => {
                 <Row>
                   <Col lg={4}>
                     <div className="mb-3">
-                      <Form.Label htmlFor="value_specialite_enseignant">Valeur</Form.Label>
+                      <Form.Label htmlFor="value_specialite_enseignant">
+                        Valeur
+                      </Form.Label>
                       <Form.Control
                         type="text"
                         id="value_specialite_enseignant"
@@ -115,7 +118,7 @@ const EditSpecialiteEnseignant = () => {
                   <Col lg={4}>
                     <div className="mb-3">
                       <Form.Label htmlFor="specialite_fr">
-                      Spécialité Enseignant
+                        Spécialité Enseignant
                       </Form.Label>
                       <Form.Control
                         type="text"

@@ -23,7 +23,7 @@ interface MatiereOption {
 }
 
 const AddFicheVoeux = () => {
-  document.title = " Ajouter fiche de voeux | Application Smart Institute";
+  document.title = " Ajouter fiche de voeux | ENIGA";
   const navigate = useNavigate();
 
   function tog_retourParametres() {
@@ -33,7 +33,8 @@ const AddFicheVoeux = () => {
   const [createFicheVoeux] = useAddFicheVoeuxMutation();
   // const [selectedJours, setSelectedJours] = useState<any[]>([]);
 
-  const { data: subjects = [], isSuccess: subjectsLoaded } = useFetchMatiereQuery();
+  const { data: subjects = [], isSuccess: subjectsLoaded } =
+    useFetchMatiereQuery();
 
   const { data: allTeachers = [] } = useFetchEnseignantsQuery();
   const { data: allVoeux = [] } = useFetchFicheVoeuxsQuery();
@@ -45,10 +46,12 @@ const AddFicheVoeux = () => {
     fiche_voeux_classes: [
       {
         matieres: "",
-        classe: [{
-          subject_id: "",
-          class_id: ""
-        }],
+        classe: [
+          {
+            subject_id: "",
+            class_id: "",
+          },
+        ],
         //Temporary data for subjects selection
         consernedClasses: [],
         selectedClasseOptions: [],
@@ -71,25 +74,30 @@ const AddFicheVoeux = () => {
       prenom_ar: "",
     },
     semestre: "S1",
-    remarque: ""
+    remarque: "",
   });
 
-  const [cleanSubjectsBySemester, setCleanSubjectsBySemester] = useState<Matiere[]>([]);
+  const [cleanSubjectsBySemester, setCleanSubjectsBySemester] = useState<
+    Matiere[]
+  >([]);
   const [hasProcessed, setHasProcessed] = useState<boolean>(false);
 
-  const [searchTerm, setSearchTerm] = useState<string[]>(['']);
+  const [searchTerm, setSearchTerm] = useState<string[]>([""]);
   const [filteredSubjects, setFilteredSubjects] = useState<any[][]>([[]]);
   const [showSuggestions, setShowSuggestions] = useState<boolean[]>([false]);
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>, fiche_index: number) => {
-    console.log(selectedTeacherId)
-    if (selectedTeacherId === '') {
+  const handleSearch = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    fiche_index: number
+  ) => {
+    console.log(selectedTeacherId);
+    if (selectedTeacherId === "") {
       alert("Selectionner un enseignant tout d'abord");
     } else {
-      console.log(cleanSubjectsBySemester)
+      console.log(cleanSubjectsBySemester);
       const query = e.target.value.toLowerCase();
       let searchTermRef = [...searchTerm];
-      searchTermRef[fiche_index] = query
+      searchTermRef[fiche_index] = query;
       setSearchTerm(searchTermRef);
 
       if (query.length > 0) {
@@ -115,30 +123,44 @@ const AddFicheVoeux = () => {
 
   useEffect(() => {
     if (subjectsLoaded && !hasProcessed) {
-      const subjectsBySemester = subjects.filter(subject => subject.semestre !== undefined && Number(subject.semestre[1]) % 2 !== 0).filter((subject, index, self) =>
-        index === self.findIndex(s => s.matiere === subject.matiere && s.types[0].type === subject.types[0].type)
-      );
+      const subjectsBySemester = subjects
+        .filter(
+          (subject) =>
+            subject.semestre !== undefined &&
+            Number(subject.semestre[1]) % 2 !== 0
+        )
+        .filter(
+          (subject, index, self) =>
+            index ===
+            self.findIndex(
+              (s) =>
+                s.matiere === subject.matiere &&
+                s.types[0].type === subject.types[0].type
+            )
+        );
       setCleanSubjectsBySemester(subjectsBySemester);
       setHasProcessed(true);
     }
   }, [subjects, hasProcessed]);
 
-  const teachersWithoutWishCard = allTeachers.filter(
-    (teacher: any) =>
-      !allVoeux.some(
-        (voeux) =>
-          voeux.enseignant._id === teacher._id &&
-          formData?.semestre! === voeux?.semestre!
-      )
-  ).sort(function (a, b) {
-    if (a.prenom_fr < b.prenom_fr) {
-      return -1;
-    }
-    if (a.prenom_fr > b.prenom_fr) {
-      return 1;
-    }
-    return 0;
-  });
+  const teachersWithoutWishCard = allTeachers
+    .filter(
+      (teacher: any) =>
+        !allVoeux.some(
+          (voeux) =>
+            voeux.enseignant._id === teacher._id &&
+            formData?.semestre! === voeux?.semestre!
+        )
+    )
+    .sort(function (a, b) {
+      if (a.prenom_fr < b.prenom_fr) {
+        return -1;
+      }
+      if (a.prenom_fr > b.prenom_fr) {
+        return 1;
+      }
+      return 0;
+    });
 
   const handleTempsChange = (e: any, index: number) => {
     if (e.target.value !== "") {
@@ -322,7 +344,7 @@ const AddFicheVoeux = () => {
   };
 
   const toggleSemestre = () => {
-    const newSemester = formData.semestre === "S1" ? "S2" : "S1"
+    const newSemester = formData.semestre === "S1" ? "S2" : "S1";
     setFormData((prevState) => {
       return {
         ...prevState,
@@ -361,17 +383,41 @@ const AddFicheVoeux = () => {
     let subjectsBySemester: Matiere[] = [];
 
     switch (newSemester) {
-      case 'S1':
-        subjectsBySemester = subjects.filter(subject => subject.semestre !== undefined && Number(subject.semestre[1]) % 2 !== 0).filter((subject, index, self) =>
-          index === self.findIndex(s => s.matiere === subject.matiere && s.types[0].type === subject.types[0].type)
-        );
+      case "S1":
+        subjectsBySemester = subjects
+          .filter(
+            (subject) =>
+              subject.semestre !== undefined &&
+              Number(subject.semestre[1]) % 2 !== 0
+          )
+          .filter(
+            (subject, index, self) =>
+              index ===
+              self.findIndex(
+                (s) =>
+                  s.matiere === subject.matiere &&
+                  s.types[0].type === subject.types[0].type
+              )
+          );
         setCleanSubjectsBySemester(subjectsBySemester);
         break;
 
-      case 'S2':
-        subjectsBySemester = subjects.filter(subject => subject.semestre !== undefined && Number(subject.semestre[1]) % 2 === 0).filter((subject, index, self) =>
-          index === self.findIndex(s => s.matiere === subject.matiere && s.types[0].type === subject.types[0].type)
-        );
+      case "S2":
+        subjectsBySemester = subjects
+          .filter(
+            (subject) =>
+              subject.semestre !== undefined &&
+              Number(subject.semestre[1]) % 2 === 0
+          )
+          .filter(
+            (subject, index, self) =>
+              index ===
+              self.findIndex(
+                (s) =>
+                  s.matiere === subject.matiere &&
+                  s.types[0].type === subject.types[0].type
+              )
+          );
         setCleanSubjectsBySemester(subjectsBySemester);
         break;
 
@@ -379,12 +425,11 @@ const AddFicheVoeux = () => {
         break;
     }
 
-    setSearchTerm(['']);
+    setSearchTerm([""]);
     setFilteredSubjects([]);
     setShowSuggestions([false]);
 
-    setSelectedTeacherId('');
-
+    setSelectedTeacherId("");
   };
 
   const { data: allClasses = [] } = useFetchClassesQuery();
@@ -399,14 +444,14 @@ const AddFicheVoeux = () => {
   const [filteredOptions, setFiltredOptions] = useState<any[]>([]);
 
   const handleSelectChange = (selectedOptions: any, index: number) => {
-    console.log("selectedOptions", selectedOptions)
+    console.log("selectedOptions", selectedOptions);
     setFormData((prevState) => {
       const updatedFicheVoeux = [...prevState.fiche_voeux_classes];
       updatedFicheVoeux[index].selectedClasseOptions = selectedOptions;
 
       const classes = selectedOptions.map((option: any) => ({
         _id: option.value,
-        label: option.nom_classe_fr
+        label: option.nom_classe_fr,
       }));
 
       const uniqueClasses: any = [
@@ -422,27 +467,30 @@ const AddFicheVoeux = () => {
       }, [] as Matiere[]);
 
       updatedFicheVoeux[index].selectedClasses = uniqueClasses;
-      updatedFicheVoeux[index].classe = selectedOptions.map(
-        (item: any) => {
-          let classElement = allClasses.filter(c => c._id === item.value);
+      updatedFicheVoeux[index].classe = selectedOptions.map((item: any) => {
+        let classElement = allClasses.filter((c) => c._id === item.value);
 
-          let modules = classElement[0].parcours.modules;
-          if (modules.length > 0) {
-            const subjects = modules.map((module: any) => {
-              let subjectsResult = module.matiere.filter((m: any) => m.matiere + " " + m.types[0].type === updatedFicheVoeux[index].matieres);
-              return subjectsResult;
-            })
+        let modules = classElement[0].parcours.modules;
+        if (modules.length > 0) {
+          const subjects = modules.map((module: any) => {
+            let subjectsResult = module.matiere.filter(
+              (m: any) =>
+                m.matiere + " " + m.types[0].type ===
+                updatedFicheVoeux[index].matieres
+            );
+            return subjectsResult;
+          });
 
-            const validSubjects = subjects.filter((subjectArray: any) => subjectArray.length > 0);
+          const validSubjects = subjects.filter(
+            (subjectArray: any) => subjectArray.length > 0
+          );
 
-            return {
-              class_id: item.value,
-              subject_id: validSubjects[0][0]._id
-            }
-
-          }
+          return {
+            class_id: item.value,
+            subject_id: validSubjects[0][0]._id,
+          };
         }
-      );
+      });
 
       return {
         ...prevState,
@@ -522,7 +570,7 @@ const AddFicheVoeux = () => {
 
     let searchTermRef = [...searchTerm];
     console.log(searchTermRef);
-    searchTermRef.push('');
+    searchTermRef.push("");
     setSearchTerm(searchTermRef);
 
     let filteredSubjectsRef = [...filteredSubjects];
@@ -585,7 +633,6 @@ const AddFicheVoeux = () => {
 
 
   const handleSelectSubject = (subject: any, index: number) => {
-
     let searchTermRef = [...searchTerm];
     searchTermRef[index] = subject?.matiere! + " " + subject?.types[0].type;
     setSearchTerm(searchTermRef);
@@ -602,28 +649,38 @@ const AddFicheVoeux = () => {
     console.log(allClasses);
 
     //*Step 1: Filter all classes based on subject semester and class semesters (Could be S1 or S2)
-    const filteredClassesBySubjectSemester = allClasses.filter(c => c.semestres[0] === subject.semestre || c.semestres[1] === subject.semestre);
-    console.log('Step1 classes', filteredClassesBySubjectSemester);
+    const filteredClassesBySubjectSemester = allClasses.filter(
+      (c) =>
+        c.semestres[0] === subject.semestre ||
+        c.semestres[1] === subject.semestre
+    );
+    console.log("Step1 classes", filteredClassesBySubjectSemester);
 
     //*Step 2: Filter from the above result all classes based on subject semester module semester and subject id
     let fileteredClasses = [];
     for (const classElement of filteredClassesBySubjectSemester) {
-      let modules = classElement.parcours.modules.filter((m: any) => m.semestre_module === subject.semestre);
+      let modules = classElement.parcours.modules.filter(
+        (m: any) => m.semestre_module === subject.semestre
+      );
       if (modules.length > 0) {
         const subjects = modules.map((module: any) => {
-          let subjectsResult = module.matiere.filter((m: any) => m.matiere === subject.matiere);
+          let subjectsResult = module.matiere.filter(
+            (m: any) => m.matiere === subject.matiere
+          );
           return subjectsResult;
-        })
-        console.log('subjects', subjects)
-        const validSubjects = subjects.filter((subjectArray: any) => subjectArray.length > 0);
+        });
+        console.log("subjects", subjects);
+        const validSubjects = subjects.filter(
+          (subjectArray: any) => subjectArray.length > 0
+        );
         if (validSubjects.length > 0) {
-          console.log('classElement', classElement);
+          console.log("classElement", classElement);
           fileteredClasses.push(classElement);
         }
       }
     }
 
-    console.log('Step2 classes', fileteredClasses);
+    console.log("Step2 classes", fileteredClasses);
 
     let options = fileteredClasses.map((classe: any) => ({
       value: classe?._id!,
@@ -635,7 +692,8 @@ const AddFicheVoeux = () => {
       updatedFicheVoeux[index].classe = [];
       updatedFicheVoeux[index].selectedClasses = [];
       updatedFicheVoeux[index].selectedClasseOptions = [];
-      updatedFicheVoeux[index].matieres = subject.matiere + " " + subject.types[0].type;
+      updatedFicheVoeux[index].matieres =
+        subject.matiere + " " + subject.types[0].type;
 
       let filtredOptions: any = options.filter(
         (option: any) =>
@@ -652,7 +710,6 @@ const AddFicheVoeux = () => {
         fiche_voeux_classes: updatedFicheVoeux,
       };
     });
-
   };
 
   const onChangeObservation = (e: any) => {
@@ -662,7 +719,6 @@ const AddFicheVoeux = () => {
       remarque: value,
     }));
   };
-
 
   return (
     <React.Fragment>
@@ -724,7 +780,9 @@ const AddFicheVoeux = () => {
                       <Row>
                         <Col lg={6}>
                           <div className="position-relative">
-                            <Form.Label className="text-muted">Matière</Form.Label>
+                            <Form.Label className="text-muted">
+                              Matière
+                            </Form.Label>
                             <Form.Control
                               placeholder="Chercher matière..."
                               type="text"
@@ -733,26 +791,38 @@ const AddFicheVoeux = () => {
                               autoComplete="off"
                               autoCapitalize="off"
                               value={searchTerm[fiche_index]}
-                              onChange={(e: any) => handleSearch(e, fiche_index)}
+                              onChange={(e: any) =>
+                                handleSearch(e, fiche_index)
+                              }
                               onFocus={() => {
                                 let showSuggestionsRef = [...showSuggestions];
                                 showSuggestionsRef[fiche_index] = true;
                                 setShowSuggestions(showSuggestionsRef);
                               }}
                             />
-                            {showSuggestions[fiche_index] && filteredSubjects[fiche_index]?.length > 0 && (
-                              <ListGroup className="mt-2 position-absolute w-100 shadow">
-                                {filteredSubjects[fiche_index]?.map((subject, index) => (
-                                  <ListGroup.Item
-                                    key={index}
-                                    action
-                                    onClick={() => handleSelectSubject(subject, fiche_index)}
-                                  >
-                                    {subject?.matiere! + " " + subject.types[0].type}
-                                  </ListGroup.Item>
-                                ))}
-                              </ListGroup>
-                            )}
+                            {showSuggestions[fiche_index] &&
+                              filteredSubjects[fiche_index]?.length > 0 && (
+                                <ListGroup className="mt-2 position-absolute w-100 shadow">
+                                  {filteredSubjects[fiche_index]?.map(
+                                    (subject, index) => (
+                                      <ListGroup.Item
+                                        key={index}
+                                        action
+                                        onClick={() =>
+                                          handleSelectSubject(
+                                            subject,
+                                            fiche_index
+                                          )
+                                        }
+                                      >
+                                        {subject?.matiere! +
+                                          " " +
+                                          subject.types[0].type}
+                                      </ListGroup.Item>
+                                    )
+                                  )}
+                                </ListGroup>
+                              )}
                           </div>
                         </Col>
                         <Col lg={4}>
@@ -835,7 +905,7 @@ const AddFicheVoeux = () => {
                           variant="info"
                           disabled={formData.enseignant.nom_ar === ""}
                           onClick={addNewClassLine}
-                          style={{ marginRight: '20%' }}
+                          style={{ marginRight: "20%" }}
                         >
                           <i
                             className="bi bi-plus"
@@ -927,7 +997,12 @@ const AddFicheVoeux = () => {
                       <Col lg={8}>
                         <div>
                           <label className="form-label">Remarque</label>
-                          <textarea onChange={onChangeObservation} className="form-control" id="exampleFormControlTextarea5" rows={3}></textarea>
+                          <textarea
+                            onChange={onChangeObservation}
+                            className="form-control"
+                            id="exampleFormControlTextarea5"
+                            rows={3}
+                          ></textarea>
                         </div>
                       </Col>
                     </Row>

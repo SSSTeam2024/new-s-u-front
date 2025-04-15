@@ -11,7 +11,7 @@ import Flatpickr from "react-flatpickr";
 import Swal from "sweetalert2";
 
 const ParametresEmploi = () => {
-  document.title = " Parametres Emplois | Application Smart Institute";
+  document.title = " Parametres Emplois | ENIGA";
 
   const [formData, setFormData] = useState({
     _id: "",

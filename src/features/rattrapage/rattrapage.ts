@@ -46,11 +46,6 @@ export const rattrapageSlice = createApi({
         { _id: string; etat: string; status: string }
       >({
         query({ _id, etat, status }) {
-          // Log the values before sending the request
-          console.log("Updating Rattrapage with ID:", _id);
-          console.log("Etat:", etat);
-          console.log("Status:", status);
-
           return {
             url: `/updateRattrapage/${_id}`,
             method: "PUT",

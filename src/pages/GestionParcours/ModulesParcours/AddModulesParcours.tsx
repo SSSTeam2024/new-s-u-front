@@ -8,7 +8,7 @@ import { useFetchDepartementsQuery } from "features/departement/departement";
 import CustomLoader from "Common/CustomLoader/CustomLoader";
 
 const AddModulesParcours = () => {
-  document.title = " Ajouter Salle | Application Smart Institute";
+  document.title = " Ajouter Salle | ENIGA";
   const navigate = useNavigate();
 
   function tog_retourParametres() {

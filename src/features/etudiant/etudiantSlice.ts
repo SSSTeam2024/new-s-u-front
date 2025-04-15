@@ -268,7 +268,6 @@ export const etudiantSlice = createApi({
       }),
       updateEtudiant: builder.mutation<void, EtudiantExcel>({
         query: ({ _id, ...rest }) => {
-          // console.log("Payload being sent to the backend:", { id: _id, ...rest });
           if (!_id) {
             throw new Error("No student ID provided");
           }

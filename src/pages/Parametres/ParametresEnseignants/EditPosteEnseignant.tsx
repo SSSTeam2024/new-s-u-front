@@ -8,7 +8,7 @@ import { useUpdatePostePersonnelMutation } from "features/postePersonnel/postePe
 import { useUpdatePosteEnseignantMutation } from "features/posteEnseignant/posteEnseignant";
 
 const EditPosteEnseignant = () => {
-  document.title = " Modifier Poste Enseignant | Application Smart Institute";
+  document.title = " Modifier Poste Enseignant | ENIGA";
   const navigate = useNavigate();
   const { state: posteEnseignant } = useLocation();
   const [editPosteEnseignant] = useUpdatePosteEnseignantMutation();
@@ -101,7 +101,9 @@ const EditPosteEnseignant = () => {
                 <Row>
                   <Col lg={4}>
                     <div className="mb-3">
-                      <Form.Label htmlFor="value_poste_enseignant">Valeur</Form.Label>
+                      <Form.Label htmlFor="value_poste_enseignant">
+                        Valeur
+                      </Form.Label>
                       <Form.Control
                         type="text"
                         id="value_poste_enseignant"

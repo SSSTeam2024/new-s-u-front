@@ -24,22 +24,25 @@ interface MatiereOption {
 }
 
 const EditFicheVoeux = () => {
-  document.title = " Modifier fiche de voeux | Application Smart Institute";
+  document.title = "Modifier fiche de voeux | ENIGA";
   const navigate = useNavigate();
 
   function tog_retourParametres() {
     navigate("/gestion-emplois/gestion-fiche-voeux/liste-fiche-voeux");
   }
 
-  const { data: allClasses = [], isSuccess: allClassesLoaded } = useFetchClassesQuery();
+  const { data: allClasses = [], isSuccess: allClassesLoaded } =
+    useFetchClassesQuery();
 
   const location = useLocation();
   const voeuxDetails = location.state;
 
-  const { data: subjects = [], isSuccess: subjectsLoaded } = useFetchMatiereQuery();
+  const { data: subjects = [], isSuccess: subjectsLoaded } =
+    useFetchMatiereQuery();
 
   const { data: allTeachers = [] } = useFetchEnseignantsQuery();
-  const { data: allVoeux = [], isSuccess: allVoeuxLoaded } = useFetchFicheVoeuxsQuery();
+  const { data: allVoeux = [], isSuccess: allVoeuxLoaded } =
+    useFetchFicheVoeuxsQuery();
 
   const [selectedTeacherId, setSelectedTeacherId] = useState<string>("");
 
@@ -48,17 +51,19 @@ const EditFicheVoeux = () => {
     fiche_voeux_classes: [
       {
         matieres: "",
-        classe: [{
-          subject_id: "",
-          class_id: ""
-        }],
+        classe: [
+          {
+            subject_id: "",
+            class_id: "",
+          },
+        ],
         //Temporary data for subjects selection
         consernedClasses: [],
         selectedClasseOptions: [],
         selectedClasses: [],
         filteredClassesOptions: [],
         filtredClasses: [],
-        selectionDisabled: true
+        selectionDisabled: true,
       },
     ],
     jours: [
@@ -75,22 +80,27 @@ const EditFicheVoeux = () => {
       prenom_ar: "",
     },
     semestre: "S1",
-    remarque: ""
+    remarque: "",
   });
 
-  const [cleanSubjectsBySemester, setCleanSubjectsBySemester] = useState<Matiere[]>([]);
+  const [cleanSubjectsBySemester, setCleanSubjectsBySemester] = useState<
+    Matiere[]
+  >([]);
   const [hasProcessed, setHasProcessed] = useState<boolean>(false);
 
-  const [searchTerm, setSearchTerm] = useState<string[]>(['']);
+  const [searchTerm, setSearchTerm] = useState<string[]>([""]);
   const [filteredSubjects, setFilteredSubjects] = useState<any[][]>([[]]);
   const [showSuggestions, setShowSuggestions] = useState<boolean[]>([false]);
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>, fiche_index: number) => {
-    console.log(selectedTeacherId)
-    console.log(cleanSubjectsBySemester)
+  const handleSearch = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    fiche_index: number
+  ) => {
+    console.log(selectedTeacherId);
+    console.log(cleanSubjectsBySemester);
     const query = e.target.value.toLowerCase();
     let searchTermRef = [...searchTerm];
-    searchTermRef[fiche_index] = query
+    searchTermRef[fiche_index] = query;
     setSearchTerm(searchTermRef);
 
     if (query.length > 0) {
@@ -125,9 +135,21 @@ const EditFicheVoeux = () => {
 
   useEffect(() => {
     if (allClassesLoaded && subjectsLoaded && !hasProcessed) {
-      const subjectsBySemester = subjects.filter(subject => subject.semestre !== undefined && Number(subject.semestre[1]) % 2 !== 0).filter((subject, index, self) =>
-        index === self.findIndex(s => s.matiere === subject.matiere && s.types[0].type === subject.types[0].type)
-      );
+      const subjectsBySemester = subjects
+        .filter(
+          (subject) =>
+            subject.semestre !== undefined &&
+            Number(subject.semestre[1]) % 2 !== 0
+        )
+        .filter(
+          (subject, index, self) =>
+            index ===
+            self.findIndex(
+              (s) =>
+                s.matiere === subject.matiere &&
+                s.types[0].type === subject.types[0].type
+            )
+        );
 
       let listeVouex: any[] = [];
       let searchTermRef = [];
@@ -137,36 +159,44 @@ const EditFicheVoeux = () => {
       for (const voeux of voeuxDetails.fiche_voeux_classes) {
         //************************CONSERNED CLASSES LIST */
 
-
         searchTermRef.push(voeux.matieres);
         filteredSubjectsRef.push([]);
         showSuggestionsRef.push(false);
 
-
         //*Step 1: Filter all classes based on subject semester and class semesters (Could be S1 or S2)
-        const filteredClassesBySubjectSemester = allClasses.filter(c => c.semestres[0] === voeux?.classe[0]?.subject_id?.semestre || c.semestres[1] === voeux?.classe[0]?.subject_id?.semestre);
-        console.log('Step1 classes', filteredClassesBySubjectSemester);
+        const filteredClassesBySubjectSemester = allClasses.filter(
+          (c) =>
+            c.semestres[0] === voeux?.classe[0]?.subject_id?.semestre ||
+            c.semestres[1] === voeux?.classe[0]?.subject_id?.semestre
+        );
+        console.log("Step1 classes", filteredClassesBySubjectSemester);
 
         //*Step 2: Filter from the above result all classes based on subject semester module semester and subject id
         let fileteredClasses = [];
         for (const classElement of filteredClassesBySubjectSemester) {
-          let modules = classElement.parcours.modules.filter((m: any) => m.semestre_module === voeux?.classe[0]?.subject_id?.semestre);
+          let modules = classElement.parcours.modules.filter(
+            (m: any) =>
+              m.semestre_module === voeux?.classe[0]?.subject_id?.semestre
+          );
           if (modules.length > 0) {
             const subjects = modules.map((module: any) => {
-              let subjectsResult = module.matiere.filter((m: any) => m.matiere === voeux?.classe[0]?.subject_id?.matiere!);
+              let subjectsResult = module.matiere.filter(
+                (m: any) => m.matiere === voeux?.classe[0]?.subject_id?.matiere!
+              );
               return subjectsResult;
-            })
-            console.log('subjects', subjects)
-            const validSubjects = subjects.filter((subjectArray: any) => subjectArray.length > 0);
+            });
+            console.log("subjects", subjects);
+            const validSubjects = subjects.filter(
+              (subjectArray: any) => subjectArray.length > 0
+            );
             if (validSubjects.length > 0) {
-              console.log('classElement', classElement);
+              console.log("classElement", classElement);
               fileteredClasses.push(classElement);
-
             }
           }
         }
 
-        console.log('Step2 classes', fileteredClasses);
+        console.log("Step2 classes", fileteredClasses);
 
         let options = fileteredClasses.map((classe: any) => ({
           value: classe?._id!,
@@ -179,29 +209,27 @@ const EditFicheVoeux = () => {
 
         const classes_options = voeux.classe.map((classe: any) => ({
           _id: classe.class_id._id,
-          label: classe.class_id.nom_classe_fr
+          label: classe.class_id.nom_classe_fr,
         }));
 
         const classes = voeux.classe.map((classe: any) => ({
           class_id: classe.class_id._id,
-          subject_id: classe.subject_id._id
+          subject_id: classe.subject_id._id,
         }));
 
         //************************SELECTED CLASSES LIST */
 
-        listeVouex.push(
-          {
-            matieres: voeux.matieres,
-            classe: classes,
-            //Temporary data for subjects selection
-            consernedClasses: [],
-            selectedClasseOptions: classes_options,
-            selectedClasses: [],
-            filteredClassesOptions: options,
-            filtredClasses: [],
-            selectionDisabled: true
-          },
-        )
+        listeVouex.push({
+          matieres: voeux.matieres,
+          classe: classes,
+          //Temporary data for subjects selection
+          consernedClasses: [],
+          selectedClasseOptions: classes_options,
+          selectedClasses: [],
+          filteredClassesOptions: options,
+          filtredClasses: [],
+          selectionDisabled: true,
+        });
       }
 
       setFormData((prevState) => {
@@ -214,7 +242,7 @@ const EditFicheVoeux = () => {
           enseignant: voeuxDetails.enseignant,
           jours: voeuxDetails.jours,
           remarque: voeuxDetails.remarque,
-          semestre: voeuxDetails.semestre
+          semestre: voeuxDetails.semestre,
         };
       });
 
@@ -225,7 +253,14 @@ const EditFicheVoeux = () => {
       setCleanSubjectsBySemester(subjectsBySemester);
       setHasProcessed(true);
     }
-  }, [subjects, hasProcessed, searchTerm, filteredSubjects, showSuggestions, allClasses]);
+  }, [
+    subjects,
+    hasProcessed,
+    searchTerm,
+    filteredSubjects,
+    showSuggestions,
+    allClasses,
+  ]);
 
   const handleTempsChange = (e: any, index: number) => {
     if (e.target.value !== "") {
@@ -289,7 +324,6 @@ const EditFicheVoeux = () => {
       setFormData((prevState) => {
         const updatedFicheVoeux = [...prevState.fiche_voeux_classes];
         for (let element of updatedFicheVoeux) {
-
           clearTemporaryDaysData(element);
           clearTemporaryClassesData(element);
         }
@@ -330,14 +364,14 @@ const EditFicheVoeux = () => {
   };
 
   const handleSelectChange = (selectedOptions: any, index: number) => {
-    console.log("selectedOptions", selectedOptions)
+    console.log("selectedOptions", selectedOptions);
     setFormData((prevState) => {
       const updatedFicheVoeux = [...prevState.fiche_voeux_classes];
       updatedFicheVoeux[index].selectedClasseOptions = selectedOptions;
 
       const classes = selectedOptions.map((option: any) => ({
         _id: option.value,
-        label: option.nom_classe_fr
+        label: option.nom_classe_fr,
       }));
 
       // const uniqueClasses: any = [
@@ -353,29 +387,35 @@ const EditFicheVoeux = () => {
       // }, [] as Matiere[]);
 
       // updatedFicheVoeux[index].selectedClasses = uniqueClasses;
-      updatedFicheVoeux[index].classe = selectedOptions.map(
-        (item: any) => {
-          let classElement = allClasses.filter(c => c._id === item.value);
+      updatedFicheVoeux[index].classe = selectedOptions.map((item: any) => {
+        let classElement = allClasses.filter((c) => c._id === item.value);
 
-          let modules = classElement[0].parcours.modules;
-          if (modules.length > 0) {
-            const subjects = modules.map((module: any) => {
-              let subjectsResult = module.matiere.filter((m: any) => m.matiere + " " + m.types[0].type === updatedFicheVoeux[index].matieres);
-              return subjectsResult;
-            })
+        let modules = classElement[0].parcours.modules;
+        if (modules.length > 0) {
+          const subjects = modules.map((module: any) => {
+            let subjectsResult = module.matiere.filter(
+              (m: any) =>
+                m.matiere + " " + m.types[0].type ===
+                updatedFicheVoeux[index].matieres
+            );
+            return subjectsResult;
+          });
 
-            const validSubjects = subjects.filter((subjectArray: any) => subjectArray.length > 0);
+          const validSubjects = subjects.filter(
+            (subjectArray: any) => subjectArray.length > 0
+          );
 
-            return {
-              class_id: item.value,
-              subject_id: validSubjects[0][0]._id
-            }
-
-          }
+          return {
+            class_id: item.value,
+            subject_id: validSubjects[0][0]._id,
+          };
         }
-      );
+      });
 
-      console.log("handleSelectChange Class updatedFicheVoeux", updatedFicheVoeux)
+      console.log(
+        "handleSelectChange Class updatedFicheVoeux",
+        updatedFicheVoeux
+      );
 
       return {
         ...prevState,
@@ -449,14 +489,14 @@ const EditFicheVoeux = () => {
           selectedClasses: [],
           filteredClassesOptions: [],
           filtredClasses: [],
-          selectionDisabled: false
+          selectionDisabled: false,
         },
       ],
     }));
 
     let searchTermRef = [...searchTerm];
     console.log(searchTermRef);
-    searchTermRef.push('');
+    searchTermRef.push("");
     setSearchTerm(searchTermRef);
 
     let filteredSubjectsRef = [...filteredSubjects];
@@ -532,7 +572,6 @@ const EditFicheVoeux = () => {
   };
 
   const handleSelectSubject = (subject: any, index: number) => {
-
     let searchTermRef = [...searchTerm];
     searchTermRef[index] = subject?.matiere! + " " + subject?.types[0].type;
     setSearchTerm(searchTermRef);
@@ -549,28 +588,38 @@ const EditFicheVoeux = () => {
     console.log(allClasses);
 
     //*Step 1: Filter all classes based on subject semester and class semesters (Could be S1 or S2)
-    const filteredClassesBySubjectSemester = allClasses.filter(c => c.semestres[0] === subject.semestre || c.semestres[1] === subject.semestre);
-    console.log('Step1 classes', filteredClassesBySubjectSemester);
+    const filteredClassesBySubjectSemester = allClasses.filter(
+      (c) =>
+        c.semestres[0] === subject.semestre ||
+        c.semestres[1] === subject.semestre
+    );
+    console.log("Step1 classes", filteredClassesBySubjectSemester);
 
     //*Step 2: Filter from the above result all classes based on subject semester module semester and subject id
     let fileteredClasses = [];
     for (const classElement of filteredClassesBySubjectSemester) {
-      let modules = classElement.parcours.modules.filter((m: any) => m.semestre_module === subject.semestre);
+      let modules = classElement.parcours.modules.filter(
+        (m: any) => m.semestre_module === subject.semestre
+      );
       if (modules.length > 0) {
         const subjects = modules.map((module: any) => {
-          let subjectsResult = module.matiere.filter((m: any) => m.matiere === subject.matiere);
+          let subjectsResult = module.matiere.filter(
+            (m: any) => m.matiere === subject.matiere
+          );
           return subjectsResult;
-        })
-        console.log('subjects', subjects)
-        const validSubjects = subjects.filter((subjectArray: any) => subjectArray.length > 0);
+        });
+        console.log("subjects", subjects);
+        const validSubjects = subjects.filter(
+          (subjectArray: any) => subjectArray.length > 0
+        );
         if (validSubjects.length > 0) {
-          console.log('classElement', classElement);
+          console.log("classElement", classElement);
           fileteredClasses.push(classElement);
         }
       }
     }
 
-    console.log('Step2 classes', fileteredClasses);
+    console.log("Step2 classes", fileteredClasses);
 
     let options = fileteredClasses.map((classe: any) => ({
       value: classe?._id!,
@@ -582,7 +631,8 @@ const EditFicheVoeux = () => {
       updatedFicheVoeux[index].classe = [];
       updatedFicheVoeux[index].selectedClasses = [];
       updatedFicheVoeux[index].selectedClasseOptions = [];
-      updatedFicheVoeux[index].matieres = subject.matiere + " " + subject.types[0].type;
+      updatedFicheVoeux[index].matieres =
+        subject.matiere + " " + subject.types[0].type;
 
       let filtredOptions: any = options.filter(
         (option: any) =>
@@ -599,7 +649,6 @@ const EditFicheVoeux = () => {
         fiche_voeux_classes: updatedFicheVoeux,
       };
     });
-
   };
 
   const onChangeObservation = (e: any) => {
@@ -620,8 +669,7 @@ const EditFicheVoeux = () => {
         fiche_voeux_classes: updatedFicheVoeux,
       };
     });
-  }
-
+  };
 
   return (
     <React.Fragment>
@@ -639,7 +687,9 @@ const EditFicheVoeux = () => {
                   <Col lg={12}>
                     <div className="mb-3 text-center">
                       <h2>
-                        Fiche de Voeux - {voeuxDetails.enseignant.prenom_fr} {voeuxDetails.enseignant.nom_fr} - {voeuxDetails.semestre}
+                        Fiche de Voeux - {voeuxDetails.enseignant.prenom_fr}{" "}
+                        {voeuxDetails.enseignant.nom_fr} -{" "}
+                        {voeuxDetails.semestre}
                       </h2>
                     </div>
                   </Col>
@@ -650,7 +700,9 @@ const EditFicheVoeux = () => {
                       <Row>
                         <Col lg={5}>
                           <div className="position-relative">
-                            <Form.Label className="text-muted">Matière</Form.Label>
+                            <Form.Label className="text-muted">
+                              Matière
+                            </Form.Label>
                             <Form.Control
                               placeholder="Chercher matière..."
                               type="text"
@@ -659,26 +711,38 @@ const EditFicheVoeux = () => {
                               autoComplete="off"
                               autoCapitalize="off"
                               value={searchTerm[fiche_index]}
-                              onChange={(e: any) => handleSearch(e, fiche_index)}
+                              onChange={(e: any) =>
+                                handleSearch(e, fiche_index)
+                              }
                               onFocus={() => {
                                 let showSuggestionsRef = [...showSuggestions];
                                 showSuggestionsRef[fiche_index] = true;
                                 setShowSuggestions(showSuggestionsRef);
                               }}
                             />
-                            {showSuggestions[fiche_index] && filteredSubjects[fiche_index]?.length > 0 && (
-                              <ListGroup className="mt-2 w-100 shadow">
-                                {filteredSubjects[fiche_index]?.map((subject, index) => (
-                                  <ListGroup.Item
-                                    key={index}
-                                    action
-                                    onClick={() => handleSelectSubject(subject, fiche_index)}
-                                  >
-                                    {subject?.matiere! + " " + subject.types[0].type}
-                                  </ListGroup.Item>
-                                ))}
-                              </ListGroup>
-                            )}
+                            {showSuggestions[fiche_index] &&
+                              filteredSubjects[fiche_index]?.length > 0 && (
+                                <ListGroup className="mt-2 w-100 shadow">
+                                  {filteredSubjects[fiche_index]?.map(
+                                    (subject, index) => (
+                                      <ListGroup.Item
+                                        key={index}
+                                        action
+                                        onClick={() =>
+                                          handleSelectSubject(
+                                            subject,
+                                            fiche_index
+                                          )
+                                        }
+                                      >
+                                        {subject?.matiere! +
+                                          " " +
+                                          subject.types[0].type}
+                                      </ListGroup.Item>
+                                    )
+                                  )}
+                                </ListGroup>
+                              )}
                           </div>
                         </Col>
                         <Col lg={3}>
@@ -728,7 +792,7 @@ const EditFicheVoeux = () => {
                         <Col lg={2}>
                           <Button
                             className="mt-4"
-                            style={{ marginRight: '5px' }}
+                            style={{ marginRight: "5px" }}
                             variant="warning"
                             disabled={!data.selectionDisabled}
                             onClick={() => resetClassSelection(fiche_index)}
@@ -752,7 +816,7 @@ const EditFicheVoeux = () => {
                           variant="info"
                           disabled={formData.enseignant.nom_ar === ""}
                           onClick={addNewClassLine}
-                          style={{ marginRight: '20%' }}
+                          style={{ marginRight: "20%" }}
                         >
                           <i
                             className="bi bi-plus"
@@ -828,10 +892,7 @@ const EditFicheVoeux = () => {
                     ))}
                     <Row>
                       <Col lg={12}>
-                        <Button
-                          variant="info"
-                          onClick={addNewDayLine}
-                        >
+                        <Button variant="info" onClick={addNewDayLine}>
                           <i
                             className="bi bi-plus"
                             style={{ fontSize: "15px" }}
@@ -843,7 +904,13 @@ const EditFicheVoeux = () => {
                       <Col lg={8}>
                         <div>
                           <label className="form-label">Remarque</label>
-                          <textarea onChange={onChangeObservation} value={formData.remarque} className="form-control" id="exampleFormControlTextarea5" rows={3}></textarea>
+                          <textarea
+                            onChange={onChangeObservation}
+                            value={formData.remarque}
+                            className="form-control"
+                            id="exampleFormControlTextarea5"
+                            rows={3}
+                          ></textarea>
                         </div>
                       </Col>
                     </Row>

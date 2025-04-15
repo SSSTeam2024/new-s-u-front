@@ -23,25 +23,20 @@ import {
 } from "features/personnel/personnelSlice";
 import * as XLSX from "xlsx";
 import FileSaver from "file-saver";
-import { format } from "date-fns";
 import {
   useAddServicePersonnelMutation,
-  useFetchServicesPersonnelQuery,
   useGetServicePersonnelValueMutation,
 } from "features/servicePersonnel/servicePersonnel";
 import {
   useAddPostePersonnelMutation,
-  useFetchPostesPersonnelQuery,
   useGetPostePersonnelValueMutation,
 } from "features/postePersonnel/postePersonnel";
 import {
   useAddGradePersonnelMutation,
-  useFetchGradesPersonnelQuery,
   useGetGradePersonnelValueMutation,
 } from "features/gradePersonnel/gradePersonnel";
 import {
   useAddCategoriePersonnelMutation,
-  useFetchCategoriesPersonnelQuery,
   useGetCategoryPersonnelValueMutation,
 } from "features/categoriePersonnel/categoriePersonnel";
 import {
@@ -50,8 +45,8 @@ import {
 } from "features/etatPersonnel/etatPersonnelSlice";
 
 const excelDateToJSDate = (excelDate: number): string => {
-  const jsDate = new Date((excelDate - 25569) * 86400 * 1000); // Convert Excel date to JS date
-  return jsDate.toLocaleDateString("fr-FR"); // Format date to dd/mm/yyyy
+  const jsDate = new Date((excelDate - 25569) * 86400 * 1000);
+  return jsDate.toLocaleDateString("fr-FR");
 };
 
 export interface PersonnelFileEXEL {
@@ -91,9 +86,6 @@ const ListePersonnels = () => {
   document.title = "Liste des personnels | ENIGA";
 
   const navigate = useNavigate();
-
-  const [modal_AddEnseignantModals, setmodal_AddEnseignantModals] =
-    useState<boolean>(false);
 
   function tog_AddPersonnel() {
     navigate("/gestion-personnel/ajouter-personnel");
@@ -1283,14 +1275,14 @@ const ListePersonnels = () => {
                 <Card.Body>
                   <Row className="g-3">
                     <Col lg={3}>
-                      <div className="search-box">
+                      <label className="search-box">
                         <input
                           type="text"
                           className="form-control search"
                           placeholder="Chercher..."
                         />
                         <i className="ri-search-line search-icon"></i>
-                      </div>
+                      </label>
                     </Col>
                     <Col className="col-lg-auto">
                       <select
@@ -1362,7 +1354,7 @@ const ListePersonnels = () => {
                     customPageSize={10}
                     className="custom-header-css table align-middle table-nowrap"
                     tableClass="table-centered align-middle table-nowrap mb-0"
-                    theadClass="text-muted table-light"
+                    theadClass="text-muted"
                     SearchPlaceholder="Search Products..."
                   />
                   {/* </table> */}

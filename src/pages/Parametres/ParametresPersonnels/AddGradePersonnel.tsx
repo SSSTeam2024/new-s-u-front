@@ -1,18 +1,12 @@
-import React, {useState } from "react";
-import {
-  Button,
-  Col,
-  Container,
-  Form,
-  Row,
-} from "react-bootstrap";
-import {useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { Button, Col, Container, Form, Row } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 import "flatpickr/dist/flatpickr.min.css";
 import Swal from "sweetalert2";
 import { useAddGradePersonnelMutation } from "features/gradePersonnel/gradePersonnel";
 
 const AddGradePersonnel = () => {
-  document.title = " Ajouter Grade Personnel | Application Smart Institute";
+  document.title = " Ajouter Grade Personnel | ENIGA";
   const navigate = useNavigate();
 
   function tog_retourParametres() {
@@ -43,7 +37,9 @@ const AddGradePersonnel = () => {
     });
   };
 
-  const onSubmitGradePersonnel = async (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmitGradePersonnel = async (
+    e: React.FormEvent<HTMLFormElement>
+  ) => {
     e.preventDefault();
     try {
       await createGradePersonnel(formData).unwrap();
@@ -82,7 +78,10 @@ const AddGradePersonnel = () => {
         <Container fluid={true}>
           <Row>
             <Col lg={12}>
-              <Form className="tablelist-form" onSubmit={onSubmitGradePersonnel}>
+              <Form
+                className="tablelist-form"
+                onSubmit={onSubmitGradePersonnel}
+              >
                 <div
                   id="alert-error-msg"
                   className="d-none alert alert-danger py-2"
@@ -91,7 +90,9 @@ const AddGradePersonnel = () => {
                 <Row>
                   <Col lg={4}>
                     <div className="mb-3">
-                      <Form.Label htmlFor="value_grade_personnel">Valeur</Form.Label>
+                      <Form.Label htmlFor="value_grade_personnel">
+                        Valeur
+                      </Form.Label>
                       <Form.Control
                         type="text"
                         id="value_grade_personnel"
@@ -105,7 +106,9 @@ const AddGradePersonnel = () => {
 
                   <Col lg={4}>
                     <div className="mb-3">
-                      <Form.Label htmlFor="grade_fr">Grade Personnel</Form.Label>
+                      <Form.Label htmlFor="grade_fr">
+                        Grade Personnel
+                      </Form.Label>
                       <Form.Control
                         type="text"
                         id="grade_fr"

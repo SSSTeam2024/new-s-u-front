@@ -19,7 +19,7 @@ import img1 from "assets/images/users/avatar-1.jpg";
 import { useFetchReclamationsPersonnelQuery } from "features/reclamationPersonnel/reclamationPersonnelSlice";
 
 const ReclamationTablePersonnel = () => {
-  document.title = " Table Reclamation Personnel | Smart Institute";
+  document.title = " Table Reclamation Personnel | ENIGA";
 
   const location = useLocation();
   const personnelDetails = location.state;

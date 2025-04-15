@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import {
   Button,
   Card,
@@ -12,7 +12,6 @@ import Breadcrumb from "Common/BreadCrumb";
 import { Link, useNavigate } from "react-router-dom";
 import * as XLSX from "xlsx";
 import FileSaver from "file-saver";
-import TableContainer from "Common/TableContainer";
 import Swal from "sweetalert2";
 import {
   useDeleteMatiereMutation,
@@ -54,12 +53,6 @@ const ListMatieres = () => {
   function tog_ImportModals() {
     setmodal_ImportModals(!modal_ImportModals);
   }
-  const exportToExcel = () => {
-    const worksheet = XLSX.utils.json_to_sheet(matiere);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Matieres");
-    XLSX.writeFile(workbook, "Matieres.xlsx");
-  };
 
   function tog_AddMatiere() {
     navigate("/departement/gestion-matieres/ajouter-matiere");
@@ -463,9 +456,13 @@ const ListMatieres = () => {
                   <Modal.Body className="p-4">
                     Vous pouvez importer plusieurs matières à partir de ce
                     template{" "}
-                    <a href="#" onClick={createAndDownloadExcel}>
+                    <span
+                      className="text-primary"
+                      onClick={createAndDownloadExcel}
+                      style={{ cursor: "pointer" }}
+                    >
                       Cliquer ici pour télécharger
-                    </a>
+                    </span>
                     <Form.Group controlId="formFile" className="mt-3">
                       <Form.Label>Upload Excel File</Form.Label>
                       <Form.Control
@@ -495,7 +492,12 @@ const ListMatieres = () => {
               <Card>
                 <Card.Body className="p-0">
                   <div>
-                    <DataTable columns={columns} data={data} pagination />
+                    <DataTable
+                      columns={columns}
+                      data={data}
+                      pagination
+                      noDataComponent="Il n'y a aucun enregistrement à afficher"
+                    />
                   </div>
                 </Card.Body>
               </Card>

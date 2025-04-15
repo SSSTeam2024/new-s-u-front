@@ -858,7 +858,7 @@ export const replaceShortCodes = (demandData: any, globalData: any, docNumber?: 
       enseignantId?.specilaite?.specialite_ar!
     );
   }
-  // console.log(newBody);
+
   newUpdateBody = JSON.parse(newBody);
 
   return newUpdateBody;

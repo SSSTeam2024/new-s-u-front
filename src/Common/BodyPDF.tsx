@@ -239,7 +239,6 @@ const BodyPDF = forwardRef<HTMLDivElement, ChildProps>((props: any, ref) => {
     }
     // UNIVERSITY FR
     if (newBody?.includes("nom_directeur")) {
-      console.log(allVariables);
       newBody = newBody?.replace("nom_directeur", allVariables.directeur_fr);
     }
 
@@ -713,7 +712,7 @@ const BodyPDF = forwardRef<HTMLDivElement, ChildProps>((props: any, ref) => {
         enseignantId.specilaite.specialite_ar
       );
     }
-    // console.log(newBody);
+
     setNewUpdateBody(JSON.parse(newBody));
   }, [piece_demande, studentId, anneeScolaire, allVariables]);
 

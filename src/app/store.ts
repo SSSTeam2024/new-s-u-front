@@ -77,6 +77,11 @@ import { messageSlice } from "features/messages/messagesSlice";
 import { demandeTirageSlice } from "features/demandeTirage/demandeTirageSlice";
 import { absencePersonnelSlice } from "features/absencePersonnel/absencePersonnel";
 import { personnelWorkingDaySlice } from "features/personnelWorkingDay/personnelWorkingDaySlice";
+import { voieEnvoiSlice } from "features/voieEnvoi/voieEnvoiSlice";
+import { courrierEntrantSlice } from "features/courrierEntrant/courrierEntrant";
+import { courrierSortantSlice } from "features/courrierSortant/courrierSortantSlice";
+import { intervenantsSlice } from "features/intervenants/intervenantsSlice";
+import { pointageSlice } from "features/pointageEnseignant/pointageEnseignantSlice";
 
 export const store = configureStore({
   reducer: {
@@ -153,6 +158,13 @@ export const store = configureStore({
     [demandeTirageSlice.reducerPath]: demandeTirageSlice.reducer,
     [absencePersonnelSlice.reducerPath]: absencePersonnelSlice.reducer,
     [personnelWorkingDaySlice.reducerPath]: personnelWorkingDaySlice.reducer,
+    [voieEnvoiSlice.reducerPath]: voieEnvoiSlice.reducer,
+    [courrierEntrantSlice.reducerPath]: courrierEntrantSlice.reducer,
+    [courrierSortantSlice.reducerPath]: courrierSortantSlice.reducer,
+    //! Intervenants
+    [intervenantsSlice.reducerPath]: intervenantsSlice.reducer,
+     //! Pointage Enseignant
+     [pointageSlice.reducerPath]: pointageSlice.reducer,
     auth: authSlice,
     Layout: LayoutReducer,
     ForgetPassword: ForgetPasswordReducer,
@@ -227,7 +239,12 @@ export const store = configureStore({
       messageSlice.middleware,
       demandeTirageSlice.middleware,
       absencePersonnelSlice.middleware,
-      personnelWorkingDaySlice.middleware
+      personnelWorkingDaySlice.middleware,
+      voieEnvoiSlice.middleware,
+      courrierEntrantSlice.middleware,
+      courrierSortantSlice.middleware,
+      intervenantsSlice.middleware,
+      pointageSlice.middleware
     ]);
   },
 });

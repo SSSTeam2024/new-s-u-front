@@ -127,7 +127,7 @@ const ListFicheVoeux = () => {
           }
         }
       }
-      console.log("Liste voeux", voeux)
+      console.log("Liste voeux", voeux);
       setListeVoeux(voeux);
     }
   }, [isSuccess, data]);
@@ -328,14 +328,14 @@ const ListFicheVoeux = () => {
                 <Card.Body>
                   <Row className="g-3">
                     <Col lg={3}>
-                      <div className="search-box">
+                      <label className="search-box">
                         <input
                           type="text"
                           className="form-control search"
                           placeholder="Chercher..."
                         />
                         <i className="ri-search-line search-icon"></i>
-                      </div>
+                      </label>
                     </Col>
 
                     <Col className="col-lg-auto ms-auto">
@@ -378,7 +378,7 @@ const ListFicheVoeux = () => {
                       isPagination={true}
                       className="custom-header-css table align-middle table-nowrap"
                       tableClass="table-centered align-middle table-nowrap mb-0"
-                      theadClass="text-muted table-light"
+                      theadClass="text-muted"
                       SearchPlaceholder="Search Products..."
                     />
                   </table>
@@ -409,7 +409,12 @@ const ListFicheVoeux = () => {
         placement="end"
       >
         <Offcanvas.Header closeButton>
-          <Offcanvas.Title>Fiche Voeux pour {showFicheClasseDetails?.enseignant?.nom_fr! + " " + showFicheClasseDetails?.enseignant?.prenom_fr!}</Offcanvas.Title>
+          <Offcanvas.Title>
+            Fiche Voeux pour{" "}
+            {showFicheClasseDetails?.enseignant?.nom_fr! +
+              " " +
+              showFicheClasseDetails?.enseignant?.prenom_fr!}
+          </Offcanvas.Title>
         </Offcanvas.Header>
         <Offcanvas.Body>
           <div>{showFicheClasseDetails?.semestre!}</div>
@@ -423,9 +428,7 @@ const ListFicheVoeux = () => {
                         <span className="text-muted">Matière</span>
                       </td>
                       <td>
-                        <span className="fw-medium">
-                          {voeux?.matieres!}
-                        </span>
+                        <span className="fw-medium">{voeux?.matieres!}</span>
                       </td>
                     </tr>
                     <tr>
@@ -473,7 +476,9 @@ const ListFicheVoeux = () => {
                 <span className="text-muted">Remarque</span>
               </div>
               <div>
-                <span className="fw-medium">{showFicheClasseDetails.remarque}</span>
+                <span className="fw-medium">
+                  {showFicheClasseDetails.remarque}
+                </span>
               </div>
             </div>
           </Row>

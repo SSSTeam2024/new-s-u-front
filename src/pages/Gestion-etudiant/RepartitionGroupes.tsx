@@ -62,7 +62,7 @@ const RepartitionGroupe = () => {
     (classe) => classe.niveau_classe._id === selectedNiveau
   );
 
-  const { data: EtudiantsByClasseID = [], isSuccess: studentsLoaded } =
+  const { data: EtudiantsByClasseID = [] } =
     useFetchEtudiantsByIdClasseQuery(selectedGroupe);
 
   const { data: classeDetails } = useFetchClasseByIdQuery(selectedGroupe);
@@ -145,77 +145,86 @@ const RepartitionGroupe = () => {
               <Card>
                 <Card.Header>
                   <Row className="g-3">
-                    <Col className="col-lg-auto">
-                      <select
-                        className="form-select"
-                        id="idDepartement"
-                        name="departement-single-default"
-                        onChange={handleSelectedDepartement}
-                      >
-                        <option defaultValue="">Départements</option>
-                        {AllDepartements.map((departement) => (
-                          <option
-                            value={departement?._id!}
-                            key={departement?._id!}
+                    <Col>
+                      <Row>
+                        <Col className="col-lg-auto">
+                          <select
+                            className="form-select"
+                            id="idDepartement"
+                            name="departement-single-default"
+                            onChange={handleSelectedDepartement}
                           >
-                            {departement.name_fr}
-                          </option>
-                        ))}
-                      </select>
+                            <option defaultValue="">Départements</option>
+                            {AllDepartements.map((departement) => (
+                              <option
+                                value={departement?._id!}
+                                key={departement?._id!}
+                              >
+                                {departement.name_fr}
+                              </option>
+                            ))}
+                          </select>
+                        </Col>
+                        {selectedDepartement !== "" && (
+                          <Col className="col-lg-auto">
+                            <select
+                              className="form-select"
+                              id="idClasse"
+                              name="classes-single-default"
+                              onChange={handleSelectedGroupe}
+                            >
+                              <option defaultValue="">Groupes</option>
+                              {filtredClasseByDepartement.map((classe) => (
+                                <option value={classe?._id!} key={classe?._id!}>
+                                  {classe?.nom_classe_fr!}
+                                </option>
+                              ))}
+                            </select>
+                          </Col>
+                        )}
+                      </Row>
+                      <Row className="mt-2">
+                        <Col className="col-lg-auto">
+                          <select
+                            className="form-select"
+                            id="idNiveau"
+                            name="niveau-single-default"
+                            onChange={handleSelectedNiveau}
+                          >
+                            <option defaultValue="">Niveaux</option>
+                            {AllNiveaux.map((niveau) => (
+                              <option value={niveau?._id!} key={niveau?._id!}>
+                                {niveau.name_niveau_fr}
+                              </option>
+                            ))}
+                          </select>
+                        </Col>
+                        {selectedNiveau !== "" && (
+                          <Col className="col-lg-auto">
+                            <select
+                              className="form-select"
+                              id="idGroupe"
+                              name="groupes-single-default"
+                              onChange={handleSelectedGroupe}
+                            >
+                              <option defaultValue="">Groupes</option>
+                              {filtredClasseByNiveau.map((classe) => (
+                                <option value={classe?._id!} key={classe?._id!}>
+                                  {classe?.nom_classe_fr!}
+                                </option>
+                              ))}
+                            </select>
+                          </Col>
+                        )}
+                      </Row>
                     </Col>
-                    {selectedDepartement !== "" && (
-                      <Col className="col-lg-auto">
-                        <select
-                          className="form-select"
-                          id="idClasse"
-                          name="classes-single-default"
-                          onChange={handleSelectedGroupe}
-                        >
-                          <option defaultValue="">Groupes</option>
-                          {filtredClasseByDepartement.map((classe) => (
-                            <option value={classe?._id!} key={classe?._id!}>
-                              {classe?.nom_classe_fr!}
-                            </option>
-                          ))}
-                        </select>
-                      </Col>
-                    )}
-                    <Col className="col-lg-auto">
-                      <select
-                        className="form-select"
-                        id="idNiveau"
-                        name="niveau-single-default"
-                        onChange={handleSelectedNiveau}
-                      >
-                        <option defaultValue="">Niveaux</option>
-                        {AllNiveaux.map((niveau) => (
-                          <option value={niveau?._id!} key={niveau?._id!}>
-                            {niveau.name_niveau_fr}
-                          </option>
-                        ))}
-                      </select>
-                    </Col>
-                    {selectedNiveau !== "" && (
-                      <Col className="col-lg-auto">
-                        <select
-                          className="form-select"
-                          id="idGroupe"
-                          name="groupes-single-default"
-                          onChange={handleSelectedGroupe}
-                        >
-                          <option defaultValue="">Groupes</option>
-                          {filtredClasseByNiveau.map((classe) => (
-                            <option value={classe?._id!} key={classe?._id!}>
-                              {classe?.nom_classe_fr!}
-                            </option>
-                          ))}
-                        </select>
-                      </Col>
-                    )}
-                    <Col lg={5} className="d-flex justify-content-end">
+                    <Col
+                      lg={5}
+                      className="d-flex justify-content-end align-items-center"
+                    >
                       <Link
                         to="#"
-                        className="badge bg-info-subtle text-info view-item-btn"
+                        className="badge bg-info-subtle text-info view-item-btn h-50"
                       >
                         <i
                           className="ph ph-printer"
@@ -225,7 +234,7 @@ const RepartitionGroupe = () => {
                             fontSize: "2.6em",
                           }}
                           onMouseEnter={(e) =>
-                            (e.currentTarget.style.transform = "scale(1.5)")
+                            (e.currentTarget.style.transform = "scale(1.48)")
                           }
                           onMouseLeave={(e) =>
                             (e.currentTarget.style.transform = "scale(1)")
@@ -242,6 +251,7 @@ const RepartitionGroupe = () => {
                       columns={columns}
                       data={EtudiantsByClasseID}
                       pagination
+                      noDataComponent="Il n'y a aucun enregistrement à afficher"
                     />
                   </div>
                   <Row
@@ -267,6 +277,7 @@ const RepartitionGroupe = () => {
                                   src={`${
                                     process.env.REACT_APP_API_URL
                                   }/files/variableGlobaleFiles/logoRepubliqueFiles/${lastVariable?.logo_republique!}`}
+                                  alt={lastVariable?.etablissement_fr!}
                                 />
                               </Col>
                               <Col lg={4} className="text-center pt-2">

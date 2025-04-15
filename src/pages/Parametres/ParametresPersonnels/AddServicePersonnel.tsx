@@ -9,7 +9,7 @@ import { useAddPostePersonnelMutation } from "features/postePersonnel/postePerso
 import { useAddServicePersonnelMutation } from "features/servicePersonnel/servicePersonnel";
 
 const AddServicesPersonnel = () => {
-  document.title = " Ajouter Service Personnel | Application Smart Institute";
+  document.title = " Ajouter Service Personnel | ENIGA";
   const navigate = useNavigate();
 
   function tog_retourParametres() {
@@ -129,7 +129,9 @@ const AddServicesPersonnel = () => {
                         textAlign: "right",
                       }}
                     >
-                      <Form.Label htmlFor="service_ar">إدارة شؤون الموظفين</Form.Label>
+                      <Form.Label htmlFor="service_ar">
+                        إدارة شؤون الموظفين
+                      </Form.Label>
                       <Form.Control
                         type="text"
                         id="service_ar"

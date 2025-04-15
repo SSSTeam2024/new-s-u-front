@@ -385,7 +385,7 @@ const delegationOptions: DelegationOptions = {
 };
 
 const EditProfilPersonnel = () => {
-  document.title = " Modifier Profil Personnel | Application Smart Institute";
+  document.title = " Modifier Profil Personnel | ENIGA";
   const navigate = useNavigate();
   const { state: personnel } = useLocation();
   const [editPersonnel] = useUpdatePersonnelMutation();
@@ -465,7 +465,6 @@ const EditProfilPersonnel = () => {
   const [selectedWilaya, setSelectedWilaya] = useState<Wilaya | "">(
     personnel?.state! || ""
   );
-  const [selectedDelegation, setSelectedDelegation] = useState<string>("");
   const [selectedDateDelivrance, setSelectedDateDelivrance] =
     useState<Date | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -621,19 +620,9 @@ const EditProfilPersonnel = () => {
     }));
   };
 
-  const errorAlert = (message: string) => {
-    Swal.fire({
-      position: "center",
-      icon: "error",
-      title: message,
-      showConfirmButton: false,
-      timer: 2000,
-    });
-  };
   const onSubmitPersonnel = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      console.log("Submitting form with data:", formData);
       await editPersonnel(formData).unwrap();
       notify();
       navigate("/gestion-personnel/liste-personnels");
@@ -805,7 +794,7 @@ const EditProfilPersonnel = () => {
         const { base64Data, extension } = await convertToBase64(file);
         setFormData((prev) => ({
           ...prev,
-          photo_profil: `${file.name}`, // Keep the original file name
+          photo_profil: `${file.name}`,
           PhotoProfilFileBase64String: base64Data,
           PhotoProfilFileExtension: extension,
         }));
@@ -825,7 +814,7 @@ const EditProfilPersonnel = () => {
   const photoProfilSrc =
     formData.PhotoProfilFileBase64String && formData.PhotoProfilFileExtension
       ? `data:image/${formData.PhotoProfilFileExtension};base64,${formData.PhotoProfilFileBase64String}`
-      : ""; // Fallback image
+      : "";
 
   return (
     <React.Fragment>

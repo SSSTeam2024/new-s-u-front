@@ -28,7 +28,7 @@ import {
 } from "features/congé/leaveBalanceSlice";
 
 const ListeSoldeConge = () => {
-  document.title = "Liste solde Congés | Smart Institute";
+  document.title = "Liste solde Congés | ENIGA";
 
   const user = useSelector((state: RootState) => selectCurrentUser(state));
 
@@ -255,10 +255,7 @@ const ListeSoldeConge = () => {
     <React.Fragment>
       <div className="page-content">
         <Container fluid={true}>
-          <Breadcrumb
-            title="Gestions des congés"
-            pageTitle="Liste des congés"
-          />
+          <Breadcrumb title="Solde des Congés" pageTitle="Gestion des congés" />
 
           <Row id="usersList">
             <Col lg={12}>
@@ -266,14 +263,14 @@ const ListeSoldeConge = () => {
                 <Card.Body>
                   <Row className="g-lg-2 g-4">
                     <Col lg={3}>
-                      <div className="search-box">
+                      <label className="search-box">
                         <input
                           type="text"
                           className="form-control search"
-                          placeholder="Chercher une demande..."
+                          placeholder="Chercher ..."
                         />
                         <i className="ri-search-line search-icon"></i>
-                      </div>
+                      </label>
                     </Col>
 
                     {isMultiDeleteButton && (
@@ -307,7 +304,7 @@ const ListeSoldeConge = () => {
                     isPagination={true}
                     className="custom-header-css table align-middle table-nowrap"
                     tableClass="table-centered align-middle table-nowrap mb-0"
-                    theadClass="text-muted table-light"
+                    theadClass="text-muted"
                     SearchPlaceholder="Search Products..."
                   />
                   <div className="noresult" style={{ display: "none" }}>

@@ -7,7 +7,7 @@ import Swal from "sweetalert2";
 import { useAddGradeEnseignantMutation } from "features/gradeEnseignant/gradeEnseignant";
 
 const AddGradeEnseignant = () => {
-  document.title = " Ajouter Grade Enseignant | Application Smart Institute";
+  document.title = " Ajouter Grade Enseignant | ENIGA";
   const navigate = useNavigate();
 
   function tog_retourParametres() {

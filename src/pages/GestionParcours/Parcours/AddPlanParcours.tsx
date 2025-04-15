@@ -18,7 +18,7 @@ export interface ModuleParcours {
 }
 
 const AddPlanParcours = () => {
-  document.title = "Ajouter plan de parcours | Application Smart Institute";
+  document.title = "Ajouter plan de parcours | ENIGA";
   const navigate = useNavigate();
   const location = useLocation();
   const parcoursetails = location.state;

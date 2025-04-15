@@ -6,7 +6,7 @@ import { useUpdateEtatPersonnelMutation } from "features/etatPersonnel/etatPerso
 import Swal from "sweetalert2";
 
 const EditEtatPersonnel = () => {
-  document.title = " Modifier Etat Compte Personnel | Application Smart Institute";
+  document.title = " Modifier Etat Compte Personnel | ENIGA";
   const navigate = useNavigate();
   const { state: etatPersonnel } = useLocation();
   const [editEtatPersonnel] = useUpdateEtatPersonnelMutation();
@@ -108,7 +108,9 @@ const EditEtatPersonnel = () => {
 
                   <Col lg={4}>
                     <div className="mb-3">
-                      <Form.Label htmlFor="etat_fr">Etat Compte Personnel</Form.Label>
+                      <Form.Label htmlFor="etat_fr">
+                        Etat Compte Personnel
+                      </Form.Label>
                       <Form.Control
                         type="text"
                         id="etat_fr"
@@ -128,7 +130,9 @@ const EditEtatPersonnel = () => {
                         textAlign: "right",
                       }}
                     >
-                      <Form.Label htmlFor="etat_ar">حالة حساب الإداري</Form.Label>
+                      <Form.Label htmlFor="etat_ar">
+                        حالة حساب الإداري
+                      </Form.Label>
                       <Form.Control
                         type="text"
                         id="etat_ar"

@@ -63,7 +63,6 @@ const MyAccount = () => {
   }
 
   const handleShowPdfModal = (file: any) => {
-    console.log(file);
     setPdfUrl(file);
     setShowPdfModal(true);
   };

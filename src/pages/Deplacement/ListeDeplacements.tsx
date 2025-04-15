@@ -1,19 +1,7 @@
 import React, { useState, useMemo, useCallback } from "react";
-import {
-  Button,
-  Card,
-  Col,
-  Container,
-  Form,
-  Modal,
-  Row,
-} from "react-bootstrap";
+import { Button, Card, Col, Container, Modal, Row } from "react-bootstrap";
 import Breadcrumb from "Common/BreadCrumb";
-import CountUp from "react-countup";
 import TableContainer from "Common/TableContainer";
-import { userList } from "Common/data";
-import Flatpickr from "react-flatpickr";
-import dummyImg from "../../assets/images/users/user-dummy-img.jpg";
 import { Link, useNavigate } from "react-router-dom";
 import { RootState } from "app/store";
 import { useSelector } from "react-redux";
@@ -21,14 +9,13 @@ import { selectCurrentUser } from "features/account/authSlice";
 import { actionAuthorization } from "utils/pathVerification";
 import {
   useFetchAvisEnseignantQuery,
-  AvisEnseignant,
   useDeleteAvisEnseignantMutation,
 } from "features/avisEnseignant/avisEnseignantSlice";
 import Swal from "sweetalert2";
 import { useFetchDeplacementQuery } from "features/deplacement/deplacementSlice";
 
 const ListeDeplacements = () => {
-  document.title = "Liste des déplacements| ENIGA";
+  document.title = "Liste des déplacements | ENIGA";
 
   const user = useSelector((state: RootState) => selectCurrentUser(state));
 
@@ -37,8 +24,7 @@ const ListeDeplacements = () => {
 
   const { refetch } = useFetchAvisEnseignantQuery();
   const [deleteAvisEnseignant] = useDeleteAvisEnseignantMutation();
-  const [modal_AddUserModals, setmodal_AddUserModals] =
-    useState<boolean>(false);
+
   const [isMultiDeleteButton, setIsMultiDeleteButton] =
     useState<boolean>(false);
   // State for PDF modal
@@ -82,17 +68,14 @@ const ListeDeplacements = () => {
 
       if (result.isConfirmed) {
         await deleteAvisEnseignant({ _id: id }).unwrap();
-        Swal.fire("Supprimé !", "L'avis personnel a été supprimée.", "success");
+        Swal.fire("Supprimé !", "Déplacement a été supprimée.", "success");
         refetch(); // Recharger les données ou mettre à jour l'UI
       }
     } catch (error) {
-      console.error(
-        "Erreur lors de la suppression de l'avis personnel :",
-        error
-      );
+      console.error("Erreur lors de la suppression du déplacement :", error);
       Swal.fire(
         "Erreur !",
-        "Un problème est survenu lors de la suppression de l'avis personnel.",
+        "Un problème est survenu lors de la suppression du déplacement.",
         "error"
       );
     }
@@ -101,15 +84,6 @@ const ListeDeplacements = () => {
   function tog_AddDeplacement() {
     navigate("/gestion-deplacement/Ajouter-deplacement");
   }
-
-  const handleShowPdfModal = (fileName: string) => {
-    let link =
-      `${process.env.REACT_APP_API_URL}/files/avisEnseignantFiles/pdf/` +
-      fileName;
-
-    setPdfUrl(link);
-    setShowPdfModal(true);
-  };
 
   const handleClosePdfModal = () => {
     setShowPdfModal(false);
@@ -304,7 +278,10 @@ const ListeDeplacements = () => {
     <React.Fragment>
       <div className="page-content">
         <Container fluid={true}>
-          <Breadcrumb title="Liste des Avis" pageTitle="Avis enseignants" />
+          <Breadcrumb
+            title="Liste des Déplacements"
+            pageTitle="Gestion des déplacements"
+          />
 
           <Row id="usersList">
             <Col lg={12}>
@@ -312,14 +289,14 @@ const ListeDeplacements = () => {
                 <Card.Body>
                   <Row className="g-lg-2 g-4">
                     <Col lg={3}>
-                      <div className="search-box">
+                      <label className="search-box">
                         <input
                           type="text"
                           className="form-control search"
                           placeholder="Chercher ..."
                         />
                         <i className="ri-search-line search-icon"></i>
-                      </div>
+                      </label>
                     </Col>
 
                     {isMultiDeleteButton && (
@@ -353,7 +330,7 @@ const ListeDeplacements = () => {
                     isPagination={true}
                     className="custom-header-css table align-middle table-nowrap"
                     tableClass="table-centered align-middle table-nowrap mb-0"
-                    theadClass="text-muted table-light"
+                    theadClass="text-muted"
                     SearchPlaceholder="Search Products..."
                   />
                   <div className="noresult" style={{ display: "none" }}>

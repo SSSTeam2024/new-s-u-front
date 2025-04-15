@@ -19,7 +19,7 @@ import img1 from "assets/images/users/avatar-1.jpg";
 import { useFetchDemandeEtudiantQuery } from "features/demandeEtudiant/demandeEtudiantSlice";
 
 const DemandeTable = () => {
-  document.title = "table Demande Etudiant | Smart Institute";
+  document.title = "table Demande Etudiant | ENIGA";
 
   const location = useLocation();
   const studentDetails = location.state;

@@ -246,6 +246,7 @@ const Cours = () => {
                   columns={columns}
                   data={getFilteredCours()}
                   pagination
+                  noDataComponent="Il n'y a aucun enregistrement à afficher"
                 />
               </Card.Body>
             </Card>

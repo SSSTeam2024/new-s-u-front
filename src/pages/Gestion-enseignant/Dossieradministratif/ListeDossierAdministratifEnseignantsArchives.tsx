@@ -1,18 +1,16 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { Card, Col, Container, Row } from "react-bootstrap";
 import Breadcrumb from "Common/BreadCrumb";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import TableContainer from "Common/TableContainer";
 import {
   DossierAdministratif,
   useFetchDossierAdministratifQuery,
-  useRemoveSpecificPaperMutation,
   useRestoreDossierAdministratifMutation,
 } from "features/dossierAdministratif/dossierAdministratif";
 
 const ListeDossierAdministratifEnseignantsArchives = () => {
-  document.title =
-    "Liste Dossiers Administratifs Enseignants Archivés  | ENIGA";
+  document.title = "Dossiers Administratifs Enseignants Archivés | ENIGA";
 
   const { data = [] } = useFetchDossierAdministratifQuery();
   const enseignantsDossiers = data.filter(
@@ -143,8 +141,8 @@ const ListeDossierAdministratifEnseignantsArchives = () => {
       <div className="page-content">
         <Container fluid={true}>
           <Breadcrumb
-            title="Gestion des enseignants"
-            pageTitle="Liste des dossiers enseignants archivés"
+            title="Dossiers enseignants archivés"
+            pageTitle="Gestion des enseignants"
           />
 
           <Row id="sellersList">
@@ -153,14 +151,14 @@ const ListeDossierAdministratifEnseignantsArchives = () => {
                 <Card.Body>
                   <Row className="g-3">
                     <Col lg={3}>
-                      <div className="search-box">
+                      <label className="search-box">
                         <input
                           type="text"
                           className="form-control search"
                           placeholder="Chercher..."
                         />
                         <i className="ri-search-line search-icon"></i>
-                      </div>
+                      </label>
                     </Col>
                     {/* <Col className="col-lg-auto ms-auto">
                       <div className="hstack gap-3">
@@ -193,7 +191,7 @@ const ListeDossierAdministratifEnseignantsArchives = () => {
                       isPagination={true}
                       className="custom-header-css table align-middle table-nowrap"
                       tableClass="table-centered align-middle table-nowrap mb-0"
-                      theadClass="text-muted table-light"
+                      theadClass="text-muted"
                       SearchPlaceholder="Search Products..."
                     />
                   </table>
