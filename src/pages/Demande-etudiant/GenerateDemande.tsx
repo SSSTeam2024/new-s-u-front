@@ -34,8 +34,8 @@ const GenerateDemande = () => {
   const bodyRef = useRef<HTMLDivElement | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const { data: number, isSuccess: nextNumberLoaded } = useGetGeneratedDocNextNumberByModelIdQuery(
-      demandeLocation?.piece_demande?._id!
-      );
+    demandeLocation?.piece_demande?._id!
+  );
 
   const [saveGeneratedDoc] = useSaveGeneratedDocMutation();
 
@@ -97,6 +97,7 @@ const GenerateDemande = () => {
       setNewUpdateBody(generatedDocument);
 
       let allVariables = AllVariablesGlobales[AllVariablesGlobales.length - 1];
+      console.log("allVariables ligne 100", allVariables)
 
       const [an1, an2] = allVariables?.annee_universitaire!.split('/');
 
@@ -114,11 +115,11 @@ const GenerateDemande = () => {
         "-" +
         d.getFullYear().toString();
 
-      if(demandeLocation?.piece_demande?.has_number! === '1'){
+      if (demandeLocation?.piece_demande?.has_number! === '1') {
         num = number.value + "/" + part2an1 + part2an2;
       }
 
-      if(demandeLocation?.piece_demande?.has_code! === '1'){
+      if (demandeLocation?.piece_demande?.has_code! === '1') {
         qr = qrCodeQndOrderNumber.cryptedQrCode;
       }
       //TODO : CODE YABDA 8ALET KEN FI AWEL TELECHARGEMENT
@@ -138,8 +139,9 @@ const GenerateDemande = () => {
   const getCryptedQrCodeAndOrderNumber = () => {
     let cryptedCode = "";
     let order_number = "";
-    if(demandeLocation?.status! !== 'traité' && demandeLocation?.generated_doc === null){
+    if (demandeLocation?.status! !== 'traité' && demandeLocation?.generated_doc === null) {
       let allVariables = AllVariablesGlobales[AllVariablesGlobales.length - 1];
+
 
       const [an1, an2] = allVariables?.annee_universitaire!.split('/');
 
@@ -147,7 +149,7 @@ const GenerateDemande = () => {
       const [part1an2, part2an2] = an2.split('0');
       order_number = number.value + "/" + part2an1 + part2an2;
       cryptedCode = generateQRCode(demandeLocation._id, order_number);
-    }else{
+    } else {
       console.log(demandeLocation?.generated_doc);
       cryptedCode = demandeLocation?.generated_doc?.num_qr_code!;
       order_number = demandeLocation?.generated_doc?.num_ordre!;
@@ -292,69 +294,69 @@ const GenerateDemande = () => {
 
   const handleSaveAsPDF = async () => {
     const qrCodeQndOrderNumber = getCryptedQrCodeAndOrderNumber();
-  let generatedDocument = replaceShortCodes(demandeLocation, AllVariablesGlobales, qrCodeQndOrderNumber.orderNumber, qrCodeQndOrderNumber.cryptedQrCode);
+    let generatedDocument = replaceShortCodes(demandeLocation, AllVariablesGlobales, qrCodeQndOrderNumber.orderNumber, qrCodeQndOrderNumber.cryptedQrCode);
 
-  if (generatedDocument) {
-    // Create a temporary DOM element to manipulate styles safely
-    const tempDiv = document.createElement("div");
-    tempDiv.innerHTML = generatedDocument;
+    if (generatedDocument) {
+      // Create a temporary DOM element to manipulate styles safely
+      const tempDiv = document.createElement("div");
+      tempDiv.innerHTML = generatedDocument;
 
-    // Remove unwanted styles from `.docx-wrapper`
-    const docxWrapper: any = tempDiv.querySelector(".docx-wrapper");
-    if (docxWrapper) {
-      docxWrapper.style.background = "transparent"; // Remove gray background
-      docxWrapper.style.padding = "0"; // Remove padding
-      docxWrapper.style.display = "block"; // Reset display to normal flow
-      docxWrapper.style.flexFlow = "unset";
-      docxWrapper.style.alignItems = "unset";
+      // Remove unwanted styles from `.docx-wrapper`
+      const docxWrapper: any = tempDiv.querySelector(".docx-wrapper");
+      if (docxWrapper) {
+        docxWrapper.style.background = "transparent"; // Remove gray background
+        docxWrapper.style.padding = "0"; // Remove padding
+        docxWrapper.style.display = "block"; // Reset display to normal flow
+        docxWrapper.style.flexFlow = "unset";
+        docxWrapper.style.alignItems = "unset";
+      }
+
+      // Create a temporary container for the sanitized document
+      const tempContainer = document.createElement("div");
+      tempContainer.style.position = "absolute";
+      tempContainer.style.left = "-9999px";
+      tempContainer.style.width = "fit-content";
+      tempContainer.style.background = "#fff";
+      tempContainer.innerHTML = tempDiv.innerHTML; // Use modified content
+
+      document.body.appendChild(tempContainer);
+
+      // Generate PDF
+      const canvas = await html2canvas(tempContainer, { scale: 2, useCORS: true });
+      // const imgData = canvas.toDataURL("image/png");
+      const imgData = canvas.toDataURL("image/jpeg", 0.7);
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "px",
+        format: [tempContainer.offsetWidth, tempContainer.offsetHeight],
+      });
+
+      pdf.addImage(
+        imgData,
+        // "PNG",
+        "JPEG",
+        0,
+        0,
+        tempContainer.offsetWidth,
+        tempContainer.offsetHeight
+      );
+      pdf.save("document.pdf");
+
+      document.body.removeChild(tempContainer);
+
+      if (demandeLocation?.status! !== 'traité' && demandeLocation?.generated_doc === null) {
+        let generatedDocDataRef = { ...generatedDocData };
+
+        generatedDocDataRef.body = generatedDocument;
+
+        console.log(generatedDocDataRef);
+        await saveDocmentAndUpdateDemand(generatedDocDataRef);
+      }
+
+    } else {
+      alert("No content available to save as PDF.");
     }
-
-    // Create a temporary container for the sanitized document
-    const tempContainer = document.createElement("div");
-    tempContainer.style.position = "absolute";
-    tempContainer.style.left = "-9999px";
-    tempContainer.style.width = "fit-content";
-    tempContainer.style.background = "#fff";
-    tempContainer.innerHTML = tempDiv.innerHTML; // Use modified content
-
-    document.body.appendChild(tempContainer);
-
-    // Generate PDF
-    const canvas = await html2canvas(tempContainer, { scale: 2, useCORS: true });
-    // const imgData = canvas.toDataURL("image/png");
-    const imgData = canvas.toDataURL("image/jpeg", 0.7);
-    const pdf = new jsPDF({
-      orientation: "portrait",
-      unit: "px",
-      format: [tempContainer.offsetWidth, tempContainer.offsetHeight],
-    });
-
-    pdf.addImage(
-      imgData,
-      // "PNG",
-      "JPEG",
-      0,
-      0,
-      tempContainer.offsetWidth,
-      tempContainer.offsetHeight
-    );
-    pdf.save("document.pdf");
-
-    document.body.removeChild(tempContainer);
-
-    if(demandeLocation?.status! !== 'traité' && demandeLocation?.generated_doc === null){
-      let generatedDocDataRef = {...generatedDocData};
-
-      generatedDocDataRef.body = generatedDocument;
-
-      console.log(generatedDocDataRef);
-      await saveDocmentAndUpdateDemand(generatedDocDataRef);
-    }
-
-  } else {
-    alert("No content available to save as PDF.");
-  }
-  //*****
+    //*****
     // let generatedDocument = replaceShortCodes(
     //   demandeLocation,
     //   AllVariablesGlobales
@@ -392,57 +394,57 @@ const GenerateDemande = () => {
     //   alert("No content available to save as PDF.");
     // }
     //*********
-  //   let generatedDocument = replaceShortCodes(demandeLocation, AllVariablesGlobales);
+    //   let generatedDocument = replaceShortCodes(demandeLocation, AllVariablesGlobales);
 
-  // if (!generatedDocument) {
-  //   alert("No content available to save as PDF.");
-  //   return;
-  // }
+    // if (!generatedDocument) {
+    //   alert("No content available to save as PDF.");
+    //   return;
+    // }
 
-  // // Create a temporary container for rendering the content
-  // const tempContainer = document.createElement("div");
-  // tempContainer.style.position = "absolute";
-  // tempContainer.style.left = "-9999px";
-  // tempContainer.style.width = "fit-content";
-  // tempContainer.style.background = "#fff";
-  // tempContainer.innerHTML = generatedDocument;
-  // document.body.appendChild(tempContainer);
+    // // Create a temporary container for rendering the content
+    // const tempContainer = document.createElement("div");
+    // tempContainer.style.position = "absolute";
+    // tempContainer.style.left = "-9999px";
+    // tempContainer.style.width = "fit-content";
+    // tempContainer.style.background = "#fff";
+    // tempContainer.innerHTML = generatedDocument;
+    // document.body.appendChild(tempContainer);
 
-  // try {
-  //   // Ensure all images are loaded before capturing
-  //   const images: any = tempContainer.querySelectorAll("img");
-  //   await Promise.all([...images].map((img) => new Promise((resolve) => {
-  //     if (img.complete) {
-  //       resolve(true);
-  //     } else {
-  //       img.onload = () => resolve(true);
-  //       img.onerror = () => resolve(true); // Prevent failure on broken images
-  //     }
-  //   })));
+    // try {
+    //   // Ensure all images are loaded before capturing
+    //   const images: any = tempContainer.querySelectorAll("img");
+    //   await Promise.all([...images].map((img) => new Promise((resolve) => {
+    //     if (img.complete) {
+    //       resolve(true);
+    //     } else {
+    //       img.onload = () => resolve(true);
+    //       img.onerror = () => resolve(true); // Prevent failure on broken images
+    //     }
+    //   })));
 
-  //   // Capture the content as a high-resolution image
-  //   const canvas = await html2canvas(tempContainer, { scale: 2, useCORS: true });
-  //   const imgData = canvas.toDataURL("image/png");
+    //   // Capture the content as a high-resolution image
+    //   const canvas = await html2canvas(tempContainer, { scale: 2, useCORS: true });
+    //   const imgData = canvas.toDataURL("image/png");
 
-  //   // Define PDF format (A4 size in px: 595x842)
-  //   const pdf = new jsPDF({
-  //     orientation: "portrait",
-  //     unit: "px",
-  //     format: [tempContainer.offsetWidth, tempContainer.offsetHeight],
-  //   });
+    //   // Define PDF format (A4 size in px: 595x842)
+    //   const pdf = new jsPDF({
+    //     orientation: "portrait",
+    //     unit: "px",
+    //     format: [tempContainer.offsetWidth, tempContainer.offsetHeight],
+    //   });
 
-  //   // Calculate scaled height to maintain aspect ratio
-  //   const imgWidth = 595; // A4 width in pixels
-  //   const imgHeight = (canvas.height * imgWidth) / canvas.width; // Maintain aspect ratio
+    //   // Calculate scaled height to maintain aspect ratio
+    //   const imgWidth = 595; // A4 width in pixels
+    //   const imgHeight = (canvas.height * imgWidth) / canvas.width; // Maintain aspect ratio
 
-  //   pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
-  //   pdf.save("document.pdf");
-  // } catch (error) {
-  //   console.error("Error generating PDF:", error);
-  //   alert("Failed to generate PDF.");
-  // } finally {
-  //   document.body.removeChild(tempContainer); // Clean up after rendering
-  // }
+    //   pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
+    //   pdf.save("document.pdf");
+    // } catch (error) {
+    //   console.error("Error generating PDF:", error);
+    //   alert("Failed to generate PDF.");
+    // } finally {
+    //   document.body.removeChild(tempContainer); // Clean up after rendering
+    // }
   };
 
   const saveDocmentAndUpdateDemand = async (generatedDocData: any) => {
@@ -455,7 +457,7 @@ const GenerateDemande = () => {
     }).unwrap();
 
     notify();
-    
+
   }
 
   const notify = () => {
@@ -465,7 +467,7 @@ const GenerateDemande = () => {
       title: "Document généré avec succès",
       showConfirmButton: false,
       timer: 2000,
-    }).then(()=>{
+    }).then(() => {
       navigate("/demandes-etudiant/Liste-demandes-etudiant");
     });
   };
@@ -569,9 +571,9 @@ const GenerateDemande = () => {
     <React.Fragment>
       <div className="page-content">
         <Container fluid={true}>
-        <div className="hstack gap-2 justify-content-end d-print-none mt-4 mb-4">
+          <div className="hstack gap-2 justify-content-end d-print-none mt-4 mb-4">
             <Button onClick={handleSaveAsPDF}>
-            {demandeLocation.status === 'traité' && demandeLocation.generated_doc !== null ? (<>Télécharger</>) : (<>Enregistrer et Télécharger</>)}
+              {demandeLocation.status === 'traité' && demandeLocation.generated_doc !== null ? (<>Télécharger</>) : (<>Enregistrer et Télécharger</>)}
             </Button>
           </div>
           {/* <div
@@ -588,7 +590,7 @@ const GenerateDemande = () => {
               border: "1px solid #ddd",
             }}
           > */}
-            {/* <Row>
+          {/* <Row>
               <HeaderPDF
                 logo_etablissement={
                   AllVariablesGlobales[2]?.logo_etablissement!
@@ -597,11 +599,11 @@ const GenerateDemande = () => {
                 logo_universite={AllVariablesGlobales[2]?.logo_universite!}
               />
             </Row> */}
-            {/* <Row>
+          {/* <Row>
               <TitlePDF piece_demande={demandeLocation?.piece_demande!} />
             </Row> */}
-            <Row>
-              {/* <BodyPDF
+          <Row>
+            {/* <BodyPDF
                 piece_demande={demandeLocation?.piece_demande!}
                 studentId={demandeLocation?.studentId!}
                 enseignantId={demandeLocation?.enseignantId!}
@@ -615,7 +617,7 @@ const GenerateDemande = () => {
                 }
                 allVariables={AllVariablesGlobales[2]}
               /> */}
-              {/* <div
+            {/* <div
                 style={{
                   border: "1px solid #ccc",
                   padding: "10px",
@@ -624,14 +626,14 @@ const GenerateDemande = () => {
                   background: "#f9f9f9",
                 }}
               > */}
-                <div
-                  dangerouslySetInnerHTML={{
-                    __html: /* JSON.parse(newUpdateBody) */ newUpdateBody,
-                  }}
-                />
-              {/* </div> */}
-            </Row>
-            {/* <Row className="mt-auto">
+            <div
+              dangerouslySetInnerHTML={{
+                __html: /* JSON.parse(newUpdateBody) */ newUpdateBody,
+              }}
+            />
+            {/* </div> */}
+          </Row>
+          {/* <Row className="mt-auto">
               <FooterPDF
                 address_fr={AllVariablesGlobales[2]?.address_fr!}
                 code={AllVariablesGlobales[2]?.code_postal!}

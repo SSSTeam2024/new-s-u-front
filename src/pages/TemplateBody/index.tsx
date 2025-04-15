@@ -108,7 +108,8 @@ const TemplateBody = () => {
               </li>
               <li>
                 <Link
-                  to="#"
+                  to="/template/edit-template-body"
+                  state={cellProps}
                   className="badge bg-success-subtle text-success edit-item-btn"
                 >
                   <i

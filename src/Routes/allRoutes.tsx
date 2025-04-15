@@ -236,6 +236,7 @@ import RepartitionEnseignant from "pages/Gestion-enseignant/RepartitionEnseignan
 import RechercheAvance from "pages/Gestion-etudiant/RechercheAvance";
 import RepartitionPersonnel from "pages/Gestion-personnel/RepartitionPersonnel";
 import ListeAbsencePersonnel from "pages/Gestion-personnel/ListeAbsencePersonnel";
+import EditTemplateBody from "pages/TemplateBody/EditTemplateBody";
 const authProtectedRoutes = [
   { path: "/dashboard", component: <Dashboard /> },
   //service Tirage
@@ -870,6 +871,7 @@ const authProtectedRoutes = [
   { path: "/template/liste-template-body", component: <TemplateBody /> },
   { path: "/template/ajouter-template-body", component: <NewTemplateBody /> },
   { path: "/template/single-template-body", component: <TemplateBodyDetail /> },
+  { path: "/template/edit-template-body", component: <EditTemplateBody /> },
   //short code
   { path: "/shortCode/liste-short-code", component: <ShortCode /> },
   { path: "/shortCode/ajouter-short-code", component: <NewShortCode /> },
@@ -1061,12 +1063,12 @@ const authProtectedRoutes = [
   // Messagerie
 
   {
-    path: "/messagerie/liste-message",component: <Messages />,
+    path: "/messagerie/liste-message", component: <Messages />,
   },
   {
-    path: "/messagerie/single-message",component: <SingleMessage />,
+    path: "/messagerie/single-message", component: <SingleMessage />,
   },
- 
+
 
   // Accounts
   { path: "/account", component: <MyAccount /> },

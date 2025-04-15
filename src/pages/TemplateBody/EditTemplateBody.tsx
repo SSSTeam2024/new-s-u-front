@@ -9,7 +9,7 @@ import {
   Spinner,
   FormControl,
 } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { useFetchShortCodeQuery } from "features/shortCode/shortCodeSlice";
 import { useAddNewTemplateBodyMutation } from "features/templateBody/templateBodySlice";
@@ -22,43 +22,17 @@ import { useFetchVirtualServicesQuery } from "features/virtualService/virtualSer
 import { useFetchAllUsersQuery } from "features/account/accountSlice";
 import Select from "react-select";
 
-const NewTemplateBody = () => {
-  document.title = "Ajouter un Modèle | ENIGA";
+const EditTemplateBody = () => {
+  document.title = "Modifier un Modèle | ENIGA";
 
   const navigate = useNavigate();
+  const location = useLocation();
+  const templateBodyDetails = location.state
+  console.log("templateBodyDetails", templateBodyDetails)
   const [addNewTemplateBody, { isLoading }] = useAddNewTemplateBodyMutation();
   const { data: shortCodeList = [] } = useFetchShortCodeQuery();
-
-  const { data: virtualServices = [] } = useFetchVirtualServicesQuery();
-
   const { data: admins = [] } = useFetchAllUsersQuery();
 
-  console.log(admins);
-
-  //************************************************************************** */
-
-  const customStyles = {
-    multiValue: (styles: any, { data }: any) => ({
-      ...styles,
-      backgroundColor: "#4b93ff",
-    }),
-    multiValueLabel: (styles: any, { data }: any) => ({
-      ...styles,
-      backgroundColor: "#4b93ff",
-      color: "white",
-    }),
-    multiValueRemove: (styles: any, { data }: any) => ({
-      ...styles,
-      color: "white",
-      backgroundColor: "#4b93ff",
-      ":hover": {
-        backgroundColor: "#4b93ff",
-        color: "white",
-      },
-    }),
-  };
-
-  const [content, setContent] = useState<any>("");
 
   const previewContainer: any = useRef(null);
 
@@ -74,24 +48,6 @@ const NewTemplateBody = () => {
 
   const [withNumber, setWithOrderNumber] = useState<boolean>(false);
 
-  // const handleFileUpload = async (event: any) => {
-  //   const file = event.target.files[0];
-  //   if (file) {
-  //     const reader = new FileReader();
-  //     reader.onload = async (e: any) => {
-  //       const arrayBuffer = e.target.result;
-  //       if (previewContainer.current) {
-  //         previewContainer.current.innerHTML = ""; // Clear existing content
-  //         await renderAsync(arrayBuffer, previewContainer.current);
-  //       }
-  //     };
-  //     reader.readAsArrayBuffer(file);
-  //   }
-  //   previewContainer.current.contentEditable = true;
-  //   setIsDocumentLoaded(true);
-  // };
-
-  /////////////////////////////////////////////////
 
   const handleFileUpload = async (event: any) => {
     const file = event.target.files[0];
@@ -151,8 +107,6 @@ const NewTemplateBody = () => {
       reader.readAsDataURL(blob);
     });
   };
-
-  ////////////////////////////////////////////////
 
   // Capture cursor position
   const captureCursorPosition = () => {
@@ -354,107 +308,6 @@ const NewTemplateBody = () => {
     setSelectedLangue(e.target.value);
   };
 
-  // const onChangePage = (
-  //   e: React.ChangeEvent<HTMLSelectElement>,
-  //   index: number
-  // ) => {
-  //   console.log(e.target.value);
-  //   console.log(index);
-
-  //   let servicesRef = [...templateBody.services];
-  //   let page: any = servicesRef[index].pages.filter(
-  //     (p: any) => p.id === e.target.value
-  //   );
-
-  //   console.log(page);
-
-  //   servicesRef[index].pageData.id = page[0]?.id!;
-  //   servicesRef[index].pageData.pageName = page[0]?.name!;
-
-  //   console.log(servicesRef[index]);
-
-  //   setTemplateBody((prevState) => ({
-  //     ...prevState,
-  //     services: servicesRef,
-  //   }));
-  // };
-
-  // const onChangeAdmin = (
-  //   e: React.ChangeEvent<HTMLSelectElement>,
-  //   index: number
-  // ) => {
-  //   console.log(e.target.value);
-  //   console.log(index);
-
-  //   let servicesRef = [...templateBody.services];
-  //   let admin = admins.filter((a) => a._id === e.target.value);
-
-  //   servicesRef[index].adminData.id = e.target.value;
-  //   servicesRef[index].adminData.login = admin[0].login;
-
-  //   let permissions = admin[0].permissions.filter(
-  //     (p: any) => p.documentEdition !== "no"
-  //   );
-
-  //   servicesRef[index].pages = permissions.map((p: any) => {
-  //     return { id: p._id, p_name: p.name };
-  //   });
-
-  //   console.log(servicesRef[index].pages);
-
-  //   setTemplateBody((prevState) => ({
-  //     ...prevState,
-  //     services: servicesRef,
-  //   }));
-  // };
-
-  const onChangeService = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    console.log(e.target.value);
-
-    // let servicesRef = [...templateBody.services];
-    // let service = virtualServices.filter((s) => s._id === e.target.value);
-
-    // servicesRef[index].serviceData.id = e.target.value;
-    // servicesRef[index].serviceData.title = service[0].title;
-
-    // let adminsPerService: any = admins.filter(
-    //   (a) => a.service._id === e.target.value
-    // );
-    // servicesRef[index].admins = adminsPerService;
-    // servicesRef[index].pages = [];
-
-    setTemplateBody((prevState) => ({
-      ...prevState,
-      services: e.target.value,
-    }));
-  };
-
-  // const addNewLine = () => {
-  //   let servicesRef = [...templateBody.services];
-  //   servicesRef.push({
-  //     serviceData: { id: "", title: "" },
-  //     adminData: { id: "", login: "" },
-  //     pageData: { id: "", pageName: "" },
-  //     admins: [],
-  //     pages: [],
-  //   });
-  //   setTemplateBody((prevState) => ({
-  //     ...prevState,
-  //     services: servicesRef,
-  //   }));
-  // };
-
-  // const removeLine = (index: number) => {
-  //   let servicesRef = [...templateBody.services];
-
-  //   servicesRef.splice(index, 1);
-
-  //   setTemplateBody((prevState) => ({
-  //     ...prevState,
-  //     services: servicesRef,
-  //   }));
-  // };
-
   const onChangeIntendedFor = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setTemplateBody((prevState) => ({
       ...prevState,
@@ -477,19 +330,6 @@ const NewTemplateBody = () => {
     }));
   };
 
-  // const handleBodyChange = (event:any, editor:any) => {
-  //   const data = editor.getData();
-
-  //   const tableMatches = data.match(/<table>/gi) || [];
-  //   const numberOfTables = tableMatches.length;
-
-  //   setTemplateBody((prevState) => ({
-  //     ...prevState,
-  //     body: data,
-  //     isArray: numberOfTables > 0 ? "1" : "0",
-  //     arraysNumber: numberOfTables.toString(),
-  //   }));
-  // };
 
   const config = {
     readonly: false,
@@ -558,8 +398,7 @@ const NewTemplateBody = () => {
   };
 
   const handleFormSubmit =
-    async (/* e: React.FormEvent<HTMLFormElement> */) => {
-      // e.preventDefault();
+    async () => {
       try {
         console.log(templateBody);
         await addNewTemplateBody(templateBody).unwrap();
@@ -577,9 +416,7 @@ const NewTemplateBody = () => {
           title: "Erreur",
           text: "Une erreur est survenue lors de la création du corps du modèle.",
         });
-      } //finally {
-      //   setTemplateBody(initialTemplateBody);
-      // }
+      }
     };
 
   const handleNextStep = () => {
@@ -606,37 +443,6 @@ const NewTemplateBody = () => {
       setStep((prevStep) => prevStep - 1);
     }
   };
-
-  const handleKeyDown = (event: any, editor: any) => {
-    if (event.key === "Enter" && !event.shiftKey) {
-      event.preventDefault(); // Prevent the default behavior of the Enter key
-      editor.model.change((writer: any) => {
-        const position = editor.model.document.selection.getFirstPosition();
-        writer.insertElement("softBreak", position); // Insert a line break
-      });
-    }
-  };
-  const editor = useRef(null);
-
-  // const config = {
-  //   readonly: false, // Allow editing
-  //   height: 842, // Approximate A4 height in pixels
-  //   width: 595,  // Approximate A4 width in pixels
-  //   toolbarAdaptive: false, // Ensures the toolbar shows all items
-  //   toolbarSticky: false, // Keeps the toolbar at the top
-  //   buttons: [
-  //     'source', '|',
-  //     'bold', 'italic', 'underline', 'strikethrough', '|',
-  //     'superscript', 'subscript', '|',
-  //     'ul', 'ol', '|',
-  //     'outdent', 'indent', '|',
-  //     'font', 'fontsize', 'brush', 'paragraph', '|',
-  //     'table', 'link', '|',
-  //     'align', '|',
-  //     'undo', 'redo', '|',
-  //     'hr', 'eraser', 'fullsize'
-  //   ]
-  // };
 
   return (
     <Container fluid className="page-content">
@@ -702,105 +508,7 @@ const NewTemplateBody = () => {
                           </Form.Select>
                         </Form.Group>
                       </Col>
-                      <Col lg={8}>
-                        {/* {templateBody.services.map(
-                          (service: any, index: number) => ( */}
-                        <Row>
-                          {/* <Col lg={3}>
-                            <Form.Group controlId="service">
-                              <Form.Label>Espace</Form.Label>
-                              <Form.Select
-                                value={templateBody.services}
-                                onChange={(e) => {
-                                  onChangeService(e);
-                                }}
-                                className="text-muted"
-                              >
-                                <option value="">Sélectionner Espace</option>
-                                <option value="Demande_Etudiant">
-                                  Demande Etudiant
-                                </option>
-                                <option value="Demande_Enseignant">
-                                  Demande Enseignant
-                                </option>
-                                <option value="Demande_Personnel">
-                                  Demande Personnel
-                                </option>
-                                <option value="Gestion_Examen">
-                                  Gestion Examen
-                                </option>
-                                <option value="Gestion_Stage">
-                                  Gestion Stage
-                                </option>
-                              </Form.Select>
-                            </Form.Group>
-                          </Col> */}
-                          {/* <Col lg={3}>
-                                <Form.Group controlId="intended_for">
-                                  <Form.Label>
-                                    {index === 0 ? <>Admin conserné</> : <></>}
-                                  </Form.Label>
-                                  <Form.Select
-                                    value={service?.adminData?.id!}
-                                    onChange={(e) => {
-                                      onChangeAdmin(e, index);
-                                    }}
-                                    className="text-muted"
-                                  >
-                                    <option value="">Sélectionner Admin</option>
-                                    {service.admins.map((admin: any) => (
-                                      <option value={admin?._id!}>
-                                        {admin?.login!}
-                                      </option>
-                                    ))}
-                                    
-                                  </Form.Select>
-                                </Form.Group>
-                              </Col>
-                              <Col lg={4}>
-                                <Form.Group controlId="service">
-                                  <Form.Label>
-                                    {index === 0 ? <>Page conserné</> : <></>}
-                                  </Form.Label>
-                                  <Form.Select
-                                    value={service?.pageData?.id!}
-                                    onChange={(e) => {
-                                      onChangePage(e, index);
-                                    }}
-                                    className="text-muted"
-                                  >
-                                    <option value="">Sélectionner Page</option>
-                                    {service.pages.map((page: any) => (
-                                      <option value={page?.id!}>
-                                        {page?.p_name!}
-                                      </option>
-                                    ))}
-                                  </Form.Select>
-                                </Form.Group>
-                              </Col>
-                              <Col lg={2}>
-                                <Button
-                                  className="mt-4"
-                                  variant="danger"
-                                  onClick={() => removeLine(index)}
-                                >
-                                  <i className="bi bi-trash-fill"></i>
-                                </Button>
-                              </Col> */}
-                        </Row>
-                        {/* )
-                        )} */}
-                        {/* <Row className="mt-2">
-                          <Col lg={12}>
-                            <Button variant="info" onClick={addNewLine}>
-                              <i
-                                className="bi bi-plus"
-                                style={{ fontSize: "15px" }}
-                              ></i>
-                            </Button>
-                          </Col>
-                        </Row> */}
-                      </Col>
+
                     </Row>
                     <div className="d-flex justify-content-end mt-3">
                       <Button
@@ -822,23 +530,7 @@ const NewTemplateBody = () => {
                   <>
                     <Row className="mt-4">
                       <Col lg={3}>
-                        {/* <Form.Label>Corps</Form.Label> */}
 
-                        {/* <label
-                          htmlFor="docInput"
-                          className="m-2"
-                          data-bs-toggle="tooltip"
-                          data-bs-placement="right"
-                          title="Choisir un fichier .docx"
-                        >
-                          <span className="avatar-xs d-inline-block">
-                            <span
-                              className="avatar-title bg-light border rounded-circle text-muted cursor-pointer"
-                            >
-                              <i className="ri-article-line fs-24"></i>
-                            </span>
-                          </span>
-                        </label> */}
                         <input
                           className="d-none"
                           type="file"
@@ -907,17 +599,7 @@ const NewTemplateBody = () => {
                             </div>
                           )}
                         </Button>
-                        <Col lg={4}></Col>
-                        {/* <div className="center">
-                          <JoditEditor
-                            ref={editor}
-                            value={body}
-                            config={config}
-                            onBlur={(newContent) =>
-                              handleBodyChange(newContent)
-                            }
-                          />
-                        </div> */}
+
                       </Col>
                     </Row>
                     <Row className="m-3">
@@ -1089,4 +771,4 @@ const NewTemplateBody = () => {
   );
 };
 
-export default NewTemplateBody;
+export default EditTemplateBody;
