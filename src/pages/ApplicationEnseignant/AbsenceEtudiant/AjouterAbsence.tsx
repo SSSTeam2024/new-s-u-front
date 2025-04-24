@@ -1,46 +1,27 @@
-import React, { useEffect, useState } from "react";
-import {
-  Container,
-  Row,
-  Card,
-  Col,
-  Modal,
-  Form,
-  Button,
-  Offcanvas,
-} from "react-bootstrap";
-import DataTable from "react-data-table-component";
+import React, { useCallback, useEffect, useState } from "react";
+import { Container, Row, Card, Col, Form, Button } from "react-bootstrap";
 import Breadcrumb from "Common/BreadCrumb";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import Flatpickr from "react-flatpickr";
 import { useFetchEnseignantsQuery } from "features/enseignant/enseignantSlice";
-
-// import UpdateAbsence from "./UpdateAbsence";
 import { French } from "flatpickr/dist/l10n/fr";
-// import { formatDate, formatTime } from "helpers/data_time_format";
-import {
-  Classe,
-  useFetchClassesByTeacherMutation,
-  useFetchClassesQuery,
-} from "features/classe/classe";
 import {
   AbsenceEtudiant,
   useAddAbsenceEtudiantMutation,
 } from "features/absenceEtudiant/absenceSlice";
-import { useFetchParcoursQuery } from "features/parcours/parcours";
 import { useFetchEtudiantsByIdClasseQuery } from "features/etudiant/etudiantSlice";
-import { formatDate, formatTime } from "helpers/data_time_format";
+import { formatDate } from "helpers/data_time_format";
 import { useGetTeacherPeriodsBySemesterAndIdTeacherV2Mutation } from "features/teachersPeriods/teachersPeriods";
 import { useGetPeriodicSessionsByTeacherV2Mutation } from "features/seance/seance";
 import { useFetchTimeTableParamsQuery } from "features/timeTableParams/timeTableParams";
+import {
+  PointageEnseignant,
+  useAddPointageEnseignantMutation,
+} from "features/pointageEnseignant/pointageEnseignantSlice";
 
 const AjouterAbsence = () => {
   const { data: AllEnseignants = [] } = useFetchEnseignantsQuery();
-
-  const { data: AllClasse = [] } = useFetchClassesQuery();
-
-  const { data: AllParcours = [] } = useFetchParcoursQuery();
 
   const [getTeacherPeriodicSchedules] =
     useGetTeacherPeriodsBySemesterAndIdTeacherV2Mutation();
@@ -50,8 +31,6 @@ const AjouterAbsence = () => {
   const [studentTypes, setStudentTypes] = useState<{ [key: string]: string }>(
     {}
   );
-  const [classesList, setClassesList] = useState<Classe[]>();
-  const [showObservation, setShowObservation] = useState<boolean>(false);
 
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [max_date, setMaxDate] = useState<Date | undefined>(undefined);
@@ -73,10 +52,53 @@ const AjouterAbsence = () => {
   const { data: EtudiantsByClasseID = [], isSuccess: studentsLoaded } =
     useFetchEtudiantsByIdClasseQuery(selectedClasse);
 
-  const { data: scheduleParams = [], isSuccess: paramsLoaded } = useFetchTimeTableParamsQuery();
+  const { data: scheduleParams = [], isSuccess: paramsLoaded } =
+    useFetchTimeTableParamsQuery();
+
+  const configureMinAndMaxCalendarDates = useCallback(
+    (semester: string) => {
+      if (semester === "1") {
+        const [day1, month1, year1] = scheduleParams[0].semestre1_start
+          .split("-")
+          .map(Number);
+        const semesterOneStartDate = new Date(year1, month1 - 1, day1);
+        setMinDate(semesterOneStartDate);
+
+        const currentDate = new Date();
+        const [day2, month2, year2] = scheduleParams[0].semestre1_end
+          .split("-")
+          .map(Number);
+        const semesterOneEndDate = new Date(year2, month2 - 1, day2);
+
+        if (semesterOneEndDate > currentDate) {
+          setMaxDate(currentDate);
+        } else {
+          setMaxDate(semesterOneEndDate);
+        }
+      } else {
+        const [day1, month1, year1] = scheduleParams[0].semestre2_start
+          .split("-")
+          .map(Number);
+        const semesterTwoStartDate = new Date(year1, month1 - 1, day1);
+        setMinDate(semesterTwoStartDate);
+
+        const currentDate = new Date();
+        const [day2, month2, year2] = scheduleParams[0].semestre2_end
+          .split("-")
+          .map(Number);
+        const semesterTwoEndDate = new Date(year2, month2 - 1, day2);
+
+        if (semesterTwoEndDate > currentDate) {
+          setMaxDate(currentDate);
+        } else {
+          setMaxDate(semesterTwoEndDate);
+        }
+      }
+    },
+    [scheduleParams]
+  );
 
   useEffect(() => {
-
     if (studentsLoaded && !hasProcessed) {
       let students = EtudiantsByClasseID.map((student: any) => ({
         student: student,
@@ -84,48 +106,24 @@ const AjouterAbsence = () => {
       }));
 
       setStudentsList(students);
-      console.log(students);
-      setHasProcessed(true);
 
+      setHasProcessed(true);
     }
 
     if (paramsLoaded && !hasProcessed2) {
-      configureMinAndMaxCalendarDates('1');
+      configureMinAndMaxCalendarDates("1");
       setHasProcessed2(true);
     }
-  }, [EtudiantsByClasseID, hasProcessed, selectedClasse, scheduleParams, hasProcessed2]);
-
-  const configureMinAndMaxCalendarDates = (semester: string) => {
-    if (semester === '1') {
-      const [day1, month1, year1] = scheduleParams[0].semestre1_start.split('-').map(Number);
-      const semesterOneStartDate = new Date(year1, month1 - 1, day1);
-      setMinDate(semesterOneStartDate);
-
-      const currentDate = new Date();
-      const [day2, month2, year2] = scheduleParams[0].semestre1_end.split('-').map(Number);
-      const semesterOneEndDate = new Date(year2, month2 - 1, day2);
-
-      if (semesterOneEndDate > currentDate) {
-        setMaxDate(currentDate);
-      } else {
-        setMaxDate(semesterOneEndDate);
-      }
-    } else {
-      const [day1, month1, year1] = scheduleParams[0].semestre2_start.split('-').map(Number);
-      const semesterTwoStartDate = new Date(year1, month1 - 1, day1);
-      setMinDate(semesterTwoStartDate);
-
-      const currentDate = new Date();
-      const [day2, month2, year2] = scheduleParams[0].semestre2_end.split('-').map(Number);
-      const semesterTwoEndDate = new Date(year2, month2 - 1, day2);
-
-      if (semesterTwoEndDate > currentDate) {
-        setMaxDate(currentDate);
-      } else {
-        setMaxDate(semesterTwoEndDate);
-      }
-    }
-  }
+  }, [
+    EtudiantsByClasseID,
+    hasProcessed,
+    selectedClasse,
+    scheduleParams,
+    hasProcessed2,
+    paramsLoaded,
+    studentsLoaded,
+    configureMinAndMaxCalendarDates,
+  ]);
 
   const handleDateChange = (selectedDates: Date[]) => {
     setSelectedDate(selectedDates[0]);
@@ -134,13 +132,6 @@ const AjouterAbsence = () => {
     setSelectedClasse("");
     setStudentsList([]);
     setHasProcessed(false);
-  };
-
-  const [selectedTime, setSelectedTime] = useState<Date | null>(null);
-
-  const handleTimeChange = (selectedDates: Date[]) => {
-    const time = selectedDates[0];
-    setSelectedTime(time);
   };
 
   const notifySuccess = () => {
@@ -163,20 +154,6 @@ const AjouterAbsence = () => {
     });
   };
 
-  const [selectedEleve, setSelectedEleve] = useState<string>("");
-
-  const handleSelectEleve = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = event.target.value;
-    setSelectedEleve(value);
-  };
-
-  const handleSelectTrimestre = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const value = event.target.value;
-    setSelectedTrimestre(value);
-  };
-
   const toggleSemestre = () => {
     const newSemester = selectedTrimestre === "1" ? "2" : "1";
     configureMinAndMaxCalendarDates(newSemester);
@@ -192,7 +169,6 @@ const AjouterAbsence = () => {
   const handleSelectEnseignant = async (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
-    console.log(selectedDate);
     if (selectedDate === null) {
       alert("Sélectionnez une date avant de continuer!");
     } else {
@@ -204,17 +180,12 @@ const AjouterAbsence = () => {
         semester: selectedTrimestre,
       };
 
-      console.log(periodicSchedulesRequestData);
-
       let schedules = await getTeacherPeriodicSchedules(
         periodicSchedulesRequestData
       ).unwrap();
-      console.log("schedules", schedules);
 
       const filteredSchedulesIds =
         filterTeacherSchedulesBasedOnSelectedDate(schedules);
-
-      console.log("filteredSchedulesIds", filteredSchedulesIds);
 
       let teacherSessionsRequestData = {
         teacher_id: value,
@@ -225,10 +196,8 @@ const AjouterAbsence = () => {
         teacherSessionsRequestData
       ).unwrap();
 
-      console.log("allTeacherSessions", allTeacherSessions);
-
       const sessions = filterSessionsBasedOnSelectedWeekDay(allTeacherSessions);
-      console.log(sessions);
+
       setSessions(sessions);
       setSelectedClasse("");
       setStudentsList([]);
@@ -238,7 +207,7 @@ const AjouterAbsence = () => {
 
   const filterTeacherSchedulesBasedOnSelectedDate = (schedules: any) => {
     let date = formatDate(selectedDate);
-    console.log(date);
+
     let filteredSchedulesClassPeriodsIds: any = [];
 
     for (const schedule of schedules) {
@@ -312,11 +281,10 @@ const AjouterAbsence = () => {
       .split("-")
       .map(Number);
 
-    const start = new Date(startYear, startMonth - 1, startDay); // months are 0-based
+    const start = new Date(startYear, startMonth - 1, startDay);
     const end = new Date(endYear, endMonth - 1, endDay);
     const abs = new Date(absenceYear, absenceMonth - 1, absenceDay);
 
-    // Check if abs date is between start and end date
     return abs >= start && abs <= end;
   };
 
@@ -330,27 +298,6 @@ const AjouterAbsence = () => {
     );
     setSelectedClasse(selectedSession[0].classe._id);
     setHasProcessed(false);
-
-    console.log("studentTypes", studentTypes);
-  };
-
-  const [selectedMatiere, setSelectedMatiere] = useState<string>("");
-
-  const handleSelectMatiere = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = event.target.value;
-    setSelectedMatiere(value);
-  };
-
-  const handleSelectClasse = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = event.target.value;
-    setSelectedClasse(value);
-  };
-
-  const [selectedType, setSelectedType] = useState<string>("");
-
-  const handleSelectType = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = event.target.value;
-    setSelectedType(value);
   };
 
   const [modal_AddAbsence, setmodal_AddAbsence] = useState<boolean>(false);
@@ -358,13 +305,9 @@ const AjouterAbsence = () => {
     setmodal_AddAbsence(!modal_AddAbsence);
   }
 
-  const [modal_UpdateAbsence, setmodal_UpdateAbsence] =
-    useState<boolean>(false);
-  function tog_UpdateAbsence() {
-    setmodal_UpdateAbsence(!modal_UpdateAbsence);
-  }
-
   const [createAbsence] = useAddAbsenceEtudiantMutation();
+
+  const [createPointage] = useAddPointageEnseignantMutation();
 
   const initialAbsence: AbsenceEtudiant = {
     classe: "",
@@ -375,9 +318,15 @@ const AjouterAbsence = () => {
     trimestre: "",
   };
 
+  const initialPointage: PointageEnseignant = {
+    id_enseignant: "",
+    id_seance: "",
+    date_pointage: "",
+  };
+
   const [absence, setAbsence] = useState(initialAbsence);
 
-  const { classe, enseignant, etudiants, seance, date, trimestre } = absence;
+  const [pointage, setPointage] = useState(initialPointage);
 
   const handleStudentTypeChange = (e: any, element: any, index: number) => {
     let value = "";
@@ -418,7 +367,7 @@ const AjouterAbsence = () => {
   function tog_AllAbsences() {
     navigate("/application-enseignant/lister-absence");
   }
-  const onSubmitAbsence = (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmitAbsence = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {
@@ -436,10 +385,18 @@ const AjouterAbsence = () => {
         enseignant: selectedEnseignant,
         seance: selectedSession,
       };
-      console.log(absenceData);
-      createAbsence(absenceData)
+
+      const pointageData = {
+        ...pointage,
+        id_enseignant: selectedEnseignant,
+        id_seance: selectedSession,
+        date_pointage: formatDate(selectedDate),
+      };
+
+      await createAbsence(absenceData)
         .then(() => notifySuccess())
         .then(() => setAbsence(initialAbsence));
+      await createPointage(pointageData);
       tog_AllAbsences();
     } catch (error) {
       notifyError(error);
@@ -493,7 +450,7 @@ const AjouterAbsence = () => {
                               dateFormat: "d M, Y",
                               locale: French,
                               maxDate: max_date,
-                              minDate: min_date
+                              minDate: min_date,
                             }}
                             id="date"
                             name="date"

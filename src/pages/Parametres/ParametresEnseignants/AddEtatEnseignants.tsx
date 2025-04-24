@@ -1,20 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
-import {
-  Button,
-  Card,
-  Col,
-  Container,
-  Form,
-  Row,
-} from "react-bootstrap";
+import { Button, Card, Col, Container, Form, Row } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import "flatpickr/dist/flatpickr.min.css";
 import { useAddEtatPersonnelMutation } from "features/etatPersonnel/etatPersonnelSlice";
 import Swal from "sweetalert2";
 import { useAddEtatEnseignantMutation } from "features/etatEnseignant/etatEnseignant";
 
-const AddEtatEnseignant= () => {
-  document.title = " Ajouter Etat Enseignant | Application Smart Institute";
+const AddEtatEnseignant = () => {
+  document.title = " Ajouter Etat Enseignant | ENIGA";
   const navigate = useNavigate();
 
   function tog_retourParametres() {
@@ -45,7 +38,9 @@ const AddEtatEnseignant= () => {
     });
   };
 
-  const onSubmitEtatEnseignant = async (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmitEtatEnseignant = async (
+    e: React.FormEvent<HTMLFormElement>
+  ) => {
     e.preventDefault();
     try {
       await createEtatEnseignant(formData).unwrap();
@@ -84,7 +79,10 @@ const AddEtatEnseignant= () => {
         <Container fluid={true}>
           <Row>
             <Col lg={12}>
-              <Form className="tablelist-form" onSubmit={onSubmitEtatEnseignant}>
+              <Form
+                className="tablelist-form"
+                onSubmit={onSubmitEtatEnseignant}
+              >
                 <div
                   id="alert-error-msg"
                   className="d-none alert alert-danger py-2"
@@ -93,7 +91,9 @@ const AddEtatEnseignant= () => {
                 <Row>
                   <Col lg={4}>
                     <div className="mb-3">
-                      <Form.Label htmlFor="value_etat_enseignant">Valeur</Form.Label>
+                      <Form.Label htmlFor="value_etat_enseignant">
+                        Valeur
+                      </Form.Label>
                       <Form.Control
                         type="text"
                         id="value_etat_enseignant"
@@ -107,7 +107,9 @@ const AddEtatEnseignant= () => {
 
                   <Col lg={4}>
                     <div className="mb-3">
-                      <Form.Label htmlFor="etat_fr">Etat Compte Enseignant</Form.Label>
+                      <Form.Label htmlFor="etat_fr">
+                        Etat Compte Enseignant
+                      </Form.Label>
                       <Form.Control
                         type="text"
                         id="etat_fr"
@@ -127,7 +129,9 @@ const AddEtatEnseignant= () => {
                         textAlign: "right",
                       }}
                     >
-                      <Form.Label htmlFor="etat_ar">حالة حساب الأستاذ</Form.Label>
+                      <Form.Label htmlFor="etat_ar">
+                        حالة حساب الأستاذ
+                      </Form.Label>
                       <Form.Control
                         type="text"
                         id="etat_ar"

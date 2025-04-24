@@ -8,7 +8,7 @@ import { useFetchDepartementsQuery } from "features/departement/departement";
 import { useFetchMentionsClasseQuery } from "features/mentionClasse/mentionClasse";
 
 const AddSection = () => {
-  document.title = " Ajouter Spécialités | Application Smart Institute";
+  document.title = " Ajouter Spécialités | ENIGA";
   const navigate = useNavigate();
 
   function tog_retourParametres() {

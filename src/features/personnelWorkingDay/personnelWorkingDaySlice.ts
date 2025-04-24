@@ -2,10 +2,14 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export interface PersonnelWorkingDay {
   _id?: any;
+  name: any;
   day_start_time: string;
   day_end_time: string;
   daily_pause_start: string;
   daily_pause_end: string;
+  period_start: string;
+  period_end: string;
+  part_time: string
 }
 
 export const personnelWorkingDaySlice = createApi({
@@ -34,10 +38,17 @@ export const personnelWorkingDaySlice = createApi({
         invalidatesTags: ["PersonnelWorkingDay"],
       }),
       updatePersonnelWorkingDay: builder.mutation<void, PersonnelWorkingDay>({
-        query: ({ ...rest }) => ({
-          url: `/update-personnel-working-day`,
-          method: "PUT",
-          body: rest,
+                query: ({ _id, ...rest }) => ({
+                  url: `/update-personnel-working-day/${_id}`,
+                  method: "PUT",
+                  body: rest,
+                }),
+                invalidatesTags: ["PersonnelWorkingDay"],
+              }),
+      deletePersonnelWorkingDay: builder.mutation<void, string>({
+        query: (_id) => ({
+          url: `delete-personnel-working-day-params/${_id}`,
+          method: "DELETE",
         }),
         invalidatesTags: ["PersonnelWorkingDay"],
       }),
@@ -49,4 +60,5 @@ export const {
   useAddPersonnelWorkingDayMutation,
   useFetchPersonnelWorkingDayQuery,
   useUpdatePersonnelWorkingDayMutation,
+  useDeletePersonnelWorkingDayMutation
 } = personnelWorkingDaySlice;

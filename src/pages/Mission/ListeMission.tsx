@@ -4,9 +4,6 @@ import Breadcrumb from "Common/BreadCrumb";
 import { useNavigate } from "react-router-dom";
 import TableContainer from "Common/TableContainer";
 import { Link } from "react-router-dom";
-import { RootState } from "app/store";
-import { useSelector } from "react-redux";
-import { selectCurrentUser } from "features/account/authSlice";
 import { useFetchMissionQuery } from "features/mission/missionSlice";
 import {
   TemplateBody,
@@ -14,25 +11,15 @@ import {
 } from "features/templateBody/templateBodySlice";
 
 const ListeMissions = () => {
-  document.title = "Liste des missions | ENIGA";
-
-  const user = useSelector((state: RootState) => selectCurrentUser(state));
+  document.title = "Liste des taches | ENIGA";
 
   const { data: missions } = useFetchMissionQuery();
   const { data: templateBodies } = useFetchTemplateBodyQuery();
 
-  const templateBody: TemplateBody[] = Array.isArray(templateBodies)
-    ? templateBodies
-    : [];
-
-  // State to track which row has the select dropdown visible
-
-  console.log("templates", templateBodies);
   const [visibleRow, setVisibleRow] = useState<number | null>(null);
   const missionTemplates: any = templateBodies?.filter(
     (template) => template.intended_for === "mission"
   );
-  console.log(missionTemplates);
   const navigate = useNavigate();
   const handleAction = (cellProps: any, templateBody: any) => {
     // Initialize the navigate function
@@ -231,7 +218,7 @@ const ListeMissions = () => {
     <React.Fragment>
       <div className="page-content">
         <Container fluid={true}>
-          <Breadcrumb title="Liste des Taches" pageTitle="Tache" />
+          <Breadcrumb title="Liste des Taches" pageTitle="Taches" />
 
           <Row id="usersList">
             <Col lg={12}>
@@ -239,14 +226,14 @@ const ListeMissions = () => {
                 <Card.Body>
                   <Row className="g-lg-2 g-4">
                     <Col lg={3}>
-                      <div className="search-box">
+                      <label className="search-box">
                         <input
                           type="text"
                           className="form-control search"
                           placeholder="Chercher ..."
                         />
                         <i className="ri-search-line search-icon"></i>
-                      </div>
+                      </label>
                     </Col>
                     <Col className="col-lg-auto ms-auto">
                       <div className="hstack gap-2">
@@ -274,7 +261,7 @@ const ListeMissions = () => {
                     isPagination={true}
                     className="custom-header-css table align-middle table-nowrap"
                     tableClass="table-centered align-middle table-nowrap mb-0"
-                    theadClass="text-muted table-light"
+                    theadClass="text-muted"
                     SearchPlaceholder="Search Products..."
                   />
                   <div className="noresult" style={{ display: "none" }}>

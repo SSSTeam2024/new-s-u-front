@@ -38,8 +38,7 @@ export interface DossierAdministratif {
 }
 
 const AddDossieradministratif = () => {
-  document.title =
-    "Ajouter Dossier Administratif | Application Smart Institute";
+  document.title = "Ajouter Dossier Administratif | ENIGA";
   const navigate = useNavigate();
 
   function tog_retourParametres() {

@@ -1,40 +1,18 @@
 import React, { useState } from "react";
-import {
-  Button,
-  Card,
-  Col,
-  Container,
-  Dropdown,
-  Modal,
-  Nav,
-  Row,
-  Tab,
-} from "react-bootstrap";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Button, Card, Col, Container, Modal, Row } from "react-bootstrap";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Carousel, Image } from "react-bootstrap";
 import Breadcrumb from "Common/BreadCrumb";
 import "./style.css";
 
 // Import images
-import img1 from "assets/images/small/img-1.jpg";
-import img2 from "assets/images/small/img-2.jpg";
-import img3 from "assets/images/small/img-3.jpg";
 import img4 from "assets/images/small/img-4.jpg";
-import img5 from "assets/images/small/img-5.jpg";
-import img6 from "assets/images/small/img-6.jpg";
-import avatar1 from "assets/images/users/avatar-1.jpg";
-import student from "assets/images/etudiant.png";
-import file from "assets/images/demande.png";
+import avatar1 from "assets/images/users/user-dummy-img.jpg";
 
 const SingleReclamationEtudiant = () => {
   document.title = "Voir Réclamation Etudiant | ENIGA";
   const location = useLocation();
-  console.log("state", location);
-  const studentId = location.state?.studentId?._id!;
   const navigate = useNavigate();
-  const Navigate = (studentId: any) => {
-    navigate("/reclamation-etudiant/single-reclamation-etudiant");
-  };
 
   const [showModal, setShowModal] = useState(false);
   const [mediaType, setMediaType] = useState("");

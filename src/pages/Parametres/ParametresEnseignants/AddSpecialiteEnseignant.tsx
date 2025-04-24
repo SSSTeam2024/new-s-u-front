@@ -8,8 +8,7 @@ import Swal from "sweetalert2";
 import { useAddSpecialiteEnseignantMutation } from "features/specialiteEnseignant/specialiteEnseignant";
 
 const AddSpecialiteEnseignant = () => {
-  document.title =
-    " Ajouter Spécialité Enseignant | Application Smart Institute";
+  document.title = " Ajouter Spécialité Enseignant | ENIGA";
   const navigate = useNavigate();
 
   function tog_retourParametres() {

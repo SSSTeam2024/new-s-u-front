@@ -1,19 +1,7 @@
-import React, { useState, useMemo, useCallback } from "react";
-import {
-  Button,
-  Card,
-  Col,
-  Container,
-  Form,
-  Modal,
-  Row,
-} from "react-bootstrap";
+import React, { useMemo } from "react";
+import { Button, Card, Col, Container, Row } from "react-bootstrap";
 import Breadcrumb from "Common/BreadCrumb";
-import CountUp from "react-countup";
 import TableContainer from "Common/TableContainer";
-import { userList } from "Common/data";
-import Flatpickr from "react-flatpickr";
-import dummyImg from "../../assets/images/users/user-dummy-img.jpg";
 import { Link, useNavigate } from "react-router-dom";
 import { RootState } from "app/store";
 import { useSelector } from "react-redux";
@@ -21,7 +9,6 @@ import { selectCurrentUser } from "features/account/authSlice";
 import { actionAuthorization } from "utils/pathVerification";
 import {
   useFetchAvisEnseignantQuery,
-  AvisEnseignant,
   useDeleteAvisEnseignantMutation,
 } from "features/avisEnseignant/avisEnseignantSlice";
 import Swal from "sweetalert2";
@@ -39,36 +26,6 @@ const ListeNotesPro = () => {
 
   const { refetch } = useFetchAvisEnseignantQuery();
   const [deleteAvisEnseignant] = useDeleteAvisEnseignantMutation();
-  const [modal_AddUserModals, setmodal_AddUserModals] =
-    useState<boolean>(false);
-  const [isMultiDeleteButton, setIsMultiDeleteButton] =
-    useState<boolean>(false);
-  // State for PDF modal
-  const [showPdfModal, setShowPdfModal] = useState<boolean>(false);
-  const [pdfUrl, setPdfUrl] = useState<string>("");
-
-  // Checked All
-  const checkedAll = useCallback(() => {
-    const checkall = document.getElementById("checkAll") as HTMLInputElement;
-    const ele = document.querySelectorAll(".userCheckBox");
-
-    if (checkall.checked) {
-      ele.forEach((ele: any) => {
-        ele.checked = true;
-      });
-    } else {
-      ele.forEach((ele: any) => {
-        ele.checked = false;
-      });
-    }
-    checkedbox();
-  }, []);
-  const checkedbox = () => {
-    const ele = document.querySelectorAll(".userCheckBox:checked");
-    ele.length > 0
-      ? setIsMultiDeleteButton(true)
-      : setIsMultiDeleteButton(false);
-  };
 
   function tog_AddNewGrades() {
     navigate("/gestion-notes-professionelles/Ajouter-notes-professionelles");
@@ -88,12 +45,16 @@ const ListeNotesPro = () => {
 
       if (result.isConfirmed) {
         await deleteAvisEnseignant({ _id: id }).unwrap();
-        Swal.fire("Supprimé !", "L'avis personnel a été supprimée.", "success");
+        Swal.fire(
+          "Supprimé !",
+          "Note Professionnelle a été supprimée.",
+          "success"
+        );
         refetch(); // Recharger les données ou mettre à jour l'UI
       }
     } catch (error) {
       console.error(
-        "Erreur lors de la suppression de l'avis personnel :",
+        "Erreur lors de la suppression du Note Professionnelle :",
         error
       );
       Swal.fire(
@@ -102,11 +63,6 @@ const ListeNotesPro = () => {
         "error"
       );
     }
-  };
-
-  const handleClosePdfModal = () => {
-    setShowPdfModal(false);
-    setPdfUrl("");
   };
 
   const columns = useMemo(
@@ -264,7 +220,7 @@ const ListeNotesPro = () => {
         },
       },
     ],
-    [checkedAll]
+    []
   );
 
   return (
@@ -273,22 +229,24 @@ const ListeNotesPro = () => {
         <Container fluid={true}>
           <Breadcrumb
             title="Liste des notes profesionnelles"
-            pageTitle="Note profesionnelle"
+            pageTitle="Notes profesionnelles"
           />
-          <Row className="col-lg-auto ms-auto mb-3">
-            <Col lg={10}></Col>
-            <Col lg={2}>
-              <div className="hstack gap-2">
-                <Button
-                  variant="primary"
-                  className="add-btn"
+          <Card className="p-2">
+            <Row>
+              <Col lg={10}></Col>
+              <Col lg={2}>
+                <span
+                  className="badge bg-secondary-subtle text-secondary view-item-btn fs-16"
+                  style={{ cursor: "pointer" }}
                   onClick={() => tog_AddNewGrades()}
                 >
-                  Ajouter une note professionnelle
-                </Button>
-              </div>
-            </Col>
-          </Row>
+                  <i className="ph ph-plus align-middle"></i> Note
+                  professionnelle
+                </span>
+              </Col>
+            </Row>
+          </Card>
+
           <Row id="usersList">
             <Col lg={12}>
               {/* <Card>
@@ -325,7 +283,7 @@ const ListeNotesPro = () => {
                     isPagination={true}
                     className="custom-header-css table align-middle table-nowrap"
                     tableClass="table-centered align-middle table-nowrap mb-0"
-                    theadClass="text-muted table-light"
+                    theadClass="text-muted"
                     SearchPlaceholder="Search Products..."
                   />
                   <div className="noresult" style={{ display: "none" }}>

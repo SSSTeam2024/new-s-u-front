@@ -185,28 +185,28 @@ const NewTemplateBody = () => {
 
   const handleQrCodeInsertion = () => {
     setCanSaveTemplate(false);
-    
+
     if (rangeRef.current) {
       const img = document.createElement("img");
-      
+
       img.src = "https://qrcg-free-editor.qr-code-generator.com/latest/assets/images/websiteQRCode_noFrame.png"; // Fake QR code image
       img.alt = "QR Code";
       img.style.width = "100px";
       img.style.height = "100px";
       img.style.margin = "5px";
-  
+
       const paragraph = document.createElement("p");
       paragraph.style.marginTop = "5px";
       paragraph.style.fontSize = "11px";
       paragraph.style.fontStyle = "italic";
       paragraph.style.color = "#0d87b5";
 
-      if(selectedLangue === 'arabic'){
+      if (selectedLangue === 'arabic') {
         paragraph.textContent = "امسح هذا الرمز للتحقق من صحة المستند عبر الإنترنت";
-      }else{
+      } else {
         paragraph.textContent = "Scanner ce code pour vérifier l’intégrité de ce document en ligne";
       }
-     
+
       const container = document.createElement("div");
       container.className = 'qr-container';
       container.appendChild(img);
@@ -231,21 +231,21 @@ const NewTemplateBody = () => {
       qrContainer.remove();
     }
     setTemplateBody((prevState) => ({
-        ...prevState,
-        has_code: '0'
-      }));
+      ...prevState,
+      has_code: '0'
+    }));
     setWithQrCode(false);
   };
 
   const handleOrderNumberInsertion = () => {
     setCanSaveTemplate(false);
-    
+
     if (rangeRef.current) {
-  
+
       const span = document.createElement("span");
-      if(selectedLangue === 'arabic'){
+      if (selectedLangue === 'arabic') {
         span.textContent = "عدد الرقم/السنة";
-      }else{
+      } else {
         span.textContent = "N° num/annee";
       }
       span.style.fontSize = "14px";
@@ -865,7 +865,7 @@ const NewTemplateBody = () => {
                             Ajouter un modèle Word
                           </div>
                         </label>
-                        
+
                       </Col>
                       <Col lg={5} style={{ textAlign: "end" }}>
                         <Button
@@ -920,11 +920,32 @@ const NewTemplateBody = () => {
                         </div> */}
                       </Col>
                     </Row>
+                    <Row className="m-3">
+                      <div className="d-flex align-items-center gap-2">
+                        <button type="button" className="btn btn-outline-primary btn-sm" onClick={() => document.execCommand('bold')}>
+                          <i className="bi bi-type-bold"></i> Bold
+                        </button>
+                        <button type="button" className="btn btn-outline-primary btn-sm" onClick={() => document.execCommand('italic')}>
+                          <i className="bi bi-type-italic"></i> Italic
+                        </button>
+                        <select
+                          className="form-select form-select-sm w-auto"
+                          onChange={(e) => document.execCommand('fontSize', false, e.target.value)}
+                        >
+                          <option value="3">Normal</option>
+                          <option value="4">Medium</option>
+                          <option value="5">Large</option>
+                          <option value="6">Very Large</option>
+                        </select>
+                      </div>
+                    </Row>
+
 
                     <Row>
                       <Col lg={8}>
                         <div
                           ref={previewContainer}
+                          contentEditable={true}
                           style={{
                             border: "1px solid #ccc",
                             padding: "10px",
@@ -944,37 +965,37 @@ const NewTemplateBody = () => {
                         >
                           <Card>
                             <Card.Body className="d-flex">
-                                  {
-                                    withQrCode === false ? (<Button
-                                      variant="info"
-                                      size="sm"
-                                      onClick={handleQrCodeInsertion}
-                                      className="me-2 mb-2"
-                                    >Insérer un code QR
-                                    </Button>) : (<Button
-                                    variant="danger"
-                                    size="sm"
-                                    onClick={removeQrContainer}
-                                    className="me-2 mb-2"
-                                  >Supprimez le code QR
-                                  </Button>)
-                                  }
-                                  
-                                  {
-                                    withNumber === false ? (<Button
-                                      variant="info"
-                                      size="sm"
-                                      onClick={handleOrderNumberInsertion}
-                                      className="me-2 mb-2"
-                                    >Insérer un numéro d'ordre
-                                    </Button>) : (<Button
-                                    variant="danger"
-                                    size="sm"
-                                    onClick={removeOrderNumber}
-                                    className="me-2 mb-2"
-                                  >Supprimez le numéro d'ordre
-                                  </Button>)
-                                  }
+                              {
+                                withQrCode === false ? (<Button
+                                  variant="info"
+                                  size="sm"
+                                  onClick={handleQrCodeInsertion}
+                                  className="me-2 mb-2"
+                                >Insérer un code QR
+                                </Button>) : (<Button
+                                  variant="danger"
+                                  size="sm"
+                                  onClick={removeQrContainer}
+                                  className="me-2 mb-2"
+                                >Supprimez le code QR
+                                </Button>)
+                              }
+
+                              {
+                                withNumber === false ? (<Button
+                                  variant="info"
+                                  size="sm"
+                                  onClick={handleOrderNumberInsertion}
+                                  className="me-2 mb-2"
+                                >Insérer un numéro d'ordre
+                                </Button>) : (<Button
+                                  variant="danger"
+                                  size="sm"
+                                  onClick={removeOrderNumber}
+                                  className="me-2 mb-2"
+                                >Supprimez le numéro d'ordre
+                                </Button>)
+                              }
                             </Card.Body>
                           </Card>
                           <Card>

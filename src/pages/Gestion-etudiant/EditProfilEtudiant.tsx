@@ -476,7 +476,7 @@ export interface TypeInscriptionEtudiant {
   files_type_inscription: FileDetail[];
 }
 const EditProfilEtudiant = () => {
-  document.title = " Modifier Profil Etudiant | Application Smart Institute";
+  document.title = " Modifier Profil Etudiant | ENIGA";
   const navigate = useNavigate();
   const { state: etudiant } = useLocation();
   const [editEtudiant] = useUpdateEtudiantMutation();
@@ -499,100 +499,99 @@ const EditProfilEtudiant = () => {
   const [getTypeInscriptionByIdStudent, { data, isLoading, error }] =
     useGetTypeInscriptionByIdStudentMutation();
   const [formData, setFormData] = useState<EtudiantExcel>({
-     _id: "",
-     nom_fr: "",
-     nom_ar: "",
-     prenom_fr: "",
-     prenom_ar: "",
-     lieu_naissance_fr: "",
-     lieu_naissance_ar: "",
-     date_naissance: "",
-     nationalite: "",
-     etat_civil: "",
-     sexe: "",
-     num_CIN: "",
-     face_1_CIN: "",
-     face_2_CIN: "",
-     fiche_paiement: "",
-     etat_compte: "",
-     groupe_classe: {
-       _id: "",
-       nom_classe_fr: "",
-       nom_classe_ar: "",
-       departement: "",
-       niveau_classe: {
-         _id: "",
-         name_niveau_ar: "",
-         name_niveau_fr: "",
-         abreviation: "",
-         sections: [], // Initialize as an empty array since it expects an array of Section objects
-       },
-       matieres: [], // Initialize as an empty array
-     },
-     state: "",
-     dependence: "",
-     code_postale: "",
-     adress_ar: "",
-     adress_fr: "",
-     num_phone: "",
-     email: "",
-     nom_pere: "",
-     job_pere: "",
-     nom_mere: "",
-     num_phone_tuteur: "",
-     moyen: "",
-     session: "",
-     filiere: "",
-     niveau_scolaire: "",
-     annee_scolaire: "",
-     type_inscription: "",
-     Face1CINFileBase64String: "",
-     Face1CINFileExtension: "",
-     Face2CINFileBase64String: "",
-     Face2CINFileExtension: "",
-     FichePaiementFileBase64String: "",
-     FichePaiementFileExtension: "",
-     files: [
-       { name_ar: "", name_fr: "", file: "", base64String: "", extension: "" },
-     ],
-     photo_profil: "",
-     PhotoProfilFileExtension: "",
-     PhotoProfilFileBase64String: "",
-     etat_compte_Ar: "",
-     type_inscription_ar: "",
-     nbre_enfants: "",
-     etablissement_conjoint: "",
-     profesion_Conjoint: "",
-     prenom_conjoint: "",
-     Cycle_Ar: "",
-     ville: "",
-     pays_bac: "",
-     mention: "",
-     situation_militaire: "",
-     tel_parents: "",
-     pays_parents: "",
-     gouvernorat_parents: "",
-     code_postale_parents: "",
-     adresse_parents: "",
-     etat_mere: "",
-     etablissement_mere: "",
-     profession_mere: "",
-     prenom_mere: "",
-     etat_pere: "",
-     prenom_pere: "",
-     pays: "",
-     gouvernorat: "",
-     matricule_number: "",
-     passeport_number: "",
-     cnss_number: "",
-   });
- 
+    _id: "",
+    nom_fr: "",
+    nom_ar: "",
+    prenom_fr: "",
+    prenom_ar: "",
+    lieu_naissance_fr: "",
+    lieu_naissance_ar: "",
+    date_naissance: "",
+    nationalite: "",
+    etat_civil: "",
+    sexe: "",
+    num_CIN: "",
+    face_1_CIN: "",
+    face_2_CIN: "",
+    fiche_paiement: "",
+    etat_compte: "",
+    groupe_classe: {
+      _id: "",
+      nom_classe_fr: "",
+      nom_classe_ar: "",
+      departement: "",
+      niveau_classe: {
+        _id: "",
+        name_niveau_ar: "",
+        name_niveau_fr: "",
+        abreviation: "",
+        sections: [], // Initialize as an empty array since it expects an array of Section objects
+      },
+      matieres: [], // Initialize as an empty array
+    },
+    state: "",
+    dependence: "",
+    code_postale: "",
+    adress_ar: "",
+    adress_fr: "",
+    num_phone: "",
+    email: "",
+    nom_pere: "",
+    job_pere: "",
+    nom_mere: "",
+    num_phone_tuteur: "",
+    moyen: "",
+    session: "",
+    filiere: "",
+    niveau_scolaire: "",
+    annee_scolaire: "",
+    type_inscription: "",
+    Face1CINFileBase64String: "",
+    Face1CINFileExtension: "",
+    Face2CINFileBase64String: "",
+    Face2CINFileExtension: "",
+    FichePaiementFileBase64String: "",
+    FichePaiementFileExtension: "",
+    files: [
+      { name_ar: "", name_fr: "", file: "", base64String: "", extension: "" },
+    ],
+    photo_profil: "",
+    PhotoProfilFileExtension: "",
+    PhotoProfilFileBase64String: "",
+    etat_compte_Ar: "",
+    type_inscription_ar: "",
+    nbre_enfants: "",
+    etablissement_conjoint: "",
+    profesion_Conjoint: "",
+    prenom_conjoint: "",
+    Cycle_Ar: "",
+    ville: "",
+    pays_bac: "",
+    mention: "",
+    situation_militaire: "",
+    tel_parents: "",
+    pays_parents: "",
+    gouvernorat_parents: "",
+    code_postale_parents: "",
+    adresse_parents: "",
+    etat_mere: "",
+    etablissement_mere: "",
+    profession_mere: "",
+    prenom_mere: "",
+    etat_pere: "",
+    prenom_pere: "",
+    pays: "",
+    gouvernorat: "",
+    matricule_number: "",
+    passeport_number: "",
+    cnss_number: "",
+  });
 
   const [fileInputs, setFileInputs] = useState<{ [key: string]: string[] }>({});
   const [selectedFiles, setselectedFiles] = useState<any>([]);
   const [selectedOption, setSelectedOption] = useState<string>("");
   const [newArray, setNewArray] = useState<any[]>([]);
- 
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -1255,11 +1254,9 @@ const EditProfilEtudiant = () => {
                             </div>
                           </Col>
                         </Row>
-                        <Row
-                         
-                        >
+                        <Row>
                           <Col lg={3}>
-                            <div className="mb-3"    >
+                            <div className="mb-3">
                               <Form.Label htmlFor="etat_civil">
                                 Etat civil
                               </Form.Label>
@@ -1274,13 +1271,12 @@ const EditProfilEtudiant = () => {
                                 <option value="">etat-civil</option>
                                 <option value="Marie">Marié(e)</option>
                                 <option value="Celibataire">Celibataire</option>
-                               
                               </select>
                             </div>
                           </Col>
 
                           <Col lg={3}>
-                            <div className="mb-3"  >
+                            <div className="mb-3">
                               <label htmlFor="sexe" className="form-label">
                                 Genre
                               </label>
@@ -1675,12 +1671,8 @@ const EditProfilEtudiant = () => {
                           <Card.Body>
                             <Row>
                               <Col lg={3}>
-                                <div
-                                  className="mb-3"
-                                >
-                                  <Form.Label
-                                    htmlFor="tel_parents"
-                                  >
+                                <div className="mb-3">
+                                  <Form.Label htmlFor="tel_parents">
                                     Telephone
                                   </Form.Label>
                                   <Form.Control
@@ -1694,20 +1686,14 @@ const EditProfilEtudiant = () => {
                               </Col>
 
                               <Col lg={3}>
-                                <div
-                                  className="mb-3"
-                                 
-                                >
-                                  <Form.Label
-                                    htmlFor="prenom_pere"
-                                  >
-                                   Prenom pere
+                                <div className="mb-3">
+                                  <Form.Label htmlFor="prenom_pere">
+                                    Prenom pere
                                   </Form.Label>
                                   <Form.Control
                                     type="text"
                                     id="prenom_pere"
                                     placeholder=""
-                                  
                                     onChange={onChange}
                                     value={formData.prenom_pere}
                                   />
@@ -1715,14 +1701,9 @@ const EditProfilEtudiant = () => {
                               </Col>
 
                               <Col lg={3}>
-                                <div
-                                  className="mb-3"
-                                 
-                                >
-                                  <Form.Label
-                                    htmlFor="nom_pere"
-                                  >
-                                       Nom pere
+                                <div className="mb-3">
+                                  <Form.Label htmlFor="nom_pere">
+                                    Nom pere
                                   </Form.Label>
                                   <Form.Control
                                     type="text"
@@ -1734,15 +1715,9 @@ const EditProfilEtudiant = () => {
                                 </div>
                               </Col>
                               <Col lg={3}>
-                                <div
-                                  className="mb-3"
-                                  
-                                >
-                                  <Form.Label
-                                    htmlFor="job_pere"
-                                    
-                                  >
-                                  Profession pere
+                                <div className="mb-3">
+                                  <Form.Label htmlFor="job_pere">
+                                    Profession pere
                                   </Form.Label>
                                   <Form.Control
                                     type="text"
@@ -1755,54 +1730,90 @@ const EditProfilEtudiant = () => {
                               </Col>
                             </Row>
                             <Row>
-                            <Col lg={3}>
-                                <div className="mb-3" >
-                                  <Form.Label  htmlFor="prenom_mere">
-                                  Prenom mere
+                              <Col lg={3}>
+                                <div className="mb-3">
+                                  <Form.Label htmlFor="prenom_mere">
+                                    Prenom mere
                                   </Form.Label>
-                                  <Form.Control type="text" id="prenom_mere" placeholder="" onChange={onChange} value={formData.prenom_mere} />
+                                  <Form.Control
+                                    type="text"
+                                    id="prenom_mere"
+                                    placeholder=""
+                                    onChange={onChange}
+                                    value={formData.prenom_mere}
+                                  />
                                 </div>
                               </Col>
                               <Col lg={3}>
-                                <div className="mb-3" >
-                                  <Form.Label  htmlFor="nom_mere">
-                                  Nom mere
+                                <div className="mb-3">
+                                  <Form.Label htmlFor="nom_mere">
+                                    Nom mere
                                   </Form.Label>
-                                  <Form.Control type="text" id="nom_mere" placeholder="" onChange={onChange} value={formData.nom_mere} />
+                                  <Form.Control
+                                    type="text"
+                                    id="nom_mere"
+                                    placeholder=""
+                                    onChange={onChange}
+                                    value={formData.nom_mere}
+                                  />
                                 </div>
                               </Col>
                               <Col lg={3}>
-                                <div className="mb-3" >
-                                  <Form.Label  htmlFor="profession_mere">
-                                  Profession mere
+                                <div className="mb-3">
+                                  <Form.Label htmlFor="profession_mere">
+                                    Profession mere
                                   </Form.Label>
-                                  <Form.Control type="text" id="profession_mere" placeholder="" onChange={onChange} value={formData.profession_mere} />
+                                  <Form.Control
+                                    type="text"
+                                    id="profession_mere"
+                                    placeholder=""
+                                    onChange={onChange}
+                                    value={formData.profession_mere}
+                                  />
                                 </div>
                               </Col>
                               <Col lg={3}>
-                                <div className="mb-3" >
-                                  <Form.Label  htmlFor="etablissement_mere">
-                                  Etablissement mere       
-                                   </Form.Label>
-                                  <Form.Control type="text" id="etablissement_mere" placeholder="" onChange={onChange} value={formData.etablissement_mere} />
+                                <div className="mb-3">
+                                  <Form.Label htmlFor="etablissement_mere">
+                                    Etablissement mere
+                                  </Form.Label>
+                                  <Form.Control
+                                    type="text"
+                                    id="etablissement_mere"
+                                    placeholder=""
+                                    onChange={onChange}
+                                    value={formData.etablissement_mere}
+                                  />
                                 </div>
                               </Col>
                             </Row>
                             <Row>
-                            <Col lg={3}>
-                                <div className="mb-3" >
-                                  <Form.Label  htmlFor="etat_pere">
-                                  Etat pere       
-                                   </Form.Label>
-                                  <Form.Control type="text" id="etat_pere" placeholder="" onChange={onChange} value={formData.etat_pere} />
+                              <Col lg={3}>
+                                <div className="mb-3">
+                                  <Form.Label htmlFor="etat_pere">
+                                    Etat pere
+                                  </Form.Label>
+                                  <Form.Control
+                                    type="text"
+                                    id="etat_pere"
+                                    placeholder=""
+                                    onChange={onChange}
+                                    value={formData.etat_pere}
+                                  />
                                 </div>
                               </Col>
                               <Col lg={3}>
-                                <div className="mb-3" >
-                                  <Form.Label  htmlFor="etat_mere">
-                                  Etat mere       
-                                   </Form.Label>
-                                  <Form.Control type="text" id="etat_mere" placeholder="" onChange={onChange} value={formData.etat_mere} />
+                                <div className="mb-3">
+                                  <Form.Label htmlFor="etat_mere">
+                                    Etat mere
+                                  </Form.Label>
+                                  <Form.Control
+                                    type="text"
+                                    id="etat_mere"
+                                    placeholder=""
+                                    onChange={onChange}
+                                    value={formData.etat_mere}
+                                  />
                                 </div>
                               </Col>
                             </Row>
@@ -1832,7 +1843,7 @@ const EditProfilEtudiant = () => {
                               <Col lg={3}>
                                 <div className="mb-3">
                                   <Form.Label htmlFor="annee_scolaire">
-                                     Année de baccalauréat
+                                    Année de baccalauréat
                                   </Form.Label>
                                   <Flatpickr
                                     value={selectedDateBac!}
@@ -1862,21 +1873,17 @@ const EditProfilEtudiant = () => {
                                     onChange={handleSelectChange}
                                   >
                                     <option value="">إختر الشعبة</option>
-                                    <option value="آداب ">
-                                      Lettres
-                                    </option>
+                                    <option value="آداب ">Lettres</option>
                                     <option value="رياضيات">
-                                    Mathematiques 
+                                      Mathematiques
                                     </option>
                                     <option value="علوم تجريبية">
-                                    Sciences experimentales 
+                                      Sciences experimentales
                                     </option>
                                     <option value="اقتصاد وتصرف">
                                       Economie et Gestion
                                     </option>
-                                    <option value="تقنية">
-                                    Technique 
-                                    </option>
+                                    <option value="تقنية">Technique</option>
                                     <option value="علوم إعلامية">
                                       Sciences Informatiques
                                     </option>

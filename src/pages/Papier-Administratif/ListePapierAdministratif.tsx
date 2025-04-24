@@ -15,21 +15,16 @@ const ListePapierAdministratifs = () => {
 
   const navigate = useNavigate();
 
-  const [modal_AddParametreModals, setmodal_AddParametreModals] =
-    useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState("");
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value.toLowerCase());
   };
-  function tog_AddParametreModals() {
-    setmodal_AddParametreModals(!modal_AddParametreModals);
-  }
 
   function tog_AddPapierAdministratif() {
     navigate("/papier-administratif/ajouter-papier");
   }
   const { data = [] } = useFetchPapierAdministratifQuery();
-  console.log(data);
+
   const [deletePapierAdministratif] = useDeletePapierAdministratifMutation();
 
   const swalWithBootstrapButtons = Swal.mixin({
@@ -182,8 +177,8 @@ const ListePapierAdministratifs = () => {
       <div className="page-content">
         <Container fluid={true}>
           <Breadcrumb
-            title="Papier Administratifs"
-            pageTitle="Liste des papiers administratifs"
+            title="Liste des papiers administratifs"
+            pageTitle="Papier Administratifs"
           />
 
           <Row id="sellersList">
@@ -192,7 +187,7 @@ const ListePapierAdministratifs = () => {
                 <Card.Body>
                   <Row className="g-3">
                     <Col lg={3}>
-                      <div className="search-box">
+                      <label className="search-box">
                         <input
                           type="text"
                           className="form-control search"
@@ -201,7 +196,7 @@ const ListePapierAdministratifs = () => {
                           onChange={handleSearchChange}
                         />
                         <i className="ri-search-line search-icon"></i>
-                      </div>
+                      </label>
                     </Col>
                     <Col className="col-lg-auto ms-auto">
                       <div className="hstack gap-2">
@@ -234,7 +229,7 @@ const ListePapierAdministratifs = () => {
                       isPagination={true}
                       className="custom-header-css table align-middle table-nowrap"
                       tableClass="table-centered align-middle table-nowrap mb-0"
-                      theadClass="text-muted table-light"
+                      theadClass="text-muted"
                       SearchPlaceholder="Search Products..."
                     />
                   </table>

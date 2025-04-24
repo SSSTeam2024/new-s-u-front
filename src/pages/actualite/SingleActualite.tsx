@@ -8,7 +8,7 @@
 // import { useFetchActualiteQuery, useFetchActualiteByIdQuery, Actualite } from "features/actualite/actualiteSlice";
 
 // const SingleActualite = () => {
-//   document.title = "Avis Etudiant | Smart Institute";
+//   document.title = "Avis Etudiant | ENIGA";
 
 //   const navigate = useNavigate();
 //   const location = useLocation();
@@ -168,43 +168,70 @@
 // export default SingleActualite;
 
 import React, { useEffect } from "react";
-import { Button, Col, Container, Row, Carousel, Image, Card } from "react-bootstrap";
+import {
+  Button,
+  Col,
+  Container,
+  Row,
+  Carousel,
+  Image,
+  Card,
+} from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
 import Breadcrumb from "Common/BreadCrumb";
 import actualite from "assets/images/actualite.jpg";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
-import { useFetchActualiteQuery, useFetchActualiteByIdQuery, Actualite } from "features/actualite/actualiteSlice";
-import DOMPurify from 'dompurify';
+import {
+  useFetchActualiteQuery,
+  useFetchActualiteByIdQuery,
+  Actualite,
+} from "features/actualite/actualiteSlice";
+import DOMPurify from "dompurify";
 const SingleActualite = () => {
-  document.title = "Avis Etudiant | Smart Institute";
+  document.title = "Avis Etudiant | ENIGA";
 
   const navigate = useNavigate();
   const location = useLocation();
-  const locationState = location.state as Actualite | { _id: string } | undefined;
+  const locationState = location.state as
+    | Actualite
+    | { _id: string }
+    | undefined;
   const passedId = locationState ? (locationState as Actualite)._id : undefined;
 
   // Fetch the article by ID if passed, otherwise use location state data
-  const { data: fetchedArticle, isLoading: isLoadingById } = useFetchActualiteByIdQuery({ _id: passedId || "" }, {
-    skip: !passedId,
-  });
+  const { data: fetchedArticle, isLoading: isLoadingById } =
+    useFetchActualiteByIdQuery(
+      { _id: passedId || "" },
+      {
+        skip: !passedId,
+      }
+    );
 
   const article = passedId ? fetchedArticle : (locationState as Actualite);
 
-  const { data: actualiteData = [], isLoading, error } = useFetchActualiteQuery();
+  const {
+    data: actualiteData = [],
+    isLoading,
+    error,
+  } = useFetchActualiteQuery();
 
   // Type guard to ensure actualiteData is an array
   const isActualiteArray = Array.isArray(actualiteData);
 
   // Filter related articles
   const relatedArticles = isActualiteArray
-    ? actualiteData.filter((relatedArticle: Actualite) => relatedArticle._id !== article?._id).slice(0, 4)
+    ? actualiteData
+        .filter(
+          (relatedArticle: Actualite) => relatedArticle._id !== article?._id
+        )
+        .slice(0, 4)
     : [];
 
   useEffect(() => {
     if (!passedId && !article) {
       // If no article is passed, navigate back to the actualité list
-      navigate('/actualite');
+      navigate("/actualite");
     }
   }, [passedId, article, navigate]);
 
@@ -316,7 +343,8 @@ const SingleActualite = () => {
                       <Card.Img
                         variant="top"
                         src={
-                          relatedArticle.gallery && relatedArticle.gallery.length > 0
+                          relatedArticle.gallery &&
+                          relatedArticle.gallery.length > 0
                             ? `${process.env.REACT_APP_API_URL}/files/actualiteFiles/photo/${relatedArticle.gallery[0]}`
                             : actualite
                         }
@@ -326,19 +354,20 @@ const SingleActualite = () => {
                       <Card.Body>
                         <Card.Title>{relatedArticle.title}</Card.Title>
                         <Card.Text>
-                        
-              <p
-                    className="card-text mt-auto "
-                    style={{
-                      overflow: 'hidden',
-                      display: '-webkit-box',
-                      WebkitBoxOrient: 'vertical',
-                      WebkitLineClamp: 3,
-                      textOverflow: 'ellipsis',
-                    }}
-                  >
-                    {DOMPurify.sanitize(relatedArticle.description, { ALLOWED_TAGS: [] })}
-                  </p>
+                          <p
+                            className="card-text mt-auto "
+                            style={{
+                              overflow: "hidden",
+                              display: "-webkit-box",
+                              WebkitBoxOrient: "vertical",
+                              WebkitLineClamp: 3,
+                              textOverflow: "ellipsis",
+                            }}
+                          >
+                            {DOMPurify.sanitize(relatedArticle.description, {
+                              ALLOWED_TAGS: [],
+                            })}
+                          </p>
                         </Card.Text>
                         <Button
                           variant="primary"
@@ -368,5 +397,3 @@ const SingleActualite = () => {
 };
 
 export default SingleActualite;
-
-

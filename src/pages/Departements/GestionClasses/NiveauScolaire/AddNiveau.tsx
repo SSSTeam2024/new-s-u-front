@@ -17,7 +17,7 @@ interface SectionsOption {
 }
 
 const AddNiveau = () => {
-  document.title = " Ajouter Niveau | Application Smart Institute";
+  document.title = " Ajouter Niveau | ENIGA";
   const navigate = useNavigate();
 
   function tog_retourParametres() {

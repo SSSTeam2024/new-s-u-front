@@ -279,7 +279,7 @@ const ListeDemandeConge = () => {
       <div className="page-content">
         <Container fluid={true}>
           <Breadcrumb
-            title="Liste demande conge"
+            title="Liste demande congé"
             pageTitle="Gestion des congés"
           />
           <Row id="usersList">
@@ -288,14 +288,14 @@ const ListeDemandeConge = () => {
                 <Card.Body>
                   <Row className="g-lg-2 g-4">
                     <Col lg={3}>
-                      <div className="search-box">
+                      <label className="search-box">
                         <input
                           type="text"
                           className="form-control search"
-                          placeholder="Chercher un avis..."
+                          placeholder="Chercher ..."
                         />
                         <i className="ri-search-line search-icon"></i>
-                      </div>
+                      </label>
                     </Col>
                     {isMultiDeleteButton && (
                       <Button variant="danger" className="btn-icon">
@@ -316,7 +316,7 @@ const ListeDemandeConge = () => {
                     customPageSize={10}
                     className="custom-header-css table align-middle table-nowrap"
                     tableClass="table-centered align-middle table-nowrap mb-0"
-                    theadClass="text-muted table-light"
+                    theadClass="text-muted"
                     SearchPlaceholder="Search Products..."
                   />
                   <div className="noresult" style={{ display: "none" }}>

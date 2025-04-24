@@ -276,7 +276,7 @@ import Breadcrumb from "Common/BreadCrumb";
 import { useFetchAllUsersQuery } from "features/account/accountSlice";
 import { useFetchUserPermissionsByUserIdQuery } from "features/userPermissions/userPermissionSlice";
 import { useLocation } from "react-router-dom";
-import img1 from "assets/images/users/avatar-1.jpg";
+import img1 from "assets/images/users/user-dummy-img.jpg";
 import img4 from "assets/images/small/img-4.jpg";
 
 interface Permission {
@@ -292,11 +292,9 @@ const SingleAdmin = () => {
   document.title = "Page Admin | ENIGA";
   const location = useLocation();
   const userId = location.state._id;
-  console.log("userId", userId);
 
   const { data: permissions = [], isLoading: isLoadingPermissions } =
     useFetchUserPermissionsByUserIdQuery({ userId });
-  console.log("permissions", permissions);
   const { data: usersResponse, isLoading: isLoadingUsers } =
     useFetchAllUsersQuery();
 

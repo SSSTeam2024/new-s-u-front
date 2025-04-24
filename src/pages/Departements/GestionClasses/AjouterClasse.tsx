@@ -54,7 +54,7 @@ interface FormData {
 }
 
 const AddClasse = () => {
-  document.title = " Ajouter groupe | Application Smart Institute";
+  document.title = " Ajouter groupe | ENIGA";
   const navigate = useNavigate();
 
   function tog_retourParametres() {

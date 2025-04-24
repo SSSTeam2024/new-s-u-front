@@ -9,7 +9,7 @@ import {
 } from "features/matiere/matiere";
 
 const EditMatiere = () => {
-  document.title = " Modifier Matière | Application Smart Institute";
+  document.title = " Modifier Matière | ENIGA";
   const navigate = useNavigate();
   const { state: matiere } = useLocation();
   const [editMatiere] = useUpdateMatiereMutation();

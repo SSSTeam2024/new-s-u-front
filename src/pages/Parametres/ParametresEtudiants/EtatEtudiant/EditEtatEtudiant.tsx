@@ -7,7 +7,7 @@ import { useUpdateEtatEnseignantMutation } from "features/etatEnseignant/etatEns
 import { useUpdateEtatEtudiantMutation } from "features/etatEtudiants/etatEtudiants";
 
 const EditEtatEtudiant = () => {
-  document.title = " Modifier Etat Compte Etudiant | Application Smart Institute";
+  document.title = " Modifier Etat Compte Etudiant | ENIGA";
   const navigate = useNavigate();
   const { state: etatEtudiant } = useLocation();
   const [editEtatEtudiant] = useUpdateEtatEtudiantMutation();
@@ -45,7 +45,9 @@ const EditEtatEtudiant = () => {
       timer: 2000,
     });
   };
-  const onSubmitEtatEnseignant = async (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmitEtatEnseignant = async (
+    e: React.FormEvent<HTMLFormElement>
+  ) => {
     e.preventDefault();
     try {
       await editEtatEtudiant(formData).unwrap();
@@ -85,7 +87,10 @@ const EditEtatEtudiant = () => {
         <Container fluid={true}>
           <Row>
             <Col lg={12}>
-              <Form className="tablelist-form" onSubmit={onSubmitEtatEnseignant}>
+              <Form
+                className="tablelist-form"
+                onSubmit={onSubmitEtatEnseignant}
+              >
                 <div
                   id="alert-error-msg"
                   className="d-none alert alert-danger py-2"
@@ -95,7 +100,9 @@ const EditEtatEtudiant = () => {
                 <Row>
                   <Col lg={4}>
                     <div className="mb-3">
-                      <Form.Label htmlFor="value_etat_etudiant">Valeur</Form.Label>
+                      <Form.Label htmlFor="value_etat_etudiant">
+                        Valeur
+                      </Form.Label>
                       <Form.Control
                         type="text"
                         id="value_etat_etudiant"
@@ -109,7 +116,9 @@ const EditEtatEtudiant = () => {
 
                   <Col lg={4}>
                     <div className="mb-3">
-                      <Form.Label htmlFor="etat_fr">Etat Compte Enseignant</Form.Label>
+                      <Form.Label htmlFor="etat_fr">
+                        Etat Compte Enseignant
+                      </Form.Label>
                       <Form.Control
                         type="text"
                         id="etat_fr"
@@ -129,7 +138,9 @@ const EditEtatEtudiant = () => {
                         textAlign: "right",
                       }}
                     >
-                      <Form.Label htmlFor="etat_ar">حالة حساب الأستاذ</Form.Label>
+                      <Form.Label htmlFor="etat_ar">
+                        حالة حساب الأستاذ
+                      </Form.Label>
                       <Form.Control
                         type="text"
                         id="etat_ar"

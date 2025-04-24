@@ -1,18 +1,12 @@
-import React, {useState } from "react";
-import {
-  Button,
-  Col,
-  Container,
-  Form,
-  Row,
-} from "react-bootstrap";
-import {useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { Button, Col, Container, Form, Row } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 import "flatpickr/dist/flatpickr.min.css";
 import Swal from "sweetalert2";
 import { useAddCategoriePersonnelMutation } from "features/categoriePersonnel/categoriePersonnel";
 
 const AddCategoriePersonnel = () => {
-  document.title = " Ajouter Catégorie Personnel | Application Smart Institute";
+  document.title = " Ajouter Catégorie Personnel | ENIGA";
   const navigate = useNavigate();
 
   function tog_retourParametres() {
@@ -43,7 +37,9 @@ const AddCategoriePersonnel = () => {
     });
   };
 
-  const onSubmitCategoriePersonnel = async (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmitCategoriePersonnel = async (
+    e: React.FormEvent<HTMLFormElement>
+  ) => {
     e.preventDefault();
     try {
       await createCategoriePersonnel(formData).unwrap();
@@ -82,7 +78,10 @@ const AddCategoriePersonnel = () => {
         <Container fluid={true}>
           <Row>
             <Col lg={12}>
-              <Form className="tablelist-form" onSubmit={onSubmitCategoriePersonnel}>
+              <Form
+                className="tablelist-form"
+                onSubmit={onSubmitCategoriePersonnel}
+              >
                 <div
                   id="alert-error-msg"
                   className="d-none alert alert-danger py-2"
@@ -105,7 +104,9 @@ const AddCategoriePersonnel = () => {
 
                   <Col lg={4}>
                     <div className="mb-3">
-                      <Form.Label htmlFor="categorie_fr">Catégorie Personnel</Form.Label>
+                      <Form.Label htmlFor="categorie_fr">
+                        Catégorie Personnel
+                      </Form.Label>
                       <Form.Control
                         type="text"
                         id="categorie_fr"
@@ -125,7 +126,9 @@ const AddCategoriePersonnel = () => {
                         textAlign: "right",
                       }}
                     >
-                      <Form.Label htmlFor="categorie_ar">صنف الإداري</Form.Label>
+                      <Form.Label htmlFor="categorie_ar">
+                        صنف الإداري
+                      </Form.Label>
                       <Form.Control
                         type="text"
                         id="categorie_ar"

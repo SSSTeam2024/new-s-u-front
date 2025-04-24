@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { Button, Col, Container, Form, Row, Card, Spinner } from "react-bootstrap";
+import {
+  Button,
+  Col,
+  Container,
+  Form,
+  Row,
+  Card,
+  Spinner,
+} from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { useAddPapierAdministratifMutation } from "features/papierAdministratif/papierAdministratif";
@@ -12,10 +20,11 @@ export interface PapierAdministratif {
 }
 
 const AddPapierAdministratif: React.FC = () => {
-  document.title = "Ajouter Papier Administratif | Application Smart Institute";
+  document.title = "Ajouter Papier Administratif | ENIGA";
   const navigate = useNavigate();
 
-  const [createPapierAdministratif, { isLoading }] = useAddPapierAdministratifMutation();
+  const [createPapierAdministratif, { isLoading }] =
+    useAddPapierAdministratifMutation();
 
   const [formData, setFormData] = useState<PapierAdministratif>({
     nom_ar: "",
@@ -91,7 +100,9 @@ const AddPapierAdministratif: React.FC = () => {
                   <Row className="mb-4">
                     <Col md={6}>
                       <Form.Group>
-                        <Form.Label className="fw-semibold">Nom Fichier (Arabe)</Form.Label>
+                        <Form.Label className="fw-semibold">
+                          Nom Fichier (Arabe)
+                        </Form.Label>
                         <Form.Control
                           type="text"
                           placeholder="Entrez le nom en arabe"
@@ -105,7 +116,9 @@ const AddPapierAdministratif: React.FC = () => {
                     </Col>
                     <Col md={6}>
                       <Form.Group>
-                        <Form.Label className="fw-semibold">Nom Fichier (Français)</Form.Label>
+                        <Form.Label className="fw-semibold">
+                          Nom Fichier (Français)
+                        </Form.Label>
                         <Form.Control
                           type="text"
                           placeholder="Entrez le nom en français"
@@ -121,7 +134,9 @@ const AddPapierAdministratif: React.FC = () => {
 
                   {/* Category Selection */}
                   <Form.Group className="mb-4">
-                    <Form.Label className="fw-semibold">Sélectionnez une ou plusieurs catégories</Form.Label>
+                    <Form.Label className="fw-semibold">
+                      Sélectionnez une ou plusieurs catégories
+                    </Form.Label>
                     <Row>
                       <Col md={6}>
                         <Form.Check
@@ -153,7 +168,9 @@ const AddPapierAdministratif: React.FC = () => {
                     <Button
                       variant="outline-danger"
                       className="rounded-pill px-4 py-2 transition-all"
-                      onClick={() => navigate("/papier-administratif/lister-papier")}
+                      onClick={() =>
+                        navigate("/papier-administratif/lister-papier")
+                      }
                     >
                       Retour
                     </Button>
@@ -163,7 +180,11 @@ const AddPapierAdministratif: React.FC = () => {
                       type="submit"
                       disabled={isLoading}
                     >
-                      {isLoading ? <Spinner animation="border" size="sm" /> : "Ajouter"}
+                      {isLoading ? (
+                        <Spinner animation="border" size="sm" />
+                      ) : (
+                        "Ajouter"
+                      )}
                     </Button>
                   </div>
                 </Form>

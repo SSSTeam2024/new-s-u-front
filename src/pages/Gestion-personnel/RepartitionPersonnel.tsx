@@ -4,7 +4,6 @@ import { Etudiant } from "features/etudiant/etudiantSlice";
 import userImage from "../../assets/images/users/user-dummy-img.jpg";
 import DataTable from "react-data-table-component";
 import Breadcrumb from "Common/BreadCrumb";
-import { useFetchDepartementsQuery } from "features/departement/departement";
 import { Link } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
 import * as XLSX from "xlsx";
@@ -319,6 +318,7 @@ const RepartitionPersonnel = () => {
                     columns={columns}
                     data={getFilteredPersonnels()}
                     pagination
+                    noDataComponent="Il n'y a aucun enregistrement à afficher"
                   />
                 </Card.Body>
               </Card>
@@ -344,6 +344,7 @@ const RepartitionPersonnel = () => {
                           src={`${
                             process.env.REACT_APP_API_URL
                           }/files/variableGlobaleFiles/logoRepubliqueFiles/${lastVariable?.logo_republique!}`}
+                          alt={lastVariable?.etablissement_fr!}
                         />
                       </Col>
                       <Col lg={4} className="text-center pt-2">

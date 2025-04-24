@@ -1,29 +1,16 @@
 import React from "react";
-import {
-  Button,
-  Card,
-  Col,
-  Container,
-  Dropdown,
-  Nav,
-  Row,
-  Tab,
-} from "react-bootstrap";
-import { Link, useLocation } from "react-router-dom";
-import { Carousel, Image } from "react-bootstrap";
+import { Button, Card, Col, Container, Row } from "react-bootstrap";
+import { useLocation } from "react-router-dom";
+import { Image } from "react-bootstrap";
 import Breadcrumb from "Common/BreadCrumb";
 
 // Import images
-import img1 from "assets/images/small/img-1.jpg";
-import img2 from "assets/images/small/img-2.jpg";
-import img3 from "assets/images/small/img-3.jpg";
+
 import img4 from "assets/images/small/img-4.jpg";
-import img5 from "assets/images/small/img-5.jpg";
-import img6 from "assets/images/small/img-6.jpg";
-import avatar1 from "assets/images/users/avatar-1.jpg";
+import avatar1 from "assets/images/users/user-dummy-img.jpg";
 
 const EditDemandePersonnel = () => {
-  document.title = "Modifier demande Etudiant | Smart Institute";
+  document.title = "Modifier Demande Personnel | ENIGA";
   const state = useLocation();
 
   return (
@@ -31,7 +18,7 @@ const EditDemandePersonnel = () => {
       <div className="page-content">
         <Container fluid={true}>
           <Breadcrumb
-            title="demande Etudiant"
+            title="demande Personnel"
             pageTitle="Modifier La Demande"
           />
           <Row>

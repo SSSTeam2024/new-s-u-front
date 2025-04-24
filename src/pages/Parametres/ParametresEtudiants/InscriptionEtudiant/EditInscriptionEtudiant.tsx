@@ -7,8 +7,7 @@ import { useUpdateEtatEtudiantMutation } from "features/etatEtudiants/etatEtudia
 import { useUpdateTypeInscriptionEtudiantMutation } from "features/typeInscriptionEtudiant/typeInscriptionEtudiant";
 
 const EditTypeInscriptionEtudiant = () => {
-  document.title =
-    " Modifier Inscription Etudiant | Application Smart Institute";
+  document.title = " Modifier Inscription Etudiant | ENIGA";
   const navigate = useNavigate();
   const { state: typeInscriptionEtudiant } = useLocation();
   const [editTypeInscriptionEtudiant] =
@@ -97,7 +96,7 @@ const EditTypeInscriptionEtudiant = () => {
       updatedFiles.splice(index, 1);
       return {
         ...prevState,
-        files_type_inscription: updatedFiles
+        files_type_inscription: updatedFiles,
       };
     });
   };

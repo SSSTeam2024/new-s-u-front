@@ -9,7 +9,7 @@ import { selectCurrentUser } from "features/account/authSlice";
 import { RootState } from "app/store";
 
 const DemandeCongeDetails: React.FC = () => {
-  document.title = "Détails de demande de Congé | Smart Institute";
+  document.title = "Détails de demande de Congé | ENIGA";
   const location = useLocation();
   const demandeConge = location.state;
 

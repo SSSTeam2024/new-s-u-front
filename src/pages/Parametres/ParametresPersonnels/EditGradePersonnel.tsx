@@ -6,7 +6,7 @@ import Swal from "sweetalert2";
 import { useUpdateGradePersonnelMutation } from "features/gradePersonnel/gradePersonnel";
 
 const EditGradePersonnel = () => {
-  document.title = " Modifier Grade Personnel | Application Smart Institute";
+  document.title = " Modifier Grade Personnel | ENIGA";
   const navigate = useNavigate();
   const { state: gradePersonnel } = useLocation();
   const [editGradePersonnel] = useUpdateGradePersonnelMutation();
@@ -44,7 +44,9 @@ const EditGradePersonnel = () => {
       timer: 2000,
     });
   };
-  const onSubmitGradePersonnel = async (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmitGradePersonnel = async (
+    e: React.FormEvent<HTMLFormElement>
+  ) => {
     e.preventDefault();
     try {
       await editGradePersonnel(formData).unwrap();
@@ -84,7 +86,10 @@ const EditGradePersonnel = () => {
         <Container fluid={true}>
           <Row>
             <Col lg={12}>
-              <Form className="tablelist-form" onSubmit={onSubmitGradePersonnel}>
+              <Form
+                className="tablelist-form"
+                onSubmit={onSubmitGradePersonnel}
+              >
                 <div
                   id="alert-error-msg"
                   className="d-none alert alert-danger py-2"
@@ -94,7 +99,9 @@ const EditGradePersonnel = () => {
                 <Row>
                   <Col lg={4}>
                     <div className="mb-3">
-                      <Form.Label htmlFor="value_grade_personnel">Valeur</Form.Label>
+                      <Form.Label htmlFor="value_grade_personnel">
+                        Valeur
+                      </Form.Label>
                       <Form.Control
                         type="text"
                         id="value_grade_personnel"
@@ -108,7 +115,9 @@ const EditGradePersonnel = () => {
 
                   <Col lg={4}>
                     <div className="mb-3">
-                      <Form.Label htmlFor="grade_fr">Grade Personnel</Form.Label>
+                      <Form.Label htmlFor="grade_fr">
+                        Grade Personnel
+                      </Form.Label>
                       <Form.Control
                         type="text"
                         id="grade_fr"

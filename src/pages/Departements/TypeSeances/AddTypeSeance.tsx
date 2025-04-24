@@ -14,7 +14,7 @@ import { useAddMatiereMutation } from "features/matiere/matiere";
 import { useAddTypeSeanceMutation } from "features/typeSeance/typeSeance";
 
 const AddTypeSeance = () => {
-  document.title = " Ajouter Type Séance | Application Smart Institute";
+  document.title = " Ajouter Type Séance | ENIGA";
   const navigate = useNavigate();
 
   function tog_retourParametres() {

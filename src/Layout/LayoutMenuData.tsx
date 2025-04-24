@@ -15,11 +15,7 @@ const Navdata = () => {
   useEffect(() => {
     if (error) {
       console.error("Error fetching user permissions:", error);
-    }/*  else if (isLoading) {
-      console.log("Fetching user permissions...");
-    } else {
-      // console.log('User permissions:', userPermissions);
-    } */
+    }
   }, [userPermissions, error, isLoading]);
 
   const [isEcommerce, setIsEcommerce] = useState(false);
@@ -29,9 +25,6 @@ const Navdata = () => {
   const [isAvisPersonnel, setIsAvisPersonnel] = useState(false);
   const [isActualite, setIsActualite] = useState(false);
   const [isParametreEtudiant, setIsParametreEtudiant] = useState(false);
-  const [isParametreEnseignant, setIsParametreEnseignant] = useState(false);
-  const [isParametrePersonnel, setIsParametrePersonnel] = useState(false);
-  const [isSellers, setIsSellers] = useState(false);
   const [isInvoice, setIsInvoice] = useState(false);
   const [isParametre, setIsParametre] = useState(false);
   const [isLocalization, setIsLocalization] = useState(false);
@@ -57,14 +50,13 @@ const Navdata = () => {
   const [isMission, setIsMission] = useState(false);
   const [isModele, setIsModele] = useState(false);
   const [isLevel1, setIsLevel1] = useState(false);
-  const [isLevel2, setIsLevel2] = useState(false);
   const [isLevel3, setIsLevel3] = useState(false);
   const [isLevel4, setIsLevel4] = useState(false);
   const [isLevel5, setIsLevel5] = useState(false);
   const [isLevel6, setIsLevel6] = useState(false);
   const [isLevel7, setIsLevel7] = useState(false);
-  const [isLevel8, setIsLevel8] = useState(false);
-
+  const [isBureauOrdre, setIsBureauOrdre] = useState(false);
+  const [isSettings, setIsSettings] = useState(false);
   const [iscurrentState, setIscurrentState] = useState("Dashboard");
 
   function updateIconSidebar(e: any) {
@@ -74,10 +66,6 @@ const Navdata = () => {
       let activeIconItems = [...iconItems];
       activeIconItems.forEach((item) => {
         item.classList.remove("active");
-        // var id: any = item.getAttribute("subitems");
-        // if (document.getElementById(id)){
-        //     document.getElementById(id).classList.remove("show");
-        // }
       });
     }
   }
@@ -89,7 +77,7 @@ const Navdata = () => {
     return menuItems.filter((item) => {
       if (item.subItems) {
         item.subItems = filterMenuItems(item.subItems, routes);
-        // Keep the item if it has subItems left after filtering
+
         return item.subItems.length > 0;
       }
       return linkInRoutes(item.link, routes);
@@ -103,9 +91,6 @@ const Navdata = () => {
     }
     if (iscurrentState !== "Orders") {
       setIsOrder(false);
-    }
-    if (iscurrentState !== "Sellers") {
-      setIsSellers(false);
     }
     if (iscurrentState !== "Invoice") {
       setIsInvoice(false);
@@ -167,12 +152,6 @@ const Navdata = () => {
     if (iscurrentState !== "ParametreEtudiant") {
       setIsParametreEtudiant(false);
     }
-    if (iscurrentState !== "ParametreEnseignant") {
-      setIsParametreEnseignant(false);
-    }
-    if (iscurrentState !== "ParametrePersonnel") {
-      setIsParametrePersonnel(false);
-    }
     if (iscurrentState !== "PapierAdministratif") {
       setIsPapier(false);
     }
@@ -196,6 +175,12 @@ const Navdata = () => {
     }
     if (iscurrentState !== "Variable") {
       setIsVariable(false);
+    }
+    if (iscurrentState !== "bureau_ordre") {
+      setIsBureauOrdre(false);
+    }
+    if (iscurrentState !== "Paramétrages") {
+      setIsSettings(false);
     }
   }, [
     iscurrentState,
@@ -223,6 +208,8 @@ const Navdata = () => {
     isParcours,
     isApplicationEnseignant,
     isVariable,
+    isBureauOrdre,
+    isSettings,
   ]);
   let routes = userPermissions
     ? userPermissions.map((permission) => permission.path)
@@ -246,7 +233,7 @@ const Navdata = () => {
       id: "Gestion-des-Etudiants",
       label: "Gestion des Etudiants",
       link: "/#",
-      icon: "bi bi-person-fill-gear",
+      icon: "bi bi-person-gear",
       click: function (e: any) {
         e.preventDefault();
         setIsEtudiant(!isEtudiant);
@@ -290,7 +277,7 @@ const Navdata = () => {
       id: "gestion-enseignant",
       label: "Gestion Enseignants",
       link: "/#",
-      icon: "bi bi-person-fill-gear",
+      icon: "bi bi-person-video3",
       click: function (e: any) {
         e.preventDefault();
         setIsEnseignant(!isEnseignant);
@@ -341,7 +328,7 @@ const Navdata = () => {
       id: "Gestion-Personnel",
       label: "Gestion Personnels",
       link: "/#",
-      icon: "bi bi-person-fill-gear",
+      icon: "bi bi-person-square",
       click: function (e: any) {
         e.preventDefault();
         setIsPersonnel(!isPersonnel);
@@ -408,29 +395,13 @@ const Navdata = () => {
         updateIconSidebar(e);
       },
       stateVariables: isAvisEtudiant,
-      // subItems: [
-      //   {
-      //     id: "AjouterAvisEtudiant",
-      //     label: "Ajouter un Avis",
-      //     link: "/avis-etudiant/ajouter-avis-etudiant",
-      //     parentId: "Gestion-des-Avis",
-      //     icon: "bi bi-file-earmark-plus",
-      //   },
-      //   {
-      //     id: "GestionAvisEtudiant",
-      //     label: "Liste des avis",
-      //     link: "/avis-etudiant/liste-avis-etudiant",
-      //     parentId: "Gestion-des-Avis",
-      //     icon: "bi bi-list-ul",
-      //   },
-      // ],
     },
     // avis enseignant
     {
       id: "Avis-enseignant",
       label: "Avis Enseignant",
       link: "/avis-enseignant/liste-avis-enseignant",
-      icon: "bi bi-megaphone",
+      icon: "bi bi-bell",
       click: function (e: any) {
         e.preventDefault();
         setIsAvisEnseignant(!isAvisEnseignant);
@@ -438,29 +409,13 @@ const Navdata = () => {
         updateIconSidebar(e);
       },
       stateVariables: isAvisEnseignant,
-      // subItems: [
-      //   {
-      //     id: "AjouterAvisEnseignant",
-      //     label: "Ajouter un Avis",
-      //     link: "/avis-enseignant/ajouter-avis-enseignant",
-      //     parentId: "Avis-enseignant",
-      //     icon: "bi bi-file-earmark-plus",
-      //   },
-      //   {
-      //     id: "GestionAvisEnseignant",
-      //     label: "Liste des avis",
-      //     link: "/avis-enseignant/liste-avis-enseignant",
-      //     parentId: "Avis-enseignant",
-      //     icon: "bi bi-list-ul",
-      //   },
-      // ],
     },
     //avis personnel
     {
       id: "Avis-Personnel",
       label: "Avis Personnel",
       link: "/avis-personnel/liste-avis-personnel",
-      icon: "bi bi-megaphone",
+      icon: "bi bi-patch-exclamation",
       click: function (e: any) {
         e.preventDefault();
         setIsAvisPersonnel(!isAvisPersonnel);
@@ -468,22 +423,6 @@ const Navdata = () => {
         updateIconSidebar(e);
       },
       stateVariables: isAvisPersonnel,
-      // subItems: [
-      //   {
-      //     id: "AjouterAvisPersonnel",
-      //     label: "Ajouter un avis",
-      //     link: "/avis-personnel/ajouter-avis-personnel",
-      //     parentId: "Avis-Personnel",
-      //     icon: "bi bi-file-earmark-plus",
-      //   },
-      //   {
-      //     id: "GestionAvisPersonnel",
-      //     label: "Liste des avis",
-      //     link: "/avis-personnel/liste-avis-personnel",
-      //     parentId: "Avis-Personnel",
-      //     icon: "bi bi-list-ul",
-      //   },
-      // ],
     },
     // actualite
     {
@@ -498,64 +437,48 @@ const Navdata = () => {
         updateIconSidebar(e);
       },
       stateVariables: isActualite,
-      // subItems: [
-      //   {
-      //     id: "Ajouterctualite",
-      //     label: "Ajouter une actualité",
-      //     link: "/actualite/ajouter-actualite",
-      //     parentId: "Actualite",
-      //     icon: "bi bi-file-earmark-plus",
-      //   },
-      //   {
-      //     id: "listeActualite",
-      //     label: "Liste des actualités",
-      //     link: "/actualite/liste-actualite",
-      //     parentId: "Actualite",
-      //     icon: "bi bi-list-ul",
-      //   },
-      // ],
     },
     // demande etudiant
     {
       id: "Demande-etudiant",
       label: "Demande Etudiant",
       link: "/demandes-etudiant/Liste-demandes-etudiant",
-      icon: "bi bi-telephone-forward",
+      icon: "bi bi-patch-question",
     },
     // demande enseignant
     {
       id: "Demande-enseignant",
       label: "Demande Enseignant",
       link: "/demandes-enseignant/liste-demande-enseignant",
-      icon: "bi bi-telephone-forward",
+      icon: "bi bi-envelope-exclamation",
     },
     // demande personnel
     {
       id: "Demande-personnel",
       label: "Demande Personnel",
       link: "/demandes-personnel/liste-demande-personnel",
-      icon: "bi bi-telephone-forward",
+      icon: "bi bi-inboxes",
     },
     // reclamation etudiant
     {
       id: "Reclamation-etudiant",
       label: "Réclamation Etudiant",
       link: "/reclamation-etudiant/liste-reclamation-etudiant",
-      icon: "bi bi-envelope-exclamation",
+      icon: "bi bi-person-exclamation",
     },
     // reclamation enseignant
     {
       id: "Reclamation-enseignant",
       label: "Réclamation Enseignant",
       link: "/reclamation-enseignant/liste-reclamation-enseignant",
-      icon: "bi bi-envelope-exclamation",
+      icon: "bi bi-emoji-frown",
     },
     // reclamation personnel
     {
       id: "Reclamation-personnel",
       label: "Réclamation Personnel",
       link: "/reclamation-personnel/liste-reclamation-personnel",
-      icon: "bi bi-envelope-exclamation",
+      icon: "bi bi-hand-thumbs-down",
     },
     // Rattrapage
     {
@@ -594,131 +517,6 @@ const Navdata = () => {
         },
       ],
     },
-    //parametre compte etudiant
-    {
-      id: "parametreEtudiant",
-      label: "Paramètres Comptes Etudiants",
-      link: "/#",
-      icon: "bi bi-sliders",
-      click: function (e: any) {
-        e.preventDefault();
-        setIsParametreEtudiant(!isParametreEtudiant);
-        setIscurrentState("ParametreEtudiant");
-        updateIconSidebar(e);
-      },
-      stateVariables: isParametreEtudiant,
-      subItems: [
-        {
-          id: "EtatEtudiant",
-          label: "Etat",
-          link: "/parametre-etudiant/etat/liste-etat-etudiant",
-          parentId: "parametreEtudiant",
-          icon: "bi bi-person-fill-exclamation",
-        },
-        {
-          id: "InscriptionEtudiant",
-          label: "Inscription",
-          link: "/parametre-etudiant/inscription/liste-inscription-etudiant",
-          parentId: "parametreEtudiant",
-          icon: "bi bi-person-plus-fill",
-        },
-      ],
-    },
-    // parametre compte enseignant
-    {
-      id: "parametreEnseignant",
-      label: "Paramètres Comptes Enseignants",
-      link: "/#",
-      icon: "bi bi-sliders",
-      click: function (e: any) {
-        e.preventDefault();
-        setIsParametreEnseignant(!isParametreEnseignant);
-        setIscurrentState("ParametreEnseignant");
-        updateIconSidebar(e);
-      },
-      stateVariables: isParametreEnseignant,
-      subItems: [
-        {
-          id: "EtatEnseignat",
-          label: "Etat",
-          link: "/parametre-enseignant/etat/liste-etat-enseignant",
-          parentId: "parametreEnseignant",
-          icon: "bi bi-person-fill-exclamation",
-        },
-        {
-          id: "GradeEnseignant",
-          label: "Grade",
-          link: "/parametre-enseignant/grade/liste-grade-enseignant",
-          icon: "bi bi-award-fill",
-          parentId: "parametreEnseignant",
-        },
-        {
-          id: "posteEnseignant",
-          label: "Poste",
-          link: "/parametre-enseignant/poste/liste-poste-enseignant",
-          icon: "bi bi-book",
-          parentId: "parametreEnseignant",
-        },
-        {
-          id: "specialiteEnseingnat",
-          label: "Spécialité",
-          link: "/parametre-enseignant/specialite/liste-specialite-enseignant",
-          icon: "bi bi-briefcase-fill",
-          parentId: "parametreEnseignant",
-        },
-      ],
-    },
-    // parametre compte personnel
-    {
-      id: "parametrePersonnel",
-      label: "Paramètres Comptes Personnels",
-      link: "/#",
-      icon: "bi bi-sliders",
-      click: function (e: any) {
-        e.preventDefault();
-        setIsParametrePersonnel(!isParametrePersonnel);
-        setIscurrentState("ParametrePersonnel");
-        updateIconSidebar(e);
-      },
-      stateVariables: isParametrePersonnel,
-      subItems: [
-        {
-          id: "EtatEtudiant",
-          label: "Etat",
-          link: "/parametre-personnel/etat/liste-etat-personnel",
-          parentId: "parametrePersonnel",
-          icon: "bi bi-person-fill-exclamation",
-        },
-        {
-          id: "gradePersonnel",
-          label: "Grade",
-          link: "/parametre-personnel/grade/liste-grade-personnel",
-          icon: "bi bi-award-fill",
-          parentId: "parametrePersonnel",
-        },
-        {
-          id: "postePersonnel",
-          label: "Poste",
-          link: "/parametre-personnel/poste/liste-poste-personnel",
-          icon: "bi bi-book",
-          parentId: "parametrePersonnel",
-        },
-        {
-          id: "categoriePersonnel",
-          label: "Catégorie",
-          link: "/parametre-personnel/categorie/liste-categorie-personnel",
-          icon: "bi bi-grid",
-          parentId: "parametrePersonnel",
-        },
-        {
-          id: "servicePersonnel",
-          label: "Service",
-          link: "/parametre-personnel/service/liste-service-personnel",
-          icon: "bi bi-grid",
-          parentId: "parametrePersonnel",
-        },
-      ],
-    },
     //! Application Enseignant
     {
       id: "application_enseignant",
@@ -735,7 +533,7 @@ const Navdata = () => {
       subItems: [
         {
           id: "Absences",
-          label: "Absence",
+          label: "Absences",
           link: "/application-enseignant/lister-absence",
           parentId: "application_enseignant",
           icon: "bi bi-fingerprint",
@@ -749,21 +547,465 @@ const Navdata = () => {
         },
       ],
     },
-
-    // Paramétrages des comptes
+    //gestion departement
     {
-      id: "parametrage",
-      label: "Paramétrages des comptes",
-      icon: "bi bi-sliders",
+      id: "departement",
+      label: "Gestion Département",
+      icon: "bi bi-building-gear",
       link: "/#",
       click: function (e: any) {
         e.preventDefault();
-        setIsParametrage(!isParametrage);
-        setIscurrentState("Parametrage");
+        setIsDeaprtement(!isDeaprtement);
+        setIscurrentState("Departement");
         updateIconSidebar(e);
       },
-      stateVariables: isParametrage,
+      stateVariables: isDeaprtement,
       subItems: [
+        {
+          id: "salles",
+          label: "Salles",
+          icon: "bi bi-door-closed-fill",
+          link: "/departement/gestion-salles/liste-salles",
+        },
+        {
+          id: "classes",
+          label: "Groupes",
+          icon: "bi bi-people-fill",
+          link: "/departement/gestion-classes/liste-classes",
+        },
+        {
+          id: "departements",
+          label: "Départements",
+          icon: "bi bi-house-gear-fill",
+          link: "/departement/gestion-departements/liste-departements",
+        },
+      ],
+    },
+    //gestion parcours
+    {
+      id: "parcours",
+      label: "Plan d'études",
+      icon: "bi bi-list-check",
+      link: "/parcours",
+      click: function (e: any) {
+        e.preventDefault();
+        setIsParcours(!isParcours);
+        setIscurrentState("Parcours");
+        updateIconSidebar(e);
+      },
+      stateVariables: isParcours,
+      subItems: [
+        {
+          id: "matieres",
+          label: "Matières",
+          icon: "bi bi-journals",
+          link: "/departement/gestion-matieres/liste-matieres",
+          parentId: "matiere",
+        },
+
+        {
+          id: 1,
+          label: "Parcours",
+          link: "/parcours/gestion-parcours/liste-parcours",
+          icon: "bi bi-list",
+        },
+        {
+          id: 3,
+          label: "Types des parcours",
+          link: "/parcours/gestion-parcours/liste-type-parcours",
+          icon: "bi bi-list",
+        },
+
+        {
+          id: 2,
+          label: "Niveaux",
+          link: "/departement/gestion-classes/liste-niveau",
+          icon: "bi bi-sliders2-vertical",
+        },
+        {
+          id: 2,
+          label: "Cycles",
+          link: "/parcours/gestion-parcours/liste-cycle",
+          icon: "bi bi-bar-chart-step",
+        },
+        {
+          id: 3,
+          label: "Spécialités",
+          link: "/departement/gestion-classes/liste-section",
+          icon: "bi bi-diagram-3-fill",
+        },
+        //added liste mentions classess
+        {
+          id: 4,
+          label: "Mentions",
+          link: "/departement/gestion-classes/liste-mentions",
+          icon: "bi bi-trophy-fill",
+        },
+        //added liste domaines classess
+        {
+          id: 5,
+          label: "Domaines",
+          link: "/departement/gestion-classes/liste-domaines",
+          icon: "bi bi-globe2",
+        },
+      ],
+    },
+
+    //gestion emploi
+    {
+      id: "emplois",
+      label: "Gestion Emplois",
+      icon: "bi bi-calendar-range",
+      link: "/#",
+      click: function (e: any) {
+        e.preventDefault();
+        setIsEmplois(!isEmplois);
+        setIscurrentState("Emplois");
+        updateIconSidebar(e);
+      },
+      stateVariables: isEmplois,
+      subItems: [
+        {
+          id: "emplois-enseignants",
+          label: "Emplois de Temps Enseignants",
+          icon: "bi bi-calendar-week-fill",
+          link: "/gestion-emplois/emlpoi-enseignant/liste-emplois",
+          isChildItem: true,
+          click: function (e: any) {
+            e.preventDefault();
+            setIsLevel5(!isLevel5);
+          },
+          stateVariables: isLevel5,
+          childItems: [
+            {
+              id: 1,
+              label: "Liste Des Emplois",
+              link: "/gestion-emplois/emlpoi-enseignant/liste-emplois",
+              icon: "bi bi-list-task",
+            },
+            {
+              id: 2,
+              label: "Equilibre horaires",
+              link: "/gestion-emplois/emlpoi-enseignant/tableau-charges-horaires",
+              icon: "bi bi-table",
+            },
+          ],
+        },
+        {
+          id: "emplois-classes",
+          label: "Emplois de Temps Classes",
+          icon: "bi bi-calendar-week-fill",
+          link: "/gestion-emplois/emploi-classe/liste-emplois",
+          isChildItem: true,
+          click: function (e: any) {
+            e.preventDefault();
+            setIsLevel6(!isLevel6);
+          },
+          stateVariables: isLevel6,
+          childItems: [
+            {
+              id: 1,
+              label: "Liste Des Emplois",
+              link: "/gestion-emplois/emploi-classe/liste-emplois",
+              icon: "bi bi-list-task",
+            },
+            {
+              id: 2,
+              label: "Equilibre horaires",
+              link: "/gestion-emplois/emploi-classe/tableau-des-charges-horaires-classes",
+              icon: "bi bi-list-task",
+            },
+          ],
+        },
+        {
+          id: "ficheVoeux",
+          label: "Fiches des Voeux Enseignants",
+          icon: "bi bi-postcard-heart",
+          link: "/gestion-emplois/gestion-fiche-voeux/liste-fiche-voeux",
+          click: function (e: any) {
+            e.preventDefault();
+            setIsLevel7(!isLevel7);
+          },
+          stateVariables: isLevel7,
+        },
+      ],
+    },
+
+    // gestion rattrapages
+    {
+      id: "Gestion-des-rattrapages",
+      label: "Gestion des Rattrapages",
+      link: "/rattrapage/liste-rattrapages",
+      icon: "bi bi-calendar-event",
+      click: function (e: any) {
+        e.preventDefault();
+        setIsRattrapage(!isRattrapage);
+        setIscurrentState("Rattrapages");
+        updateIconSidebar(e);
+      },
+      stateVariables: isRattrapage,
+    },
+    //* Gestion Examens
+    {
+      id: "Gestion-des-examens",
+      label: "Planification des Examens",
+      link: "/gestion-examen/liste-des-calendrier",
+      icon: "bi bi-file-medical",
+      click: function (e: any) {
+        e.preventDefault();
+        setIsExamen(!isExamen);
+        setIscurrentState("Examen");
+        updateIconSidebar(e);
+      },
+      stateVariables: isExamen,
+    },
+    //* Gestion Notes Examen
+    {
+      id: "Gestion-des-Notes",
+      label: "Gestion des Notes",
+      link: "/gestion-examen/liste-des-notes-examen",
+      icon: "bi bi-123",
+      click: function (e: any) {
+        e.preventDefault();
+        setIsNotesExamen(!isNotesExamen);
+        setIscurrentState("NotesExamen");
+        updateIconSidebar(e);
+      },
+      stateVariables: isNotesExamen,
+    },
+    //Gestion des congés
+    {
+      id: "congés",
+      label: "Gestion des congés",
+      icon: "bi bi-shop-window",
+      link: "/#",
+      click: function (e: any) {
+        e.preventDefault();
+        setIsConge(!isConge);
+        setIscurrentState("conge");
+        updateIconSidebar(e);
+      },
+      stateVariables: isConge,
+      subItems: [
+        {
+          id: "liste-conge",
+          label: "Liste Des Congés",
+          link: "/type-conge/Liste-type-conge",
+          parentId: "congés",
+          icon: "bi bi-journal-text",
+        },
+        {
+          id: "Solde-Conge",
+          label: "Solde des Congés",
+          link: "/solde-conge/liste-solde-conge",
+          parentId: "congés",
+          icon: "bi bi-person-fill-add",
+        },
+        {
+          id: "demande-Conge",
+          label: "Ajouter Demande de Congé",
+          link: "/demande-conge/ajouter-demande-conge",
+          parentId: "congés",
+          icon: "bi bi-person-fill-add",
+        },
+        {
+          id: "liste_demande-Conge",
+          label: "Les Demandes de Congés",
+          link: "/demande-conge/liste-demande-conge",
+          parentId: "congés",
+          icon: "bi bi-luggage",
+        },
+      ],
+    },
+    // deplacement
+    {
+      id: "déplacement",
+      label: "Gestion des déplacements",
+      icon: "bi bi-car-front",
+      link: "/gestion-deplacement/Liste-deplacements",
+      click: function (e: any) {
+        e.preventDefault();
+        setIsDeplacement(!isDeplacement);
+        setIscurrentState("Deplacement");
+        updateIconSidebar(e);
+      },
+      stateVariables: isDeplacement,
+    },
+    // Mission
+    {
+      id: "Mission",
+      label: "Gestion des taches",
+      icon: "bi bi-list-task",
+      link: "/gestion-mission/liste-mission",
+      click: function (e: any) {
+        e.preventDefault();
+        setIsMission(!isMission);
+        setIscurrentState("Mission");
+        updateIconSidebar(e);
+      },
+      stateVariables: isMission,
+    },
+    // notes pro
+    {
+      id: "notes-professionnels",
+      label: "Gestion des notes professionnelles",
+      icon: "bi bi-award",
+      link: "/gestion-notes-professionelles/Liste-notes-professionelles",
+      click: function (e: any) {
+        e.preventDefault();
+        setIsNotesProfessionnelles(!isNotesProfessionnelles);
+        setIscurrentState("NotesProfessionelles");
+        updateIconSidebar(e);
+      },
+      stateVariables: isNotesProfessionnelles,
+    },
+
+    {
+      id: "lien",
+      label: "Liens Utils",
+      icon: "bi bi-link-45deg",
+      link: "/liens-utils",
+    },
+    // gestion des admins
+    {
+      id: "Gestion-des-admin",
+      label: "Gestion des admins",
+      link: "/admin/liste-admins",
+      icon: "bi bi-person-vcard",
+      click: function (e: any) {
+        e.preventDefault();
+        setIsAdmin(!isAdmin);
+        setIscurrentState("Admin");
+        updateIconSidebar(e);
+      },
+      stateVariables: isAdmin,
+    },
+    //! E-Administration
+    {
+      id: "Papier-administratif",
+      label: "E-Administration",
+      link: "/#",
+      icon: "bi bi-envelope-paper",
+      click: function (e: any) {
+        e.preventDefault();
+        setIsPapier(!isPapier);
+        setIscurrentState("PapierAdministratif");
+        updateIconSidebar(e);
+      },
+      stateVariables: isPapier,
+      subItems: [
+        {
+          id: "Papiers",
+          label: "Papiers Administratives",
+          link: "/papier-administratif/lister-papier",
+          parentId: "Papier-administratif",
+          icon: "bi bi-envelope-paper",
+        },
+        {
+          id: "modele",
+          label: "Gestion des Modèles",
+          link: "/template/liste-template-body",
+          parentId: "Papier-administratif",
+          icon: "bi bi-file-earmark-plus",
+        },
+        {
+          id: "telechargement",
+          label: "Espace téléchargement",
+          icon: "bi bi-cloud-arrow-down",
+          link: "/espace-telechargement",
+          parentId: "Papier-administratif",
+        },
+      ],
+    },
+    //! Messagerie
+    {
+      id: "messagerie",
+      label: "Messagerie",
+      icon: "bi bi-envelope",
+      link: "/messagerie/liste-message",
+    },
+    {
+      id: "tirage",
+      label: "Service Tirage",
+      icon: "bi bi-printer",
+      link: "/service-tirage/liste-tirages",
+    },
+    //! Bureau Ordre
+    {
+      id: "bureau_ordre",
+      label: "Bureau Ordre",
+      icon: "bi bi-mailbox",
+      link: "/#",
+      click: function (e: any) {
+        e.preventDefault();
+        setIsBureauOrdre(!isBureauOrdre);
+        setIscurrentState("bureau_ordre");
+        updateIconSidebar(e);
+      },
+      stateVariables: isBureauOrdre,
+      subItems: [
+        {
+          id: "Courriers-Entrants",
+          label: "Courriers Entrants",
+          link: "/bureau-ordre/courriers-entrants/lister-courriers-entrants",
+          parentId: "bureau_ordre",
+          icon: "bi bi-person-fill-add",
+        },
+        {
+          id: "Courriers-Sortants",
+          label: "Courriers Sortants",
+          link: "/bureau-ordre/courriers-sortants/lister-courriers-sortants",
+          parentId: "bureau_ordre",
+          icon: "bi bi-person-fill-add",
+        },
+        {
+          id: "liste_intervenant",
+          label: "Intervenants",
+          link: "/bureau-ordre/intervenants/lister-intervenants",
+          parentId: "bureau_ordre",
+          icon: "bi bi-person-fill-add",
+        },
+      ],
+    },
+    //! Paramétrages
+    {
+      id: "parametrages",
+      label: "Paramétrages",
+      icon: "bi bi-gear-wide-connected",
+      link: "/#",
+      click: function (e: any) {
+        e.preventDefault();
+        setIsSettings(!isSettings);
+        setIscurrentState("Paramétrages");
+        updateIconSidebar(e);
+      },
+      stateVariables: isSettings,
+      subItems: [
+        {
+          id: "variable-globales",
+          label: "Variables Globales",
+          link: "/variable/liste-variables-globales",
+          parentId: "parametrages",
+        },
+        {
+          id: "parametre-emploi",
+          label: "Parametres Des emplois",
+          link: "/gestion-emplois-classe/parametres-emplois-classe",
+          parentId: "parametrages",
+        },
+        {
+          id: "heure_de_travail",
+          label: "Heures de Travail",
+          link: "/parametre-personnel/periode/liste-periode-travail-personnel",
+          parentId: "parametrages",
+        },
+        {
+          id: "voie-envoi",
+          label: "Gestion des voie d'envoi",
+          link: "/bureau-ordre/voie-envoi/gestion-voie-envoi",
+          parentId: "parametrages",
+          icon: "bi bi-journal-text",
+        },
         {
           id: "pce",
           label: "Comptes Etudiants",
@@ -873,795 +1115,6 @@ const Navdata = () => {
           ],
         },
       ],
-    },
-
-    //parametre compte etudiant
-    // {
-    //   id: "parametreEtudiant",
-    //   label: "Paramètres Comptes Etudiants",
-    //   link: "/#",
-    //   icon: "bi bi-sliders",
-    //   click: function (e: any) {
-    //     e.preventDefault();
-    //     setIsParametreEtudiant(!isParametreEtudiant);
-    //     setIscurrentState("ParametreEtudiant");
-    //     updateIconSidebar(e);
-    //   },
-    //   stateVariables: isParametreEtudiant,
-    //   subItems: [
-    //     {
-    //       id: "EtatEtudiant",
-    //       label: "Etat",
-    //       link: "/parametre-etudiant/etat/liste-etat-etudiant",
-    //       parentId: "parametreEtudiant",
-    //       icon: "bi bi-person-fill-exclamation",
-    //     },
-    //     {
-    //       id: "InscriptionEtudiant",
-    //       label: "Inscription",
-    //       link: "/parametre-etudiant/inscription/liste-inscription-etudiant",
-    //       parentId: "parametreEtudiant",
-    //       icon: "bi bi-person-plus-fill",
-    //     },
-    //   ],
-    // },
-    // parametre compte enseignant
-    // {
-    //   id: "parametreEnseignant",
-    //   label: "Paramètres Comptes Enseignants",
-    //   link: "/#",
-    //   icon: "bi bi-sliders",
-    //   click: function (e: any) {
-    //     e.preventDefault();
-    //     setIsParametreEnseignant(!isParametreEnseignant);
-    //     setIscurrentState("ParametreEnseignant");
-    //     updateIconSidebar(e);
-    //   },
-    //   stateVariables: isParametreEnseignant,
-    //   subItems: [
-    //     {
-    //       id: "EtatEnseignat",
-    //       label: "Etat",
-    //       link: "/parametre-enseignant/etat/liste-etat-enseignant",
-    //       parentId: "parametreEnseignant",
-    //       icon: "bi bi-person-fill-exclamation",
-    //     },
-    //     {
-    //       id: "GradeEnseignant",
-    //       label: "Grade",
-    //       link: "/parametre-enseignant/grade/liste-grade-enseignant",
-    //       icon: "bi bi-award-fill",
-    //       parentId: "parametreEnseignant",
-    //     },
-    //     {
-    //       id: "posteEnseignant",
-    //       label: "Poste",
-    //       link: "/parametre-enseignant/poste/liste-poste-enseignant",
-    //       icon: "bi bi-book",
-    //       parentId: "parametreEnseignant",
-    //     },
-    //     {
-    //       id: "specialiteEnseingnat",
-    //       label: "Spécialité",
-    //       link: "/parametre-enseignant/specialite/liste-specialite-enseignant",
-    //       icon: "bi bi-briefcase-fill",
-    //       parentId: "parametreEnseignant",
-    //     },
-    //   ],
-    // },
-    // parametre compte personnel
-    // {
-    //   id: "parametrePersonnel",
-    //   label: "Paramètres Comptes Personnels",
-    //   link: "/#",
-    //   icon: "bi bi-sliders",
-    //   click: function (e: any) {
-    //     e.preventDefault();
-    //     setIsParametrePersonnel(!isParametrePersonnel);
-    //     setIscurrentState("ParametrePersonnel");
-    //     updateIconSidebar(e);
-    //   },
-    //   stateVariables: isParametrePersonnel,
-    //   subItems: [
-    //     {
-    //       id: "EtatEtudiant",
-    //       label: "Etat",
-    //       link: "/parametre-personnel/etat/liste-etat-personnel",
-    //       parentId: "parametrePersonnel",
-    //       icon: "bi bi-person-fill-exclamation",
-    //     },
-    //     {
-    //       id: "gradePersonnel",
-    //       label: "Grade",
-    //       link: "/parametre-personnel/grade/liste-grade-personnel",
-    //       icon: "bi bi-award-fill",
-    //       parentId: "parametrePersonnel",
-    //     },
-    //     {
-    //       id: "postePersonnel",
-    //       label: "Poste",
-    //       link: "/parametre-personnel/poste/liste-poste-personnel",
-    //       icon: "bi bi-book",
-    //       parentId: "parametrePersonnel",
-    //     },
-    //     {
-    //       id: "categoriePersonnel",
-    //       label: "Catégorie",
-    //       link: "/parametre-personnel/categorie/liste-categorie-personnel",
-    //       icon: "bi bi-grid",
-    //       parentId: "parametrePersonnel",
-    //     },
-    //     {
-    //       id: "servicePersonnel",
-    //       label: "Service",
-    //       link: "/parametre-personnel/service/liste-service-personnel",
-    //       icon: "bi bi-grid",
-    //       parentId: "parametrePersonnel",
-    //     },
-    //   ],
-    // },
-
-    //gestion departement
-    {
-      id: "departement",
-      label: "Gestion Département",
-      icon: "bi bi-house-gear-fill",
-      link: "/#",
-      click: function (e: any) {
-        e.preventDefault();
-        setIsDeaprtement(!isDeaprtement);
-        setIscurrentState("Departement");
-        updateIconSidebar(e);
-      },
-      stateVariables: isDeaprtement,
-
-      subItems: [
-        {
-          id: "salles",
-          label: "Salles",
-          icon: "bi bi-door-closed-fill",
-          link: "/departement/gestion-salles/liste-salles",
-
-          // click: function (e: any) {
-          //   e.preventDefault();
-          //   setIsLevel2(!isLevel2);
-          // },
-          // stateVariables: isLevel2,
-          // childItems: [
-          //   {
-          //     id: 1,
-          //     label: "Liste Des Salles",
-          //     link: "/departement/gestion-salles/liste-salles",
-          //     icon: "bi bi-person-fill-exclamation",
-          //   },
-          //   {
-          //     id: 1,
-          //     label: "Ajouter salle",
-          //     link: "/departement/gestion-salles/ajouter-salle",
-          //     icon: "bi bi-person-fill-exclamation",
-          //   },
-          // ],
-        },
-        {
-          id: "classes",
-          label: "Groupes",
-          icon: "bi bi-people-fill",
-          link: "/departement/gestion-classes/liste-classes",
-
-          // click: function (e: any) {
-          //   e.preventDefault();
-          //   setIsLevel3(!isLevel3);
-          // },
-          // stateVariables: isLevel3,
-          // childItems: [
-          //   {
-          //     id: 1,
-          //     label: "Liste des groupes",
-          //     link: "/departement/gestion-classes/liste-classes",
-          //     icon: "bi bi-people-fill",
-          //   },
-          // ],
-        },
-        {
-          id: "departements",
-          label: "Départements",
-          icon: "bi bi-house-gear-fill",
-          link: "/departement/gestion-departements/liste-departements",
-
-          // click: function (e: any) {
-          //   e.preventDefault();
-          //   setIsLevel4(!isLevel4);
-          // },
-          // stateVariables: isLevel4,
-          // childItems: [
-          //   {
-          //     id: 1,
-          //     label: "Liste Des Départements",
-          //     link: "/departement/gestion-departements/liste-departements",
-          //     icon: "bi bi-diagram-3-fill",
-          //   },
-          //   {
-          //     id: 1,
-          //     label: "Ajouter département",
-          //     link: "/departement/gestion-departements/departements/add-departement",
-          //     icon: "bi bi-diagram-3-fill",
-          //   },
-          // ],
-        },
-      ],
-    },
-
-    //gestion parcours
-    {
-      id: "parcours",
-      label: "Plan d'études",
-      icon: "bi bi-house-gear-fill",
-      link: "/parcours",
-      click: function (e: any) {
-        e.preventDefault();
-        setIsParcours(!isParcours);
-        setIscurrentState("Parcours");
-        updateIconSidebar(e);
-      },
-      stateVariables: isParcours,
-      subItems: [
-        {
-          id: "matieres",
-          label: "Matières",
-          icon: "bi bi-journals",
-          link: "/departement/gestion-matieres/liste-matieres",
-          parentId: "matiere",
-        },
-
-        {
-          id: 1,
-          label: "Parcours",
-          link: "/parcours/gestion-parcours/liste-parcours",
-          icon: "bi bi-list",
-        },
-        {
-          id: 3,
-          label: "Types des parcours",
-          link: "/parcours/gestion-parcours/liste-type-parcours",
-          icon: "bi bi-list",
-        },
-
-        {
-          id: 2,
-          label: "Niveaux",
-          link: "/departement/gestion-classes/liste-niveau",
-          icon: "bi bi-sliders2-vertical",
-        },
-        {
-          id: 2,
-          label: "Cycles",
-          link: "/parcours/gestion-parcours/liste-cycle",
-          icon: "bi bi-bar-chart-step",
-        },
-        {
-          id: 3,
-          label: "Spécialités",
-          link: "/departement/gestion-classes/liste-section",
-          icon: "bi bi-diagram-3-fill",
-        },
-        //added liste mentions classess
-        {
-          id: 4,
-          label: "Mentions",
-          link: "/departement/gestion-classes/liste-mentions",
-          icon: "bi bi-trophy-fill",
-        },
-        //added liste domaines classess
-        {
-          id: 5,
-          label: "Domaines",
-          link: "/departement/gestion-classes/liste-domaines",
-          icon: "bi bi-globe2",
-        },
-      ],
-    },
-
-    //gestion emploi
-    {
-      id: "emplois",
-      label: "Gestion Emplois",
-      icon: "bi bi-house-gear-fill",
-      link: "/#",
-      click: function (e: any) {
-        e.preventDefault();
-        setIsEmplois(!isEmplois);
-        setIscurrentState("Emplois");
-        updateIconSidebar(e);
-      },
-      stateVariables: isEmplois,
-      subItems: [
-        {
-          id: "emplois-enseignants",
-          label: "Emplois de Temps Enseignants",
-          icon: "bi bi-calendar-week-fill",
-          link: "/gestion-emplois/emlpoi-enseignant/liste-emplois",
-          isChildItem: true,
-          click: function (e: any) {
-            e.preventDefault();
-            setIsLevel5(!isLevel5);
-          },
-          stateVariables: isLevel5,
-          childItems: [
-            {
-              id: 1,
-              label: "Liste Des Emplois",
-              link: "/gestion-emplois/emlpoi-enseignant/liste-emplois",
-              icon: "bi bi-list-task",
-            },
-
-            {
-              id: 2,
-              label: "Equilibre horaires",
-              link: "/gestion-emplois/emlpoi-enseignant/tableau-charges-horaires",
-              icon: "bi bi-table",
-            },
-            // { id: 1, label: "Ajouter Un Département", link: "/gestion-departements/Ajout-departement",  icon: "bi bi-person-plus-fill"},
-          ],
-        },
-        {
-          id: "emplois-classes",
-          label: "Emplois de Temps Classes",
-          icon: "bi bi-calendar-week-fill",
-          link: "/gestion-emplois/emploi-classe/liste-emplois",
-          isChildItem: true,
-          click: function (e: any) {
-            e.preventDefault();
-            setIsLevel6(!isLevel6);
-          },
-          stateVariables: isLevel6,
-          childItems: [
-            {
-              id: 1,
-              label: "Liste Des Emplois",
-              link: "/gestion-emplois/emploi-classe/liste-emplois",
-              icon: "bi bi-list-task",
-            },
-            {
-              id: 2,
-              label: "Equilibre horaires",
-              link: "/gestion-emplois/emploi-classe/tableau-des-charges-horaires-classes",
-              icon: "bi bi-list-task",
-            },
-          ],
-        },
-        {
-          id: "parametre-emploi",
-          label: "Parametres Des emplois",
-          link: "/gestion-emplois-classe/parametres-emplois-classe",
-          icon: "bi bi-gear-fill",
-        },
-        {
-          id: "ficheVoeux",
-          label: "Fiches des Voeux Enseignants",
-          icon: "bi bi-postcard-heart",
-          link: "/gestion-emplois/gestion-fiche-voeux/liste-fiche-voeux",
-          // isChildItem: true,
-          click: function (e: any) {
-            e.preventDefault();
-            setIsLevel7(!isLevel7);
-          },
-          stateVariables: isLevel7,
-          // childItems: [
-          //   {
-          //     id: 1,
-          //     label: "Liste Des Voeux",
-          //     link: "/gestion-emplois/gestion-fiche-voeux/liste-fiche-voeux",
-          //     icon: "bi bi-list-task",
-          //   },
-          // ],
-        },
-      ],
-    },
-
-    // gestion rattrapages
-    {
-      id: "Gestion-des-rattrapages",
-      label: "Gestion des Rattrapages",
-      link: "/rattrapage/liste-rattrapages",
-      icon: "bi bi-calendar-event",
-      click: function (e: any) {
-        e.preventDefault();
-        setIsRattrapage(!isRattrapage);
-        setIscurrentState("Rattrapages");
-        updateIconSidebar(e);
-      },
-      stateVariables: isRattrapage,
-      // subItems: [
-      //   {
-      //     id: "AjouterRattrapage",
-      //     label: "Ajouter un Rattrapage",
-      //     link: "/rattrapage/ajouter-rattrapage",
-      //     parentId: "Gestion-des-rattrapages",
-      //     icon: "bi bi-calendar2-plus",
-      //   },
-      //   {
-      //     id: "GestionRattrapages",
-      //     label: "Liste Des Rattrapages",
-      //     link: "/rattrapage/liste-rattrapages",
-      //     parentId: "Gestion-des-rattrapages",
-      //     icon: "bi bi-card-list",
-      //   },
-      // ],
-    },
-    //* Gestion Examens
-    {
-      id: "Gestion-des-examens",
-      label: "Planification des Examens",
-      link: "/gestion-examen/liste-des-calendrier",
-      icon: "bi bi-calendar-event",
-      click: function (e: any) {
-        e.preventDefault();
-        setIsExamen(!isExamen);
-        setIscurrentState("Examen");
-        updateIconSidebar(e);
-      },
-      stateVariables: isExamen,
-      // subItems: [
-      //   {
-      //     id: "AjouterCalendrierExamen",
-      //     label: "Ajouter Calendrier Examen",
-      //     link: "/gestion-examen/ajouter-calendrier-examen",
-      //     parentId: "Gestion-des-examens",
-      //     icon: "bi bi-calendar2-plus",
-      //   },
-      //   {
-      //     id: "ListCalendrierExamen",
-      //     label: "Liste Des Calendrier",
-      //     link: "/gestion-examen/liste-des-calendrier",
-      //     parentId: "Gestion-des-examens",
-      //     icon: "bi bi-card-list",
-      //   },
-      // ],
-    },
-    //* Gestion Notes Examen
-    {
-      id: "Gestion-des-Notes",
-      label: "Gestion des Notes",
-      link: "/gestion-examen/liste-des-notes-examen",
-      icon: "bi bi-123",
-      click: function (e: any) {
-        e.preventDefault();
-        setIsNotesExamen(!isNotesExamen);
-        setIscurrentState("NotesExamen");
-        updateIconSidebar(e);
-      },
-      stateVariables: isNotesExamen,
-      // subItems: [
-      //   {
-      //     id: "AjouterNoteExamen",
-      //     label: "Ajouter Note Examen",
-      //     link: "/gestion-examen/ajouter-des-notes-examen",
-      //     parentId: "Gestion-des-Notes",
-      //     icon: "bi bi-calendar2-plus",
-      //   },
-      //   {
-      //     id: "ListeNotesExamen",
-      //     label: "Liste Des Notes Examen",
-      //     link: "/gestion-examen/liste-des-notes-examen",
-      //     parentId: "Gestion-des-Notes",
-      //     icon: "bi bi-card-list",
-      //   },
-      // ],
-    },
-    //Gestion des congés
-    {
-      id: "congés",
-      label: "Gestion des congés",
-      icon: "bi bi-house-gear-fill",
-      link: "/#",
-      click: function (e: any) {
-        e.preventDefault();
-        setIsConge(!isConge);
-        setIscurrentState("conge");
-        updateIconSidebar(e);
-      },
-      stateVariables: isConge,
-      subItems: [
-        {
-          id: "liste-conge",
-          label: "Liste Des Congés",
-          link: "/type-conge/Liste-type-conge",
-          parentId: "congés",
-          icon: "bi bi-journal-text",
-        },
-        {
-          id: "Solde-Conge",
-          label: "Solde des Congés",
-          link: "/solde-conge/liste-solde-conge",
-          parentId: "congés",
-          icon: "bi bi-person-fill-add",
-        },
-        {
-          id: "demande-Conge",
-          label: "Ajouter Demande de Congé",
-          link: "/demande-conge/ajouter-demande-conge",
-          parentId: "congés",
-          icon: "bi bi-person-fill-add",
-        },
-        {
-          id: "liste_demande-Conge",
-          label: "Les Demandes de Congés",
-          link: "/demande-conge/liste-demande-conge",
-          parentId: "congés",
-          icon: "bi bi-person-fill-add",
-        },
-        // {
-        //   id: "shortCode",
-        //   label: "Liste Des codes courts",
-        //   link: "/shortCode/liste-short-code",
-        //   parentId: "modele",
-        //   icon: "bi bi-person-fill-add",
-        // },
-      ],
-    },
-    // deplacement
-    {
-      id: "déplacement",
-      label: "Gestion des déplacements",
-      icon: "bi bi-car-front",
-      link: "/gestion-deplacement/Liste-deplacements",
-      click: function (e: any) {
-        e.preventDefault();
-        setIsDeplacement(!isDeplacement);
-        setIscurrentState("Deplacement");
-        updateIconSidebar(e);
-      },
-      stateVariables: isDeplacement,
-      // subItems: [
-      //   {
-      //     id: "ajouter-deplacement",
-      //     label: "Ajouter un déplacement",
-      //     link: "/gestion-deplacement/Ajouter-deplacement",
-      //     parentId: "déplacement",
-      //     icon: "bi bi-clipboard2-plus",
-      //   },
-      //   {
-      //     id: "liste_deplacements",
-      //     label: "Liste des déplacements",
-      //     link: "/gestion-deplacement/Liste-deplacements",
-      //     parentId: "déplacement",
-      //     icon: "bi bi-journal-text",
-      //   },
-      // ],
-    },
-    // Mission
-    {
-      id: "Mission",
-      label: "Gestion des taches",
-      icon: "bi bi-car-front",
-      link: "/gestion-mission/liste-mission",
-      click: function (e: any) {
-        e.preventDefault();
-        setIsMission(!isMission);
-        setIscurrentState("Mission");
-        updateIconSidebar(e);
-      },
-      stateVariables: isMission,
-      // subItems: [
-      //   {
-      //     id: "ajouter-mission",
-      //     label: "Ajouter une tâche",
-      //     link: "/gestion-mission/ajouter-mission",
-      //     parentId: "Mission",
-      //     icon: "bi bi-clipboard2-plus",
-      //   },
-      //   {
-      //     id: "liste_deplacements",
-      //     label: "Liste des tâches",
-      //     link: "/gestion-mission/liste-mission",
-      //     parentId: "Mission",
-      //     icon: "bi bi-journal-text",
-      //   },
-      // ],
-    },
-    // notes pro
-    {
-      id: "notes-professionnels",
-      label: "Gestion des notes professionnelles",
-      icon: "bi bi-card-list",
-      link: "/gestion-notes-professionelles/Liste-notes-professionelles",
-      click: function (e: any) {
-        e.preventDefault();
-        setIsNotesProfessionnelles(!isNotesProfessionnelles);
-        setIscurrentState("NotesProfessionelles");
-        updateIconSidebar(e);
-      },
-      stateVariables: isNotesProfessionnelles,
-      // subItems: [
-      //   {
-      //     id: "ajouter-notes-professionelles",
-      //     label: "Ajouter des notes professionelles",
-      //     link: "/gestion-notes-professionelles/Ajouter-notes-professionelles",
-      //     parentId: "notes-professionnels",
-      //     icon: "bi bi-clipboard2-plus",
-      //   },
-      // {
-      //   id: "Solde-Conge",
-      //   label: "Solde des Congés",
-      //   link: "/solde-conge/liste-solde-conge",
-      //   parentId: "congés",
-      //   icon: "bi bi-person-fill-add",
-      // },
-      // {
-      //   id: "demande-Conge",
-      //   label: "Ajouter Demande de Congé",
-      //   link: "/demande-conge/ajouter-demande-conge",
-      //   parentId: "congés",
-      //   icon: "bi bi-person-fill-add",
-      // },
-      //   {
-      //     id: "liste_notes_professionelles",
-      //     label: "Liste des notes professionelles",
-      //     link: "/gestion-notes-professionelles/Liste-notes-professionelles",
-      //     parentId: "notes-professionnels",
-      //     icon: "bi bi-journal-text",
-      //   },
-      // ],
-    },
-
-    //modele
-    {
-      id: "modele",
-      label: "Gestion des modèles",
-      icon: "bi bi-house-gear-fill",
-      link: "/template/liste-template-body",
-      click: function (e: any) {
-        e.preventDefault();
-        setIsModele(!isModele);
-        setIscurrentState("Modele");
-        updateIconSidebar(e);
-      },
-      stateVariables: isModele,
-      // subItems: [
-      //   {
-      //     id: "template",
-      //     label: "Liste Des modeles",
-      //     link: "/template/liste-template-body",
-      //     parentId: "modele",
-      //     icon: "bi bi-journal-text",
-      //   },
-      //   {
-      //     id: "template",
-      //     label: "Ajouter modele",
-      //     link: "/template/ajouter-template-body",
-      //     parentId: "modele",
-      //     icon: "bi bi-person-fill-add",
-      //   },
-      //   {
-      //     id: "shortCode",
-      //     label: "Liste Des codes courts",
-      //     link: "/shortCode/liste-short-code",
-      //     parentId: "modele",
-      //     icon: "bi bi-person-fill-add",
-      //   },
-      // ],
-    },
-
-    {
-      id: "telechargement",
-      label: "Espace téléchargement",
-      icon: "bi bi-cloud-arrow-down-fill",
-      link: "/espace-telechargement",
-    },
-    {
-      id: "lien",
-      label: "Liens Utils",
-      icon: "bi bi-link-45deg",
-      link: "/liens-utils",
-    },
-    {
-      id: "messagerie",
-      label: "Messagerie",
-      icon: "bi bi-envelope",
-      link: "/messagerie/liste-message",
-    },
-    {
-      id: "variable-globales",
-      label: "Variables Globales",
-      icon: "bi bi-cloud-arrow-down-fill",
-      link: "/variable/liste-variables-globales",
-      click: function (e: any) {
-        e.preventDefault();
-        setIsVariable(!isVariable);
-        setIscurrentState("Variable");
-        updateIconSidebar(e);
-      },
-      stateVariables: isVariable,
-      // subItems: [
-      //   {
-      //     id: "AjouterVariable",
-      //     label: "Ajouter variable globale",
-      //     link: "/variable/ajouter-variables-globales",
-      //     parentId: "variable-globales",
-      //     icon: "bi bi-person-fill-add",
-      //   },
-      //   {
-      //     id: "AjouterPermission",
-      //     label: "Liste des variables globales",
-      //     link: "/variable/liste-variables-globales",
-      //     parentId: "variable-globales",
-      //     icon: "bi bi-person-lines-fill",
-      //   },
-
-      // ],
-    },
-    // gestion des admins
-    {
-      id: "Gestion-des-admin",
-      label: "Gestion des admins",
-      link: "/admin/liste-admins",
-      icon: "bi bi-person-fill-gear",
-      click: function (e: any) {
-        e.preventDefault();
-        setIsAdmin(!isAdmin);
-        setIscurrentState("Admin");
-        updateIconSidebar(e);
-      },
-      stateVariables: isAdmin,
-      // subItems: [
-      //   {
-      //     id: "AjouterAdmin",
-      //     label: "Liste des Admins",
-      //     link: "/admin/liste-admins",
-      //     parentId: "Gestion-des-admin",
-      //     icon: "bi bi-person-fill-add",
-      //   },
-      //   {
-      //     id: "AjouterPermission",
-      //     label: "Ajouter des permissions",
-      //     link: "/permissions",
-      //     parentId: "Gestion-des-admin",
-      //     icon: "bi bi-person-lines-fill",
-      //   },
-      //   {
-      //     id: "AjouterAdmin",
-      //     label: "Ajouter Admin",
-      //     link: "/admin/ajouter-admin",
-      //     parentId: "Gestion-des-admin",
-      //     icon: "bi bi-person-lines-fill",
-      //   },
-      // ],
-    },
-    // Papier administratif
-    {
-      id: "Papier-administratif",
-      label: "Papiers administartifs",
-      link: "/papier-administratif/lister-papier",
-      icon: "bi bi-envelope-paper",
-      click: function (e: any) {
-        e.preventDefault();
-        setIsPapier(!isPapier);
-        setIscurrentState("PapierAdministratif");
-        updateIconSidebar(e);
-      },
-      stateVariables: isPapier,
-      // subItems: [
-      //   {
-      //     id: "ListerPapier",
-      //     label: "Liste Papier Administratif",
-      //     link: "/papier-administratif/lister-papier",
-      //     parentId: "Papier-admin",
-      //     icon: "bi bi-list",
-      //   },
-      //   {
-      //     id: "AjouterPapier",
-      //     label: "Ajouter Papier Administratif",
-      //     link: "/papier-administratif/ajouter-papier",
-      //     parentId: "Papier-admin",
-      //     icon: "bi bi-file-earmark-plus",
-      //   },
-      // ],
-    },
-    {
-      id: "tirage",
-      label: "Service Tirage",
-      icon: "bi bi-printer",
-      link: "/service-tirage/liste-tirages",
     },
   ];
   const filteredMenuItems = filterMenuItems(menuItems, routes);

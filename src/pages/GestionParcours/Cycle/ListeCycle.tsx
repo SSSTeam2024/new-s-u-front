@@ -283,10 +283,7 @@ const ListeCycle = () => {
     <React.Fragment>
       <div className="page-content">
         <Container fluid={true}>
-          <Breadcrumb
-            title="Liste des cycles"
-            pageTitle="Liste des cycles"
-          />
+          <Breadcrumb title="Liste des cycles" pageTitle="Liste des cycles" />
 
           <Row id="sellersList">
             <Col lg={12}>
@@ -343,7 +340,7 @@ const ListeCycle = () => {
                       isPagination={true}
                       className="custom-header-css table align-middle table-nowrap"
                       tableClass="table-centered align-middle table-nowrap mb-0"
-                      theadClass="text-muted table-light"
+                      theadClass="text-muted"
                       SearchPlaceholder="Search Products..."
                     />
                   </table>

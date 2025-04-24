@@ -12,10 +12,7 @@ import Breadcrumb from "Common/BreadCrumb";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import TableContainer from "Common/TableContainer";
 import Swal from "sweetalert2";
-import {
-  GradeEnseignant,
-  useDeleteGradeEnseignantMutation,
-} from "features/gradeEnseignant/gradeEnseignant";
+import { useDeleteGradeEnseignantMutation } from "features/gradeEnseignant/gradeEnseignant";
 import {
   Rattrapage,
   useFetchRattrapagesQuery,
@@ -346,8 +343,8 @@ const ListeRattrapages = () => {
       <div className="page-content">
         <Container fluid={true}>
           <Breadcrumb
-            title="Paramètres des enseignants"
-            pageTitle="Liste grades des enseignants"
+            title="Liste des rattrapages"
+            pageTitle="Gestion des Rattrapages"
           />
 
           <Row id="sellersList">
@@ -356,7 +353,7 @@ const ListeRattrapages = () => {
                 <Card.Body>
                   <Row className="g-3">
                     <Col lg={3}>
-                      <div className="search-box">
+                      <label className="search-box">
                         <input
                           type="text"
                           className="form-control search"
@@ -365,7 +362,7 @@ const ListeRattrapages = () => {
                           onChange={handleSearchChange}
                         />
                         <i className="ri-search-line search-icon"></i>
-                      </div>
+                      </label>
                     </Col>
 
                     <Col className="col-lg-auto ms-auto">
@@ -400,7 +397,7 @@ const ListeRattrapages = () => {
                       isPagination={true}
                       className="custom-header-css table align-middle table-nowrap"
                       tableClass="table-centered align-middle table-nowrap mb-0"
-                      theadClass="text-muted table-light"
+                      theadClass="text-muted"
                       SearchPlaceholder="Search Products..."
                     />
                   </table>

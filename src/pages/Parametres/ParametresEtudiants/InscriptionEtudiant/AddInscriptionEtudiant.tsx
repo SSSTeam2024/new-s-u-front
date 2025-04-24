@@ -6,8 +6,7 @@ import Swal from "sweetalert2";
 import { useAddTypeInscriptionEtudiantMutation } from "features/typeInscriptionEtudiant/typeInscriptionEtudiant";
 
 const AddTypeInscriptionEtudiant = () => {
-  document.title =
-    " Ajouter Type Inscription Etudiant | Application Smart Institute";
+  document.title = " Ajouter Type Inscription Etudiant | ENIGA";
   const navigate = useNavigate();
 
   function tog_retourParametres() {

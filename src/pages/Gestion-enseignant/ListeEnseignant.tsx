@@ -58,7 +58,6 @@ export interface EnseignantFileEXEL {
   nationalite: string;
   etat_civil: string;
   sexe: string;
-
   date_affectation: string;
   compte_courant: string;
   identifinat_unique: string;
@@ -78,20 +77,14 @@ export interface EnseignantFileEXEL {
   entreprise1: string;
   annee_certif1: string;
   certif1: string;
-
   entreprise2: string;
   annee_certif2: string;
   certif2: string;
-
   entreprise3: string;
   annee_certif3: string;
   certif3: string;
 }
 
-const excelDateToJSDate = (excelDate: number): string => {
-  const jsDate = new Date((excelDate - 25569) * 86400 * 1000); // Convert Excel date to JS date
-  return jsDate.toLocaleDateString("fr-FR"); // Format date to dd/mm/yyyy
-};
 const ListEnseignants = () => {
   document.title = "Liste des enseignants | ENIGA";
   const user = useSelector((state: RootState) => selectCurrentUser(state));
@@ -295,7 +288,6 @@ const ListEnseignants = () => {
         //   }
         // },
       },
-
       {
         Header: "Action",
         disableFilters: true,
@@ -615,7 +607,6 @@ const ListEnseignants = () => {
               specialite_ar: item["Spécialité AR"],
               specialite_fr: item["Spécialité FR"],
             });
-            console.log("specialiteKey", specialiteKey);
           }
 
           const gradeKey = `${item["Grade AR"]}-${item["Grade FR"]}`;
@@ -726,8 +717,6 @@ const ListEnseignants = () => {
             const createdEnseignant = await addEnseignant(
               enseignantData
             ).unwrap();
-            console.log("createdEnseignant", createdEnseignant);
-            console.log("Enseignant created:", createdEnseignant);
           } catch (error) {
             console.error("Error creating personnel:", error);
           }
@@ -736,7 +725,6 @@ const ListEnseignants = () => {
         await Promise.all(enseigantPromises);
         setEnseignantFile(jsonData);
         setFilePath(file.name);
-        console.log("All enseignants records processed successfully.");
       } catch (error) {
         console.error("Error processing file:", error);
       } finally {
@@ -794,15 +782,12 @@ const ListEnseignants = () => {
         "NomConjoint",
         "PosteConjoint",
         "NombreFils",
-
         "Entreprise1",
         "AnneeCertif1",
         "NomCertif1",
-
         "Entreprise2",
         "AnneeCertif2",
         "NomCertif2",
-
         "Entreprise3",
         "AnneeCertif3",
         "NomCertif3",
@@ -819,8 +804,8 @@ const ListEnseignants = () => {
       <div className="page-content">
         <Container fluid={true}>
           <Breadcrumb
-            title="Gestion des enseignants"
-            pageTitle="Liste des enseignants"
+            title="Liste des enseignants"
+            pageTitle="Gestion des enseignants"
           />
           <Row>
             <Col xxl={3} md={6}>
@@ -1287,7 +1272,7 @@ const ListEnseignants = () => {
                 <Card.Body>
                   <Row className="g-3">
                     <Col lg={3}>
-                      <div className="search-box">
+                      <label className="search-box">
                         <input
                           type="text"
                           className="form-control search"
@@ -1296,7 +1281,7 @@ const ListEnseignants = () => {
                           onChange={handleSearchChange}
                         />
                         <i className="ri-search-line search-icon"></i>
-                      </div>
+                      </label>
                     </Col>
                     <Col className="col-lg-auto">
                       <select
@@ -1371,7 +1356,7 @@ const ListEnseignants = () => {
                         customPageSize={10}
                         className="custom-header-css table align-middle table-nowrap"
                         tableClass="table-centered align-middle table-nowrap mb-0"
-                        theadClass="text-muted table-light"
+                        theadClass="text-muted"
                         SearchPlaceholder="Search Products..."
                       />
                     </table>

@@ -139,7 +139,7 @@ const AffecterMatiere = () => {
   //   credit_matiere: matiere.credit_matiere || "",
   //   coefficient_matiere: matiere.coefficient_matiere || "",
   // }));
-  // console.log(options);
+
   const options: MatiereOption[] = allMatieres.map((matiere) => {
     // Create a new array for types (clone the existing one)
     const types = [
@@ -172,8 +172,6 @@ const AffecterMatiere = () => {
       coefficient_matiere: matiere.coefficient_matiere || "",
     };
   });
-
-  console.log(options);
 
   const customStyles = {
     multiValue: (styles: any, { data }: any) => ({

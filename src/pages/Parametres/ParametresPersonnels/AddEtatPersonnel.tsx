@@ -23,7 +23,7 @@ import { useAddEtatPersonnelMutation } from "features/etatPersonnel/etatPersonne
 import Swal from "sweetalert2";
 
 const AddEtatPersonnel = () => {
-  document.title = " Ajouter Etat Personnel | Application Smart Institute";
+  document.title = " Ajouter Etat Personnel | ENIGA";
   const navigate = useNavigate();
 
   function tog_retourParametres() {
@@ -136,7 +136,9 @@ const AddEtatPersonnel = () => {
                         textAlign: "right",
                       }}
                     >
-                      <Form.Label htmlFor="etat_ar">حالة حساب الإداري</Form.Label>
+                      <Form.Label htmlFor="etat_ar">
+                        حالة حساب الإداري
+                      </Form.Label>
                       <Form.Control
                         type="text"
                         id="etat_ar"

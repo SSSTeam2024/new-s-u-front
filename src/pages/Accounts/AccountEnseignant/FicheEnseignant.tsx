@@ -1,33 +1,16 @@
 import React, { useRef } from "react";
-import {
-  Button,
-  Card,
-  Col,
-  Container,
-  Row,
-  Table,
-  Image,
-} from "react-bootstrap";
+import { Button, Col, Container, Row, Table, Image } from "react-bootstrap";
 import Breadcrumb from "Common/BreadCrumb";
 import { useLocation } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
-import { useSelector } from "react-redux";
-import { selectCurrentUser } from "features/account/authSlice";
-import { RootState } from "app/store";
-import {
-  useFetchVaribaleGlobaleQuery,
-  VaribaleGlobale,
-} from "features/variableGlobale/variableGlobaleSlice";
+import { useFetchVaribaleGlobaleQuery } from "features/variableGlobale/variableGlobaleSlice";
 import "./hover.css";
 
-
 const FicheEnseignant: React.FC = () => {
-  document.title = "Détails de l'enseignant | Smart Institute";
+  document.title = "Détails de l'enseignant | ENIGA";
   const { data: Variables = [] } = useFetchVaribaleGlobaleQuery();
   const location = useLocation();
   const detailsEnseignant = location.state;
-
-  const user = useSelector((state: RootState) => selectCurrentUser(state));
 
   const contentRef = useRef<HTMLDivElement>(null);
   const reactToPrintFn = useReactToPrint({ contentRef });
@@ -35,14 +18,14 @@ const FicheEnseignant: React.FC = () => {
   // Get the last variable
   const lastVariable =
     Variables.length > 0 ? Variables[Variables.length - 1] : null;
-  console.log("lastVariable", lastVariable);
+
   return (
     <React.Fragment>
       <div className="page-content">
         <Container fluid={true}>
           <Breadcrumb
-            title="Fiche de l'étudiant"
-            pageTitle="Détails de l'étudiant"
+            title="Fiche de l'enseignant"
+            pageTitle="Détails de l'enseignant"
           />
 
           <Row className="justify-content-center">
@@ -50,7 +33,7 @@ const FicheEnseignant: React.FC = () => {
               <div
                 ref={contentRef}
                 className="p-4 border"
-                style={{ maxWidth: "794px",  maxHeight: "1223px" }}
+                style={{ maxWidth: "794px", maxHeight: "1223px" }}
               >
                 {/* <div ref={contentRef} className="print-container p-4 border border-dark"> */}
 
@@ -75,13 +58,10 @@ const FicheEnseignant: React.FC = () => {
                     </h3>
                     <h5 className="text-uppercase mb-0">
                       {lastVariable?.etablissement_fr!}{" "}
-                   
-                     
                     </h5>
                     <span className="fw-bold">
-                    {lastVariable?.annee_universitaire!}
+                      {lastVariable?.annee_universitaire!}
                     </span>
-              
                   </Col>
 
                   {/* Right Logo */}
@@ -120,7 +100,8 @@ const FicheEnseignant: React.FC = () => {
                         <tr>
                           <td className="fw-bold">Nom & Prénom:</td>
                           <td>
-                            {detailsEnseignant.nom_fr} {detailsEnseignant.prenom_fr}
+                            {detailsEnseignant.nom_fr}{" "}
+                            {detailsEnseignant.prenom_fr}
                           </td>
                         </tr>
                         <tr>
@@ -136,44 +117,39 @@ const FicheEnseignant: React.FC = () => {
                         </tr>
                         <tr>
                           <td>
-                          <td className="fw-bold">CIN:</td>
-                          <td>{detailsEnseignant.num_CIN}</td>
+                            <td className="fw-bold">CIN:</td>
+                            <td>{detailsEnseignant.num_CIN}</td>
                           </td>
-                          <td>
-                         
-                          </td>
-                         
+                          <td></td>
                         </tr>
                         <tr>
                           <td>
                             <tr>
-                            <td className="fw-bold">Etat civil:</td>
-                            {/* <td>{detailsEnseignant.etat_civil}</td> */}
-                            <td>{detailsEnseignant.etat_civil === "متزوج" ? "  Marié(e)" : detailsEnseignant.etat_civil === "أعزب " ? "Celibataire" : ""}</td>
-
+                              <td className="fw-bold">Etat civil:</td>
+                              {/* <td>{detailsEnseignant.etat_civil}</td> */}
+                              <td>
+                                {detailsEnseignant.etat_civil === "متزوج"
+                                  ? "  Marié(e)"
+                                  : detailsEnseignant.etat_civil === "أعزب "
+                                  ? "Celibataire"
+                                  : ""}
+                              </td>
                             </tr>
-                         
                           </td>
-                         <td>
-                          <tr>
-                          <td className="fw-bold">Sexe:</td>
-                          <td>{detailsEnseignant.sexe}</td>
-                          </tr>
-                        
-                         </td>
-                          
-                          </tr>
-                         
+                          <td>
+                            <tr>
+                              <td className="fw-bold">Sexe:</td>
+                              <td>{detailsEnseignant.sexe}</td>
+                            </tr>
+                          </td>
+                        </tr>
+
                         <tr>
                           <td>
-                          <td className="fw-bold">Situation militaire:</td>
-                          <td>{detailsEnseignant.situation_militaire}</td>
+                            <td className="fw-bold">Situation militaire:</td>
+                            <td>{detailsEnseignant.situation_militaire}</td>
                           </td>
-                        
-                           
                         </tr>
-                       
-                      
                       </tbody>
                     </Table>
                   </Col>
@@ -184,43 +160,42 @@ const FicheEnseignant: React.FC = () => {
                   <h5 className="fw-bold text-uppercase">
                     Informations de Contact
                   </h5>
-                  <div className="mb-3 d-flex" >
-                  <Table bordered size="sm" className="flex-grow-1">
-                    <tbody>
-                      <tr>
-                        <td className="fw-bold">Téléphone 1:</td>
-                        <td>{detailsEnseignant.num_phone1}</td>
-                      </tr>
-                      <tr>
-                        <td className="fw-bold">Téléphone 2:</td>
-                        <td>{detailsEnseignant.num_phone2}</td>
-                      </tr>
-                     
-                      <tr>
-                         <td className="fw-bold">Marticule CNSS:</td>
-                         <td>{detailsEnseignant.cnss_number}</td>
-                         </tr>
-                    </tbody>
-                  </Table>
-                  <Table bordered size="sm">
-                    <tbody>
-                    <tr>
-                        <td className="fw-bold">Email:</td>
-                        <td>{detailsEnseignant.email}</td>
-                      </tr>
-                      <tr>
-                        <td className="fw-bold">Adresse:</td>
-                        <td>{detailsEnseignant.adress_fr}</td>
-                      </tr>
-                     
-                      <tr>
-                        <td className="fw-bold">compte_courant:</td>
-                        <td>{detailsEnseignant.compte_courant}</td>
-                      </tr>
-                    </tbody>
-                  </Table>
+                  <div className="mb-3 d-flex">
+                    <Table bordered size="sm" className="flex-grow-1">
+                      <tbody>
+                        <tr>
+                          <td className="fw-bold">Téléphone 1:</td>
+                          <td>{detailsEnseignant.num_phone1}</td>
+                        </tr>
+                        <tr>
+                          <td className="fw-bold">Téléphone 2:</td>
+                          <td>{detailsEnseignant.num_phone2}</td>
+                        </tr>
+
+                        <tr>
+                          <td className="fw-bold">Marticule CNSS:</td>
+                          <td>{detailsEnseignant.cnss_number}</td>
+                        </tr>
+                      </tbody>
+                    </Table>
+                    <Table bordered size="sm">
+                      <tbody>
+                        <tr>
+                          <td className="fw-bold">Email:</td>
+                          <td>{detailsEnseignant.email}</td>
+                        </tr>
+                        <tr>
+                          <td className="fw-bold">Adresse:</td>
+                          <td>{detailsEnseignant.adress_fr}</td>
+                        </tr>
+
+                        <tr>
+                          <td className="fw-bold">compte_courant:</td>
+                          <td>{detailsEnseignant.compte_courant}</td>
+                        </tr>
+                      </tbody>
+                    </Table>
                   </div>
-                 
                 </div>
 
                 {/* Academic Info */}
@@ -229,44 +204,35 @@ const FicheEnseignant: React.FC = () => {
                     Informations Professionnelles
                   </h5>
                   <div className="d-flex">
-                  <Table bordered size="sm" className="flex-grow-1">
-                    <tbody>
-                    <tr>
-                        <td className="fw-bold">Matricule:</td>
-                        <td>{detailsEnseignant.matricule}</td>
-                      </tr>
-                      <tr>
-                        <td className="fw-bold">poste:</td>
-                        <td>{detailsEnseignant.poste.poste_fr}</td>
-                      </tr>
-                      <tr>
-                        <td className="fw-bold">grade</td>
-                        <td>{detailsEnseignant?.grade?.grade_fr!}</td>
-                      </tr>
-                     
-                     
-                     
-                    </tbody>
-                  </Table>
-                  <Table bordered size="sm">
-                    <tbody>
-                   
-                    <tr>
-                        <td className="fw-bold">Spécialité:</td>
-                        <td>
-                          {detailsEnseignant.specilaite.specialite_fr }
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="fw-bold">departements:</td>
-                        <td>{detailsEnseignant.departements.name_fr}</td>
-                      </tr>
-                     
-                     
-                    </tbody>
-                  </Table>
+                    <Table bordered size="sm" className="flex-grow-1">
+                      <tbody>
+                        <tr>
+                          <td className="fw-bold">Matricule:</td>
+                          <td>{detailsEnseignant.matricule}</td>
+                        </tr>
+                        <tr>
+                          <td className="fw-bold">poste:</td>
+                          <td>{detailsEnseignant.poste.poste_fr}</td>
+                        </tr>
+                        <tr>
+                          <td className="fw-bold">grade</td>
+                          <td>{detailsEnseignant?.grade?.grade_fr!}</td>
+                        </tr>
+                      </tbody>
+                    </Table>
+                    <Table bordered size="sm">
+                      <tbody>
+                        <tr>
+                          <td className="fw-bold">Spécialité:</td>
+                          <td>{detailsEnseignant.specilaite.specialite_fr}</td>
+                        </tr>
+                        <tr>
+                          <td className="fw-bold">departements:</td>
+                          <td>{detailsEnseignant.departements.name_fr}</td>
+                        </tr>
+                      </tbody>
+                    </Table>
                   </div>
-                 
                 </div>
                 {/* Cin images */}
                 {/* <Row>

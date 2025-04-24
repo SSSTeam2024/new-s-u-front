@@ -22,11 +22,7 @@ import Logout from "pages/Authentication/Logout";
 import Register from "pages/Authentication/Register";
 import ForgotPassword from "pages/Authentication/ForgotPassword";
 import UserProfile from "pages/Authentication/user-profile";
-
-import DemandeEnseignant from "pages/Demande-enseignant/ListeDemandeEnseignant";
-
 import AjouterEnseignant from "pages/Gestion-enseignant/AjouterEnseignant";
-
 import AjouterAvisEtudiant from "pages/avis-etudiant/AjouterAvisEtudiant";
 import ListeAvisEtudiant from "pages/avis-etudiant/ListeAvisEtudiant";
 import ListeAvisEnseignant from "pages/avis-enseignant/ListeAvisEnseignant";
@@ -129,7 +125,6 @@ import NewShortCode from "pages/ShortCode/NewShortCode";
 import AjouterVariablesGlobales from "pages/VariableGlobal/AjouterVariableGlobale";
 import ListeVariablesGlobales from "pages/VariableGlobal/ListeVariableGlobale";
 import EditActualite from "pages/actualite/EditActualite";
-import ProfilEnseignant from "pages/Accounts/AccountEnseignant/ProfilEnseignant";
 import EditAvisEtudiant from "pages/avis-etudiant/EditAvisEtudiant";
 import AjouterReclamationEnseignant from "pages/Reclamation-enseignant/AjouterReclamationEnseignant";
 import AjouterReclamationPersonnel from "pages/Reclamation-personnel/AjouterReclamationPersonnel";
@@ -147,7 +142,6 @@ import ListeDossierAdministratif from "pages/Gestion-enseignant/Dossieradministr
 import AddDossieradministratif from "pages/Gestion-enseignant/Dossieradministratif/AddDossieradministratif";
 import AddPapierAdministratif from "pages/Papier-Administratif/AddPapierAdministratif";
 import ListePapierAdministratifs from "pages/Papier-Administratif/ListePapierAdministratif";
-
 import EditDossierAdministratifEnseignants from "pages/Gestion-enseignant/Dossieradministratif/EditDossierAdministratif";
 import CreateAdmin from "pages/Permissions/AjouterAdmin";
 import GenerateDemande from "pages/Demande-etudiant/GenerateDemande";
@@ -177,7 +171,6 @@ import EditFicheVoeux from "pages/Departements/FicheVoeux/EditFicheVoeux";
 import SingleEmploiClasse from "pages/Departements/Emploi/GestionEmploiClasse";
 import ListeEmploisClasse from "pages/Departements/Emploi/ListeEmploisClasse";
 import EditProfilEnseignant from "pages/Gestion-enseignant/EditProfilEnseignant";
-import GestionEmploiEnseignant from "pages/Departements/EmploiEnseignant/GestionEmploiEnseignant";
 import TableauChargesHorairesClasses from "pages/Departements/Emploi/TableauChargesHorairesClasses";
 import EditProfilPersonnel from "pages/Gestion-personnel/EditProfilPersonnel";
 import EquilibreHorairesGrade from "pages/Departements/EmploiEnseignant/EquilibreHorairesGrade";
@@ -192,7 +185,6 @@ import ListMentionClasse from "pages/Departements/GestionClasses/MentionClasse/L
 //! Gestion des Notes Examen
 import GestionNotesExamen from "pages/GestionNotesExamen";
 import AjouterNotesExamen from "pages/GestionNotesExamen/AjouterNotesExamen";
-
 import GenerateDemandeEnseignant from "pages/Demande-enseignant/GenerateDemandeEnseignant";
 import GenerateDemandePersonnel from "pages/Demande-personnel/GenerateDemandePersonnel";
 import AjouterDeplacement from "pages/Deplacement/AjouterDeplacement";
@@ -236,6 +228,25 @@ import RepartitionEnseignant from "pages/Gestion-enseignant/RepartitionEnseignan
 import RechercheAvance from "pages/Gestion-etudiant/RechercheAvance";
 import RepartitionPersonnel from "pages/Gestion-personnel/RepartitionPersonnel";
 import ListeAbsencePersonnel from "pages/Gestion-personnel/ListeAbsencePersonnel";
+import EditTemplateBody from "pages/TemplateBody/EditTemplateBody";
+import ViewAbsencePersonnel from "pages/Gestion-personnel/ViewAbsencePersonnel";
+import ModifierAbsencePersonnel from "pages/Gestion-personnel/ModifierAbsencePersonnel";
+import PeriodeDeTravailPersonnel from "pages/PeriodeDeTravailPersonnel";
+import AjouterPeriodeTravail from "pages/PeriodeDeTravailPersonnel/AjouterPeriodeTravail";
+import ModifierPeriodeTravail from "pages/PeriodeDeTravailPersonnel/ModifierPeriodeTravail";
+import VoieEnvoi from "pages/VoieEnvoi";
+import CourriersEntrants from "pages/CourriersEntrants";
+import AjouterCourrierEntrant from "pages/CourriersEntrants/AjouterCourrierEntrant";
+import CourriersSortants from "pages/CourriersSortants";
+import AjouterCourrierSortant from "pages/CourriersSortants/AjouterCourrierSortant";
+import ViewCourriersEntrantDetails from "pages/CourriersEntrants/ViewCourrierEntrantDetails";
+import ViewCourrierSortantDetails from "pages/CourriersSortants/ViewCourrierSortantDetails";
+import ModifierCourrierSortant from "pages/CourriersSortants/ModifierCourrierSortant";
+import ModifierCourrierEntrant from "pages/CourriersEntrants/ModifierCourrierEntrant";
+import Intervenants from "pages/Intervenants";
+import AjouterIntervenant from "pages/Intervenants/AjouterIntervenant";
+import ModifierIntervenant from "pages/Intervenants/ModifierIntervenant";
+
 const authProtectedRoutes = [
   { path: "/dashboard", component: <Dashboard /> },
   //service Tirage
@@ -750,6 +761,19 @@ const authProtectedRoutes = [
     component: <EditCategoriePersonnel />,
   },
 
+  {
+    path: "/parametre-personnel/periode/liste-periode-travail-personnel",
+    component: <PeriodeDeTravailPersonnel />,
+  },
+  {
+    path: "/parametre-personnel/periode/ajouter-periode-travail-personnel",
+    component: <AjouterPeriodeTravail />,
+  },
+  {
+    path: "/parametre-personnel/periode/modifier-periode-travail-personnel",
+    component: <ModifierPeriodeTravail />,
+  },
+
   // Gestion des matieres
   {
     path: "/departement/gestion-matieres/liste-matieres",
@@ -854,6 +878,78 @@ const authProtectedRoutes = [
   //liste lien utils
   { path: "/liens-utils", component: <ListLienUtilst /> },
 
+  //! Liste Voie Envoi
+  {
+    path: "/bureau-ordre/voie-envoi/gestion-voie-envoi",
+    component: <VoieEnvoi />,
+  },
+
+  //! Liste Courriers Entrants
+  {
+    path: "/bureau-ordre/courriers-entrants/lister-courriers-entrants",
+    component: <CourriersEntrants />,
+  },
+
+  //! Détails Courrier Entrant
+  {
+    path: "/bureau-ordre/courriers-entrants/details-courrier-entrant",
+    component: <ViewCourriersEntrantDetails />,
+  },
+
+  //! Ajouter Courrier Entrant
+  {
+    path: "/bureau-ordre/courriers-entrants/ajouter-courrier-entrant",
+    component: <AjouterCourrierEntrant />,
+  },
+
+  //! Modifier Courrier Entrant
+  {
+    path: "/bureau-ordre/courriers-entrants/modifier-courrier-entrant",
+    component: <ModifierCourrierEntrant />,
+  },
+
+  //! Liste Courriers Sortants
+  {
+    path: "/bureau-ordre/courriers-sortants/lister-courriers-sortants",
+    component: <CourriersSortants />,
+  },
+
+  //! Ajouter Courrier Sortant
+  {
+    path: "/bureau-ordre/courriers-sortants/ajouter-courrier-sortant",
+    component: <AjouterCourrierSortant />,
+  },
+
+  //! Détails Courrier Sortant
+  {
+    path: "/bureau-ordre/courriers-sortants/details-courrier-sortant",
+    component: <ViewCourrierSortantDetails />,
+  },
+
+  //! Modifier Courrier Sortant
+  {
+    path: "/bureau-ordre/courriers-sortants/modifier-courrier-sortant",
+    component: <ModifierCourrierSortant />,
+  },
+
+  //! Intervenants
+  {
+    path: "/bureau-ordre/intervenants/lister-intervenants",
+    component: <Intervenants />,
+  },
+
+  //! New Intervenant
+  {
+    path: "/bureau-ordre/intervenants/nouveau-intervenant",
+    component: <AjouterIntervenant />,
+  },
+
+  //! Update Intervenant
+  {
+    path: "/bureau-ordre/intervenants/modifier-intervenant",
+    component: <ModifierIntervenant />,
+  },
+
   // Liste espaces de telechargements
   { path: "/espace-telechargement", component: <ListEspaceTelechargement /> },
 
@@ -870,6 +966,7 @@ const authProtectedRoutes = [
   { path: "/template/liste-template-body", component: <TemplateBody /> },
   { path: "/template/ajouter-template-body", component: <NewTemplateBody /> },
   { path: "/template/single-template-body", component: <TemplateBodyDetail /> },
+  { path: "/template/edit-template-body", component: <EditTemplateBody /> },
   //short code
   { path: "/shortCode/liste-short-code", component: <ShortCode /> },
   { path: "/shortCode/ajouter-short-code", component: <NewShortCode /> },
@@ -1055,18 +1152,26 @@ const authProtectedRoutes = [
     component: <ListeAbsencePersonnel />,
   },
   {
+    path: "/gestion-personnel/details-absence-personnel",
+    component: <ViewAbsencePersonnel />,
+  },
+  {
+    path: "/gestion-personnel/modifier-absence-personnel",
+    component: <ModifierAbsencePersonnel />,
+  },
+  {
     path: "/absence-personnel/ajouter-absence-personnel",
     component: <AjouterAbsencePersonnel />,
   },
   // Messagerie
 
   {
-    path: "/messagerie/liste-message",component: <Messages />,
+    path: "/messagerie/liste-message", component: <Messages />,
   },
   {
-    path: "/messagerie/single-message",component: <SingleMessage />,
+    path: "/messagerie/single-message", component: <SingleMessage />,
   },
- 
+
 
   // Accounts
   { path: "/account", component: <MyAccount /> },

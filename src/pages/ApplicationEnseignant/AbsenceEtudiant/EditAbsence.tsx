@@ -1,26 +1,11 @@
 import React, { useEffect, useState } from "react";
-import {
-  Container,
-  Row,
-  Card,
-  Col,
-  Modal,
-  Form,
-  Button,
-  Offcanvas,
-} from "react-bootstrap";
+import { Container, Row, Card, Col, Form, Button } from "react-bootstrap";
 import Breadcrumb from "Common/BreadCrumb";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-import Flatpickr from "react-flatpickr";
-import { useFetchEnseignantsQuery } from "features/enseignant/enseignantSlice";
-
-// import UpdateAbsence from "./UpdateAbsence";
-import { French } from "flatpickr/dist/l10n/fr";
 
 import {
   AbsenceEtudiant,
-  useAddAbsenceEtudiantMutation,
   useUpdateAbsenceMutation,
 } from "features/absenceEtudiant/absenceSlice";
 import { useFetchEtudiantsByIdClasseQuery } from "features/etudiant/etudiantSlice";
@@ -31,8 +16,6 @@ import { useGetPeriodicSessionsByTeacherV2Mutation } from "features/seance/seanc
 const EditAbsence = () => {
   const location = useLocation();
   const absenceDetails = location?.state?.absenceDetails;
-  console.log(absenceDetails);
-  const { data: AllEnseignants = [] } = useFetchEnseignantsQuery();
 
   const [getTeacherPeriodicSchedules] =
     useGetTeacherPeriodsBySemesterAndIdTeacherV2Mutation();
@@ -51,8 +34,6 @@ const EditAbsence = () => {
 
   const [studentsList, setStudentsList] = useState<any[]>([]);
 
-  console.log("studentsList", studentsList)
-
   const [hasProcessed, setHasProcessed] = useState<boolean>(false);
 
   const [selectedClasse, setSelectedClasse] = useState<string>("");
@@ -68,7 +49,7 @@ const EditAbsence = () => {
       }));
 
       setStudentsList(students);
-      console.log(students);
+
       setHasProcessed(true);
     }
   }, [EtudiantsByClasseID, hasProcessed, selectedClasse]);
@@ -76,7 +57,7 @@ const EditAbsence = () => {
   useEffect(() => {
     if (absenceDetails) {
       setSelectedDate(new Date(absenceDetails.date));
-      setSelectedTrimestre(absenceDetails.trimestre === 'S1' ? '1' : '2');
+      setSelectedTrimestre(absenceDetails.trimestre === "S1" ? "1" : "2");
       setSelectedEnseignant(absenceDetails.enseignant);
       setSelectedClasse(absenceDetails.classe);
       setSelectedSession(absenceDetails.seance);
@@ -84,7 +65,7 @@ const EditAbsence = () => {
         absenceDetails.etudiants.map((etudiant: any) => ({
           student: etudiant.etudiant,
           presence: etudiant.typeAbsent !== "A",
-          typeAbsent: etudiant.typeAbsent
+          typeAbsent: etudiant.typeAbsent,
         }))
       );
     }
@@ -131,7 +112,6 @@ const EditAbsence = () => {
   const handleSelectEnseignant = async (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
-    console.log(selectedDate);
     if (selectedDate === null) {
       alert("Sélectionnez une date avant de continuer!");
     } else {
@@ -142,8 +122,6 @@ const EditAbsence = () => {
         teacherId: value,
         semester: selectedTrimestre,
       };
-
-      console.log(periodicSchedulesRequestData);
 
       let schedules = await getTeacherPeriodicSchedules(
         periodicSchedulesRequestData
@@ -160,7 +138,7 @@ const EditAbsence = () => {
       ).unwrap();
 
       const sessions = filterSessionsBasedOnSelectedWeekDay(allTeacherSessions);
-      console.log(sessions);
+
       setSessions(sessions);
       setSelectedClasse("");
       setStudentsList([]);
@@ -170,7 +148,7 @@ const EditAbsence = () => {
 
   const filterTeacherSchedulesBasedOnSelectedDate = (schedules: any) => {
     let date = formatDate(selectedDate);
-    console.log(date);
+
     let filteredSchedulesClassPeriodsIds: any = [];
 
     for (const schedule of schedules) {
@@ -281,11 +259,8 @@ const EditAbsence = () => {
   );
 
   const handleStudentTypeChange = (e: any, element: any, index: number) => {
-    console.log("element", element)
     let isPresent = !element.presence;
     let absenceType = isPresent ? "P" : "A";
-
-    console.log("absenceType", absenceType)
 
     setStudentTypes((prevState) => ({
       ...prevState,
@@ -329,11 +304,9 @@ const EditAbsence = () => {
         })),
       };
 
-      console.log("Updating Absence: ", updatedAbsence);
-
       await updateAbsence(updatedAbsence)
         .then(() => {
-          notifySuccess()
+          notifySuccess();
           navigate("/application-enseignant/lister-absence");
         })
         .catch((error) => notifyError(error));
@@ -460,7 +433,6 @@ const EditAbsence = () => {
                             {element.student.prenom_fr} {element.student.nom_fr}
                           </Col>
                           <Col lg={4} className="mb-1">
-
                             <div className="form-check form-switch">
                               <input
                                 className="form-check-input"

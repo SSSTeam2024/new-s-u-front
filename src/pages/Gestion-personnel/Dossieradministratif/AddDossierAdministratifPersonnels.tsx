@@ -38,8 +38,7 @@ export interface DossierAdministratif {
 }
 
 const AddDossieradministratifPersonnels = () => {
-  document.title =
-    "Ajouter dossier administratif | Application Smart Institute";
+  document.title = "Ajouter dossier administratif | ENIGA";
   const navigate = useNavigate();
   function tog_retourParametres() {
     navigate("/gestion-personnel/liste-dossier-administartif");

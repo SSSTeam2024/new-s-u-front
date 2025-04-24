@@ -20,7 +20,7 @@ import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 type LanguageCode = "french" | "arabic";
 const TemplateBody = () => {
-  document.title = "Liste des template body | ENIGA";
+  document.title = "Liste des modèles | ENIGA";
   const MySwal = withReactContent(Swal);
   const navigate = useNavigate();
 
@@ -108,7 +108,8 @@ const TemplateBody = () => {
               </li>
               <li>
                 <Link
-                  to="#"
+                  to="/template/edit-template-body"
+                  state={cellProps}
                   className="badge bg-success-subtle text-success edit-item-btn"
                 >
                   <i
@@ -160,7 +161,10 @@ const TemplateBody = () => {
     <React.Fragment>
       <div className="page-content">
         <Container fluid={true}>
-          <Breadcrumb title="Liste des modèles" pageTitle="Liste des modèles" />
+          <Breadcrumb
+            title="Liste des modèles"
+            pageTitle="Gestion des modèles"
+          />
 
           <Row id="sellersList">
             <Col lg={12}>
@@ -168,14 +172,14 @@ const TemplateBody = () => {
                 <Card.Body>
                   <Row className="g-3">
                     <Col lg={3}>
-                      <div className="search-box">
+                      <label className="search-box">
                         <input
                           type="text"
                           className="form-control search"
                           placeholder="Chercher..."
                         />
                         <i className="ri-search-line search-icon"></i>
-                      </div>
+                      </label>
                     </Col>
                     <Col className="col-lg-auto">
                       <select
@@ -223,7 +227,7 @@ const TemplateBody = () => {
                       isPagination={true}
                       className="custom-header-css table align-middle table-nowrap"
                       tableClass="table-centered align-middle table-nowrap mb-0"
-                      theadClass="text-muted table-light"
+                      theadClass="text-muted"
                       SearchPlaceholder="Search Products..."
                     />
                   </table>

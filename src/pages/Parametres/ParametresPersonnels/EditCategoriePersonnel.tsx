@@ -6,7 +6,7 @@ import Swal from "sweetalert2";
 import { useUpdateCategoriePersonnelMutation } from "features/categoriePersonnel/categoriePersonnel";
 
 const EditCategoriePersonnel = () => {
-  document.title = " Modifier Catégorie Personnel | Application Smart Institute";
+  document.title = " Modifier Catégorie Personnel | ENIGA";
   const navigate = useNavigate();
   const { state: categoriePersonnel } = useLocation();
   const [editCategoriePersonnel] = useUpdateCategoriePersonnelMutation();
@@ -44,7 +44,9 @@ const EditCategoriePersonnel = () => {
       timer: 2000,
     });
   };
-  const onSubmitCategoriePersonnel = async (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmitCategoriePersonnel = async (
+    e: React.FormEvent<HTMLFormElement>
+  ) => {
     e.preventDefault();
     try {
       await editCategoriePersonnel(formData).unwrap();
@@ -84,7 +86,10 @@ const EditCategoriePersonnel = () => {
         <Container fluid={true}>
           <Row>
             <Col lg={12}>
-              <Form className="tablelist-form" onSubmit={onSubmitCategoriePersonnel}>
+              <Form
+                className="tablelist-form"
+                onSubmit={onSubmitCategoriePersonnel}
+              >
                 <div
                   id="alert-error-msg"
                   className="d-none alert alert-danger py-2"
@@ -108,7 +113,9 @@ const EditCategoriePersonnel = () => {
 
                   <Col lg={4}>
                     <div className="mb-3">
-                      <Form.Label htmlFor="categorie_fr">Catégorie Personnel</Form.Label>
+                      <Form.Label htmlFor="categorie_fr">
+                        Catégorie Personnel
+                      </Form.Label>
                       <Form.Control
                         type="text"
                         id="categorie_fr"
@@ -128,7 +135,9 @@ const EditCategoriePersonnel = () => {
                         textAlign: "right",
                       }}
                     >
-                      <Form.Label htmlFor="categorie_ar">صنف الإداري</Form.Label>
+                      <Form.Label htmlFor="categorie_ar">
+                        صنف الإداري
+                      </Form.Label>
                       <Form.Control
                         type="text"
                         id="categorie_ar"

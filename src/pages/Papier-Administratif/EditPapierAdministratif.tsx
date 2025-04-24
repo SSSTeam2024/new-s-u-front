@@ -6,8 +6,7 @@ import Swal from "sweetalert2";
 import { useUpdatePapierAdministratifMutation } from "features/papierAdministratif/papierAdministratif";
 
 const EditPapierAdministratif = () => {
-  document.title =
-    " Modifier Papier Administratif | Application Smart Institute";
+  document.title = " Modifier Papier Administratif | ENIGA";
   const navigate = useNavigate();
   const { state: papierAdministratif } = useLocation();
   const [editPapierAdministratif] = useUpdatePapierAdministratifMutation();
