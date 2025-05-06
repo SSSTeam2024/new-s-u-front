@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 import { useFetchEnseignantsQuery, } from "features/enseignant/enseignantSlice";
 import { useFetchPersonnelsQuery, } from "features/personnel/personnelSlice";
 import { useFetchEtudiantsQuery, } from "features/etudiant/etudiantSlice";
+import {useFetchAllUsersQuery} from "features/account/accountSlice"
 import Swal from "sweetalert2";
 import { RootState } from "app/store";
 import { useSelector } from "react-redux";
@@ -42,8 +43,15 @@ interface Enseignant extends BaseUser {
     name_fr: string
   }
 }
+interface User extends BaseUser {
+  userType: "User";
+  departements?: {
+    _id: string;
+    name_fr: string
+  }
+}
 
-type User = Etudiant | Personnel | Enseignant;
+type Users = Etudiant | Personnel | Enseignant | User;
 
 
 const SingleMessage = () => {
@@ -73,10 +81,12 @@ const SingleMessage = () => {
   const { data: personnels = [] } = useFetchPersonnelsQuery();
   const { data: enseignants = [] } = useFetchEnseignantsQuery();
   const { data: etudiants = [] } = useFetchEtudiantsQuery();
-  const allUsers: User[] = [
+  const { data: users = [] } = useFetchAllUsersQuery();
+  const allUsers: Users[] = [
     ...personnels.map((user) => ({ ...user, userType: "Personnel" }) as Personnel),
     ...enseignants.map((user) => ({ ...user, userType: "Enseignant" }) as Enseignant),
     ...etudiants.map((user) => ({ ...user, userType: "Etudiant" }) as Etudiant),
+    ...users.map((user) => ({ ...user, userType: "User" }) as Users),
   ];
 
 

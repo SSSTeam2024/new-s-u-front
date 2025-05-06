@@ -35,6 +35,7 @@ import { selectCurrentUser } from "features/account/authSlice";
 import { useFetchEnseignantsQuery, } from "features/enseignant/enseignantSlice";
 import { useFetchPersonnelsQuery, } from "features/personnel/personnelSlice";
 import { useFetchEtudiantsQuery, } from "features/etudiant/etudiantSlice";
+import {useFetchAllUsersQuery} from "features/account/accountSlice"
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import { useNavigate } from "react-router-dom";
@@ -74,10 +75,17 @@ interface Enseignant extends BaseUser {
     name_fr: string
   }
 }
+interface User extends BaseUser {
+  userType: "User";
+  departements?: {
+    _id: string;
+    name_fr: string
+  }
+}
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 // Define a combined type that includes all possible user types
-type User = Etudiant | Personnel | Enseignant;
+type Users = Etudiant | Personnel | Enseignant | User;
 
 const Messages = () => {
   const currentUser = useSelector((state: RootState) => selectCurrentUser(state));
@@ -111,7 +119,7 @@ const Messages = () => {
   const { data: personnels = [] } = useFetchPersonnelsQuery();
   const { data: enseignants = [] } = useFetchEnseignantsQuery();
   const { data: etudiants = [] } = useFetchEtudiantsQuery();
-
+  const { data: users = [] } = useFetchAllUsersQuery();
   const isLoading = archivedSentLoading || archivedInboxLoading;                                        
   const archivedMessages = [...(archivedSentMessages || []), ...(archivedInboxMessages || [])];
 
@@ -154,10 +162,11 @@ const Messages = () => {
   const [showDropdown, setShowDropdown] = useState(false);
 
 
-  const allUsers: User[] = [
+  const allUsers: Users[] = [
     ...personnels.map((user) => ({ ...user, userType: "Personnel" }) as Personnel),
     ...enseignants.map((user) => ({ ...user, userType: "Enseignant" }) as Enseignant),
     ...etudiants.map((user) => ({ ...user, userType: "Etudiant" }) as Etudiant),
+    ...users.map((user) => ({ ...user, userType: "User" }) as Users),
   ];
   const handleShow = () => setShowModal(true);
   const handleClose = () => setShowModal(false);
@@ -1055,7 +1064,7 @@ const Messages = () => {
                                             handleRestoreMessage(message._id, userId, userType);
                                           }}
                                         >
-                                          <i className="bi bi-arrow-up-circle"></i>
+                                          <i className="bi bi-arrow-up-circle" title="Restaurer"></i>
                                         </Button>
                                       </td>
                                     </tr>
@@ -1354,7 +1363,18 @@ const Messages = () => {
                               {user.poste?.poste_fr || "N/A"}
                             </span>
                           </>
-                        ) : (
+                        ) : user.userType === "User" ? (
+                          <>
+                            {user.nom_fr} {user.prenom_fr}{" "}
+                            <span className="badge bg-warning-subtle text-warning">
+                              {user.userType}
+                            </span>{" "}
+                            -{" "}
+                            <span className="badge badge-gradient-warning">
+                             admin
+                            </span>
+                          </>
+                        ): (
                           <>
                             {user.nom_fr} {user.prenom_fr}{" "}
                             <span className="badge bg-success-subtle text-success">
