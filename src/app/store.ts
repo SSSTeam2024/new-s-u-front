@@ -4,7 +4,7 @@ import { setupListeners } from "@reduxjs/toolkit/query";
 
 import LayoutReducer from "../slices/layouts/reducer";
 // Authentication
-import ForgetPasswordReducer from "../slices/auth/forgetpwd/reducer";
+// import ForgetPasswordReducer from "../slices/auth/forgetpwd/reducer";
 import ProfileReducer from "../slices/auth/profile/reducer";
 import DashboardReducer from "../slices/dashboard/reducer";
 import authSlice from "features/account/authSlice";
@@ -82,6 +82,8 @@ import { courrierEntrantSlice } from "features/courrierEntrant/courrierEntrant";
 import { courrierSortantSlice } from "features/courrierSortant/courrierSortantSlice";
 import { intervenantsSlice } from "features/intervenants/intervenantsSlice";
 import { pointageSlice } from "features/pointageEnseignant/pointageEnseignantSlice";
+import { cloneSlice } from "features/cloneDb/cloneDb";
+import { databaseSlice } from "features/databaseNames/databaseSlice";
 
 export const store = configureStore({
   reducer: {
@@ -165,9 +167,13 @@ export const store = configureStore({
     [intervenantsSlice.reducerPath]: intervenantsSlice.reducer,
      //! Pointage Enseignant
      [pointageSlice.reducerPath]: pointageSlice.reducer,
+     //! Clone Database
+     [cloneSlice.reducerPath]: cloneSlice.reducer,
+     //! Create DatabaseName
+     [databaseSlice.reducerPath]: databaseSlice.reducer,
     auth: authSlice,
     Layout: LayoutReducer,
-    ForgetPassword: ForgetPasswordReducer,
+    // ForgetPassword: ForgetPasswordReducer,
     Profile: ProfileReducer,
     Dashboard: DashboardReducer,
   },
@@ -244,7 +250,9 @@ export const store = configureStore({
       courrierEntrantSlice.middleware,
       courrierSortantSlice.middleware,
       intervenantsSlice.middleware,
-      pointageSlice.middleware
+      pointageSlice.middleware,
+      cloneSlice.middleware,
+      databaseSlice.middleware,
     ]);
   },
 });

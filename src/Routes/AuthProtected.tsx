@@ -8,7 +8,8 @@ import Cookies from "js-cookie";
 const AuthProtected = (props: any) => {
   const [canAccess, setCanAccess] = useState<boolean | null>(null);
   const urlPath = window.location.pathname;
-
+  const today = new Date();
+  const currentMonth = today.getMonth() + 1;
   const tokenc = Cookies.get("astk");
   const dispatch = useDispatch();
 
@@ -28,9 +29,14 @@ const AuthProtected = (props: any) => {
           if (urlPath === "/") {
             setCanAccess(true);
           } else if (urlPath !== "/") {
-            const access = res.permissions.some(
-              (permission: any) => permission.path === urlPath
-            );
+            let access;
+            if (urlPath === "/migration" && currentMonth !== 5) {
+              access = false;
+            } else {
+              access = res.permissions.some(
+                (permission: any) => permission.path === urlPath
+              );
+            }
             setCanAccess(access);
           }
         })
@@ -44,7 +50,7 @@ const AuthProtected = (props: any) => {
     return <div>Loading...</div>;
   }
 
-  if (canAccess === false) {
+  if (canAccess === false /* && urlPath !== "/login" */) {
     if (!tokenc) {
       return <Navigate to="/login" />;
     } else if (tokenc) return <Navigate to="/auth-404" />;

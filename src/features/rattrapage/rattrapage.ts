@@ -23,13 +23,21 @@ export const rattrapageSlice = createApi({
   tagTypes: ["Rattrapage"],
   endpoints(builder) {
     return {
-      fetchRattrapages: builder.query<Rattrapage[], number | void>({
-        query() {
-          return `get-all-rattrapage`;
+      fetchRattrapages: builder.query<
+        Rattrapage[],
+        { useNewDb?: string } | void
+      >({
+        query(useNewDb) {
+          return {
+            url: `get-all-rattrapage`,
+            headers:
+              useNewDb !== undefined
+                ? { "x-use-new-db": useNewDb.useNewDb }
+                : undefined,
+          };
         },
         providesTags: ["Rattrapage"],
       }),
-
       addRattrapage: builder.mutation<void, Rattrapage>({
         query(payload) {
           return {
@@ -54,23 +62,23 @@ export const rattrapageSlice = createApi({
         },
         invalidatesTags: ["Rattrapage"],
       }),
-
-      //   updateSeance: builder.mutation<void, Seance>({
-      //     query: ({ _id, ...rest }) => ({
-      //       url: `/update-seance/${_id}`,
-      //       method: "PUT",
-      //       body: rest,
-      //     }),
-      //     invalidatesTags: ["Seance"],
-      //   }),
-      //   deleteSeance: builder.mutation<void, any>({
-      //     query: (payload) => ({
-      //       url: `delete-seance`,
-      //       method: "DELETE",
-      //       body: payload,
-      //     }),
-      //     invalidatesTags: ["Seance"],
-      //   }),
+      deleteManyRattrapage: builder.mutation<
+        Rattrapage,
+        { ids: string[]; useNewDb?: boolean }
+      >({
+        query({ ids, useNewDb }) {
+          return {
+            url: `delete-many`,
+            method: "DELETE",
+            body: { ids },
+            headers:
+              useNewDb !== undefined
+                ? { "x-use-new-db": String(useNewDb) }
+                : undefined,
+          };
+        },
+        invalidatesTags: ["Rattrapage"],
+      }),
     };
   },
 });
@@ -79,4 +87,5 @@ export const {
   useAddRattrapageMutation,
   useFetchRattrapagesQuery,
   useUpdateRattrapageEtatStatusMutation,
+  useDeleteManyRattrapageMutation,
 } = rattrapageSlice;

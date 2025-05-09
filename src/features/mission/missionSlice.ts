@@ -9,18 +9,25 @@ export interface Mission {
   date_fin: string;
   objectif: string;
   etat: string;
+  createdAt?: string;
 }
 export const missionSlice = createApi({
   reducerPath: "missionApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: `${process.env.REACT_APP_API_URL}/api/mission/`, // Adjust endpoint base URL
+    baseUrl: `${process.env.REACT_APP_API_URL}/api/mission/`,
   }),
   tagTypes: ["Mission"],
   endpoints(builder) {
     return {
-      fetchMission: builder.query<Mission, void>({
-        query() {
-          return "get-all-missions";
+      fetchMission: builder.query<Mission[], { useNewDb?: string } | void>({
+        query(useNewDb) {
+          return {
+            url: `get-all-missions`,
+            headers:
+              useNewDb !== undefined
+                ? { "x-use-new-db": useNewDb.useNewDb }
+                : undefined,
+          };
         },
         providesTags: ["Mission"],
       }),
@@ -64,6 +71,23 @@ export const missionSlice = createApi({
         },
         invalidatesTags: ["Mission"],
       }),
+      deleteManyMissions: builder.mutation<
+        Mission,
+        { ids: string[]; useNewDb?: boolean }
+      >({
+        query({ ids, useNewDb }) {
+          return {
+            url: `delete-many`,
+            method: "DELETE",
+            body: { ids },
+            headers:
+              useNewDb !== undefined
+                ? { "x-use-new-db": String(useNewDb) }
+                : undefined,
+          };
+        },
+        invalidatesTags: ["Mission"],
+      }),
     };
   },
 });
@@ -74,4 +98,5 @@ export const {
   useAddMissionMutation,
   useUpdateMissionMutation,
   useDeleteMissionMutation,
+  useDeleteManyMissionsMutation,
 } = missionSlice;

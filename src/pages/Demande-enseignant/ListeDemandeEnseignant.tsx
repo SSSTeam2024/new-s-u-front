@@ -269,7 +269,7 @@ const ListeDemandeEnseignant = () => {
     ],
     [checkedAll]
   );
-
+  console.log("demande enseignant", demandesEnseignant);
   return (
     <React.Fragment>
       <div className="page-content">

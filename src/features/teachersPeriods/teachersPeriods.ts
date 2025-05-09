@@ -20,16 +20,6 @@ export const teachersPeriodsSlice = createApi({
   tagTypes: ["TeacherPeriod"],
   endpoints(builder) {
     return {
-      // fetchClassePeriodsByClassId: builder.query<
-      //   TeacherPeriod[],
-      //   number | void
-      // >({
-      //   query(id) {
-      //     return `create-teacher-period/${id}`;
-      //   },
-      //   providesTags: ["TeacherPeriod"],
-      // }),
-
       getTeacherPeriodsByTeacherId: builder.mutation<void, any>({
         query(payload) {
           return {
@@ -40,7 +30,6 @@ export const teachersPeriodsSlice = createApi({
         },
         invalidatesTags: ["TeacherPeriod"],
       }),
-
       getTeachersPeriods: builder.mutation<void, Payload>({
         query(payload) {
           return {
@@ -50,6 +39,22 @@ export const teachersPeriodsSlice = createApi({
           };
         },
         invalidatesTags: ["TeacherPeriod"],
+      }),
+      getAllTeachersPeriods: builder.query<
+        TeacherPeriod[],
+        { useNewDb?: string } | void
+      >({
+        query(useNewDb) {
+          return {
+            url: `/get-all-periods`,
+            method: "GET",
+            headers:
+              useNewDb !== undefined
+                ? { "x-use-new-db": useNewDb.useNewDb }
+                : undefined,
+          };
+        },
+        providesTags: ["TeacherPeriod"],
       }),
       getTeacherPeriodsBySemesterAndIdTeacherV2: builder.mutation<any, any>({
         query(payload) {
@@ -70,14 +75,23 @@ export const teachersPeriodsSlice = createApi({
         }),
         providesTags: ["TeacherPeriod"],
       }),
-      // updateClassePeriod: builder.mutation<void, TeacherPeriod>({
-      //   query: (payload) => ({
-      //     url: `/update-class-emploi-period`,
-      //     method: "PUT",
-      //     body: payload,
-      //   }),
-      //   invalidatesTags: ["TeacherPeriod"],
-      // }),
+      deleteManyPeriods: builder.mutation<
+        TeacherPeriod,
+        { ids: string[]; useNewDb?: boolean }
+      >({
+        query({ ids, useNewDb }) {
+          return {
+            url: `delete-many`,
+            method: "DELETE",
+            body: { ids },
+            headers:
+              useNewDb !== undefined
+                ? { "x-use-new-db": String(useNewDb) }
+                : undefined,
+          };
+        },
+        invalidatesTags: ["TeacherPeriod"],
+      }),
     };
   },
 });
@@ -87,4 +101,6 @@ export const {
   useGetTeacherPeriodsByTeacherIdMutation,
   useGetTeacherPeriodsBySemesterAndIdTeacherV2Mutation,
   useGetTeacherPeriodsBySemesterAndIdTeacherQuery,
+  useGetAllTeachersPeriodsQuery,
+  useDeleteManyPeriodsMutation,
 } = teachersPeriodsSlice;

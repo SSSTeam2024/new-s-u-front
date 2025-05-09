@@ -18,6 +18,11 @@ const Login = () => {
     password: "",
   });
 
+  if (localStorage.getItem("canReload") === "true") {
+    localStorage.clear();
+    window.location.reload();
+  }
+
   const notify = () => {
     Swal.fire({
       icon: "success",

@@ -226,9 +226,15 @@ export const etudiantSlice = createApi({
   tagTypes: ["Etudiant"],
   endpoints(builder) {
     return {
-      fetchEtudiants: builder.query<Etudiant[], number | void>({
-        query() {
-          return `get-all-etudiant`;
+      fetchEtudiants: builder.query<Etudiant[], { useNewDb?: string } | void>({
+        query(useNewDb) {
+          return {
+            url: `get-all-etudiant`,
+            headers:
+              useNewDb !== undefined
+                ? { "x-use-new-db": useNewDb.useNewDb }
+                : undefined,
+          };
         },
         providesTags: ["Etudiant"],
       }),
@@ -322,5 +328,5 @@ export const {
   useGetTypeInscriptionByIdStudentMutation,
   useUpdateGroupeClasseMutation,
   useFetchEtudiantsByIdClasseQuery,
-  useFetchEtudiantsByClassIdsQuery
+  useFetchEtudiantsByClassIdsQuery,
 } = etudiantSlice;

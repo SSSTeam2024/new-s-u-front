@@ -53,9 +53,15 @@ export const examenSlice = createApi({
   tagTypes: ["Examen"],
   endpoints(builder) {
     return {
-      fetchExamens: builder.query<Examen[], number | void>({
-        query() {
-          return `get-all-examen`;
+      fetchExamens: builder.query<Examen[], { useNewDb?: string } | void>({
+        query(useNewDb) {
+          return {
+            url: `get-all-examen`,
+            headers:
+              useNewDb !== undefined
+                ? { "x-use-new-db": useNewDb.useNewDb }
+                : undefined,
+          };
         },
         providesTags: ["Examen"],
       }),
@@ -94,11 +100,17 @@ export const examenSlice = createApi({
         }),
         invalidatesTags: ["Examen"],
       }),
-      deleteExamen: builder.mutation<void, string>({
-        query: (_id) => ({
-          url: `delete-examen/${_id}`,
-          method: "DELETE",
-        }),
+      deleteExamen: builder.mutation<void, { useNewDb: boolean; _id: string }>({
+        query({ useNewDb, _id }) {
+          return {
+            url: `delete-examen/${_id}`,
+            method: "DELETE",
+            headers:
+              useNewDb !== undefined
+                ? { "x-use-new-db": String(useNewDb) }
+                : undefined,
+          };
+        },
         invalidatesTags: ["Examen"],
       }),
       getExamenByRegime: builder.mutation<void, GetExamenByRegime>({

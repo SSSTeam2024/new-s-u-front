@@ -235,56 +235,45 @@ const CourriersEntrants = () => {
           <Card className="shadow p-4">
             <Card.Header className="border-bottom-dashed">
               <Row>
-                <Col lg={6}>
-                  <Row>
-                    <Col>
-                      <label className="search-box">
-                        <input
-                          type="text"
-                          className="form-control search"
-                          placeholder="Rechercher ..."
-                          value={searchTerm}
-                          onChange={handleSearchChange}
-                        />
-                        <i className="ri-search-line search-icon"></i>
-                      </label>
-                    </Col>
-                    <Col>
-                      <select
-                        className="form-select"
-                        onChange={handleSelectedSource}
-                      >
-                        <option value="source">Source</option>
-                        {AllIntervenants.map((intervenant) => (
-                          <option
-                            value={intervenant?._id!}
-                            key={intervenant?._id!}
-                          >
-                            {intervenant?.nom_fr!}
-                          </option>
-                        ))}
-                      </select>
-                    </Col>
-                    <Col>
-                      <select
-                        className="form-select"
-                        onChange={handleSelectedDestinataire}
-                      >
-                        <option value="destinataire">Destinataire</option>
-                        {AllIntervenants.map((intervenant) => (
-                          <option
-                            value={intervenant?._id!}
-                            key={intervenant?._id!}
-                          >
-                            {intervenant?.nom_fr!}
-                          </option>
-                        ))}
-                      </select>
-                    </Col>
-                  </Row>
+                <Col>
+                  <label className="search-box">
+                    <input
+                      type="text"
+                      className="form-control search"
+                      placeholder="Rechercher ..."
+                      value={searchTerm}
+                      onChange={handleSearchChange}
+                    />
+                    <i className="ri-search-line search-icon"></i>
+                  </label>
                 </Col>
-                <Col lg={3}></Col>
-                <Col lg={3} className="d-flex justify-content-end">
+                <Col>
+                  <select
+                    className="form-select"
+                    onChange={handleSelectedSource}
+                  >
+                    <option value="source">Source</option>
+                    {AllIntervenants.map((intervenant) => (
+                      <option value={intervenant?._id!} key={intervenant?._id!}>
+                        {intervenant?.nom_fr!}
+                      </option>
+                    ))}
+                  </select>
+                </Col>
+                <Col>
+                  <select
+                    className="form-select"
+                    onChange={handleSelectedDestinataire}
+                  >
+                    <option value="destinataire">Destinataire</option>
+                    {AllIntervenants.map((intervenant) => (
+                      <option value={intervenant?._id!} key={intervenant?._id!}>
+                        {intervenant?.nom_fr!}
+                      </option>
+                    ))}
+                  </select>
+                </Col>
+                <Col className="d-flex justify-content-end">
                   <span
                     className="badge bg-secondary-subtle text-secondary view-item-btn fs-18"
                     style={{ cursor: "pointer" }}

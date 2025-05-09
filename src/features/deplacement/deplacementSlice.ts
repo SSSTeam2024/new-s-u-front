@@ -14,18 +14,28 @@ export interface Deplacement {
   pdfBase64String: string;
   pdfExtension: string;
   etat: string;
+  createdAt?: string;
 }
 export const deplacementSlice = createApi({
   reducerPath: "deplacementApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: `${process.env.REACT_APP_API_URL}/api/deplacement/`, // Adjust endpoint base URL
+    baseUrl: `${process.env.REACT_APP_API_URL}/api/deplacement/`,
   }),
   tagTypes: ["Deplacement"],
   endpoints(builder) {
     return {
-      fetchDeplacement: builder.query<Deplacement, void>({
-        query() {
-          return "get-all-deplacements";
+      fetchDeplacement: builder.query<
+        Deplacement[],
+        { useNewDb?: string } | void
+      >({
+        query(useNewDb) {
+          return {
+            url: `get-all-deplacements`,
+            headers:
+              useNewDb !== undefined
+                ? { "x-use-new-db": useNewDb.useNewDb }
+                : undefined,
+          };
         },
         providesTags: ["Deplacement"],
       }),
@@ -69,6 +79,23 @@ export const deplacementSlice = createApi({
         },
         invalidatesTags: ["Deplacement"],
       }),
+      deleteManyDeplacement: builder.mutation<
+        Deplacement,
+        { ids: string[]; useNewDb?: boolean }
+      >({
+        query({ ids, useNewDb }) {
+          return {
+            url: `delete-many`,
+            method: "DELETE",
+            body: { ids },
+            headers:
+              useNewDb !== undefined
+                ? { "x-use-new-db": String(useNewDb) }
+                : undefined,
+          };
+        },
+        invalidatesTags: ["Deplacement"],
+      }),
     };
   },
 });
@@ -79,4 +106,5 @@ export const {
   useAddDeplacementMutation,
   useUpdateDeplacementMutation,
   useDeleteDeplacementMutation,
+  useDeleteManyDeplacementMutation,
 } = deplacementSlice;

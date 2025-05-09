@@ -28,7 +28,7 @@ function convertToBase64(
 }
 
 const AjouterVariablesGlobales = () => {
-  document.title = " Variables Globales | ENIGA";
+  document.title = "Variables Globales | ENIGA";
   const navigate = useNavigate();
   const [newVariableGlobale] = useAddNewVaribaleGlobaleMutation();
 

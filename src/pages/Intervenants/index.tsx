@@ -75,12 +75,24 @@ const Intervenants = () => {
     },
     {
       name: <span className="font-weight-bold fs-13">C.I.N</span>,
-      selector: (row: any) => row?.cin!,
+      selector: (row: any) => {
+        return row?.cin! !== "" ? (
+          <span>{row?.cin!}</span>
+        ) : (
+          <span className="text-danger-emphasis"> ---- </span>
+        );
+      },
       sortable: true,
     },
     {
       name: <span className="font-weight-bold fs-13">Matricule</span>,
-      selector: (row: any) => row?.matricule!,
+      selector: (row: any) => {
+        return row?.matricule! !== "" ? (
+          <span>{row?.matricule!}</span>
+        ) : (
+          <span className="text-danger-emphasis"> ---- </span>
+        );
+      },
       sortable: true,
     },
     {
@@ -132,6 +144,37 @@ const Intervenants = () => {
     },
   ];
 
+  const [searchTerm, setSearchTerm] = useState("");
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const getFilteredIntervenants = () => {
+    let filteredIntervenants = [...data];
+
+    if (searchTerm) {
+      filteredIntervenants = filteredIntervenants.filter(
+        (intervenant: any) =>
+          intervenant
+            ?.nom_fr!.toLowerCase()
+            .includes(searchTerm.toLowerCase()) ||
+          intervenant
+            ?.nom_ar!.toLowerCase()
+            .includes(searchTerm.toLowerCase()) ||
+          intervenant?.cin!.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          intervenant
+            ?.matricule!.toLowerCase()
+            .includes(searchTerm.toLowerCase()) ||
+          intervenant
+            ?.phone!.toLowerCase()
+            .includes(searchTerm.toLowerCase()) ||
+          intervenant?.email!.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    return filteredIntervenants.reverse();
+  };
+
   return (
     <React.Fragment>
       <div className="page-content">
@@ -140,7 +183,19 @@ const Intervenants = () => {
           <Card>
             <Card.Header>
               <Row>
-                <Col lg={12} className="d-flex justify-content-end">
+                <Col>
+                  <label className="search-box">
+                    <input
+                      type="text"
+                      className="form-control search"
+                      placeholder="Rechercher ..."
+                      value={searchTerm}
+                      onChange={handleSearchChange}
+                    />
+                    <i className="ri-search-line search-icon"></i>
+                  </label>
+                </Col>
+                <Col className="d-flex justify-content-end">
                   <span
                     className="badge bg-primary-subtle text-primary view-item-btn fs-18"
                     style={{ cursor: "pointer" }}
@@ -158,7 +213,7 @@ const Intervenants = () => {
             <Card.Body>
               <DataTable
                 columns={columns}
-                data={data}
+                data={getFilteredIntervenants()}
                 pagination
                 noDataComponent="Il n'y a aucun enregistrement à afficher"
               />
@@ -176,68 +231,100 @@ const Intervenants = () => {
           </Offcanvas.Header>
           <Offcanvas.Body>
             <Row className="mb-3">
-              <Col lg={3}>
+              <Col lg={4}>
                 <span className="fw-medium">Nom</span>
               </Col>
-              <Col lg={4}>
+              <Col lg={8} className="text-end">
                 <i>
                   {intervenantDetails?.nom_fr!} (
                   {intervenantDetails?.abbreviation!}){" "}
                 </i>
               </Col>
-              <Col lg={3}>
+            </Row>
+            <Row className="mb-3">
+              <Col lg={4}>
+                <span className="fw-medium">الإسم</span>
+              </Col>
+              <Col lg={8} className="text-end">
                 <i>{intervenantDetails?.nom_ar!}</i>
               </Col>
-              <Col lg={2}>
-                <span className="fw-medium">الإ سم</span>
-              </Col>
             </Row>
             <Row className="mb-3">
-              <Col lg={3}>
+              <Col lg={4}>
                 <span className="fw-medium">C.I.N</span>
               </Col>
-              <Col lg={9}>
-                <i>{intervenantDetails?.cin!}</i>
+              <Col lg={8} className="text-end">
+                {intervenantDetails?.cin! !== "" ? (
+                  <i>{intervenantDetails?.cin!}</i>
+                ) : (
+                  <i className="text-danger">Pas de C.I.N disponible</i>
+                )}
               </Col>
             </Row>
             <Row className="mb-3">
-              <Col lg={3}>
+              <Col lg={4}>
                 <span className="fw-medium">Matricule</span>
               </Col>
-              <Col lg={9}>
+              <Col lg={8} className="text-end">
                 <i>{intervenantDetails?.matricule!}</i>
               </Col>
             </Row>
             <Row className="mb-3">
-              <Col lg={3}>
-                <span className="fw-medium">Téléphone</span>
+              <Col lg={4}>
+                <div className="hstack gap-1">
+                  <i className="ri-phone-fill"></i>
+                  <span className="fw-medium">Téléphone</span>
+                </div>
               </Col>
-              <Col lg={9}>
+              <Col lg={8} className="text-end">
                 <i>{intervenantDetails?.phone!}</i>
               </Col>
             </Row>
             <Row className="mb-3">
-              <Col lg={3}>
-                <span className="fw-medium">Email</span>
+              <Col lg={4}>
+                <div className="hstack gap-1">
+                  <i className="ri-mail-fill"></i>
+                  <span className="fw-medium">Email</span>
+                </div>
               </Col>
-              <Col lg={9}>
-                <i>{intervenantDetails?.email!}</i>
+              <Col lg={8} className="text-end">
+                {intervenantDetails?.email! !== "" ? (
+                  <i>{intervenantDetails?.email!}</i>
+                ) : (
+                  <i className="text-danger">Aucun e-mail disponible</i>
+                )}
               </Col>
             </Row>
             <Row className="mb-3">
-              <Col lg={3}>
-                <span className="fw-medium">Adresse</span>
+              <Col lg={4}>
+                <div className="hstack gap-1">
+                  <i className="ri-map-pin-fill"></i>
+                  <span className="fw-medium">Adresse</span>
+                </div>
               </Col>
-              <Col lg={9}>
-                <i>{intervenantDetails?.address!}</i>
+              <Col lg={8} className="text-end">
+                {intervenantDetails?.address! !== "" ? (
+                  <i>{intervenantDetails?.address!}</i>
+                ) : (
+                  <i className="text-danger-emphasis">
+                    Pas d'adresse disponible
+                  </i>
+                )}
               </Col>
             </Row>
             <Row className="mb-3">
-              <Col lg={3}>
-                <span className="fw-medium">Site Web</span>
+              <Col lg={4}>
+                <div className="hstack gap-1">
+                  <i className="ri-global-fill"></i>
+                  <span className="fw-medium">Site Web</span>
+                </div>
               </Col>
-              <Col lg={9}>
-                <i>{intervenantDetails?.site!}</i>
+              <Col lg={8} className="text-end">
+                {intervenantDetails?.site! !== "" ? (
+                  <i>{intervenantDetails?.site!}</i>
+                ) : (
+                  <i className="text-danger">Aucun site Web disponible</i>
+                )}
               </Col>
             </Row>
           </Offcanvas.Body>

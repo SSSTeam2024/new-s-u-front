@@ -3,6 +3,7 @@ import { selectCurrentUser } from "features/account/authSlice";
 import { RootState } from "../app/store";
 import { useSelector } from "react-redux";
 import { useFetchUserPermissionsByUserIdQuery } from "../features/userPermissions/userPermissionSlice";
+import { useFetchMigrateValueQuery } from "features/cloneDb/cloneDb";
 
 const Navdata = () => {
   const user: any = useSelector((state: RootState) => selectCurrentUser(state));
@@ -12,13 +13,18 @@ const Navdata = () => {
     isLoading,
   } = useFetchUserPermissionsByUserIdQuery({ userId: user?._id! });
 
+  const { data: migrationValue } = useFetchMigrateValueQuery();
+  const today = new Date();
+  const currentMonth = today.getMonth() + 1;
+
   useEffect(() => {
     if (error) {
       console.error("Error fetching user permissions:", error);
     }
-  }, [userPermissions, error, isLoading]);
+  }, [userPermissions, error, isLoading, migrationValue]);
 
   const [isEcommerce, setIsEcommerce] = useState(false);
+  const [isMigration, setIsMigration] = useState(false);
   const [isOrder, setIsOrder] = useState(false);
   const [isAvisEtudiant, setIsAvisEtudiant] = useState(false);
   const [isAvisEnseignant, setIsAvisEnseignant] = useState(false);
@@ -88,6 +94,9 @@ const Navdata = () => {
     document.body.classList.remove("twocolumn-panel");
     if (iscurrentState !== "Ecommerce") {
       setIsEcommerce(false);
+    }
+    if (iscurrentState !== "Migration") {
+      setIsMigration(false);
     }
     if (iscurrentState !== "Orders") {
       setIsOrder(false);
@@ -210,6 +219,7 @@ const Navdata = () => {
     isVariable,
     isBureauOrdre,
     isSettings,
+    isMigration,
   ]);
   let routes = userPermissions
     ? userPermissions.map((permission) => permission.path)
@@ -1116,8 +1126,29 @@ const Navdata = () => {
         },
       ],
     },
+
+    //! Migration
+    // {
+    //   id: "migration",
+    //   label: "Migration",
+    //   icon: "bi bi-file-zip",
+    //   link: "/migration",
+    // },
   ];
+
+  if (currentMonth === 5) {
+    menuItems.push({
+      id: "migration",
+      label: "Migration",
+      icon: "bi bi-file-zip",
+      link: "/migration",
+    });
+  }
   const filteredMenuItems = filterMenuItems(menuItems, routes);
-  return <React.Fragment>{filteredMenuItems}</React.Fragment>;
+  return (
+    <React.Fragment>
+      {migrationValue === true && filteredMenuItems}
+    </React.Fragment>
+  );
 };
 export default Navdata;
