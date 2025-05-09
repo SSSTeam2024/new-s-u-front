@@ -14,6 +14,9 @@ export interface UserResponse {
     app_name: string;
     status: string;
     permissions: any[];
+    nom_fr: String;
+    prenom_fr: String;
+    email: String;
   };
 }
 export interface AddUser {
@@ -26,7 +29,8 @@ export interface AddUser {
   app_name: string;
   status: string;
   nom_fr:string;
-  prenom_fr: string
+  prenom_fr: string;
+  email: String;
 }
 export interface LoginRequest {
   login: string;

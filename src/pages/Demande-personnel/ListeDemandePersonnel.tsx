@@ -34,7 +34,8 @@ const ListeDemandePersonnel = () => {
   const { data: demandesPersonnel } = useFetchDemandePersonnelQuery();
 
   // Mutation hooks
-  const [deleteDemandeEtudiant] = useDeleteDemandePersonnelMutation();
+
+  const [deleteDemandePersonnel] = useDeleteDemandePersonnelMutation();
   const navigate = useNavigate();
 
   const handleNavigate = () => {
@@ -53,7 +54,7 @@ const ListeDemandePersonnel = () => {
         confirmButtonText: "Yes, delete it!",
       }).then(async (result) => {
         if (result.isConfirmed) {
-          await deleteDemandeEtudiant(id).unwrap();
+          await deleteDemandePersonnel(id).unwrap();
           MySwal.fire(
             "Deleted!",
             "The reclamation has been deleted.",
@@ -115,15 +116,14 @@ const ListeDemandePersonnel = () => {
       {
         Header: "Personnel",
         accessor: (row: any) =>
-          `${row.personnelId?.prenom_fr || ""} ${
-            row.personnelId?.nom_fr || ""
+          `${row.personnelId?.prenom_fr || ""} ${row.personnelId?.nom_fr || ""
           }`,
         disableFilters: true,
         filterable: true,
       },
       {
         Header: "CIN",
-        accessor: (row: any) => row.personnelId?.num_CIN || "",
+        accessor: (row: any) => row.personnelId?.num_cin || "",
         disableFilters: true,
         filterable: true,
       },
@@ -247,6 +247,7 @@ const ListeDemandePersonnel = () => {
                   <Link
                     to="#"
                     className="badge bg-danger-subtle text-danger remove-item-btn"
+                    onClick={() => handleDeleteDemande(cellProps._id)}
                   >
                     <i
                       className="ph ph-trash"

@@ -1,8 +1,10 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { GeneratedDoc } from "features/generatedDoc/generatedDocSlice";
 
 export interface Demande {
   _id: string;
   enseignantId: string;
+  generated_doc?: string | GeneratedDoc;
   title: string;
   description: string;
   piece_demande: string;
@@ -52,16 +54,16 @@ export const demandeEnseignantSlice = createApi({
         },
         invalidatesTags: ["Demandes"],
       }),
-      updateDemandeEnseignant: builder.mutation<void, Demande>({
-        query(reclamation) {
-          const { _id, ...rest } = reclamation;
+      updateDemandeEnseignant: builder.mutation<void, Partial<Demande>>({
+        query(demande) {
+
           return {
-            url: `edit-demande-enseignant/${_id}`,
-            method: "PUT",
-            body: rest,
+            url: `edit-demande-Enseignant`,
+            method: 'PUT',
+            body: demande,
           };
         },
-        invalidatesTags: ["Demandes"],
+        invalidatesTags: ['Demandes'],
       }),
       deleteDemandeEnseignant: builder.mutation<void, string>({
         query(_id) {

@@ -45,7 +45,7 @@ const ListeVariablesGlobales = () => {
 
   const { data: deplacements } = useFetchDeplacementQuery();
   const { data: Variables = [] } = useFetchVaribaleGlobaleQuery();
-  // console.log("variables", Variables);
+  console.log("variables", Variables);
 
   // Get the last variable
   const lastVariable =
@@ -438,7 +438,7 @@ const ListeVariablesGlobales = () => {
                       .map(([key, newValue]) => {
                         const previousValue =
                           (Variables[index - 1] as Record<string, unknown>)?.[
-                            key
+                          key
                           ] ?? "N/A";
                         let previousImage = String(previousValue);
                         let newImage = String(newValue);

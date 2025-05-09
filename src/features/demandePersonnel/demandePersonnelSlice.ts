@@ -1,17 +1,19 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { GeneratedDoc } from "features/generatedDoc/generatedDocSlice";
 
 export interface Demande {
-  _id: string;
-  personnelId: string;
-  title: string;
-  description: string;
-  piece_demande: string;
-  langue: string;
-  nombre_copie: number;
-  response: string;
-  status: string;
-  createdAt: Date;
-  updatedAt: Date;
+    _id: string,
+  personnelId: string,
+  generated_doc?: string | GeneratedDoc;
+  title: string,
+  description: string,
+  piece_demande: string,
+  langue: string,
+  nombre_copie: number,
+  response: string,
+  status: string,
+  createdAt: Date,
+  updatedAt: Date
 }
 export const demandePersonnelSlice = createApi({
   reducerPath: "demandePersonnelApi",
@@ -52,7 +54,7 @@ export const demandePersonnelSlice = createApi({
         },
         invalidatesTags: ["Demandes"],
       }),
-      updateDemandePersonnel: builder.mutation<void, Demande>({
+      updateDemandePersonnel: builder.mutation<void, Partial<Demande>>({
         query(reclamation) {
           const { _id, ...rest } = reclamation;
           return {

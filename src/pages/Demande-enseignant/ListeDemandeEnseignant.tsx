@@ -110,8 +110,7 @@ const ListeDemandeEnseignant = () => {
       {
         Header: "Enseignant",
         accessor: (row: any) =>
-          `${row.enseignantId?.prenom_fr || ""} ${
-            row.enseignantId?.nom_fr || ""
+          `${row.enseignantId?.prenom_fr || ""} ${row.enseignantId?.nom_fr || ""
           }`,
         disableFilters: true,
         filterable: true,
@@ -183,7 +182,7 @@ const ListeDemandeEnseignant = () => {
                     to="/demandes-enseignant/single-demande-enseignant"
                     state={cellProps}
                     className="badge bg-info-subtle text-info view-item-btn"
-                    data-bs-toggle="offcanvas"
+                  // data-bs-toggle="offcanvas"
                   >
                     <i
                       className="ph ph-eye"

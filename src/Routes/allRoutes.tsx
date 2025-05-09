@@ -228,6 +228,7 @@ import RepartitionEnseignant from "pages/Gestion-enseignant/RepartitionEnseignan
 import RechercheAvance from "pages/Gestion-etudiant/RechercheAvance";
 import RepartitionPersonnel from "pages/Gestion-personnel/RepartitionPersonnel";
 import ListeAbsencePersonnel from "pages/Gestion-personnel/ListeAbsencePersonnel";
+import EditTemplateBody from "pages/TemplateBody/EditTemplateBody";
 import ViewAbsencePersonnel from "pages/Gestion-personnel/ViewAbsencePersonnel";
 import ModifierAbsencePersonnel from "pages/Gestion-personnel/ModifierAbsencePersonnel";
 import PeriodeDeTravailPersonnel from "pages/PeriodeDeTravailPersonnel";
@@ -971,6 +972,7 @@ const authProtectedRoutes = [
   { path: "/template/liste-template-body", component: <TemplateBody /> },
   { path: "/template/ajouter-template-body", component: <NewTemplateBody /> },
   { path: "/template/single-template-body", component: <TemplateBodyDetail /> },
+  { path: "/template/edit-template-body", component: <EditTemplateBody /> },
   //short code
   { path: "/shortCode/liste-short-code", component: <ShortCode /> },
   { path: "/shortCode/ajouter-short-code", component: <NewShortCode /> },

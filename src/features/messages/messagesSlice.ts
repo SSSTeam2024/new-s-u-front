@@ -23,7 +23,7 @@ export interface Message {
   attachmentsBase64Strings: string[];
   attachmentsExtensions: string[];
   status: "sent" | "read" | "archived";
-  receiverStatus:"sent" | "read" | "archived";
+  receiverStatus:"unread"| "read"| "archived"| "deleted";
   senderStatus: "sent" | "read" | "archived";
   createdAt?: string; 
   parentMessageId?: string
@@ -92,6 +92,14 @@ fetchRepliesByParentId: builder.query<Message[], string>({
       }),
       invalidatesTags: ["Message"],
     }),
+     // Mark a message as unread
+     markMessageAsUnread: builder.mutation<void, { messageId: string }>({
+      query: ({ messageId }) => ({
+        url: `unread/${messageId}`,
+        method: "PUT",
+      }),
+      invalidatesTags: ["Message"],
+    }),
     // Archive a message
     archiveMessage: builder.mutation<Message, { messageId: string; userId: string; userType: string }>({
       query: ({ messageId, userId, userType }) => ({
@@ -101,6 +109,26 @@ fetchRepliesByParentId: builder.query<Message[], string>({
       }),
       invalidatesTags: ["Message"],
     }),
+     // delete a message
+     deleteMessage: builder.mutation<Message, { messageId: string; userId: string; userType: string }>({
+      query: ({ messageId, userId, userType }) => ({
+        url: `delete-message/${messageId}`,
+        method: "POST",
+        body: { userId, userType },
+      }),
+      invalidatesTags: ["Message"],
+    }),
+
+     // restore a message
+     restoreMessage: builder.mutation<Message, { messageId: string; userId: string; userType: string }>({
+      query: ({ messageId, userId, userType }) => ({
+        url: `restore/${messageId}`,
+        method: "POST",
+        body: { userId, userType },
+      }),
+      invalidatesTags: ["Message"],
+    }),
+    // delete message for user
     deleteMessageForUser: builder.mutation<Message, { messageId: string; userId: string; userType: string }>({
       query: ({ messageId, userId, userType }) => ({
         url: `delete/${messageId}`,
@@ -112,10 +140,40 @@ fetchRepliesByParentId: builder.query<Message[], string>({
 
 
     // Delete a message
-    deleteMessage: builder.mutation<void, { messageId: string }>({
-      query: ({ messageId }) => ({
-        url: `${messageId}`,
-        method: "DELETE",
+    // deleteMessage: builder.mutation<void, { messageId: string }>({
+    //   query: ({ messageId }) => ({
+    //     url: `${messageId}`,
+    //     method: "DELETE",
+    //   }),
+    //   invalidatesTags: ["Message"],
+    // }),
+    // fetchDeletedMessagesForUser: builder.query<Message[], { userId: string; userType: string }>({
+    //   query: ({ userId, userType }) => ({
+    //     url: "/deleted",
+    //     method: "POST",
+    //     body: { userId, userType },
+    //   }),
+    // }),
+
+    fetchDeletedMessagesForUser: builder.query<
+  { deletedMessages: Message[] }, // 👈 expected response
+  { userId: string; userType: string } // request payload
+>({
+  query: ({ userId, userType }) => ({
+    url: "/deleted",
+    method: "POST",
+    body: { userId, userType },
+  }),
+}),
+
+    transferMessage: builder.mutation({
+      query: ({ messageId, newReceiver, forwardedBy }) => ({
+        url: `transfer/${messageId}`,
+        method: "POST",
+        body: {
+          newReceiver,
+          forwardedBy,
+        },
       }),
       invalidatesTags: ["Message"],
     }),
@@ -132,5 +190,11 @@ export const {
   useArchiveMessageMutation,
   useDeleteMessageMutation,
   useFetchRepliesByParentIdQuery,
-  useDeleteMessageForUserMutation
+  useDeleteMessageForUserMutation,
+  useRestoreMessageMutation,
+  useMarkMessageAsUnreadMutation,
+  useFetchDeletedMessagesForUserQuery,
+  useTransferMessageMutation,
+  // useFetchDeletedInboxMessagesQuery,
+  // useFetchDeletedSentMessagesQuery
 } = messageSlice;
