@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button, Card, Col, Container, Row } from "react-bootstrap";
 
@@ -6,7 +6,7 @@ const TemplateBodyDetail = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const templateBody = location.state; // Extract the template body data from location
-
+  console.log("templateBody", templateBody)
   if (!templateBody) {
     return (
       <div>
@@ -61,24 +61,18 @@ const TemplateBodyDetail = () => {
                       <p>{templateBody?.intended_for}</p>
                     </div>
 
-                    <div className="mb-3">
-                      <h4 className="card-title mb-0">Corps</h4>
-                      <div
-                        style={{
-                          border: "1px solid #ccc",
-                          padding: "10px",
-                          marginTop: "20px",
-                          minHeight: "300px",
-                          background: "#f9f9f9",
-                        }}
-                      >
-                        <div
-                          dangerouslySetInnerHTML={{
-                            __html: JSON.parse(templateBody?.body),
-                          }}
-                        ></div>
-                      </div>
-                    </div>
+
+                    <Button
+                      variant="success"
+                      as="a"
+                      href={templateBody.doc ? `${process.env.REACT_APP_API_URL}/files/Modeles/${templateBody.doc}` : '#'}
+                      download={!!templateBody.doc}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      disabled={!templateBody.doc}
+                    >
+                      {templateBody.doc ? "Télécharger le fichier" : "Fichier indisponible"}
+                    </Button>
 
                     <div className="hstack gap-2 justify-content-end">
                       <Button variant="secondary" onClick={() => navigate(-1)}>

@@ -66,6 +66,16 @@ export const demandePersonnelSlice = createApi({
         },
         invalidatesTags: ['Demandes'],
       }),
+      handleDemandePersonnel: builder.mutation<void, any>({
+        query(demande) {
+          return {
+            url: 'handle-demande-personnel',
+            method: 'POST',
+            body: demande,
+          };
+        },
+        invalidatesTags: ['Demandes'],
+      }),
     };
   },
 });
@@ -76,4 +86,5 @@ export const {
   useAddDemandePersonnelMutation,
   useUpdateDemandePersonnelMutation,
   useDeleteDemandePersonnelMutation,
+  useHandleDemandePersonnelMutation
 } = demandePersonnelSlice;

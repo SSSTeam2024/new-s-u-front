@@ -149,14 +149,14 @@ const ListeDemandePersonnel = () => {
         filterable: true,
         accessor: (cellProps: any) => {
           switch (cellProps.status) {
-            case "en cours":
+            case "traité":
               return (
                 <span className="badge bg-success-subtle text-success">
                   {" "}
                   {cellProps.status}
                 </span>
               );
-            case "Inactive":
+            case "rejeté":
               return (
                 <span className="badge bg-danger-subtle text-danger">
                   {" "}
@@ -165,7 +165,7 @@ const ListeDemandePersonnel = () => {
               );
             default:
               return (
-                <span className="badge bg-success-subtle text-success">
+                <span className="badge bg-secondary-subtle text-secondary">
                   {" "}
                   {cellProps.status}
                 </span>

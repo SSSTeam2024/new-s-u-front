@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   Button,
   Card,
@@ -7,20 +7,34 @@ import {
   Form,
   Row,
   Spinner,
-  FormControl,
 } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { useFetchShortCodeQuery } from "features/shortCode/shortCodeSlice";
-import { useAddNewTemplateBodyMutation } from "features/templateBody/templateBodySlice";
+import { useAddNewTemplateBodyMutation, useUpdateTemplateBodyMutation } from "features/templateBody/templateBodySlice";
 import "./body.css";
-import JoditEditor from "jodit-react";
 import { renderAsync } from "docx-preview";
-import jsPDF from "jspdf";
-import html2canvas from "html2canvas";
-import { useFetchVirtualServicesQuery } from "features/virtualService/virtualServiceSlice";
-import { useFetchAllUsersQuery } from "features/account/accountSlice";
-import Select from "react-select";
+import copy from "copy-to-clipboard";
+
+function convertToBase64(
+  file: File
+): Promise<{ base64Data: string; extension: string }> {
+  return new Promise((resolve, reject) => {
+    const fileReader = new FileReader();
+    fileReader.onload = () => {
+      const base64String = fileReader.result as string;
+      const [, base64Data] = base64String.split(",");
+      const extension = file.name.split(".").pop() ?? "";
+      resolve({ base64Data, extension });
+    };
+    fileReader.onerror = (error) => {
+      reject(error);
+    };
+    fileReader.readAsDataURL(file);
+  });
+}
+
+export { convertToBase64 };
 
 const EditTemplateBody = () => {
   document.title = "Modifier un Modèle | ENIGA";
@@ -28,225 +42,60 @@ const EditTemplateBody = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const templateBodyDetails = location.state
-  console.log("templateBodyDetails", templateBodyDetails)
-  const [addNewTemplateBody, { isLoading }] = useAddNewTemplateBodyMutation();
+
+  const [updateTemplateBody, { isLoading }] = useUpdateTemplateBodyMutation();
   const { data: shortCodeList = [] } = useFetchShortCodeQuery();
-  const { data: admins = [] } = useFetchAllUsersQuery();
-
-
   const previewContainer: any = useRef(null);
-
-  const [selectedWord, setSelectedWord] = useState("");
-
-  const rangeRef: any = useRef(null);
-
-  const [canSaveTemplate, setCanSaveTemplate] = useState<boolean>(false);
-
-  const [isDocumentLoaded, setIsDocumentLoaded] = useState<boolean>(false);
 
   const [withQrCode, setWithQrCode] = useState<boolean>(false);
 
   const [withNumber, setWithOrderNumber] = useState<boolean>(false);
 
+  useEffect(() => {
+    if (templateBodyDetails) {
+      setTemplateBody({
+        // _id: templateBodyDetails._id || "",
+        // title: templateBodyDetails.title || "",
+        // body: templateBodyDetails.body || "",
+        // langue: templateBodyDetails.langue || "",
+        // intended_for: templateBodyDetails.intended_for || "",
+        // has_code: templateBodyDetails.has_code || "0",
+        // has_number: templateBodyDetails.has_number || "0",
+        _id: templateBodyDetails._id || "",
+        title: templateBodyDetails.title || "",
+        body: templateBodyDetails.body || "",
+        langue: templateBodyDetails.langue || "",
+        intended_for: templateBodyDetails.intended_for || "",
+        has_code: templateBodyDetails.has_code || "0",
+        has_number: templateBodyDetails.has_number || "0",
+        fileBase64: "",
+        fileExtension: "",
+        fileName: "",
+      });
 
-  const handleFileUpload = async (event: any) => {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = async (e: any) => {
-        const arrayBuffer = e.target.result;
+      setSelectedLangue(templateBodyDetails.langue || "");
+      setSelectedIntendedFor(templateBodyDetails.intended_for || "");
+      setWithQrCode(templateBodyDetails.has_code === "1");
+      setWithOrderNumber(templateBodyDetails.has_number === "1");
 
-        if (previewContainer.current) {
-          previewContainer.current.innerHTML = "";
+      if (templateBodyDetails.body && previewContainer.current) {
+        // Render HTML content back into the editable preview
+        previewContainer.current.innerHTML = JSON.parse(templateBodyDetails.body);
+        previewContainer.current.contentEditable = true;
 
-          await renderAsync(arrayBuffer, previewContainer.current);
-
-          const updatedHTML = await convertImagesToBase64(
-            previewContainer.current.innerHTML
-          );
-          previewContainer.current.innerHTML = updatedHTML;
-
-          setIsDocumentLoaded(true);
-        }
-      };
-      reader.readAsArrayBuffer(file);
-    }
-    previewContainer.current.contentEditable = true;
-  };
-
-  const convertImagesToBase64 = async (html: string): Promise<string> => {
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(html, "text/html");
-
-    const images: any = doc.querySelectorAll("img");
-
-    for (const img of images) {
-      const src = img.getAttribute("src");
-      if (src && src.startsWith("blob:")) {
-        try {
-          const response = await fetch(src);
-          const blob = await response.blob();
-
-          const base64 = await convertBlobToBase64(blob);
-
-          img.setAttribute("src", base64);
-        } catch (error) {
-          console.error("Error converting image to base64:", error);
-        }
       }
     }
+  }, [templateBodyDetails]);
 
-    return doc.documentElement.innerHTML;
-  };
-
-  const convertBlobToBase64 = (blob: Blob): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result as string);
-      reader.onerror = reject;
-      reader.readAsDataURL(blob);
-    });
-  };
-
-  // Capture cursor position
-  const captureCursorPosition = () => {
-    const selection = window.getSelection();
-    if (selection && selection.rangeCount > 0) {
-      rangeRef.current = selection.getRangeAt(0);
-    }
-  };
-
-  const handleInsertWord = () => {
-    if (rangeRef.current && selectedWord) {
-      const span = document.createElement("span");
-      span.textContent = selectedWord;
-      rangeRef.current.insertNode(span);
-      rangeRef.current.collapse(false); // Move cursor to the end of the inserted word
-      rangeRef.current = null; // Clear the range
-    }
-  };
-
-  const handleShortCodeInsertion = (code: string) => {
-    setCanSaveTemplate(false);
-    if (rangeRef.current && code) {
-      const span = document.createElement("span");
-      span.textContent = code;
-      rangeRef.current.insertNode(span);
-      rangeRef.current.collapse(false); // Move cursor to the end of the inserted word
-      rangeRef.current = null; // Clear the range
-    }
-  };
-
-  const handleQrCodeInsertion = () => {
-    setCanSaveTemplate(false);
-
-    if (rangeRef.current) {
-      const img = document.createElement("img");
-
-      img.src = "https://qrcg-free-editor.qr-code-generator.com/latest/assets/images/websiteQRCode_noFrame.png"; // Fake QR code image
-      img.alt = "QR Code";
-      img.style.width = "100px";
-      img.style.height = "100px";
-      img.style.margin = "5px";
-
-      const paragraph = document.createElement("p");
-      paragraph.style.marginTop = "5px";
-      paragraph.style.fontSize = "11px";
-      paragraph.style.fontStyle = "italic";
-      paragraph.style.color = "#0d87b5";
-
-      if (selectedLangue === 'arabic') {
-        paragraph.textContent = "امسح هذا الرمز للتحقق من صحة المستند عبر الإنترنت";
-      } else {
-        paragraph.textContent = "Scanner ce code pour vérifier l’intégrité de ce document en ligne";
-      }
-
-      const container = document.createElement("div");
-      container.className = 'qr-container';
-      container.appendChild(img);
-      container.appendChild(paragraph);
-
-      rangeRef.current.insertNode(container);
-      rangeRef.current.collapse(false); // Move cursor to the end
-      rangeRef.current = null; // Clear the range
-
-      setTemplateBody((prevState) => ({
-        ...prevState,
-        has_code: '1'
-      }));
-
-      setWithQrCode(true);
-    }
-  };
-
-  const removeQrContainer = () => {
-    const qrContainer = document.querySelector(".qr-container");
-    if (qrContainer) {
-      qrContainer.remove();
-    }
-    setTemplateBody((prevState) => ({
-      ...prevState,
-      has_code: '0'
-    }));
-    setWithQrCode(false);
-  };
-
-  const handleOrderNumberInsertion = () => {
-    setCanSaveTemplate(false);
-
-    if (rangeRef.current) {
-
-      const span = document.createElement("span");
-      if (selectedLangue === 'arabic') {
-        span.textContent = "عدد الرقم/السنة";
-      } else {
-        span.textContent = "N° num/annee";
-      }
-      span.style.fontSize = "14px";
-      span.className = 'order-number';
-
-      rangeRef.current.insertNode(span);
-      rangeRef.current.collapse(false); // Move cursor to the end
-      rangeRef.current = null; // Clear the range
-
-      setTemplateBody((prevState) => ({
-        ...prevState,
-        has_number: '1'
-      }));
-
-      setWithOrderNumber(true);
-    }
-  };
-
-  const removeOrderNumber = () => {
-    const qrContainer = document.querySelector(".order-number");
-    if (qrContainer) {
-      qrContainer.remove();
-    }
-    setTemplateBody((prevState) => ({
-      ...prevState,
-      has_number: '0'
-    }));
-
-    setWithOrderNumber(false);
-  };
-
-  const handleSaveEdited = () => {
-    if (previewContainer.current) {
-      const editedContent = previewContainer.current.innerHTML;
-      console.log("Edited Content:", editedContent);
-
-      // setContent(JSON.stringify(editedContent));
-      setTemplateBody((prevState) => ({
-        ...prevState,
-        body: JSON.stringify(editedContent),
-      }));
-      setCanSaveTemplate(true);
-    }
-  };
-
-  //************************************************************************** */
-
+  // const initialTemplateBody = {
+  //   _id: "",
+  //   title: "",
+  //   body: "",
+  //   langue: "",
+  //   intended_for: "",
+  //   has_code: "0",
+  //   has_number: "0",
+  // };
   const initialTemplateBody = {
     _id: "",
     title: "",
@@ -255,6 +104,9 @@ const EditTemplateBody = () => {
     intended_for: "",
     has_code: "0",
     has_number: "0",
+    fileBase64: "",
+    fileExtension: "",
+    fileName: "",
   };
 
   const [templateBody, setTemplateBody] = useState(initialTemplateBody);
@@ -329,83 +181,33 @@ const EditTemplateBody = () => {
       [id]: value,
     }));
   };
-
-
-  const config = {
-    readonly: false,
-    height: 652,
-    width: 595,
-    toolbarAdaptive: false,
-    toolbarSticky: false,
-    buttons: [
-      "source",
-      "|",
-      "bold",
-      "italic",
-      "underline",
-      "strikethrough",
-      "|",
-      "superscript",
-      "subscript",
-      "|",
-      "ul",
-      "ol",
-      "|",
-      "outdent",
-      "indent",
-      "|",
-      "font",
-      "fontsize",
-      "brush",
-      "paragraph",
-      "|",
-      "table",
-      "link",
-      "|",
-      "align",
-      "|",
-      "undo",
-      "redo",
-      "|",
-      "hr",
-      "eraser",
-      "fullsize",
-    ],
-    controls: {
-      font: {
-        list: {
-          Arial: "Arial, Helvetica, sans-serif",
-          "Times New Roman": "Times New Roman, serif",
-          "Courier New": "Courier New, Courier, monospace",
-          Georgia: "Georgia, serif",
-          Tahoma: "Tahoma, Geneva, sans-serif",
-          Verdana: "Verdana, Geneva, sans-serif",
-        },
-      },
-    },
-  };
-
-  const handleBodyChange = (newContent: any) => {
-    const tableMatches = newContent.match(/<table>/gi) || [];
-    const numberOfTables = tableMatches.length;
-
-    setTemplateBody((prevState) => ({
-      ...prevState,
-      body: newContent,
-      isArray: numberOfTables > 0 ? "1" : "0",
-      arraysNumber: numberOfTables.toString(),
-    }));
-  };
-
   const handleFormSubmit =
     async () => {
       try {
-        console.log(templateBody);
-        await addNewTemplateBody(templateBody).unwrap();
+
+
+        await updateTemplateBody({
+          _id: templateBody._id,
+          data: {
+            title: templateBody.title,
+            langue: templateBody.langue,
+            intended_for: templateBody.intended_for,
+            has_code: templateBody.has_code,
+            has_number: templateBody.has_number,
+            ...(templateBody.fileBase64 && {
+              fileBase64: templateBody.fileBase64,
+              fileExtension: templateBody.fileExtension,
+              fileName: templateBody.fileName,
+            }),
+          }
+        }).unwrap();
+
+
+
         Swal.fire({
           position: "center",
           icon: "success",
-          title: "Le corps du modèle a été créé avec succès.",
+          title: "Le corps du modèle a été modifié avec succès.",
           showConfirmButton: false,
           timer: 2000,
         });
@@ -414,7 +216,7 @@ const EditTemplateBody = () => {
         Swal.fire({
           icon: "error",
           title: "Erreur",
-          text: "Une erreur est survenue lors de la création du corps du modèle.",
+          text: "Une erreur est survenue lors de la modification du corps du modèle.",
         });
       }
     };
@@ -444,6 +246,44 @@ const EditTemplateBody = () => {
     }
   };
 
+  const [originalHtml, setOriginalHtml] = useState("");
+
+  useEffect(() => {
+    if (templateBodyDetails?.body) {
+      const html = JSON.parse(templateBodyDetails.body);
+      setOriginalHtml(html);
+    }
+  }, [templateBodyDetails]);
+
+  const handleCopyText = (titre: string) => {
+    console.log(titre)
+    copyToClipboard(titre);
+  };
+  const handleFileUpload = async (event: any) => {
+    const file = event.target.files[0];
+    if (file) {
+      const { base64Data, extension } = await convertToBase64(file);
+      const [file_name, ext] = file.name.split('.');
+      setTemplateBody((prevState) => ({
+        ...prevState,
+        fileBase64: base64Data,
+        fileExtension: extension,
+        fileName: file_name
+      }));
+      setDocumemntName(file_name)
+    }
+  };
+
+  const copyToClipboard = (titre: string) => {
+    if (titre === 'qr_code') {
+      copy('{' + titre + '}\n{link}');
+    } else {
+      copy('{' + titre + '}');
+    }
+    alert('Code court copié!');
+  };
+  const [documentName, setDocumemntName] = useState<string>('')
+  const paramsShortCodes = shortCodeList.filter((code) => code.intended_for === 'params');
   return (
     <Container fluid className="page-content">
       <Row>
@@ -455,7 +295,7 @@ const EditTemplateBody = () => {
                   <i className="bi bi-person-lines-fill"></i>
                 </div>
               </div>
-              <h5 className="card-title mb-0">Nouveau Modèle</h5>
+              <h5 className="card-title mb-0">Modifier Modèle</h5>
             </Card.Header>
 
             <Card.Body>
@@ -481,6 +321,7 @@ const EditTemplateBody = () => {
                             value={langue}
                             onChange={onChangeLanguage}
                             className="text-muted"
+                            disabled
                           >
                             <option value="">Sélectionner Langue</option>
                             <option value="arabic">Arabe</option>
@@ -495,6 +336,7 @@ const EditTemplateBody = () => {
                             value={intended_for}
                             onChange={onChangeIntendedFor}
                             className="text-muted"
+                            disabled
                           >
                             <option value="">Sélectionner</option>
                             <option value="enseignant">
@@ -526,46 +368,16 @@ const EditTemplateBody = () => {
                   </>
                 )}
 
-                {step === 2 && (
+                {/* {step === 2 && (
                   <>
                     <Row className="mt-4">
-                      <Col lg={3}>
 
-                        <input
-                          className="d-none"
-                          type="file"
-                          accept=".docx"
-                          name="docInput"
-                          id="docInput"
-                          onChange={handleFileUpload}
-                        />
-                        <label
-                          htmlFor="docInput"
-                          className="btn btn-light"
-                          style={{
-                            cursor: "pointer",
-                            borderRadius: "5px",
-                          }}
-                        >
-                          <div
-                            style={{ display: "flex", alignItems: "center" }}
-                          >
-                            <i
-                              className="bi bi-cloud-arrow-up fs-20"
-                              style={{ marginRight: "3px" }}
-                            ></i>
-                            Ajouter un modèle Word
-                          </div>
-                        </label>
-
-                      </Col>
                       <Col lg={5} style={{ textAlign: "end" }}>
                         <Button
                           variant="warning"
                           onClick={handleSaveEdited}
                           disabled={
-                            canSaveTemplate === true ||
-                            isDocumentLoaded === false
+                            canSaveTemplate === true
                           }
                           style={{ marginRight: "5px" }}
                         >
@@ -581,7 +393,7 @@ const EditTemplateBody = () => {
                         </Button>
                         <Button
                           variant="success"
-                          // type="submit"
+                       
                           disabled={isLoading || canSaveTemplate === false}
                           onClick={handleFormSubmit}
                         >
@@ -595,7 +407,7 @@ const EditTemplateBody = () => {
                                 className="bi bi-file-earmark-plus fs-20"
                                 style={{ marginRight: "3px" }}
                               ></i>
-                              Générer modèle
+                              Mettre à jour le modèle
                             </div>
                           )}
                         </Button>
@@ -624,19 +436,7 @@ const EditTemplateBody = () => {
 
 
                     <Row>
-                      <Col lg={8}>
-                        <div
-                          ref={previewContainer}
-                          contentEditable={true}
-                          style={{
-                            border: "1px solid #ccc",
-                            padding: "10px",
-                            marginTop: "20px",
-                            minHeight: "300px",
-                          }}
-                          onMouseUp={captureCursorPosition}
-                        ></div>
-                      </Col>
+                     
                       <Col lg={4}>
                         <div
                           className="mb-3"
@@ -741,6 +541,210 @@ const EditTemplateBody = () => {
                                     onClick={() =>
                                       handleShortCodeInsertion(code.body)
                                     }
+                                    className="me-2 mb-2"
+                                  >
+                                    {code.titre}
+                                  </Button>
+                                ) : (
+                                  <></>
+                                )
+                              )}
+                            </Card.Body>
+                          </Card>
+                        </div>
+                      </Col>
+                    </Row>
+                    <div className="d-flex justify-content-between mt-3">
+                      <Button variant="secondary" onClick={handlePreviousStep}>
+                        Précédent
+                      </Button>
+                    </div>
+                  </>
+                )} */}
+                {step === 2 && (
+                  <>
+                    <Row className="mt-4">
+                      <Col lg={3}>
+
+                        <input
+                          className="d-none"
+                          type="file"
+                          accept=".docx"
+                          name="docInput"
+                          id="docInput"
+                          onChange={handleFileUpload}
+                        />
+                        <label
+                          htmlFor="docInput"
+                          className="btn btn-light"
+                          style={{
+                            cursor: "pointer",
+                            borderRadius: "5px",
+                          }}
+                        >
+                          <div
+                            style={{ display: "flex", alignItems: "center" }}
+                          >
+                            <i
+                              className="bi bi-cloud-arrow-up fs-20"
+                              style={{ marginRight: "3px" }}
+                            ></i>
+                            Remplacer un modèle Word
+                          </div>
+                          <span>{documentName}</span>
+                        </label>
+
+                      </Col>
+                      <Col lg={3}>
+                        <Button
+                          variant="success"
+                          disabled={isLoading || documentName === ''}
+                          onClick={handleFormSubmit}
+                        >
+                          {isLoading ? (
+                            <Spinner as="span" animation="border" size="sm" />
+                          ) : (
+                            <div
+                              style={{ display: "flex", alignItems: "center" }}
+                            >
+                              <i
+                                className="bi bi-file-earmark-plus fs-20"
+                                style={{ marginRight: "3px" }}
+                              ></i>
+                              Générer modèle
+                            </div>
+                          )}
+                        </Button>
+                      </Col>
+                      <Col lg={5} style={{ textAlign: "start" }}>
+
+                      </Col>
+                      <Col lg={4} className="mt-2" style={{ borderRadius: '5px', border: '1px solid #e1e1e1', padding: '10px', background: '#ffe0a880', fontWeight: '400', textAlign: "start" }}>
+                        Vérifier que votre document word est bien rempli avec les codes courts necessaires.
+                      </Col>
+                    </Row>
+                    {/* {selectedLangue === 'arabic' && (
+                      <Row style={{ marginTop: '10px' }}>
+                        <Col lg={3}></Col>
+                        <Col lg={5}></Col>
+                        <Col lg={4} style={{ borderRadius: '5px', border: '1px solid #e1e1e1', padding: '10px', background: 'rgb(254 185 255 / 50%)', fontWeight: '400', textAlign: "start" }}>
+                          Assurez que vous insérez les parenthèses comme des codes courts pour les documents en arabe.
+                        </Col>
+                      </Row>
+                    )} */}
+
+                    <Row className="mb-3"
+                      style={{
+                        marginLeft: "5%",
+                        marginTop: "20px",
+                      }}>
+                      <Col lg={12}>
+                        <div
+                          className="mb-3"
+                          style={{
+                            marginLeft: "5%",
+                            marginTop: "20px",
+                          }}
+                        >
+                          <Card>
+                            <Card.Body className="d-flex">
+                              {paramsShortCodes.map((code: any) =>
+                                <Button
+                                  key={code._id}
+                                  variant="info"
+                                  onClick={() => handleCopyText(code.body)}
+                                  size="sm"
+                                  className="me-2 mb-2"
+                                >
+                                  {code.titre}
+                                </Button>
+
+                              )}
+                              {selectedLangue === 'arabic' && (
+                                <>
+                                  <Button
+                                    variant="info"
+                                    onClick={() => handleCopyText('closed_parenthese')}
+                                    size="sm"
+                                    className="me-2 mb-2"
+                                  >
+                                    {'('}
+                                  </Button>
+                                  <Button
+                                    variant="info"
+                                    onClick={() => handleCopyText('open_parenthese')}
+                                    size="sm"
+                                    className="me-2 mb-2"
+                                  >
+                                    {')'}
+                                  </Button></>
+                              )}
+
+                            </Card.Body>
+                          </Card>
+                          <Card>
+                            <Card.Header as="h5">
+                              Informations d'établissement
+                            </Card.Header>
+                            <Card.Body>
+                              {displayShortCodeList.map((code: any) =>
+                                code.intended_for === "global" ? (
+                                  <Button
+                                    key={code._id}
+                                    variant="secondary"
+                                    onClick={() => handleCopyText(code.body)}
+                                    size="sm"
+                                    // onClick={() =>
+                                    //   handleShortCodeInsertion(code.body)
+                                    // }
+                                    className="me-2 mb-2"
+                                  >
+                                    {code.titre}
+                                  </Button>
+                                ) : (
+                                  <></>
+                                )
+                              )}
+                            </Card.Body>
+                          </Card>
+
+                          <Card>
+                            {selectedIntendedFor === "etudiant" && (
+                              <Card.Header as="h6">
+                                Informations étudiant
+                              </Card.Header>
+                            )}
+                            {selectedIntendedFor === "enseignant" && (
+                              <Card.Header as="h6">
+                                Informations enseignant
+                              </Card.Header>
+                            )}
+                            {selectedIntendedFor === "personnel" && (
+                              <Card.Header as="h6">
+                                Informations personnel
+                              </Card.Header>
+                            )}
+                            {selectedIntendedFor === "examen" && (
+                              <Card.Header as="h6">
+                                Informations examen
+                              </Card.Header>
+                            )}
+                            {selectedIntendedFor === "mission" && (
+                              <Card.Header as="h6">
+                                Informations de tâche
+                              </Card.Header>
+                            )}
+                            <Card.Body>
+                              {displayShortCodeList.map((code: any) =>
+                                code.intended_for !== "global" ? (
+                                  <Button
+                                    key={code._id}
+                                    variant="secondary"
+                                    size="sm"
+                                    onClick={() => handleCopyText(code.body)}
+                                    // onClick={() =>
+                                    //   handleShortCodeInsertion(code.body)
+                                    // }
                                     className="me-2 mb-2"
                                   >
                                     {code.titre}

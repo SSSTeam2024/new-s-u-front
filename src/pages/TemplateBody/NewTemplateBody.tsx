@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   Button,
   Card,
@@ -16,11 +16,33 @@ import { useAddNewTemplateBodyMutation } from "features/templateBody/templateBod
 import "./body.css";
 import JoditEditor from "jodit-react";
 import { renderAsync } from "docx-preview";
+// import * as docx from "docx-preview";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import { useFetchVirtualServicesQuery } from "features/virtualService/virtualServiceSlice";
 import { useFetchAllUsersQuery } from "features/account/accountSlice";
 import Select from "react-select";
+import copy from "copy-to-clipboard";
+
+function convertToBase64(
+  file: File
+): Promise<{ base64Data: string; extension: string }> {
+  return new Promise((resolve, reject) => {
+    const fileReader = new FileReader();
+    fileReader.onload = () => {
+      const base64String = fileReader.result as string;
+      const [, base64Data] = base64String.split(",");
+      const extension = file.name.split(".").pop() ?? "";
+      resolve({ base64Data, extension });
+    };
+    fileReader.onerror = (error) => {
+      reject(error);
+    };
+    fileReader.readAsDataURL(file);
+  });
+}
+
+export { convertToBase64 };
 
 const NewTemplateBody = () => {
   document.title = "Ajouter un Modèle | ENIGA";
@@ -74,49 +96,48 @@ const NewTemplateBody = () => {
 
   const [withNumber, setWithOrderNumber] = useState<boolean>(false);
 
+  const [documentName, setDocumemntName] = useState<string>('')
+
   // const handleFileUpload = async (event: any) => {
   //   const file = event.target.files[0];
   //   if (file) {
   //     const reader = new FileReader();
   //     reader.onload = async (e: any) => {
   //       const arrayBuffer = e.target.result;
+
   //       if (previewContainer.current) {
-  //         previewContainer.current.innerHTML = ""; // Clear existing content
+  //         previewContainer.current.innerHTML = "";
+
   //         await renderAsync(arrayBuffer, previewContainer.current);
+
+  //         const updatedHTML = await convertImagesToBase64(
+  //           previewContainer.current.innerHTML
+  //         );
+  //         previewContainer.current.innerHTML = updatedHTML;
+
+  //         setIsDocumentLoaded(true);
   //       }
   //     };
   //     reader.readAsArrayBuffer(file);
   //   }
   //   previewContainer.current.contentEditable = true;
-  //   setIsDocumentLoaded(true);
   // };
-
-  /////////////////////////////////////////////////
 
   const handleFileUpload = async (event: any) => {
     const file = event.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = async (e: any) => {
-        const arrayBuffer = e.target.result;
-
-        if (previewContainer.current) {
-          previewContainer.current.innerHTML = "";
-
-          await renderAsync(arrayBuffer, previewContainer.current);
-
-          const updatedHTML = await convertImagesToBase64(
-            previewContainer.current.innerHTML
-          );
-          previewContainer.current.innerHTML = updatedHTML;
-
-          setIsDocumentLoaded(true);
-        }
-      };
-      reader.readAsArrayBuffer(file);
+      const { base64Data, extension } = await convertToBase64(file);
+      const [file_name, ext] = file.name.split('.');
+      setTemplateBody((prevState) => ({
+        ...prevState,
+        fileBase64: base64Data,
+        fileExtension: extension,
+        fileName: file_name
+      }));
+      setDocumemntName(file_name)
     }
-    previewContainer.current.contentEditable = true;
   };
+
 
   const convertImagesToBase64 = async (html: string): Promise<string> => {
     const parser = new DOMParser();
@@ -296,7 +317,9 @@ const NewTemplateBody = () => {
   const initialTemplateBody = {
     _id: "",
     title: "",
-    body: "",
+    fileBase64: "",
+    fileExtension: "",
+    fileName: "",
     langue: "",
     intended_for: "",
     has_code: "0",
@@ -308,7 +331,7 @@ const NewTemplateBody = () => {
   const [selectedLangue, setSelectedLangue] = useState("");
   const [selectedIntendedFor, setSelectedIntendedFor] = useState("");
 
-  const { title, body, langue, intended_for, has_code, has_number } =
+  const { title, fileBase64, fileExtension, langue, intended_for, has_code, has_number } =
     templateBody;
 
   const globalShortCodesAr = shortCodeList.filter(
@@ -317,6 +340,8 @@ const NewTemplateBody = () => {
   const globalShortCodesFr = shortCodeList.filter(
     (code) => code.intended_for === "global" && code.langue === "french"
   );
+
+  const paramsShortCodes = shortCodeList.filter((code) => code.intended_for === 'params');
 
   // Filter non-global shortcodes based on selected language and intended for
   const filteredShortCodeList = shortCodeList
@@ -354,106 +379,15 @@ const NewTemplateBody = () => {
     setSelectedLangue(e.target.value);
   };
 
-  // const onChangePage = (
-  //   e: React.ChangeEvent<HTMLSelectElement>,
-  //   index: number
-  // ) => {
-  //   console.log(e.target.value);
-  //   console.log(index);
-
-  //   let servicesRef = [...templateBody.services];
-  //   let page: any = servicesRef[index].pages.filter(
-  //     (p: any) => p.id === e.target.value
-  //   );
-
-  //   console.log(page);
-
-  //   servicesRef[index].pageData.id = page[0]?.id!;
-  //   servicesRef[index].pageData.pageName = page[0]?.name!;
-
-  //   console.log(servicesRef[index]);
-
-  //   setTemplateBody((prevState) => ({
-  //     ...prevState,
-  //     services: servicesRef,
-  //   }));
-  // };
-
-  // const onChangeAdmin = (
-  //   e: React.ChangeEvent<HTMLSelectElement>,
-  //   index: number
-  // ) => {
-  //   console.log(e.target.value);
-  //   console.log(index);
-
-  //   let servicesRef = [...templateBody.services];
-  //   let admin = admins.filter((a) => a._id === e.target.value);
-
-  //   servicesRef[index].adminData.id = e.target.value;
-  //   servicesRef[index].adminData.login = admin[0].login;
-
-  //   let permissions = admin[0].permissions.filter(
-  //     (p: any) => p.documentEdition !== "no"
-  //   );
-
-  //   servicesRef[index].pages = permissions.map((p: any) => {
-  //     return { id: p._id, p_name: p.name };
-  //   });
-
-  //   console.log(servicesRef[index].pages);
-
-  //   setTemplateBody((prevState) => ({
-  //     ...prevState,
-  //     services: servicesRef,
-  //   }));
-  // };
 
   const onChangeService = (e: React.ChangeEvent<HTMLSelectElement>) => {
     console.log(e.target.value);
-
-    // let servicesRef = [...templateBody.services];
-    // let service = virtualServices.filter((s) => s._id === e.target.value);
-
-    // servicesRef[index].serviceData.id = e.target.value;
-    // servicesRef[index].serviceData.title = service[0].title;
-
-    // let adminsPerService: any = admins.filter(
-    //   (a) => a.service._id === e.target.value
-    // );
-    // servicesRef[index].admins = adminsPerService;
-    // servicesRef[index].pages = [];
 
     setTemplateBody((prevState) => ({
       ...prevState,
       services: e.target.value,
     }));
   };
-
-  // const addNewLine = () => {
-  //   let servicesRef = [...templateBody.services];
-  //   servicesRef.push({
-  //     serviceData: { id: "", title: "" },
-  //     adminData: { id: "", login: "" },
-  //     pageData: { id: "", pageName: "" },
-  //     admins: [],
-  //     pages: [],
-  //   });
-  //   setTemplateBody((prevState) => ({
-  //     ...prevState,
-  //     services: servicesRef,
-  //   }));
-  // };
-
-  // const removeLine = (index: number) => {
-  //   let servicesRef = [...templateBody.services];
-
-  //   servicesRef.splice(index, 1);
-
-  //   setTemplateBody((prevState) => ({
-  //     ...prevState,
-  //     services: servicesRef,
-  //   }));
-  // };
 
   const onChangeIntendedFor = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setTemplateBody((prevState) => ({
@@ -477,74 +411,6 @@ const NewTemplateBody = () => {
     }));
   };
 
-  // const handleBodyChange = (event:any, editor:any) => {
-  //   const data = editor.getData();
-
-  //   const tableMatches = data.match(/<table>/gi) || [];
-  //   const numberOfTables = tableMatches.length;
-
-  //   setTemplateBody((prevState) => ({
-  //     ...prevState,
-  //     body: data,
-  //     isArray: numberOfTables > 0 ? "1" : "0",
-  //     arraysNumber: numberOfTables.toString(),
-  //   }));
-  // };
-
-  const config = {
-    readonly: false,
-    height: 652,
-    width: 595,
-    toolbarAdaptive: false,
-    toolbarSticky: false,
-    buttons: [
-      "source",
-      "|",
-      "bold",
-      "italic",
-      "underline",
-      "strikethrough",
-      "|",
-      "superscript",
-      "subscript",
-      "|",
-      "ul",
-      "ol",
-      "|",
-      "outdent",
-      "indent",
-      "|",
-      "font",
-      "fontsize",
-      "brush",
-      "paragraph",
-      "|",
-      "table",
-      "link",
-      "|",
-      "align",
-      "|",
-      "undo",
-      "redo",
-      "|",
-      "hr",
-      "eraser",
-      "fullsize",
-    ],
-    controls: {
-      font: {
-        list: {
-          Arial: "Arial, Helvetica, sans-serif",
-          "Times New Roman": "Times New Roman, serif",
-          "Courier New": "Courier New, Courier, monospace",
-          Georgia: "Georgia, serif",
-          Tahoma: "Tahoma, Geneva, sans-serif",
-          Verdana: "Verdana, Geneva, sans-serif",
-        },
-      },
-    },
-  };
-
   const handleBodyChange = (newContent: any) => {
     const tableMatches = newContent.match(/<table>/gi) || [];
     const numberOfTables = tableMatches.length;
@@ -558,8 +424,8 @@ const NewTemplateBody = () => {
   };
 
   const handleFormSubmit =
-    async (/* e: React.FormEvent<HTMLFormElement> */) => {
-      // e.preventDefault();
+    async () => {
+
       try {
         console.log(templateBody);
         await addNewTemplateBody(templateBody).unwrap();
@@ -577,9 +443,7 @@ const NewTemplateBody = () => {
           title: "Erreur",
           text: "Une erreur est survenue lors de la création du corps du modèle.",
         });
-      } //finally {
-      //   setTemplateBody(initialTemplateBody);
-      // }
+      }
     };
 
   const handleNextStep = () => {
@@ -587,24 +451,22 @@ const NewTemplateBody = () => {
   };
 
   const handlePreviousStep = () => {
-    if (body.trim()) {
-      Swal.fire({
-        title: "Êtes-vous sûr ?",
-        text: "Le texte écrit dans le corps sera perdu si vous continuez !",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Oui, continuer",
-        cancelButtonText: "Non, rester ici",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          setStep((prevStep) => prevStep - 1);
-        }
-      });
-    } else {
-      setStep((prevStep) => prevStep - 1);
-    }
+
+    Swal.fire({
+      title: "Êtes-vous sûr ?",
+      text: "Le texte écrit dans le corps sera perdu si vous continuez !",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Oui, continuer",
+      cancelButtonText: "Non, rester ici",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        setStep((prevStep) => prevStep - 1);
+      }
+    });
+
   };
 
   const handleKeyDown = (event: any, editor: any) => {
@@ -618,38 +480,58 @@ const NewTemplateBody = () => {
   };
   const editor = useRef(null);
 
-  // const config = {
-  //   readonly: false, // Allow editing
-  //   height: 842, // Approximate A4 height in pixels
-  //   width: 595,  // Approximate A4 width in pixels
-  //   toolbarAdaptive: false, // Ensures the toolbar shows all items
-  //   toolbarSticky: false, // Keeps the toolbar at the top
-  //   buttons: [
-  //     'source', '|',
-  //     'bold', 'italic', 'underline', 'strikethrough', '|',
-  //     'superscript', 'subscript', '|',
-  //     'ul', 'ol', '|',
-  //     'outdent', 'indent', '|',
-  //     'font', 'fontsize', 'brush', 'paragraph', '|',
-  //     'table', 'link', '|',
-  //     'align', '|',
-  //     'undo', 'redo', '|',
-  //     'hr', 'eraser', 'fullsize'
-  //   ]
-  // };
+
+
+  const handleCopyText = (titre: string) => {
+    console.log(titre)
+    copyToClipboard(titre);
+  };
+
+  const copyToClipboard = (titre: string) => {
+    if (titre === 'qr_code') {
+      copy('{' + titre + '}\n{link}');
+    } else {
+      copy('{' + titre + '}');
+    }
+    alert('Code court copié!');
+  };
 
   return (
     <Container fluid className="page-content">
       <Row>
         <Col lg={12}>
           <Card>
-            <Card.Header className="d-flex align-items-center">
-              <div className="flex-shrink-0 me-3 avatar-sm">
-                <div className="avatar-title rounded-circle bg-light text-primary fs-20">
-                  <i className="bi bi-person-lines-fill"></i>
+            <Card.Header className="d-flex justify-content-between">
+              <div className="d-flex align-items-center">
+                <div className="flex-shrink-0 me-3 avatar-sm">
+                  <div className="avatar-title rounded-circle bg-light text-primary fs-20">
+                    <i className="bi bi-person-lines-fill"></i>
+                  </div>
                 </div>
+                <h5 className="card-title mb-0">Nouveau Modèle</h5>
               </div>
-              <h5 className="card-title mb-0">Nouveau Modèle</h5>
+
+              {step === 2 && (
+                <Button
+                  variant="success"
+                  disabled={isLoading || documentName === ''}
+                  onClick={handleFormSubmit}
+                >
+                  {isLoading ? (
+                    <Spinner as="span" animation="border" size="sm" />
+                  ) : (
+                    <div
+                      style={{ display: "flex", alignItems: "center" }}
+                    >
+                      <i
+                        className="bi bi-file-earmark-plus fs-20"
+                        style={{ marginRight: "3px" }}
+                      ></i>
+                      Générer modèle
+                    </div>
+                  )}
+                </Button>
+              )}
             </Card.Header>
 
             <Card.Body>
@@ -822,23 +704,7 @@ const NewTemplateBody = () => {
                   <>
                     <Row className="mt-4">
                       <Col lg={3}>
-                        {/* <Form.Label>Corps</Form.Label> */}
 
-                        {/* <label
-                          htmlFor="docInput"
-                          className="m-2"
-                          data-bs-toggle="tooltip"
-                          data-bs-placement="right"
-                          title="Choisir un fichier .docx"
-                        >
-                          <span className="avatar-xs d-inline-block">
-                            <span
-                              className="avatar-title bg-light border rounded-circle text-muted cursor-pointer"
-                            >
-                              <i className="ri-article-line fs-24"></i>
-                            </span>
-                          </span>
-                        </label> */}
                         <input
                           className="d-none"
                           type="file"
@@ -864,98 +730,33 @@ const NewTemplateBody = () => {
                             ></i>
                             Ajouter un modèle Word
                           </div>
+                          <span>{documentName}</span>
                         </label>
 
                       </Col>
-                      <Col lg={5} style={{ textAlign: "end" }}>
-                        <Button
-                          variant="warning"
-                          onClick={handleSaveEdited}
-                          disabled={
-                            canSaveTemplate === true ||
-                            isDocumentLoaded === false
-                          }
-                          style={{ marginRight: "5px" }}
-                        >
-                          <div
-                            style={{ display: "flex", alignItems: "center" }}
-                          >
-                            <i
-                              className="bi bi-cloud-check fs-20"
-                              style={{ marginRight: "3px" }}
-                            ></i>
-                            Enregistrer les modifications
-                          </div>
-                        </Button>
-                        <Button
-                          variant="success"
-                          // type="submit"
-                          disabled={isLoading || canSaveTemplate === false}
-                          onClick={handleFormSubmit}
-                        >
-                          {isLoading ? (
-                            <Spinner as="span" animation="border" size="sm" />
-                          ) : (
-                            <div
-                              style={{ display: "flex", alignItems: "center" }}
-                            >
-                              <i
-                                className="bi bi-file-earmark-plus fs-20"
-                                style={{ marginRight: "3px" }}
-                              ></i>
-                              Générer modèle
-                            </div>
-                          )}
-                        </Button>
-                        <Col lg={4}></Col>
-                        {/* <div className="center">
-                          <JoditEditor
-                            ref={editor}
-                            value={body}
-                            config={config}
-                            onBlur={(newContent) =>
-                              handleBodyChange(newContent)
-                            }
-                          />
-                        </div> */}
+                      <Col lg={5} style={{ textAlign: "start" }}>
+
+                      </Col>
+                      <Col lg={4} style={{ borderRadius: '5px', border: '1px solid #e1e1e1', padding: '10px', background: '#ffe0a880', fontWeight: '400', textAlign: "start" }}>
+                        Vérifier que votre document word est bien rempli avec les codes courts necessaires.
                       </Col>
                     </Row>
-                    <Row className="m-3">
-                      <div className="d-flex align-items-center gap-2">
-                        <button type="button" className="btn btn-outline-primary btn-sm" onClick={() => document.execCommand('bold')}>
-                          <i className="bi bi-type-bold"></i> Bold
-                        </button>
-                        <button type="button" className="btn btn-outline-primary btn-sm" onClick={() => document.execCommand('italic')}>
-                          <i className="bi bi-type-italic"></i> Italic
-                        </button>
-                        <select
-                          className="form-select form-select-sm w-auto"
-                          onChange={(e) => document.execCommand('fontSize', false, e.target.value)}
-                        >
-                          <option value="3">Normal</option>
-                          <option value="4">Medium</option>
-                          <option value="5">Large</option>
-                          <option value="6">Very Large</option>
-                        </select>
-                      </div>
-                    </Row>
+                    {selectedLangue === 'arabic' && (
+                      <Row style={{ marginTop: '10px' }}>
+                        <Col lg={3}></Col>
+                        <Col lg={5}></Col>
+                        <Col lg={4} style={{ borderRadius: '5px', border: '1px solid #e1e1e1', padding: '10px', background: 'rgb(254 185 255 / 50%)', fontWeight: '400', textAlign: "start" }}>
+                          Assurez que vous insérez les parenthèses comme des codes courts pour les documents en arabe.
+                        </Col>
+                      </Row>
+                    )}
 
-
-                    <Row>
-                      <Col lg={8}>
-                        <div
-                          ref={previewContainer}
-                          contentEditable={true}
-                          style={{
-                            border: "1px solid #ccc",
-                            padding: "10px",
-                            marginTop: "20px",
-                            minHeight: "300px",
-                          }}
-                          onMouseUp={captureCursorPosition}
-                        ></div>
-                      </Col>
-                      <Col lg={4}>
+                    <Row className="mb-3"
+                      style={{
+                        marginLeft: "5%",
+                        marginTop: "20px",
+                      }}>
+                      <Col lg={12}>
                         <div
                           className="mb-3"
                           style={{
@@ -965,37 +766,38 @@ const NewTemplateBody = () => {
                         >
                           <Card>
                             <Card.Body className="d-flex">
-                              {
-                                withQrCode === false ? (<Button
+                              {paramsShortCodes.map((code: any) =>
+                                <Button
+                                  key={code._id}
                                   variant="info"
+                                  onClick={() => handleCopyText(code.body)}
                                   size="sm"
-                                  onClick={handleQrCodeInsertion}
                                   className="me-2 mb-2"
-                                >Insérer un code QR
-                                </Button>) : (<Button
-                                  variant="danger"
-                                  size="sm"
-                                  onClick={removeQrContainer}
-                                  className="me-2 mb-2"
-                                >Supprimez le code QR
-                                </Button>)
-                              }
+                                >
+                                  {code.titre}
+                                </Button>
 
-                              {
-                                withNumber === false ? (<Button
-                                  variant="info"
-                                  size="sm"
-                                  onClick={handleOrderNumberInsertion}
-                                  className="me-2 mb-2"
-                                >Insérer un numéro d'ordre
-                                </Button>) : (<Button
-                                  variant="danger"
-                                  size="sm"
-                                  onClick={removeOrderNumber}
-                                  className="me-2 mb-2"
-                                >Supprimez le numéro d'ordre
-                                </Button>)
-                              }
+                              )}
+                              {selectedLangue === 'arabic' && (
+                                <>
+                                  <Button
+                                    variant="info"
+                                    onClick={() => handleCopyText('closed_parenthese')}
+                                    size="sm"
+                                    className="me-2 mb-2"
+                                  >
+                                    {'('}
+                                  </Button>
+                                  <Button
+                                    variant="info"
+                                    onClick={() => handleCopyText('open_parenthese')}
+                                    size="sm"
+                                    className="me-2 mb-2"
+                                  >
+                                    {')'}
+                                  </Button></>
+                              )}
+
                             </Card.Body>
                           </Card>
                           <Card>
@@ -1008,10 +810,11 @@ const NewTemplateBody = () => {
                                   <Button
                                     key={code._id}
                                     variant="secondary"
+                                    onClick={() => handleCopyText(code.body)}
                                     size="sm"
-                                    onClick={() =>
-                                      handleShortCodeInsertion(code.body)
-                                    }
+                                    // onClick={() =>
+                                    //   handleShortCodeInsertion(code.body)
+                                    // }
                                     className="me-2 mb-2"
                                   >
                                     {code.titre}
@@ -1056,9 +859,10 @@ const NewTemplateBody = () => {
                                     key={code._id}
                                     variant="secondary"
                                     size="sm"
-                                    onClick={() =>
-                                      handleShortCodeInsertion(code.body)
-                                    }
+                                    onClick={() => handleCopyText(code.body)}
+                                    // onClick={() =>
+                                    //   handleShortCodeInsertion(code.body)
+                                    // }
                                     className="me-2 mb-2"
                                   >
                                     {code.titre}

@@ -246,6 +246,7 @@ import ModifierCourrierEntrant from "pages/CourriersEntrants/ModifierCourrierEnt
 import Intervenants from "pages/Intervenants";
 import AjouterIntervenant from "pages/Intervenants/AjouterIntervenant";
 import ModifierIntervenant from "pages/Intervenants/ModifierIntervenant";
+import DocxPreviewer from "pages/TemplateBody/DocxPreviewer";
 
 const authProtectedRoutes = [
   { path: "/dashboard", component: <Dashboard /> },
@@ -1202,6 +1203,7 @@ const publicRoutes = [
   { path: "/auth-404", component: <Error404 /> },
   { path: "/auth-500", component: <Error500 /> },
   { path: "/coming-soon", component: <ComingSoon /> },
+  { path: "/doc", component: <DocxPreviewer /> },
 ];
 
 export { authProtectedRoutes, publicRoutes };

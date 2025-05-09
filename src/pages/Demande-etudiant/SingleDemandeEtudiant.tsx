@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { Button, Card, Col, Container, Row } from "react-bootstrap";
+import { Button, Card, Col, Container, Row, Spinner } from "react-bootstrap";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Breadcrumb from "Common/BreadCrumb";
 import { jsPDF } from "jspdf";
@@ -8,36 +8,11 @@ import html2canvas from "html2canvas";
 // Import images
 import img4 from "assets/images/small/img-4.jpg";
 import student from "assets/images/etudiant.png";
-import file from "assets/images/demande.png";
-import createPDFHeader from "Common/HeaderPDF"; // Corrected import
-import FooterPDF from "Common/FooterPDF";
-import TitlePDF from "Common/TitlePDF";
-import BodyPDF from "Common/BodyPDF";
-import SignaturePDF from "Common/SignaturePDF";
-import { getTitleText } from "Common/TitlePDF";
+import file from "assets/images/demande.png"
 import { useFetchVaribaleGlobaleQuery } from "features/variableGlobale/variableGlobaleSlice";
-import ArFooterPDF from "Common/ArFooterPDF";
-import ArSignaturePDF from "Common/ArSignaturePDF";
 
-const styles = {
-  body: {
-    backgroundColor: "#ffffff",
-    fontFamily: "Source Sans",
-    fontSize: 12,
-    lineHeight: 1.4,
-    paddingTop: 32,
-    paddingBottom: 16,
-    paddingHorizontal: 32,
-    height: "100vh",
-  },
-  logo: {
-    width: 100,
-    height: 50,
-    resizeMode: "contain",
-    alignSelf: "center",
-    marginTop: 10,
-  },
-};
+import { useHandleDemandeEtudiantMutation } from "features/demandeEtudiant/demandeEtudiantSlice";
+
 
 const SingleDemandeEtudiant = (props: any) => {
   document.title = "Demande Etudiant | ENIGA";
@@ -58,6 +33,22 @@ const SingleDemandeEtudiant = (props: any) => {
     formattedDate,
     departement,
   } = props;
+
+  const [updatedDemand, setUpdatedDemand] = useState<any>(null);
+
+  const [updateDemande, { isLoading, isSuccess }] = useHandleDemandeEtudiantMutation();
+
+  const generateDocumentAndUpdateDemand = async () => {
+    console.log(state.state!)
+    const result = await updateDemande({
+      demandId: state.state._id,
+      modelName: state.state?.piece_demande?.doc!,
+      modelLangage: state.state?.piece_demande?.langue!
+    }).unwrap();
+
+    console.log(result)
+    setUpdatedDemand(result);
+  }
 
   const generatePDF = async () => {
     try {
@@ -91,6 +82,19 @@ const SingleDemandeEtudiant = (props: any) => {
     } finally {
       setIsGenerating(false);
     }
+  };
+
+  const downloadFile = (url: string) => {
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = state.state.piece_demande.title + '-' + state.state.studentId.nom_fr + '_' + state.state.studentId.prenom_fr + '.pdf';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const openFileInNewWindow = (url: string) => {
+    window.open(url, "_blank");
   };
 
   return (
@@ -224,21 +228,62 @@ const SingleDemandeEtudiant = (props: any) => {
                 />
               </Card>
             </Col>
-            <Col xxl={6} lg={6}>
+            {/* <Col xxl={6} lg={6}>
               <Card className="categrory-widgets overflow-hidden">
                 <div className="card-header d-flex align-items-center">
                   <h5 className="card-title flex-grow-1 mb-0">
                     Détails de la demande
                   </h5>
                   <div className="flex-shrink-0">
-                    <Link
-                      to="/demandes-etudiant/generer-demande-etudiant"
-                      state={state.state}
-                      className="btn btn-danger btn-label m-1"
-                    >
-                      <i className="bi bi-file-earmark-pdf label-icon align-middle fs-16 me-2"></i>
-                      {state.state.status === 'traité' && state.state.generated_doc !== null ? (<>Visualiser</>) : (<>Générer</>)}
-                    </Link>
+                    {state.state.status === 'traité' && (
+                      <Button
+                        className="btn btn-success btn-label m-1"
+                        onClick={() => downloadFile(`${process.env.REACT_APP_API_URL}/files/generated_docs/pdf/student_pdf/${state.state.generated_doc}`)}
+                      >
+                        <i className="bi bi-file-earmark-pdf label-icon align-middle fs-16 me-2"></i>
+                        Visualiser
+                      </Button>
+                    )}
+
+
+                    {isSuccess && (
+                      <Button
+                        className="btn btn-success btn-label m-2"
+                        // onClick={() => downloadFile(`${process.env.REACT_APP_API_URL}/files/generated_docs/pdf/student_pdf/${updatedDemand.generated_doc}`)}
+                        onClick={() =>
+                          openFileInNewWindow(`${process.env.REACT_APP_API_URL}/files/generated_docs/pdf/student_pdf/${updatedDemand.generated_doc}`)
+                        }
+                      >
+                        <i className="bi bi-file-earmark-pdf label-icon align-middle fs-16 me-2"></i>
+                        Visualiser
+                      </Button>
+                    )}
+
+                    {
+                      state.state.status !== 'traité' && updatedDemand === null && (
+                        <Button
+                          variant="danger"
+                          className="btn btn-danger btn-label m-2"
+                          disabled={isLoading}
+                          onClick={generateDocumentAndUpdateDemand}
+                        >
+                          {isLoading ? (
+                            <Spinner as="span" animation="border" size="sm" />
+                          ) : (
+                            <div
+                              style={{ display: "flex", alignItems: "center" }}
+                            >
+                              <i
+                                className="bi bi-file-earmark-plus fs-20"
+                                style={{ marginRight: "3px" }}
+                              ></i>
+                              Générer
+                            </div>
+                          )}
+                        </Button>
+                      )
+                    }
+
                     <Button type="button" className="btn btn-success btn-label">
                       <i className="bi bi-postcard label-icon align-middle fs-16 me-2"></i>
                       Notifier l'étudiant
@@ -296,7 +341,113 @@ const SingleDemandeEtudiant = (props: any) => {
                   className="img-fluid category-img object-fit-cover"
                 />
               </Card>
+            </Col> */}
+            <Col xxl={6} lg={6}>
+              <Card className="categrory-widgets overflow-hidden">
+                <div className="card-header d-flex align-items-center">
+                  <h5 className="card-title flex-grow-1 mb-0">
+                    Détails de la demande
+                  </h5>
+                  <div className="flex-shrink-0">
+
+                    {/* Visualiser Button: shows if either generated_doc exists */}
+                    {(state.state?.generated_doc || updatedDemand?.generated_doc) && (
+                      <Button
+                        className="btn btn-success btn-label m-2"
+                        onClick={() => {
+                          const docName = updatedDemand?.generated_doc || state.state?.generated_doc;
+                          const fileUrl = `${process.env.REACT_APP_API_URL}/files/generated_docs/pdf/student_pdf/${docName}`;
+                          window.open(fileUrl, '_blank', 'noopener,noreferrer');
+                        }}
+                      >
+                        <i className="bi bi-file-earmark-pdf label-icon align-middle fs-16 me-2"></i>
+                        Visualiser
+                      </Button>
+                    )}
+
+                    {/* Generate Button: only shows if status !== 'traité' and updatedDemand is null */}
+                    {state.state.status !== 'traité' && updatedDemand === null && (
+                      <Button
+                        variant="danger"
+                        className="btn btn-danger btn-label m-2"
+                        disabled={isLoading}
+                        onClick={generateDocumentAndUpdateDemand}
+                      >
+                        {isLoading ? (
+                          <Spinner as="span" animation="border" size="sm" />
+                        ) : (
+                          <div style={{ display: "flex", alignItems: "center" }}>
+                            <i
+                              className="bi bi-file-earmark-plus fs-20"
+                              style={{ marginRight: "3px" }}
+                            ></i>
+                            Générer
+                          </div>
+                        )}
+                      </Button>
+                    )}
+
+                    {/* Notifier Button */}
+                    <Button type="button" className="btn btn-success btn-label">
+                      <i className="bi bi-postcard label-icon align-middle fs-16 me-2"></i>
+                      Notifier l'étudiant
+                    </Button>
+
+                  </div>
+                </div>
+
+                <div className="card-body">
+                  <div className="text-center">
+                    <i className="bi bi-card-list fs-1 text-muted"></i>
+                  </div>
+                  <div className="table-responsive">
+                    <table className="table table-sm table-borderless align-middle description-table mb-0">
+                      <tbody>
+                        <tr>
+                          <td className="fs-5">Pièce demandée:</td>
+                          <td>
+                            <span className="mb-1 fs-5">
+                              {state.state?.piece_demande?.title!}
+                            </span>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="fs-5">Description:</td>
+                          <td>
+                            <span className="mb-1 fs-5">
+                              {state.state?.description!}
+                            </span>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="fs-5">Status:</td>
+                          <td>
+                            <span className="mb-1 fs-5">
+                              {state.state?.status!}
+                            </span>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="fs-5">Date d'envoi:</td>
+                          <td>
+                            <span className="mb-1 fs-5">
+                              {new Date(state.state?.createdAt!).toLocaleDateString("fr-FR")}
+                            </span>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <img
+                  src={file}
+                  alt=""
+                  className="img-fluid category-img object-fit-cover"
+                />
+              </Card>
             </Col>
+
           </Row>
         </Container>
       </div>

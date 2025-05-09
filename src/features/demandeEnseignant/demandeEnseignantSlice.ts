@@ -65,6 +65,16 @@ export const demandeEnseignantSlice = createApi({
         },
         invalidatesTags: ["Demandes"],
       }),
+      handleDemandeEnseignant: builder.mutation<void, any>({
+        query(demande) {
+          return {
+            url: 'handle-demande-enseignant',
+            method: 'POST',
+            body: demande,
+          };
+        },
+        invalidatesTags: ['Demandes'],
+      }),
     };
   },
 });
@@ -75,4 +85,5 @@ export const {
   useAddDemandeEnseignantMutation,
   useUpdateDemandeEnseignantMutation,
   useDeleteDemandeEnseignantMutation,
+  useHandleDemandeEnseignantMutation
 } = demandeEnseignantSlice;
