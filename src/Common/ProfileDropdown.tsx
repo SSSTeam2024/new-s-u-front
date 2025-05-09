@@ -45,6 +45,7 @@ const ProfileDropdown = () => {
       )
       .then((res: any) => {
         Cookies.remove("astk");
+        localStorage.clear();
         navigate("/login");
       });
   };

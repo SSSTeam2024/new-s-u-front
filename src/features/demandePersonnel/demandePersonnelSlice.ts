@@ -2,7 +2,6 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { GeneratedDoc } from "features/generatedDoc/generatedDocSlice";
 
 export interface Demande {
-
   _id: string,
   personnelId: string,
   generated_doc?: string | GeneratedDoc;
@@ -17,54 +16,80 @@ export interface Demande {
   updatedAt: Date
 }
 export const demandePersonnelSlice = createApi({
-  reducerPath: 'demandePersonnelApi',
+  reducerPath: "demandePersonnelApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: `${process.env.REACT_APP_API_URL}/api/demande-personnel/`, // Adjust endpoint base URL
+    baseUrl: `${process.env.REACT_APP_API_URL}/api/demande-personnel/`,
   }),
-  tagTypes: ['Demandes'],
+  tagTypes: ["Demandes"],
   endpoints(builder) {
     return {
-      fetchDemandePersonnel: builder.query<Demande[], void>({
-        query() {
-          return 'get-all-demande-personnels';
+      fetchDemandePersonnel: builder.query<
+        Demande[],
+        { useNewDb?: string } | void
+      >({
+        query(useNewDb) {
+          return {
+            url: `get-all-demande-personnels`,
+            headers:
+              useNewDb !== undefined
+                ? { "x-use-new-db": useNewDb.useNewDb }
+                : undefined,
+          };
         },
-        providesTags: ['Demandes'],
+        providesTags: ["Demandes"],
       }),
       fetchDemandePersonnelById: builder.query<Demande[], void>({
         query(_id) {
           return `get-demande-personnel/${_id}`;
         },
-        providesTags: ['Demandes'],
+        providesTags: ["Demandes"],
       }),
       addDemandePersonnel: builder.mutation<void, Partial<Demande>>({
         query(demande) {
           return {
-            url: 'add-demande-personnel',
-            method: 'POST',
+            url: "add-demande-personnel",
+            method: "POST",
             body: demande,
           };
         },
-        invalidatesTags: ['Demandes'],
+        invalidatesTags: ["Demandes"],
       }),
       updateDemandePersonnel: builder.mutation<void, Partial<Demande>>({
-        query(demande) {
-
+        query(reclamation) {
+          const { _id, ...rest } = reclamation;
           return {
-            url: `edit-demande-personnel`,
-            method: 'PUT',
-            body: demande,
+            url: `edit-demande-personnel/${_id}`,
+            method: "PUT",
+            body: rest,
           };
         },
-        invalidatesTags: ['Demandes'],
+        invalidatesTags: ["Demandes"],
       }),
       deleteDemandePersonnel: builder.mutation<void, string>({
         query(_id) {
           return {
             url: `delete-demande-personnel/${_id}`,
-            method: 'DELETE',
+            method: "DELETE",
           };
         },
-        invalidatesTags: ['Demandes'],
+        invalidatesTags: ["Demandes"],
+      }),
+      deleteManyDemandePersonnel: builder.mutation<
+        Demande,
+        { ids: string[]; useNewDb?: boolean }
+      >({
+        query({ ids, useNewDb }) {
+          return {
+            url: `delete-many`,
+            method: "DELETE",
+            body: { ids },
+            headers:
+              useNewDb !== undefined
+                ? { "x-use-new-db": String(useNewDb) }
+                : undefined,
+          };
+        },
+        invalidatesTags: ["Demandes"],
       }),
       handleDemandePersonnel: builder.mutation<void, any>({
         query(demande) {
@@ -86,5 +111,8 @@ export const {
   useAddDemandePersonnelMutation,
   useUpdateDemandePersonnelMutation,
   useDeleteDemandePersonnelMutation,
-  useHandleDemandePersonnelMutation
+  useHandleDemandePersonnelMutation,
+  useDeleteManyDemandePersonnelMutation,
 } = demandePersonnelSlice;
+
+

@@ -26,6 +26,7 @@ export interface DemandeTirage {
   added_by?: string;
   couleur: string;
   note: string;
+  createdAt?: string;
 }
 
 export const demandeTirageSlice = createApi({
@@ -36,9 +37,18 @@ export const demandeTirageSlice = createApi({
   tagTypes: ["DemandeTirage"],
   endpoints(builder) {
     return {
-      fetchDemandeTirages: builder.query<DemandeTirage[], number | void>({
-        query() {
-          return `get-all-demandes-tirage`;
+      fetchDemandeTirages: builder.query<
+        DemandeTirage[],
+        { useNewDb?: string } | void
+      >({
+        query(useNewDb) {
+          return {
+            url: `get-all-demandes-tirage`,
+            headers:
+              useNewDb !== undefined
+                ? { "x-use-new-db": useNewDb.useNewDb }
+                : undefined,
+          };
         },
         providesTags: ["DemandeTirage"],
       }),
@@ -52,27 +62,29 @@ export const demandeTirageSlice = createApi({
         },
         invalidatesTags: ["DemandeTirage"],
       }),
-
-      // deleteAbsence: builder.mutation<void, string>({
-      //   query: (_id) => ({
-      //     url: `delete-absence-etudiant/${_id}`,
-      //     method: "DELETE",
-      //   }),
-      //   invalidatesTags: ["AbsenceEtudiant"],
-      // }),
-      // updateAbsence: builder.mutation<void, AbsenceEtudiant>({
-      //   query: ({ _id, ...rest }) => ({
-      //     url: `/update-absence-etudiant/${_id}`,
-      //     method: "PUT",
-      //     body: rest,
-      //   }),
-      //   invalidatesTags: ["AbsenceEtudiant"],
-      // }),
+      deleteManyDemandesTirages: builder.mutation<
+        DemandeTirage,
+        { ids: string[]; useNewDb: boolean }
+      >({
+        query({ ids, useNewDb }) {
+          return {
+            url: `delete-many`,
+            method: "DELETE",
+            body: { ids },
+            headers:
+              useNewDb !== undefined
+                ? { "x-use-new-db": String(useNewDb) }
+                : undefined,
+          };
+        },
+        invalidatesTags: ["DemandeTirage"],
+      }),
     };
   },
 });
 
 export const {
   useAddDemandeTirageMutation,
-  useFetchDemandeTiragesQuery
+  useFetchDemandeTiragesQuery,
+  useDeleteManyDemandesTiragesMutation,
 } = demandeTirageSlice;

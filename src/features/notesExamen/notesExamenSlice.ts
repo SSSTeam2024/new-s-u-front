@@ -2,16 +2,16 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export interface NoteExamen {
   _id?: string;
-  enseignant: string,
-  semestre: string,
-  groupe: string,
-  matiere: string,
-  type_examen: string,
+  enseignant: string;
+  semestre: string;
+  groupe: string;
+  matiere: string;
+  type_examen: string;
   etudiants?: {
-    etudiant: string,
-    note: string
-  }[],
-  completed: string
+    etudiant: string;
+    note: string;
+  }[];
+  completed: string;
 }
 
 export const notesExamenSlice = createApi({
@@ -22,9 +22,18 @@ export const notesExamenSlice = createApi({
   tagTypes: ["NoteExamen"],
   endpoints(builder) {
     return {
-      fetchNotesExamen: builder.query<NoteExamen[], number | void>({
-        query() {
-          return `get-all-notes`;
+      fetchNotesExamen: builder.query<
+        NoteExamen[],
+        { useNewDb?: string } | void
+      >({
+        query(useNewDb) {
+          return {
+            url: `get-all-notes`,
+            headers:
+              useNewDb !== undefined
+                ? { "x-use-new-db": useNewDb.useNewDb }
+                : undefined,
+          };
         },
         providesTags: ["NoteExamen"],
       }),
@@ -38,21 +47,41 @@ export const notesExamenSlice = createApi({
         },
         invalidatesTags: ["NoteExamen"],
       }),
-      updateNoteExamen: builder.mutation<NoteExamen, { id: string; updateData: any }>({
+      updateNoteExamen: builder.mutation<
+        NoteExamen,
+        { id: string; updateData: any }
+      >({
         query: ({ id, updateData }) => ({
           url: `update-note-examen/${id}`,
-          method: 'PATCH',
+          method: "PATCH",
           body: updateData,
         }),
-        invalidatesTags: ['NoteExamen'],
+        invalidatesTags: ["NoteExamen"],
+      }),
+      deleteManyNoteExamen: builder.mutation<
+        NoteExamen,
+        { ids: string[]; useNewDb?: boolean }
+      >({
+        query({ ids, useNewDb }) {
+          return {
+            url: `delete-many`,
+            method: "DELETE",
+            body: { ids },
+            headers:
+              useNewDb !== undefined
+                ? { "x-use-new-db": String(useNewDb) }
+                : undefined,
+          };
+        },
+        invalidatesTags: ["NoteExamen"],
       }),
     };
   },
-  
 });
 
 export const {
-   useAddNewNoteExamenMutation,
-   useFetchNotesExamenQuery,
-   useUpdateNoteExamenMutation
+  useAddNewNoteExamenMutation,
+  useFetchNotesExamenQuery,
+  useUpdateNoteExamenMutation,
+  useDeleteManyNoteExamenMutation,
 } = notesExamenSlice;

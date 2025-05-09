@@ -5,23 +5,23 @@ import Dashboard from "pages/Dashboard";
 // Accounts
 import MyAccount from "pages/Accounts/AccountEtudiant";
 import Settings from "pages/Accounts/Settings";
-import SignUp from "pages/Accounts/AuthenticationInner/SignUp";
-import SignIn from "pages/Accounts/AuthenticationInner/SignIn";
-import PasswordReset from "pages/Accounts/AuthenticationInner/PasswordReset";
-import PasswordCreate from "pages/Accounts/AuthenticationInner/PasswordCreate";
-import SuccessMessage from "pages/Accounts/AuthenticationInner/SuccessMessage";
-import TwoStepVerify from "pages/Accounts/AuthenticationInner/TwoStepVerify";
-import BasicLogout from "pages/Accounts/AuthenticationInner/Logout";
+// import SignUp from "pages/Accounts/AuthenticationInner/SignUp";
+// import SignIn from "pages/Accounts/AuthenticationInner/SignIn";
+// import PasswordReset from "pages/Accounts/AuthenticationInner/PasswordReset";
+// import PasswordCreate from "pages/Accounts/AuthenticationInner/PasswordCreate";
+// import SuccessMessage from "pages/Accounts/AuthenticationInner/SuccessMessage";
+// import TwoStepVerify from "pages/Accounts/AuthenticationInner/TwoStepVerify";
+// import BasicLogout from "pages/Accounts/AuthenticationInner/Logout";
 import Error404 from "pages/Accounts/AuthenticationInner/Error404";
-import Error500 from "pages/Accounts/AuthenticationInner/Error500";
-import ComingSoon from "pages/Accounts/AuthenticationInner/ComingSoon";
+// import Error500 from "pages/Accounts/AuthenticationInner/Error500";
+// import ComingSoon from "pages/Accounts/AuthenticationInner/ComingSoon";
 
 // Authentication
 import Login from "pages/Authentication/Login";
 import Logout from "pages/Authentication/Logout";
-import Register from "pages/Authentication/Register";
-import ForgotPassword from "pages/Authentication/ForgotPassword";
-import UserProfile from "pages/Authentication/user-profile";
+// import Register from "pages/Authentication/Register";
+// import ForgotPassword from "pages/Authentication/ForgotPassword";
+// import UserProfile from "pages/Authentication/user-profile";
 import AjouterEnseignant from "pages/Gestion-enseignant/AjouterEnseignant";
 import AjouterAvisEtudiant from "pages/avis-etudiant/AjouterAvisEtudiant";
 import ListeAvisEtudiant from "pages/avis-etudiant/ListeAvisEtudiant";
@@ -247,6 +247,7 @@ import Intervenants from "pages/Intervenants";
 import AjouterIntervenant from "pages/Intervenants/AjouterIntervenant";
 import ModifierIntervenant from "pages/Intervenants/ModifierIntervenant";
 import DocxPreviewer from "pages/TemplateBody/DocxPreviewer";
+import CloneDatabase from "pages/CloneDatabase";
 
 const authProtectedRoutes = [
   { path: "/dashboard", component: <Dashboard /> },
@@ -884,6 +885,11 @@ const authProtectedRoutes = [
     path: "/bureau-ordre/voie-envoi/gestion-voie-envoi",
     component: <VoieEnvoi />,
   },
+  //! Migration
+  {
+    path: "/migration",
+    component: <CloneDatabase />,
+  },
 
   //! Liste Courriers Entrants
   {
@@ -1167,12 +1173,13 @@ const authProtectedRoutes = [
   // Messagerie
 
   {
-    path: "/messagerie/liste-message", component: <Messages />,
+    path: "/messagerie/liste-message",
+    component: <Messages />,
   },
   {
-    path: "/messagerie/single-message", component: <SingleMessage />,
+    path: "/messagerie/single-message",
+    component: <SingleMessage />,
   },
-
 
   // Accounts
   { path: "/account", component: <MyAccount /> },
@@ -1182,28 +1189,27 @@ const authProtectedRoutes = [
   // eslint-disable-next-line react/display-name
   { path: "/", exact: true, component: <Navigate to="/dashboard" /> },
   { path: "*", component: <Navigate to="/dashboard" /> },
-  { path: "/user-profile", component: <UserProfile /> },
+  // { path: "/user-profile", component: <UserProfile /> },
 ];
 
 const publicRoutes = [
   // Authentication
   { path: "/login", component: <Login /> },
   { path: "/logout", component: <Logout /> },
-  { path: "/register", component: <Register /> },
-  { path: "/forgot-password", component: <ForgotPassword /> },
+  // { path: "/register", component: <Register /> },
+  // { path: "/forgot-password", component: <ForgotPassword /> },
 
   // AuthenticationInner
-  { path: "/auth-signup-basic", component: <SignUp /> },
-  { path: "/auth-signin-basic", component: <SignIn /> },
-  { path: "/auth-pass-reset-basic", component: <PasswordReset /> },
-  { path: "/auth-pass-change-basic", component: <PasswordCreate /> },
-  { path: "/auth-success-msg-basic", component: <SuccessMessage /> },
-  { path: "/auth-twostep-basic", component: <TwoStepVerify /> },
-  { path: "/auth-logout-basic", component: <BasicLogout /> },
+  // { path: "/auth-signup-basic", component: <SignUp /> },
+  // { path: "/auth-signin-basic", component: <SignIn /> },
+  // { path: "/auth-pass-reset-basic", component: <PasswordReset /> },
+  // { path: "/auth-pass-change-basic", component: <PasswordCreate /> },
+  // { path: "/auth-success-msg-basic", component: <SuccessMessage /> },
+  // { path: "/auth-twostep-basic", component: <TwoStepVerify /> },
+  // { path: "/auth-logout-basic", component: <BasicLogout /> },
   { path: "/auth-404", component: <Error404 /> },
-  { path: "/auth-500", component: <Error500 /> },
-  { path: "/coming-soon", component: <ComingSoon /> },
-  { path: "/doc", component: <DocxPreviewer /> },
+  // { path: "/auth-500", component: <Error500 /> },
+  // { path: "/coming-soon", component: <ComingSoon /> },
 ];
 
 export { authProtectedRoutes, publicRoutes };

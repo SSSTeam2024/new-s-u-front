@@ -54,6 +54,9 @@ const CreateAdmin = () => {
     _id: "",
     personnelId: "",
     enseignantId: "",
+    nom_fr: "",
+    prenom_fr: "",
+    email: "",
     login: "",
     service: "",
     password: "",
@@ -113,26 +116,51 @@ const CreateAdmin = () => {
     setSelectedUser(""); // Clear previous selection
   };
 
+  // const onChangeUser = (e: any) => {
+  //   const selectedId = e.target.value;
+  //   setSelectedUser(selectedId);
+
+  //   // Update formData based on the user type
+  //   if (userType === "enseignant") {
+  //     setFormData((prevState) => ({
+  //       ...prevState,
+  //       enseignantId: selectedId,
+  //       personnelId: "", // Clear personnel ID if switching to enseignant
+  //     }));
+  //   } else if (userType === "personnel") {
+  //     setFormData((prevState) => ({
+  //       ...prevState,
+  //       personnelId: selectedId,
+  //       enseignantId: "", // Clear enseignant ID if switching to personnel
+  //     }));
+  //   }
+  // };
   const onChangeUser = (e: any) => {
     const selectedId = e.target.value;
     setSelectedUser(selectedId);
-
-    // Update formData based on the user type
+  
     if (userType === "enseignant") {
+      const selectedEnseignant = enseignants.find((ens) => ens._id === selectedId);
       setFormData((prevState) => ({
         ...prevState,
         enseignantId: selectedId,
-        personnelId: "", // Clear personnel ID if switching to enseignant
+        personnelId: "", // Clear personnelId
+        nom_fr: selectedEnseignant?.nom_fr || "", 
+        prenom_fr: selectedEnseignant?.prenom_fr || "",
+        email: selectedEnseignant?.email || "",
       }));
     } else if (userType === "personnel") {
+      const selectedPersonnel = personnels.find((pers) => pers._id === selectedId);
       setFormData((prevState) => ({
         ...prevState,
         personnelId: selectedId,
-        enseignantId: "", // Clear enseignant ID if switching to personnel
+        enseignantId: "", // Clear enseignantId
+        nom_fr: selectedPersonnel?.nom_fr || "",
+        prenom_fr: selectedPersonnel?.prenom_fr || "",
+        email: selectedPersonnel?.email || "",
       }));
     }
   };
-
   const onChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -152,6 +180,9 @@ const CreateAdmin = () => {
       service: formData.service,
       app_name: formData.app_name,
       status: formData.status,
+      nom_fr: formData.nom_fr,
+      prenom_fr: formData.prenom_fr,
+      email: formData.email, 
     };
     console.log("sub", submissionData);
 

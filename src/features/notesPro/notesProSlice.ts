@@ -20,9 +20,15 @@ export const notesProSlice = createApi({
   tagTypes: ["NotesPro"],
   endpoints(builder) {
     return {
-      fetchNotesPro: builder.query<NotesPro, void>({
-        query() {
-          return "get-all-notes-pro";
+      fetchNotesPro: builder.query<NotesPro[], { useNewDb?: string } | void>({
+        query(useNewDb) {
+          return {
+            url: `get-all-notes-pro`,
+            headers:
+              useNewDb !== undefined
+                ? { "x-use-new-db": useNewDb.useNewDb }
+                : undefined,
+          };
         },
         providesTags: ["NotesPro"],
       }),
@@ -76,6 +82,23 @@ export const notesProSlice = createApi({
         },
         invalidatesTags: ["NotesPro"],
       }),
+      deleteManyNotesPro: builder.mutation<
+        NotesPro,
+        { ids: string[]; useNewDb?: boolean }
+      >({
+        query({ ids, useNewDb }) {
+          return {
+            url: `delete-many`,
+            method: "DELETE",
+            body: { ids },
+            headers:
+              useNewDb !== undefined
+                ? { "x-use-new-db": String(useNewDb) }
+                : undefined,
+          };
+        },
+        invalidatesTags: ["NotesPro"],
+      }),
     };
   },
 });
@@ -87,4 +110,5 @@ export const {
   useUpdateNotesProMutation,
   useDeleteNotesProMutation,
   useGetNotesProByYearMutation,
+  useDeleteManyNotesProMutation,
 } = notesProSlice;

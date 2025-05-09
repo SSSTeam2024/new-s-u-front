@@ -18,14 +18,23 @@ export interface Demande {
 export const demandeEnseignantSlice = createApi({
   reducerPath: "DemandeEnseignantApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: `${process.env.REACT_APP_API_URL}/api/demande-enseignant/`, // Adjust endpoint base URL
+    baseUrl: `${process.env.REACT_APP_API_URL}/api/demande-enseignant/`,
   }),
   tagTypes: ["Demandes"],
   endpoints(builder) {
     return {
-      fetchDemandeEnseignant: builder.query<Demande[], void>({
-        query() {
-          return "get-all-demande-enseignants";
+      fetchDemandeEnseignant: builder.query<
+        Demande[],
+        { useNewDb?: string } | void
+      >({
+        query(useNewDb) {
+          return {
+            url: `get-all-demande-enseignants`,
+            headers:
+              useNewDb !== undefined
+                ? { "x-use-new-db": useNewDb.useNewDb }
+                : undefined,
+          };
         },
         providesTags: ["Demandes"],
       }),
@@ -75,6 +84,23 @@ export const demandeEnseignantSlice = createApi({
         },
         invalidatesTags: ['Demandes'],
       }),
+      deleteManyDemandeEnseignant: builder.mutation<
+        Demande,
+        { ids: string[]; useNewDb?: boolean }
+      >({
+        query({ ids, useNewDb }) {
+          return {
+            url: `delete-many`,
+            method: "DELETE",
+            body: { ids },
+            headers:
+              useNewDb !== undefined
+                ? { "x-use-new-db": String(useNewDb) }
+                : undefined,
+          };
+        },
+        invalidatesTags: ["Demandes"],
+      }),
     };
   },
 });
@@ -85,5 +111,6 @@ export const {
   useAddDemandeEnseignantMutation,
   useUpdateDemandeEnseignantMutation,
   useDeleteDemandeEnseignantMutation,
-  useHandleDemandeEnseignantMutation
+  useHandleDemandeEnseignantMutation,
+  useDeleteManyDemandeEnseignantMutation,
 } = demandeEnseignantSlice;
