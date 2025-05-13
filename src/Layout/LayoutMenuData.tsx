@@ -24,6 +24,7 @@ const Navdata = () => {
   }, [userPermissions, error, isLoading, migrationValue]);
 
   const [isEcommerce, setIsEcommerce] = useState(false);
+  const [isResultat, setIsResultat] = useState(false);
   const [isMigration, setIsMigration] = useState(false);
   const [isOrder, setIsOrder] = useState(false);
   const [isAvisEtudiant, setIsAvisEtudiant] = useState(false);
@@ -94,6 +95,9 @@ const Navdata = () => {
     document.body.classList.remove("twocolumn-panel");
     if (iscurrentState !== "Ecommerce") {
       setIsEcommerce(false);
+    }
+    if (iscurrentState !== "Resultat") {
+      setIsResultat(false);
     }
     if (iscurrentState !== "Migration") {
       setIsMigration(false);
@@ -220,6 +224,7 @@ const Navdata = () => {
     isBureauOrdre,
     isSettings,
     isMigration,
+    isResultat,
   ]);
   let routes = userPermissions
     ? userPermissions.map((permission) => permission.path)
@@ -782,6 +787,14 @@ const Navdata = () => {
         updateIconSidebar(e);
       },
       stateVariables: isNotesExamen,
+    },
+    //! Resultats
+    // Rattrapage
+    {
+      id: "Resultats",
+      label: "Gestion des resultats",
+      link: "/gestion-des-resultats/liste",
+      icon: "bi bi-check-all",
     },
     //Gestion des congés
     {

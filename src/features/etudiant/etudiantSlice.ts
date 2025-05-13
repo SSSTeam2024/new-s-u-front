@@ -272,6 +272,15 @@ export const etudiantSlice = createApi({
         },
         providesTags: ["Etudiant"],
       }),
+      fetchEtudiantByCin: builder.mutation<any, any>({
+        query(cin) {
+          return {
+            url: `/get-etudiant-by-cin/${cin}`,
+            method: "GET",
+          };
+        },
+        invalidatesTags: ["Etudiant"],
+      }),
       updateEtudiant: builder.mutation<void, EtudiantExcel>({
         query: ({ _id, ...rest }) => {
           if (!_id) {
@@ -329,4 +338,5 @@ export const {
   useUpdateGroupeClasseMutation,
   useFetchEtudiantsByIdClasseQuery,
   useFetchEtudiantsByClassIdsQuery,
+  useFetchEtudiantByCinMutation,
 } = etudiantSlice;

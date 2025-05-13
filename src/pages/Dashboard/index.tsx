@@ -5,6 +5,7 @@ import {
   ColorRangeTreemap,
   Groupes,
   MonochromePie,
+  NagetiveLable,
 } from "./DashboardCharts";
 import KeyCards from "./KeyCards";
 import ReclamationCards from "./ReclamationCards";
@@ -18,6 +19,16 @@ const Dashboard = () => {
         <Container fluid>
           <KeyCards />
           <ReclamationCards />
+          <Row>
+            <Card>
+              <Card.Header>
+                <h4 className="card-title mb-0">Résultat</h4>
+              </Card.Header>
+              <Card.Body>
+                <NagetiveLable dataColors='["--tb-success", "--tb-danger", "--tb-warning"]' />
+              </Card.Body>
+            </Card>
+          </Row>
           <Row>
             <Col xl={6}>
               <Card>
