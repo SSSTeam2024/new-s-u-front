@@ -5,6 +5,10 @@ import { useFetchEtudiantsQuery } from "features/etudiant/etudiantSlice";
 import { useFetchEnseignantsQuery } from "features/enseignant/enseignantSlice";
 import { useFetchPersonnelsQuery } from "features/personnel/personnelSlice";
 import { useFetchAbsencePersonnelsQuery } from "features/absencePersonnel/absencePersonnel";
+import {
+  Resultat,
+  useFetchResultatsQuery,
+} from "features/resultats/resultatsSlice";
 
 const RevenueCharts = ({ dataColors, chartData }: any) => {
   var revenueChartColors = getChartColorsArray(dataColors);
@@ -628,6 +632,127 @@ const BasicColumn = ({ dataColors }: any) => {
   );
 };
 
+const NagetiveLable = ({ dataColors }: any) => {
+  const { data = [] } = useFetchResultatsQuery();
+
+  const etudiantsAdmis = data.reduce((acc: any[], resultat: Resultat) => {
+    const admis = resultat.etudiants.filter((et) => et.avis === "Admis");
+    return acc.concat(admis);
+  }, []);
+
+  const etudiantsRefuse = data.reduce((acc: any[], resultat: Resultat) => {
+    const admis = resultat.etudiants.filter((et) => et.avis === "Refuse");
+    return acc.concat(admis);
+  }, []);
+
+  const etudiantsFemeninAdmis = data.reduce((acc: any[], resultat: any) => {
+    const admis = resultat.etudiants.filter(
+      (et: any) =>
+        et.avis === "Admis" &&
+        (et.etudiant.sexe === "Femme/أنثى" || et.etudiant.sexe === "Feminin ")
+    );
+    return acc.concat(admis);
+  }, []);
+  const etudiantsFemeninRefuse = data.reduce((acc: any[], resultat: any) => {
+    const admis = resultat.etudiants.filter(
+      (et: any) =>
+        et.avis === "Refuse" &&
+        (et.etudiant.sexe === "Femme/أنثى" || et.etudiant.sexe === "Feminin ")
+    );
+    return acc.concat(admis);
+  }, []);
+
+  const etudiantsMasculinRefuse = data.reduce(
+    (acc: any[], resultat: Resultat) => {
+      const admis = resultat.etudiants.filter(
+        (et: any) => et.avis === "Refuse" && et.etudiant.sexe === "Masculin "
+      );
+      return acc.concat(admis);
+    },
+    []
+  );
+
+  const etudiantsMasculinAdmis = data.reduce(
+    (acc: any[], resultat: Resultat) => {
+      const admis = resultat.etudiants.filter(
+        (et: any) => et.avis === "Admis" && et.etudiant.sexe === "Masculin "
+      );
+      return acc.concat(admis);
+    },
+    []
+  );
+
+  const totalAdmis = etudiantsAdmis.length;
+  const totalRefuse = etudiantsRefuse.length;
+  const femaleAdmis = etudiantsFemeninAdmis.length;
+  const femaleRefuse = etudiantsFemeninRefuse.length;
+  const maleAdmis = etudiantsMasculinAdmis.length;
+  const maleRefuse = etudiantsMasculinRefuse.length;
+
+  const chartColors = getChartColorsArray(dataColors);
+  const series = [
+    {
+      name: "Admis",
+      data: [totalAdmis, femaleAdmis, maleAdmis],
+    },
+    {
+      name: "Refusé",
+      data: [totalRefuse, femaleRefuse, maleRefuse],
+    },
+  ];
+
+  const options: any = {
+    chart: {
+      type: "bar",
+      height: 350,
+      toolbar: { show: false },
+    },
+    plotOptions: {
+      bar: {
+        horizontal: false,
+        columnWidth: "55%",
+        endingShape: "rounded",
+      },
+    },
+    dataLabels: { enabled: false },
+    stroke: {
+      show: true,
+      width: 2,
+      colors: ["transparent"],
+    },
+    colors: chartColors,
+    xaxis: {
+      categories: ["Total", "Filles", "Garçons"],
+    },
+    yaxis: {
+      title: {
+        text: "Nombre d'étudiants",
+      },
+    },
+    fill: {
+      opacity: 1,
+    },
+    tooltip: {
+      y: {
+        formatter: function (val: any) {
+          return `${val} étudiants`;
+        },
+      },
+    },
+  };
+
+  return (
+    <ReactApexChart
+      dir="ltr"
+      className="apex-charts"
+      series={series}
+      options={options}
+      type="bar"
+      height={350}
+    />
+  );
+};
+
 export {
   RevenueCharts,
   SatisfactionChart,
@@ -636,4 +761,5 @@ export {
   MonochromePie,
   ColorRangeTreemap,
   BasicColumn,
+  NagetiveLable,
 };

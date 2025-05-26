@@ -10,20 +10,21 @@ export interface Message {
     prenom_fr: string;
     email: string
   };
-  receiver: { 
+  receivers: { 
     userId: string;
     userType: "Etudiant" | "Enseignant" | "Personnel" | "User";
     nom_fr: string;
     prenom_fr: string;
-    email: string
-  };
+    email: string;
+    status?: "unread" | "read" | "archived" | "deleted";
+
+  }[];
   subject: string;
   content: string;
   attachments?: string[] | undefined;
   attachmentsBase64Strings: string[];
   attachmentsExtensions: string[];
   status: "sent" | "read" | "archived";
-  receiverStatus:"unread"| "read"| "archived"| "deleted";
   senderStatus: "sent" | "read" | "archived";
   createdAt?: string; 
   parentMessageId?: string

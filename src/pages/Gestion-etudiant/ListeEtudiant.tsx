@@ -1417,14 +1417,14 @@ const ListEtudiants = () => {
                     <Card.Header>
                       <Row className="g-3">
                         <Col lg={3}>
-                          <div className="search-box">
+                          <label className="search-box">
                             <input
                               type="text"
                               className="form-control search"
                               placeholder="Chercher..."
                             />
                             <i className="ri-search-line search-icon"></i>
-                          </div>
+                          </label>
                         </Col>
                         <Col className="col-lg-auto">
                           <select

@@ -349,7 +349,7 @@ const MyAccount = () => {
                     className="rounded-start img-fluid h-80 object-cover"
                     src={
                       etudiant.photo_profil
-                        ? `http://localhost:5000/files/etudiantFiles/PhotoProfil/${etudiant.photo_profil}`
+                        ? `http://localhost:7000/files/etudiantFiles/PhotoProfil/${etudiant.photo_profil}`
                         : userImage
                     }
                     alt="Photo Profile"
