@@ -251,6 +251,14 @@ import CloneDatabase from "pages/CloneDatabase";
 import Results from "pages/Results";
 import DetailsResultat from "pages/Results/DetailsResultat";
 import EditResultat from "pages/Results/EditResultat";
+import StagesPfe from "pages/StagesPfe";
+import DetailsStagePfe from "pages/StagesPfe/DetailsStagePfe";
+import EditStagePfe from "pages/StagesPfe/EditStagePfe";
+import Encadrement from "pages/Encadrement";
+import StagesPro from "pages/StagesPro";
+import EditStagePro from "pages/StagesPro/EditStagePro";
+import AddNewStagePro from "pages/StagesPro/AddNewStagePro";
+import AddNewStagePfe from "pages/StagesPfe/AddNewStagePfe";
 
 const authProtectedRoutes = [
   { path: "/dashboard", component: <Dashboard /> },
@@ -1196,7 +1204,40 @@ const authProtectedRoutes = [
     path: "/gestion-des-resultats/modifier",
     component: <EditResultat />,
   },
-
+  //! Stages PFE
+  {
+    path: "/gestion-des-stages/liste-stages-pfe",
+    component: <StagesPfe />,
+  },
+  {
+    path: "/gestion-des-stages/visualiser-stage-pfe",
+    component: <DetailsStagePfe />,
+  },
+  {
+    path: "/gestion-des-stages/modifier-stage-pfe",
+    component: <EditStagePfe />,
+  },
+  {
+    path: "/gestion-des-stages/encadrement",
+    component: <Encadrement />,
+  },
+  {
+    path: "/gestion-des-stages/ajouter-stage-pfe",
+    component: <AddNewStagePfe />,
+  },
+  //! Stages Pro
+  {
+    path: "/gestion-des-stages/liste-stages-professionnels",
+    component: <StagesPro />,
+  },
+  {
+    path: "/gestion-des-stages/modifier-stage-professionnel",
+    component: <EditStagePro />,
+  },
+  {
+    path: "/gestion-des-stages/ajouter-stage-professionnel",
+    component: <AddNewStagePro />,
+  },
   // Accounts
   { path: "/account", component: <MyAccount /> },
   { path: "/settings", component: <Settings /> },

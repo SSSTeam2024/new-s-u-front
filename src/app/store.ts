@@ -85,6 +85,9 @@ import { pointageSlice } from "features/pointageEnseignant/pointageEnseignantSli
 import { cloneSlice } from "features/cloneDb/cloneDb";
 import { databaseSlice } from "features/databaseNames/databaseSlice";
 import { resultatSlice } from "features/resultats/resultatsSlice";
+import { stagePfeSlice } from "features/stagesPfe/stagesPfeSlice";
+import { societeSlice } from "features/societe/societeSlice";
+import { stageProSlice } from "features/stagesPro/stagesProSlice";
 
 export const store = configureStore({
   reducer: {
@@ -174,9 +177,14 @@ export const store = configureStore({
      [databaseSlice.reducerPath]: databaseSlice.reducer,
      //! Resultats
      [resultatSlice.reducerPath]: resultatSlice.reducer,
+     //! Stage Pfe
+     [stagePfeSlice.reducerPath]: stagePfeSlice.reducer,
+     //! Societe
+     [societeSlice.reducerPath]: societeSlice.reducer,
+     //! Stage Pro
+     [stageProSlice.reducerPath]: stageProSlice.reducer,
     auth: authSlice,
     Layout: LayoutReducer,
-    // ForgetPassword: ForgetPasswordReducer,
     Profile: ProfileReducer,
     Dashboard: DashboardReducer,
   },
@@ -256,7 +264,10 @@ export const store = configureStore({
       pointageSlice.middleware,
       cloneSlice.middleware,
       databaseSlice.middleware,
-      resultatSlice.middleware
+      resultatSlice.middleware,
+      stagePfeSlice.middleware,
+      societeSlice.middleware,
+      stageProSlice.middleware
     ]);
   },
 });
