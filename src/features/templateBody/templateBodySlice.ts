@@ -11,6 +11,7 @@ export interface TemplateBody {
   intended_for: string;
   has_code: string;
   has_number: string;
+  oldFileName?: string;
 }
 export const templateBodySlice = createApi({
   reducerPath: 'templateBody',

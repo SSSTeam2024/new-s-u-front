@@ -52,8 +52,8 @@ const AjouterDemandeEtudiant = () => {
   // Filter students based on selected class
   const filteredEtudiants = selectedClasse
     ? etudiant?.filter(
-        (etudiant) => etudiant?.groupe_classe?._id! === selectedClasse
-      )
+      (etudiant) => etudiant?.groupe_classe?._id! === selectedClasse
+    )
     : etudiant; // Show all students if no class is selected
 
   const [formData, setFormData] = useState<Partial<Demande>>({
@@ -123,7 +123,7 @@ const AjouterDemandeEtudiant = () => {
     e.preventDefault();
 
     try {
-      console.log("formdata",formData)
+      console.log("formdata", formData)
       await addDemandeEtudiant(formData).unwrap();
       notify();
       navigate("/demandes-etudiant/Liste-demandes-etudiant");
@@ -141,7 +141,7 @@ const AjouterDemandeEtudiant = () => {
     Swal.fire({
       position: "center",
       icon: "success",
-      title: "Demande has been created successfully",
+      title: "La demande a été créée avec succès",
       showConfirmButton: false,
       timer: 2000,
     });
@@ -332,7 +332,7 @@ const AjouterDemandeEtudiant = () => {
                         >
                           Annuler
                         </Button>
-                        <Button variant="primary" type="submit">
+                        <Button variant="primary" type="submit" className="m-2">
                           Envoyer
                         </Button>
                       </div>

@@ -133,7 +133,7 @@ const AjouterDemandeEnseignant = () => {
     Swal.fire({
       position: "center",
       icon: "success",
-      title: "Demande has been created successfully",
+      title: "La demande a été créée avec succès",
       showConfirmButton: false,
       timer: 2000,
     });
@@ -293,7 +293,7 @@ const AjouterDemandeEnseignant = () => {
                               id="description"
                               value={formData.description ?? ""}
                               onChange={onChange}
-                              // required
+                            // required
                             />
                           </Form.Group>
                         </Col>
@@ -310,7 +310,7 @@ const AjouterDemandeEnseignant = () => {
                         >
                           Annuler
                         </Button>
-                        <Button variant="primary" type="submit">
+                        <Button variant="primary" type="submit" className="m-2">
                           Envoyer
                         </Button>
                       </div>
