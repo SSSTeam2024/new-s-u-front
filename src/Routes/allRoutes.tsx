@@ -248,6 +248,9 @@ import AjouterIntervenant from "pages/Intervenants/AjouterIntervenant";
 import ModifierIntervenant from "pages/Intervenants/ModifierIntervenant";
 import DocxPreviewer from "pages/TemplateBody/DocxPreviewer";
 import CloneDatabase from "pages/CloneDatabase";
+import Results from "pages/Results";
+import DetailsResultat from "pages/Results/DetailsResultat";
+import EditResultat from "pages/Results/EditResultat";
 
 const authProtectedRoutes = [
   { path: "/dashboard", component: <Dashboard /> },
@@ -1179,6 +1182,19 @@ const authProtectedRoutes = [
   {
     path: "/messagerie/single-message",
     component: <SingleMessage />,
+  },
+  //! Resultats
+  {
+    path: "/gestion-des-resultats/liste",
+    component: <Results />,
+  },
+  {
+    path: "/gestion-des-resultats/details",
+    component: <DetailsResultat />,
+  },
+  {
+    path: "/gestion-des-resultats/modifier",
+    component: <EditResultat />,
   },
 
   // Accounts

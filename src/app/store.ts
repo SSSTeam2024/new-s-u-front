@@ -84,6 +84,7 @@ import { intervenantsSlice } from "features/intervenants/intervenantsSlice";
 import { pointageSlice } from "features/pointageEnseignant/pointageEnseignantSlice";
 import { cloneSlice } from "features/cloneDb/cloneDb";
 import { databaseSlice } from "features/databaseNames/databaseSlice";
+import { resultatSlice } from "features/resultats/resultatsSlice";
 
 export const store = configureStore({
   reducer: {
@@ -171,6 +172,8 @@ export const store = configureStore({
      [cloneSlice.reducerPath]: cloneSlice.reducer,
      //! Create DatabaseName
      [databaseSlice.reducerPath]: databaseSlice.reducer,
+     //! Resultats
+     [resultatSlice.reducerPath]: resultatSlice.reducer,
     auth: authSlice,
     Layout: LayoutReducer,
     // ForgetPassword: ForgetPasswordReducer,
@@ -253,6 +256,7 @@ export const store = configureStore({
       pointageSlice.middleware,
       cloneSlice.middleware,
       databaseSlice.middleware,
+      resultatSlice.middleware
     ]);
   },
 });
