@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Card, Col, Container, Row } from "react-bootstrap";
 import DataTable from "react-data-table-component";
 import Breadcrumb from "Common/BreadCrumb";
@@ -18,7 +18,7 @@ const StagesPro = () => {
 
   const navigate = useNavigate();
 
-  function tog_AjouterCourrierEntrant() {
+  function tog_AjouterStagePro() {
     navigate("/gestion-des-stages/ajouter-stage-professionnel");
   }
 
@@ -56,8 +56,7 @@ const StagesPro = () => {
       name: <span className="font-weight-bold fs-13">Etudiant</span>,
       selector: (row: any) => (
         <span>
-          {row?.etudiant?.prenom_fr!}
-          {row?.etudiant?.nom_fr!}
+          {row?.etudiant?.prenom_fr!} {row?.etudiant?.nom_fr!}
         </span>
       ),
       sortable: true,
@@ -161,6 +160,45 @@ const StagesPro = () => {
     },
   ];
 
+  const [typeStage, setTypeStage] = useState<string>("");
+
+  const handleSelectedTypeStage = (e: any) => {
+    setTypeStage(e.target.value);
+  };
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const getFilteredStagePro = () => {
+    let filteredStagePro = [...data];
+
+    if (searchTerm) {
+      filteredStagePro = filteredStagePro.filter(
+        (stage: any) =>
+          stage?.etudiant
+            ?.prenom_fr!.toLowerCase()
+            .includes(searchTerm.toLowerCase()) ||
+          stage?.etudiant
+            ?.nom_fr!.toLowerCase()
+            .includes(searchTerm.toLowerCase()) ||
+          stage?.etudiant
+            ?.Groupe!.toLowerCase()
+            .includes(searchTerm.toLowerCase()) ||
+          stage?.societe?.nom!.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    if (typeStage && typeStage !== "") {
+      filteredStagePro = filteredStagePro.filter(
+        (stage: any) => stage?.type_stage! === typeStage
+      );
+    }
+
+    return filteredStagePro.reverse();
+  };
+
   return (
     <React.Fragment>
       <div className="page-content">
@@ -170,25 +208,47 @@ const StagesPro = () => {
             pageTitle="Gestion des stages"
           />
           <Card>
-            {/* <Card.Header>
+            <Card.Header>
               <Row>
+                <Col lg={2}>
+                  <label className="search-box">
+                    <input
+                      type="text"
+                      className="form-control search"
+                      placeholder="Rechercher ..."
+                      value={searchTerm}
+                      onChange={handleSearchChange}
+                    />
+                    <i className="ri-search-line search-icon"></i>
+                  </label>
+                </Col>
+                <Col lg={3}>
+                  <select
+                    className="form-select"
+                    onChange={handleSelectedTypeStage}
+                  >
+                    <option value="">Type Stage</option>
+                    <option value="Stage Technicien">Technicien</option>
+                    <option value="Stage Ouvrier">Ouvrier</option>
+                  </select>
+                </Col>
                 <Col className="d-flex justify-content-end">
                   <span
                     className="badge bg-secondary-subtle text-secondary view-item-btn fs-18"
                     style={{ cursor: "pointer" }}
-                    onClick={() => tog_AjouterCourrierEntrant()}
+                    onClick={() => tog_AjouterStagePro()}
                   >
                     <i className="ph ph-plus">Ajouter</i>
                   </span>
                 </Col>
               </Row>
-            </Card.Header> */}
+            </Card.Header>
             <Card.Body>
               <Row>
                 <Col>
                   <DataTable
                     columns={columns}
-                    data={data}
+                    data={getFilteredStagePro()}
                     pagination
                     noDataComponent="Il n'y a aucun enregistrement à afficher"
                   />

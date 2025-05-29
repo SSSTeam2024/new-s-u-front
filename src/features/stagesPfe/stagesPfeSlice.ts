@@ -4,10 +4,10 @@ export interface StagePfeModel {
   _id?: string;
   etudiant: string;
   type_stage: string;
-  binome: string;
+  binome?: string | null;
   encadrant_univ: string;
   encadrant_societe: string;
-  societe: string;
+  societe?: string | null;
   status_stage: string;
   date_debut: string;
   date_fin: string;
@@ -16,8 +16,8 @@ export interface StagePfeModel {
   description: string;
   avis: string;
   note: string;
-  rapporteur: string;
-  chef_jury: string;
+  rapporteur?: string;
+  chef_jury?: string;
   createdAt?: string;
   file_affectation_etudiant_base64?: string;
   file_affectation_etudiant_extension?: string;
@@ -52,6 +52,16 @@ export const stagePfeSlice = createApi({
         },
         providesTags: ["StagePfe"],
       }),
+      addNewPfe: builder.mutation<void, StagePfeModel>({
+              query(payload) {
+                return {
+                  url: "/create-new",
+                  method: "POST",
+                  body: payload,
+                };
+              },
+              invalidatesTags: ["StagePfe"],
+            }),
       updateStagePfe: builder.mutation<void, Partial<StagePfeModel>>({
         query: ({ _id, ...rest }) => ({
           url: `/update-one/${_id}`,
@@ -73,6 +83,7 @@ export const stagePfeSlice = createApi({
 
 export const {
   useDeleteStagePfeMutation,
+  useAddNewPfeMutation,
   useFetchAllStagePfeQuery,
   useUpdateStagePfeMutation,
 } = stagePfeSlice;

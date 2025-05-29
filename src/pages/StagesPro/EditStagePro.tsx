@@ -328,6 +328,11 @@ const EditStagePro = () => {
           </Button>
           <Form onSubmit={handleSubmit}>
             <Card>
+              <div className="p-2 text-center">
+                <h3>
+                  <i>{stageDetails.type_stage}</i>
+                </h3>
+              </div>
               <Card.Header className="bg-secondary-subtle text-dark-emphasis">
                 <span className="fs-20 fw-bold">Information Etudiant(e)</span>
               </Card.Header>
@@ -878,11 +883,11 @@ const EditStagePro = () => {
                       ) && (
                         <>
                           <iframe
-                            src={`${basePath}/propositionSigneFiles/${stageDetails.file_proposition_signe}`}
+                            src={`${basePath}/rapportFiles/${stageDetails.file_rapport}`}
                             style={{
                               border: "none",
-                              width: "100%",
-                              height: "200px",
+                              width: "500px",
+                              height: "290px",
                             }}
                             title="Rapport"
                           />

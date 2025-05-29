@@ -9,10 +9,12 @@ import withRouter from "Common/withRouter";
 import { LoginRequest, useLoginMutation } from "features/account/accountSlice";
 import { setCredentials } from "features/account/authSlice";
 import Cookies from "js-cookie";
+import { useFetchMigrateValueQuery } from "features/cloneDb/cloneDb";
 
 const Login = () => {
   document.title = "Login | ENIGA";
   const [login, { isLoading }] = useLoginMutation();
+  const { data: migrationValue } = useFetchMigrateValueQuery();
   const [formState, setFormState] = React.useState<LoginRequest>({
     login: "",
     password: "",
@@ -30,7 +32,11 @@ const Login = () => {
       showConfirmButton: false,
       timer: 2200,
     });
-    navigate("/dashboard");
+    if (migrationValue === true) {
+      navigate("/dashboard");
+    } else {
+      navigate("/migration");
+    }
   };
 
   const msgError: string = "Wrong Credentials !";

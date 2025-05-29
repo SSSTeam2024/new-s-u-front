@@ -4,10 +4,10 @@ export interface StageProModel {
   _id?: string;
   etudiant: string;
   type_stage: string;
-  binome: string;
-  encadrant_univ: string;
+  binome?: string | null;
+  encadrant_univ: string | null;
   encadrant_societe: string;
-  societe: string;
+  societe?: string | null;
   status_stage: string;
   date_debut: string;
   date_fin: string;
@@ -16,8 +16,8 @@ export interface StageProModel {
   description: string;
   avis: string;
   note: string;
-  rapporteur: string;
-  chef_jury: string;
+  rapporteur?: string;
+  chef_jury?: string;
   createdAt?: string;
   file_affectation_etudiant_base64?: string;
   file_affectation_etudiant_extension?: string;
@@ -52,6 +52,16 @@ export const stageProSlice = createApi({
         },
         providesTags: ["StagePro"],
       }),
+      createNew: builder.mutation<void, StageProModel>({
+                    query(payload) {
+                      return {
+                        url: "/create-new",
+                        method: "POST",
+                        body: payload,
+                      };
+                    },
+                    invalidatesTags: ["StagePro"],
+                  }),
       updateStagePro: builder.mutation<void, Partial<StageProModel>>({
         query: ({ _id, ...rest }) => ({
           url: `/update-one/${_id}`,
@@ -72,6 +82,7 @@ export const stageProSlice = createApi({
 });
 
 export const {
+  useCreateNewMutation,
   useDeleteStageProMutation,
   useFetchAllStageProQuery,
   useUpdateStageProMutation,
