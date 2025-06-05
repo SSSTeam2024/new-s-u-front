@@ -59,7 +59,7 @@ const ListeDemandeEnseignant = () => {
         }
       });
     } catch (error) {
-      console.error("Failed to delete reclamation:", error);
+      console.error("Failed to delete demand:", error);
       MySwal.fire(
         "Error!",
         "There was an error deleting the reclamation.",

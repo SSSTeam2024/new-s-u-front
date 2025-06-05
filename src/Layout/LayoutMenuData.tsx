@@ -50,6 +50,7 @@ const Navdata = () => {
   const [isVariable, setIsVariable] = useState(false);
   const [isNotesExamen, setIsNotesExamen] = useState(false);
   const [isConge, setIsConge] = useState(false);
+  const [isStage, setIsStage] = useState(false);
   const [isDeplacement, setIsDeplacement] = useState(false);
   const [isParcours, setIsParcours] = useState(false);
   const [isNotesProfessionnelles, setIsNotesProfessionnelles] = useState(false);
@@ -98,6 +99,9 @@ const Navdata = () => {
     }
     if (iscurrentState !== "Resultat") {
       setIsResultat(false);
+    }
+    if (iscurrentState !== "Stage") {
+      setIsStage(false);
     }
     if (iscurrentState !== "Migration") {
       setIsMigration(false);
@@ -225,6 +229,7 @@ const Navdata = () => {
     isSettings,
     isMigration,
     isResultat,
+    isStage,
   ]);
   let routes = userPermissions
     ? userPermissions.map((permission) => permission.path)
@@ -789,12 +794,48 @@ const Navdata = () => {
       stateVariables: isNotesExamen,
     },
     //! Resultats
-    // Rattrapage
     {
       id: "Resultats",
       label: "Gestion des resultats",
       link: "/gestion-des-resultats/liste",
       icon: "bi bi-check-all",
+    },
+    //! Gestion des stages
+    {
+      id: "Stage",
+      label: "Gestion des stages",
+      icon: "bi bi-buildings",
+      link: "/#",
+      click: function (e: any) {
+        e.preventDefault();
+        setIsStage(!isStage);
+        setIscurrentState("Stage");
+        updateIconSidebar(e);
+      },
+      stateVariables: isStage,
+      subItems: [
+        {
+          id: "pfe",
+          label: "PFE et Mémoire",
+          link: "/gestion-des-stages/liste-stages-pfe",
+          parentId: "Stage",
+          icon: "bi bi-journal-text",
+        },
+        {
+          id: "encadrement",
+          label: "Encadrement",
+          link: "/gestion-des-stages/encadrement",
+          parentId: "Stage",
+          icon: "bi bi-person-fill-add",
+        },
+        {
+          id: "stage-pro",
+          label: "Stage Professionnel",
+          link: "/gestion-des-stages/liste-stages-professionnels",
+          parentId: "Stage",
+          icon: "bi bi-person-fill-add",
+        },
+      ],
     },
     //Gestion des congés
     {

@@ -38,7 +38,7 @@ const TemplateBodyDetail = () => {
                         </div>
                       </div>
                       <div className="flex-grow-1">
-                        <h5 className="card-title">
+                        <h5 className="card-title  fw-bold">
                           Détails du Corps du Modèle
                         </h5>
                       </div>
@@ -76,7 +76,7 @@ const TemplateBodyDetail = () => {
 
                     <div className="hstack gap-2 justify-content-end">
                       <Button variant="secondary" onClick={() => navigate(-1)}>
-                        Retour
+                        ⬅ Retour
                       </Button>
                     </div>
                   </Card.Body>

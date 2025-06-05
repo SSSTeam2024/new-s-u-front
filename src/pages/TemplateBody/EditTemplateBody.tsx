@@ -71,6 +71,7 @@ const EditTemplateBody = () => {
         fileBase64: "",
         fileExtension: "",
         fileName: "",
+        oldFileName: templateBodyDetails.doc
       });
 
       setSelectedLangue(templateBodyDetails.langue || "");
@@ -107,6 +108,7 @@ const EditTemplateBody = () => {
     fileBase64: "",
     fileExtension: "",
     fileName: "",
+    oldFileName: ""
   };
 
   const [templateBody, setTemplateBody] = useState(initialTemplateBody);
@@ -199,6 +201,7 @@ const EditTemplateBody = () => {
               fileExtension: templateBody.fileExtension,
               fileName: templateBody.fileName,
             }),
+            oldFileName: templateBody.oldFileName
           }
         }).unwrap();
 
@@ -289,13 +292,36 @@ const EditTemplateBody = () => {
       <Row>
         <Col lg={12}>
           <Card>
-            <Card.Header className="d-flex align-items-center">
-              <div className="flex-shrink-0 me-3 avatar-sm">
-                <div className="avatar-title rounded-circle bg-light text-primary fs-20">
-                  <i className="bi bi-person-lines-fill"></i>
+            <Card.Header className="d-flex justify-content-between">
+              <div className="d-flex align-items-center">
+                <div className="flex-shrink-0 me-3 avatar-sm">
+                  <div className="avatar-title rounded-circle bg-light text-primary fs-20">
+                    <i className="bi bi-person-lines-fill"></i>
+                  </div>
                 </div>
+                <h5 className="card-title mb-0">Modifier Modèle</h5>
               </div>
-              <h5 className="card-title mb-0">Modifier Modèle</h5>
+              {step === 2 && (
+                <Button
+                  variant="success"
+                  disabled={isLoading || documentName === ''}
+                  onClick={handleFormSubmit}
+                >
+                  {isLoading ? (
+                    <Spinner as="span" animation="border" size="sm" />
+                  ) : (
+                    <div
+                      style={{ display: "flex", alignItems: "center" }}
+                    >
+                      <i
+                        className="bi bi-file-earmark-plus fs-20"
+                        style={{ marginRight: "3px" }}
+                      ></i>
+                      Enregistrer les modifications du modèle
+                    </div>
+                  )}
+                </Button>
+              )}
             </Card.Header>
 
             <Card.Body>
@@ -352,7 +378,15 @@ const EditTemplateBody = () => {
                       </Col>
 
                     </Row>
-                    <div className="d-flex justify-content-end mt-3">
+                    {/* Save and Next Buttons */}
+                    <div className="d-flex justify-content-between mt-3">
+                      <Button
+                        variant="success"
+                        onClick={handleFormSubmit} // your save logic here
+                      >
+                        Enregistrer
+                      </Button>
+
                       <Button
                         disabled={
                           templateBody.title === "" ||
@@ -595,27 +629,7 @@ const EditTemplateBody = () => {
                         </label>
 
                       </Col>
-                      <Col lg={3}>
-                        <Button
-                          variant="success"
-                          disabled={isLoading || documentName === ''}
-                          onClick={handleFormSubmit}
-                        >
-                          {isLoading ? (
-                            <Spinner as="span" animation="border" size="sm" />
-                          ) : (
-                            <div
-                              style={{ display: "flex", alignItems: "center" }}
-                            >
-                              <i
-                                className="bi bi-file-earmark-plus fs-20"
-                                style={{ marginRight: "3px" }}
-                              ></i>
-                              Générer modèle
-                            </div>
-                          )}
-                        </Button>
-                      </Col>
+
                       <Col lg={5} style={{ textAlign: "start" }}>
 
                       </Col>
@@ -623,7 +637,7 @@ const EditTemplateBody = () => {
                         Vérifier que votre document word est bien rempli avec les codes courts necessaires.
                       </Col>
                     </Row>
-                    {/* {selectedLangue === 'arabic' && (
+                    {selectedLangue === 'arabic' && (
                       <Row style={{ marginTop: '10px' }}>
                         <Col lg={3}></Col>
                         <Col lg={5}></Col>
@@ -631,7 +645,7 @@ const EditTemplateBody = () => {
                           Assurez que vous insérez les parenthèses comme des codes courts pour les documents en arabe.
                         </Col>
                       </Row>
-                    )} */}
+                    )}
 
                     <Row className="mb-3"
                       style={{
