@@ -32,7 +32,7 @@ const SingleDemandeEnseignant = () => {
 
   const location = useLocation();
   const navigate = useNavigate();
-
+  console.log(location.state!)
 
   const currentDate = new Date();
   const day = String(currentDate.getDate()).padStart(2, "0");
@@ -45,15 +45,20 @@ const SingleDemandeEnseignant = () => {
 
   const generateDocumentAndUpdateDemand = async () => {
     console.log(location.state!)
-    const result = await updateDemande({
-      demandId: location.state._id,
-      modelName: location.state?.piece_demande?.doc!,
-      modelLangage: location.state?.piece_demande?.langue!
-    }).unwrap();
+    try {
+      const result = await updateDemande({
+        demandId: location.state._id,
+        modelName: location.state?.piece_demande?.doc!,
+        modelLangage: location.state?.piece_demande?.langue!
+      }).unwrap();
 
-    console.log(result)
-    setUpdatedDemand(result);
+      setUpdatedDemand(result);
+    } catch (error) {
+      console.log(error);
+      alert("Une erreur est servenu, veuillez réessayer plus tard!")
+    }
   }
+
   const downloadFile = (url: string) => {
     const link = document.createElement("a");
     link.href = url;
@@ -65,6 +70,7 @@ const SingleDemandeEnseignant = () => {
   const openFileInNewWindow = (url: string) => {
     window.open(url, "_blank");
   };
+
   return (
     <React.Fragment>
       <div className="page-content">

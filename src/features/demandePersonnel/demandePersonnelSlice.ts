@@ -13,7 +13,12 @@ export interface Demande {
   response: string,
   status: string,
   createdAt: Date,
-  updatedAt: Date
+  updatedAt: Date,
+  extra_data: {
+    name: string,
+    value: string,
+    body: string
+  }[]
 }
 export const demandePersonnelSlice = createApi({
   reducerPath: "demandePersonnelApi",

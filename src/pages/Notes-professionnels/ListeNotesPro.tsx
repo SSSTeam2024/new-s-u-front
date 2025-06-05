@@ -23,7 +23,7 @@ const ListeNotesPro = () => {
   const navigate = useNavigate();
 
   const { data: notesPro } = useFetchNotesProQuery();
-
+  console.log("notesPro", notesPro)
   const { refetch } = useFetchAvisEnseignantQuery();
   const [deleteAvisEnseignant] = useDeleteAvisEnseignantMutation();
 
@@ -76,31 +76,31 @@ const ListeNotesPro = () => {
       },
 
       {
-        Header: "Note 1",
+        Header: "Quantité de travail",
         accessor: "note1",
         disableFilters: true,
         filterable: true,
       },
       {
-        Header: "Note 2",
+        Header: "Mode de travail",
         accessor: "note2",
         disableFilters: true,
         filterable: true,
       },
       {
-        Header: "Note 3",
+        Header: "Relations et Apparence",
         accessor: "note3",
         disableFilters: true,
         filterable: true,
       },
       {
-        Header: "Note 4",
+        Header: "Persévérance",
         accessor: "note4",
         disableFilters: true,
         filterable: true,
       },
       {
-        Header: "Note 5",
+        Header: "Discipline",
         accessor: "note5",
         disableFilters: true,
         filterable: true,

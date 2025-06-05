@@ -88,6 +88,8 @@ import { resultatSlice } from "features/resultats/resultatsSlice";
 import { stagePfeSlice } from "features/stagesPfe/stagesPfeSlice";
 import { societeSlice } from "features/societe/societeSlice";
 import { stageProSlice } from "features/stagesPro/stagesProSlice";
+import { extraShortCodeSlice } from "features/extraShortCode/extraShortCodeSlice";
+import { diversDocSlice } from "features/diversDocExtra/diversDocSlice";
 
 export const store = configureStore({
   reducer: {
@@ -169,20 +171,23 @@ export const store = configureStore({
     [courrierSortantSlice.reducerPath]: courrierSortantSlice.reducer,
     //! Intervenants
     [intervenantsSlice.reducerPath]: intervenantsSlice.reducer,
-     //! Pointage Enseignant
-     [pointageSlice.reducerPath]: pointageSlice.reducer,
-     //! Clone Database
-     [cloneSlice.reducerPath]: cloneSlice.reducer,
-     //! Create DatabaseName
-     [databaseSlice.reducerPath]: databaseSlice.reducer,
-     //! Resultats
-     [resultatSlice.reducerPath]: resultatSlice.reducer,
-     //! Stage Pfe
-     [stagePfeSlice.reducerPath]: stagePfeSlice.reducer,
-     //! Societe
-     [societeSlice.reducerPath]: societeSlice.reducer,
-     //! Stage Pro
-     [stageProSlice.reducerPath]: stageProSlice.reducer,
+    //! Pointage Enseignant
+    [pointageSlice.reducerPath]: pointageSlice.reducer,
+    //! Clone Database
+    [cloneSlice.reducerPath]: cloneSlice.reducer,
+    //! Create DatabaseName
+    [databaseSlice.reducerPath]: databaseSlice.reducer,
+    //! Resultats
+    [resultatSlice.reducerPath]: resultatSlice.reducer,
+    //! Stage Pfe
+    [stagePfeSlice.reducerPath]: stagePfeSlice.reducer,
+    //! Societe
+    [societeSlice.reducerPath]: societeSlice.reducer,
+    //! Stage Pro
+    [stageProSlice.reducerPath]: stageProSlice.reducer,
+    //! extra short codes
+    [extraShortCodeSlice.reducerPath]: extraShortCodeSlice.reducer,
+    [diversDocSlice.reducerPath]: diversDocSlice.reducer,
     auth: authSlice,
     Layout: LayoutReducer,
     Profile: ProfileReducer,
@@ -267,7 +272,9 @@ export const store = configureStore({
       resultatSlice.middleware,
       stagePfeSlice.middleware,
       societeSlice.middleware,
-      stageProSlice.middleware
+      stageProSlice.middleware,
+      extraShortCodeSlice.middleware,
+      diversDocSlice.middleware
     ]);
   },
 });

@@ -32,12 +32,14 @@ import { useNavigate } from "react-router-dom";
 import { RootState } from "app/store";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "features/account/authSlice";
+import { useGetDiversDocExtraByModelIdMutation } from "features/diversDocExtra/diversDocSlice";
 
 const AjouterDemandePersonnel = () => {
   document.title = "Ajouter Demande Personnel | ENIGA";
   const navigate = useNavigate();
   const user = useSelector((state: RootState) => selectCurrentUser(state));
   const [addDemandePersonnel] = useAddDemandePersonnelMutation();
+  const [getDiversDocExtra] = useGetDiversDocExtraByModelIdMutation();
   const { data: personnels } = useFetchPersonnelsQuery();
   const personnel: Personnel[] = Array.isArray(personnels) ? personnels : [];
 
@@ -46,7 +48,7 @@ const AjouterDemandePersonnel = () => {
     ? templateBodies
     : [];
 
-  const [formData, setFormData] = useState<Partial<Demande>>({
+  const [formData, setFormData] = useState<any>({
     personnelId: "",
     title: "",
     description: "",
@@ -57,6 +59,13 @@ const AjouterDemandePersonnel = () => {
     status: "en attente",
     createdAt: undefined,
     updatedAt: undefined,
+    extra_data: [
+      {
+        name: "",
+        value: "",
+        body: ""
+      }
+    ],
   });
 
   const [selectedLangue, setSelectedLangue] = useState<string>("");
@@ -69,40 +78,164 @@ const AjouterDemandePersonnel = () => {
   // function countDown(id: any, prev_data_attr: any) {
   //   id(prev_data_attr - 1);
   // }
+  const [diversExtraData, setDiversExtraData] = useState<any>(null);
+  const [diversExtraDataExceptional, setDiversExtraDataExceptional] = useState<any>(null);
+  const [selectedExceptional, setSelectedExceptional] = useState<any>([
+    {
+      dates_etats: "",
+      status_fils: "",
+      dates_naiss: "",
+      noms_enfants: ""
+    }
+  ]);
+  const [docLabel, setDocLabel] = useState<string>("");
 
+  // const handleLangueChange = (langue: string) => {
+  //   setSelectedLangue(langue);
+  //   setFormData((prevState) => ({
+  //     ...prevState,
+  //     langue: langue,
+  //   }));
+  // };
   const handleLangueChange = (langue: string) => {
     setSelectedLangue(langue);
-    setFormData((prevState) => ({
+    setFormData((prevState: any) => ({
       ...prevState,
       langue: langue,
+      extra_data: [],
+      piece_demande: "",
+      nombre_copie: 1
     }));
+
+    setDiversExtraData(null);
+    setDiversExtraDataExceptional(null);
+    setDocLabel("");
   };
 
   const onChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setFormData((prevState) => ({
+    setFormData((prevState: any) => ({
       ...prevState,
       [e.target.id]: e.target.value,
     }));
   };
 
   const onSelectChange = (selectedOption: any) => {
-    setFormData((prevState) => ({
+    setFormData((prevState: any) => ({
       ...prevState,
       personnelId: selectedOption.value,
     }));
   };
-  const onSelectChangeTemplate = (selectedOption: any) => {
-    setFormData((prevState) => ({
+
+  const onChangeExtra = (index: any, e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    let extraDataRef = [...formData.extra_data];
+
+    extraDataRef[index].value = e.target.value;
+    setFormData((prevState: any) => ({
       ...prevState,
-      piece_demande: selectedOption.value,
+      extra_data: extraDataRef
     }));
+  };
+  const onChangeExtraExcept = (index: any, e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, type: string) => {
+    let dataRef = [...selectedExceptional];
+
+    dataRef[index][type] = e.target.value;
+    setSelectedExceptional(dataRef);
+  };
+
+  const onChangeExtraV2 = (index: number, selectedOption: any) => {
+    let extraDataRef = [...formData.extra_data];
+
+    extraDataRef[index].value = selectedOption.value;
+    setFormData((prevState: any) => ({
+      ...prevState,
+      extra_data: extraDataRef
+    }));
+  }
+
+  const addLine = () => {
+    let dataRef = [...selectedExceptional];
+
+    dataRef.push(
+      {
+        dates_etats: "",
+        status_fils: "",
+        dates_naiss: "",
+        noms_enfants: ""
+      }
+    )
+    setSelectedExceptional(dataRef);
+  }
+
+  const removeLine = (index: number) => {
+    let dataRef = [...selectedExceptional];
+    dataRef.splice(index, 1);
+    setSelectedExceptional(dataRef)
+  };
+
+  const handleDateChange = (index: number, selectedDates: Date[]) => {
+    let date = selectedDates[0];
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+
+    let extraDataRef = [...formData.extra_data];
+    extraDataRef[index].value = day + "-" + month + "-" + year;
+
+    setFormData((prevState: any) => ({
+      ...prevState,
+      extra_data: extraDataRef
+    }));
+  };
+
+  const handleDateChangeV2 = (index: number, selectedDates: Date[]) => {
+    let date = selectedDates[0];
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+    console.log(day)
+    console.log(month)
+    console.log(year)
+    let dataRef = [...selectedExceptional];
+    dataRef[index].dates_naiss = day + "-" + month + "-" + year;
+    console.log(dataRef)
+    setSelectedExceptional(dataRef);
+  };
+
+
+
+
+  const onSelectChangeTemplate = async (selectedOption: any) => {
+    const extraData = await getDiversDocExtra(selectedOption.value).unwrap();
+    console.log(extraData);
+    if (extraData.length > 0) {
+      const normalExtraData = extraData[0].extra_data.filter(e => e.fieldBody !== 'noms_enfants' && e.fieldBody !== 'dates_naiss' && e.fieldBody !== 'status_fils' && e.fieldBody !== 'dates_etats');
+      const exceptionalExtraData = extraData[0].extra_data.filter(e => e.fieldBody === 'noms_enfants' || e.fieldBody === 'dates_naiss' || e.fieldBody === 'status_fils' || e.fieldBody === 'dates_etats');
+      setDiversExtraData(normalExtraData);
+      setDiversExtraDataExceptional(exceptionalExtraData)
+      setFormData((prevState: any) => ({
+        ...prevState,
+        piece_demande: selectedOption.value,
+        extra_data: normalExtraData.map(d => { return { name: d.fieldName, body: d.fieldBody } })
+      }));
+    } else {
+      setDiversExtraData(null);
+      setDiversExtraDataExceptional(null);
+      setFormData((prevState: any) => ({
+        ...prevState,
+        piece_demande: selectedOption.value,
+        extra_data: []
+      }));
+    }
+
+    const filteredDoc = filteredTemplates.filter(t => t._id === selectedOption.value)[0];
+    setDocLabel(filteredDoc.title);
   };
 
   const onDescriptionChange = (event: any, editor: any) => {
     const data = editor.getData();
-    setFormData((prevState) => ({
+    setFormData((prevState: any) => ({
       ...prevState,
       description: data,
     }));
@@ -115,7 +248,48 @@ const AjouterDemandePersonnel = () => {
   ) => {
     e.preventDefault();
     try {
-      await addDemandePersonnel(formData).unwrap();
+      let extraDataRef = [...formData.extra_data];
+
+      let dates_etats = {
+        name: "dates_etats",
+        value: "",
+        body: "dates_etats"
+      }
+      let status_fils = {
+        name: "status_fils",
+        value: "",
+        body: "status_fils"
+      }
+      let dates_naiss = {
+        name: "dates_naiss",
+        value: "",
+        body: "dates_naiss"
+      }
+      let noms_enfants = {
+        name: "noms_enfants",
+        value: "",
+        body: "noms_enfants"
+      }
+      for (const element of selectedExceptional) {
+        dates_etats.value += element.dates_etats + '#'
+        status_fils.value += element.status_fils + '#'
+        dates_naiss.value += element.dates_naiss + '#'
+        noms_enfants.value += element.noms_enfants + '#'
+
+      }
+
+      extraDataRef.push(dates_etats)
+      extraDataRef.push(status_fils)
+      extraDataRef.push(dates_naiss)
+      extraDataRef.push(noms_enfants)
+
+      console.log(selectedExceptional)
+
+      let refForm = { ...formData };
+      refForm.extra_data = extraDataRef
+      console.log(refForm);
+
+      await addDemandePersonnel(refForm).unwrap();
       notify();
       navigate("/demandes-personnel/liste-demande-personnel");
     } catch (error) {
@@ -220,22 +394,232 @@ const AjouterDemandePersonnel = () => {
                       </Row>
 
                       {selectedLangue && (
-                        <Row>
-                          <Col lg={6}>
-                            <Form.Group className="mb-3">
-                              <Form.Label>Piece demandée</Form.Label>
-                              <Select
-                                options={filteredTemplates.map(
-                                  (template: any) => ({
-                                    value: template._id,
-                                    label: template.title,
-                                  })
-                                )}
-                                onChange={onSelectChangeTemplate}
-                              />
-                            </Form.Group>
-                          </Col>
-                        </Row>
+                        <>
+                          <Row>
+                            <Col lg={6}>
+                              <Form.Group className="mb-3">
+                                <Form.Label>Piece demandée</Form.Label>
+                                <Select
+                                  options={filteredTemplates.map(
+                                    (template: any) => ({
+                                      value: template._id,
+                                      label: template.title,
+                                    })
+                                  )}
+                                  value={{ value: formData.piece_demande, label: docLabel }}
+                                  onChange={onSelectChangeTemplate}
+                                />
+                              </Form.Group>
+                            </Col>
+                          </Row>
+                          {(diversExtraData?.length > 0 || diversExtraDataExceptional?.length > 0) && selectedLangue === "french" && (
+                            <Row style={{ fontSize: '1rem', fontWeight: '600', fontFamily: 'system-ui', paddingLeft: '10px' }}>
+                              Données supplémentaires
+                            </Row>
+                          )}
+
+                          {(diversExtraData?.length > 0 || diversExtraDataExceptional?.length > 0) && selectedLangue === "arabic" && (
+                            <Row className="d-flex justify-content-end" style={{ fontSize: '1rem', fontWeight: '600', fontFamily: 'system-ui', color: 'violet' }}>
+                              معلومات اضافية
+                            </Row>
+                          )}
+                          {diversExtraData?.map((d: any, index: number) => (
+                            <>
+                              <Row key={index}>
+                                {selectedLangue === "french" ? (
+                                  <Col lg={5}>
+                                    <Form.Group className="mb-3">
+                                      {d.options.length === 0 && d.data_type === 'regular' && (
+                                        <>
+                                          <Form.Label style={{ fontSize: '1rem', fontWeight: '600', fontFamily: 'system-ui' }}>
+                                            {d.fieldName}
+                                          </Form.Label>
+                                          <Form.Control
+                                            type="text"
+                                            id="description"
+                                            value={formData?.extra_data[index]?.value ?? ""}
+                                            onChange={(e) => { onChangeExtra(index, e) }}
+                                            required
+                                          />
+                                        </>
+                                      )}
+                                      {d.options.length > 0 && (
+                                        <>
+                                          <Form.Label style={{ fontSize: '1rem', fontWeight: '600', fontFamily: 'system-ui' }}>
+                                            {d.fieldName}
+                                          </Form.Label>
+                                          <Select
+                                            options={d.options.map(
+                                              (option: any) => ({
+                                                value: option,
+                                                label: option,
+                                              })
+                                            )}
+                                            onChange={(e) => { onChangeExtraV2(index, e) }}
+                                            required
+                                          />
+                                        </>
+                                      )}
+                                      {d.options.length === 0 && d.data_type === 'date' && (
+                                        <>
+                                          <Form.Label style={{ fontSize: '1rem', fontWeight: '600', fontFamily: 'system-ui' }}>
+                                            {d.fieldName}
+                                          </Form.Label>
+                                          <Flatpickr
+                                            onChange={(e) => { handleDateChange(index, e) }}
+                                            className="form-control flatpickr-input"
+                                            placeholder="Sélectionner Date"
+                                            options={{
+                                              dateFormat: "d M, Y",
+                                            }}
+                                            required
+                                          />
+                                        </>
+                                      )}
+                                    </Form.Group>
+                                  </Col>
+                                ) : <>
+                                  <Col lg={7}></Col>
+                                  <Col lg={5}>
+                                    <Form.Group className="mb-3">
+                                      {d.options.length === 0 && d.data_type === 'regular' && (
+                                        <>
+                                          <Form.Label style={{ fontSize: '1rem', fontWeight: '600', fontFamily: 'system-ui', float: 'right' }}>
+                                            {d.fieldName}
+                                          </Form.Label>
+                                          <Form.Control
+                                            type="text"
+                                            id="description"
+                                            value={formData?.extra_data[index]?.value ?? ""}
+                                            onChange={(e) => { onChangeExtra(index, e) }}
+                                            required
+                                          />
+                                        </>
+                                      )}
+                                      {d.options.length > 0 && (
+                                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                          <Form.Label style={{ fontSize: '1rem', fontWeight: '600', fontFamily: 'system-ui', float: 'right', textAlign: 'end' }}>
+                                            {d.fieldName}
+                                          </Form.Label>
+
+                                          <Select
+                                            options={d.options.map(
+                                              (option: any) => ({
+                                                value: option,
+                                                label: option,
+                                              })
+                                            )}
+                                            onChange={(e) => { onChangeExtraV2(index, e) }}
+                                            required
+                                          />
+                                        </div>
+                                      )}
+                                      {d.options.length === 0 && d.data_type === 'date' && (
+                                        <>
+                                          <Form.Label style={{ fontSize: '1rem', fontWeight: '600', fontFamily: 'system-ui', float: 'right' }}>
+                                            {d.fieldName}
+                                          </Form.Label>
+                                          <Flatpickr
+                                            onChange={(e) => { handleDateChange(index, e) }}
+                                            className="form-control flatpickr-input"
+                                            placeholder="Sélectionner Date"
+                                            options={{
+                                              dateFormat: "d M, Y",
+                                            }}
+                                            required
+                                          />
+                                        </>
+                                      )}
+                                    </Form.Group>
+                                  </Col>
+                                </>
+                                }
+
+                              </Row>
+                            </>
+                          ))
+                          }
+                          {diversExtraDataExceptional?.length > 0 && selectedLangue === "arabic" && (
+                            <>
+                              <Row className="mt-2">
+                                <Col lg={1}></Col>
+                                <Col lg={3} style={{ fontSize: '1rem', fontWeight: '600', fontFamily: 'system-ui', textAlign: 'end' }}>تاريخ التحويرات الطارئة على الحالة العائلية و أسبابها</Col>
+                                <Col lg={3} style={{ fontSize: '1rem', fontWeight: '600', fontFamily: 'system-ui', textAlign: 'end' }}>صفة من تجاوزت سنه 16 سنة</Col>
+                                <Col lg={3} style={{ fontSize: '1rem', fontWeight: '600', fontFamily: 'system-ui', textAlign: 'end' }}>تواريخ الولادة</Col>
+                                <Col lg={2} style={{ fontSize: '1rem', fontWeight: '600', fontFamily: 'system-ui', textAlign: 'end' }}>أسماء الأبناء</Col>
+                              </Row>
+                              {
+                                selectedExceptional?.map((e: any, index: number) => (
+                                  <>
+                                    <Row className="mt-2">
+                                      <Col lg={1} >
+                                        <Button
+                                          variant="danger"
+                                          onClick={() => removeLine(index)}
+                                        >
+                                          <i className="bi bi-trash-fill"></i>
+                                        </Button>
+                                      </Col>
+                                      <Col lg={3} style={{ fontSize: '1rem', fontWeight: '600', fontFamily: 'system-ui', textAlign: 'end' }}>
+                                        <Form.Control
+                                          type="text"
+                                          value={e.dates_etats}
+                                          onChange={(e) => { onChangeExtraExcept(index, e, 'dates_etats') }}
+
+                                        />
+                                      </Col>
+                                      <Col lg={3} style={{ fontSize: '1rem', fontWeight: '600', fontFamily: 'system-ui', textAlign: 'end' }}>
+                                        <Form.Control
+                                          type="text"
+                                          value={e.status_fils}
+                                          onChange={(e) => { onChangeExtraExcept(index, e, 'status_fils') }}
+
+                                        />
+                                      </Col>
+                                      <Col lg={3} style={{ fontSize: '1rem', fontWeight: '600', fontFamily: 'system-ui', textAlign: 'end' }}>
+
+                                        <Flatpickr
+                                          onChange={(e) => { handleDateChangeV2(index, e) }}
+                                          className="form-control flatpickr-input"
+                                          placeholder="Sélectionner Date"
+                                          options={{
+                                            dateFormat: "d M, Y",
+                                          }}
+                                          required
+                                        />
+                                      </Col>
+                                      <Col lg={2} style={{ fontSize: '1rem', fontWeight: '600', fontFamily: 'system-ui', textAlign: 'end' }}>
+                                        <Form.Control
+                                          type="text"
+                                          value={e.noms_enfants}
+                                          onChange={(e) => { onChangeExtraExcept(index, e, 'noms_enfants') }}
+                                          required
+                                        />
+                                      </Col>
+                                    </Row>
+
+                                  </>
+                                ))
+                              }
+                              <Row>
+                                <Col lg={1}></Col>
+                                <Col lg={3}></Col>
+                                <Col lg={3}></Col>
+                                <Col lg={3}></Col>
+                                <Col lg={2} style={{ textAlign: 'end' }}>
+                                  <Button
+                                    className="mt-4"
+                                    variant="info"
+                                    onClick={() => addLine()}
+                                    disabled={selectedExceptional.length > 4}
+                                  >
+                                    <i className="bi bi-plus-lg"></i>
+                                  </Button>
+                                </Col>
+                              </Row>
+                            </>
+                          )}
+                        </>
                       )}
                       <Col lg={6}>
                         <Form.Group className="mb-3">
@@ -245,7 +629,7 @@ const AjouterDemandePersonnel = () => {
                               <Button
                                 className="minus"
                                 onClick={() => {
-                                  setFormData((prevState) => ({
+                                  setFormData((prevState: any) => ({
                                     ...prevState,
                                     nombre_copie: Math.max(
                                       (prevState.nombre_copie ?? 1) - 1,
@@ -267,7 +651,7 @@ const AjouterDemandePersonnel = () => {
                               <Button
                                 className="plus"
                                 onClick={() => {
-                                  setFormData((prevState) => ({
+                                  setFormData((prevState: any) => ({
                                     ...prevState,
                                     nombre_copie:
                                       (prevState.nombre_copie ?? 1) + 1,

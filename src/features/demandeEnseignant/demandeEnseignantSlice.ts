@@ -1,6 +1,12 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { GeneratedDoc } from "features/generatedDoc/generatedDocSlice";
 
+export interface ExtraObject {
+  name?: string,
+  value?: string,
+  body?: string
+}
+
 export interface Demande {
   _id: string;
   enseignantId: string;
@@ -12,6 +18,7 @@ export interface Demande {
   nombre_copie: number;
   response: string;
   status: string;
+  extra_data?: ExtraObject[];
   createdAt: Date;
   updatedAt: Date;
 }
