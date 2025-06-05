@@ -1535,7 +1535,7 @@ const Messages = () => {
                                 handleDeleteMultipleMessages(idsOnly);
                               }}
                             >
-                              <i className="bi bi-trash"></i> Supprimer
+                              <i className="bi bi-trash"></i> supprimer définitivement 
                             </Button>
                           </div>
                         )}
@@ -1688,13 +1688,20 @@ const Messages = () => {
                                         }
                                       />
                                     </td>
-                                    <td
+                                    {/* <td
                                       className="fw-bold"
                                       style={{ maxWidth: "150px" }}
                                     >
                                       {message.receiver?.nom_fr}{" "}
                                       {message.receiver?.prenom_fr}
-                                    </td>
+                                    </td> */}
+                                    <td className="fw-bold" style={{ maxWidth: "150px" }}>
+  {Array.isArray(message.receivers) && message.receivers.length > 0
+    ? message.receivers
+        .map((r: any) => `${r.nom_fr} ${r.prenom_fr}`)
+        .join(", ")
+    : "N/A"}
+</td>
                                     <td
                                       className="fw-bold"
                                       style={{ maxWidth: "150px" }}

@@ -27,7 +27,7 @@ export const templateBodySlice = createApi({
         },
         providesTags: ['TemplateBody'],
       }),
-      addNewTemplateBody: builder.mutation<void, TemplateBody>({
+      addNewTemplateBody: builder.mutation<any, TemplateBody>({
         query(payload) {
           return {
             url: 'create-template-body',

@@ -1,6 +1,12 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { DossierAdministratif } from "features/dossierAdministratif/dossierAdministratif";
 
+export interface Education {
+  institution: string;
+  degree: string;
+  graduationYear: string;
+}
+
 export interface Enseignant {
   dossier?: DossierAdministratif;
   _id: string;
@@ -121,6 +127,7 @@ export interface Enseignant {
   papers?: string[];
   situation_fr?: string;
   situation_ar?: string;
+    educations?: Education[];
 }
 
 export interface EnseignantGroupedByGrade {
@@ -193,8 +200,8 @@ export interface EnseignantExcel {
   PhotoProfilFileBase64String?: string;
   papers?: string[];
   situation_fr?: string;
-  situation_ar?: string;
-}
+  educations?: Education[];
+  situation_ar?: string;}
 
 export const enseignantSlice = createApi({
   reducerPath: "Enseignant",

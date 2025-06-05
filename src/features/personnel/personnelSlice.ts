@@ -1,6 +1,15 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { DossierAdministratif } from "features/dossierAdministratif/dossierAdministratif";
 
+export interface HistoriquePosition {
+  poste?: string;
+  grade?: string;
+  categorie?: string;
+  date_affectation?: string;       
+  date_titularisation?: string;    
+  date_depart?: string;            
+}
+
 export interface Personnel {
   dossier?: DossierAdministratif;
   _id: string;
@@ -68,6 +77,8 @@ export interface Personnel {
   PhotoProfilFileExtension?: string;
   PhotoProfilFileBase64String?: string;
   papers?: string[];
+  historique_positions?: HistoriquePosition[]; 
+
 }
 
 export interface PersonnelEXCEL {
@@ -112,6 +123,8 @@ export interface PersonnelEXCEL {
   PhotoProfilFileExtension?: string;
   PhotoProfilFileBase64String?: string;
   papers?: string[];
+  historique_positions?: HistoriquePosition[]; 
+
 }
 export const personnelSlice = createApi({
   reducerPath: "Personnel",

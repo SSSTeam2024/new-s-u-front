@@ -23,6 +23,8 @@ import { useFetchVirtualServicesQuery } from "features/virtualService/virtualSer
 import { useFetchAllUsersQuery } from "features/account/accountSlice";
 import Select from "react-select";
 import copy from "copy-to-clipboard";
+import { useFetchExtraShortCodeQuery } from "features/extraShortCode/extraShortCodeSlice";
+import { useCreateDiversDocExtraMutation } from "features/diversDocExtra/diversDocSlice";
 
 function convertToBase64(
   file: File
@@ -49,13 +51,13 @@ const NewTemplateBody = () => {
 
   const navigate = useNavigate();
   const [addNewTemplateBody, { isLoading }] = useAddNewTemplateBodyMutation();
+  const [createDiversDocExtraElement] = useCreateDiversDocExtraMutation();
   const { data: shortCodeList = [] } = useFetchShortCodeQuery();
+  const { data: extraShortCodeList = [] } = useFetchExtraShortCodeQuery();
 
   const { data: virtualServices = [] } = useFetchVirtualServicesQuery();
 
   const { data: admins = [] } = useFetchAllUsersQuery();
-
-  console.log(admins);
 
   //************************************************************************** */
 
@@ -301,7 +303,6 @@ const NewTemplateBody = () => {
   const handleSaveEdited = () => {
     if (previewContainer.current) {
       const editedContent = previewContainer.current.innerHTML;
-      console.log("Edited Content:", editedContent);
 
       // setContent(JSON.stringify(editedContent));
       setTemplateBody((prevState) => ({
@@ -326,10 +327,17 @@ const NewTemplateBody = () => {
     has_number: "0",
   };
 
+
   const [templateBody, setTemplateBody] = useState(initialTemplateBody);
+  const [diversDocData, setDiversDocData] = useState<any>({
+    model_id: "",
+    extra_data: [],
+  });
   const [step, setStep] = useState(1);
   const [selectedLangue, setSelectedLangue] = useState("");
   const [selectedIntendedFor, setSelectedIntendedFor] = useState("");
+
+  const [selectedShortCodes, setSelectedShortCodes] = useState<any[]>([]);
 
   const { title, fileBase64, fileExtension, langue, intended_for, has_code, has_number } =
     templateBody;
@@ -381,7 +389,6 @@ const NewTemplateBody = () => {
 
 
   const onChangeService = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    console.log(e.target.value);
 
     setTemplateBody((prevState) => ({
       ...prevState,
@@ -427,16 +434,36 @@ const NewTemplateBody = () => {
     async () => {
 
       try {
-        console.log(templateBody);
-        await addNewTemplateBody(templateBody).unwrap();
-        Swal.fire({
-          position: "center",
-          icon: "success",
-          title: "Le corps du modèle a été créé avec succès.",
-          showConfirmButton: false,
-          timer: 2000,
-        });
-        navigate("/template/liste-template-body");
+
+        const result = await addNewTemplateBody(templateBody).unwrap();
+
+        let extraRef = [...diversDocData.extra_data];
+
+        if (extraRef.length > 0) {
+          const reqData = {
+            model_id: result._id,
+            extra_data: diversDocData.extra_data
+          }
+          const resultExtra = await createDiversDocExtraElement(reqData).unwrap();
+          Swal.fire({
+            position: "center",
+            icon: "success",
+            title: "Le corps du modèle a été créé avec succès.",
+            showConfirmButton: false,
+            timer: 2000,
+          });
+          navigate("/template/liste-template-body");
+        } else {
+
+          Swal.fire({
+            position: "center",
+            icon: "success",
+            title: "Le corps du modèle a été créé avec succès.",
+            showConfirmButton: false,
+            timer: 2000,
+          });
+          navigate("/template/liste-template-body");
+        }
       } catch (error) {
         Swal.fire({
           icon: "error",
@@ -480,12 +507,63 @@ const NewTemplateBody = () => {
   };
   const editor = useRef(null);
 
+  const handleCopyText = (body: string) => {
+    let shortCodesRef = [...selectedShortCodes];
 
+    const existed = shortCodesRef.filter(e => e === body);
+    if (existed.length === 0) {
+      shortCodesRef.push(body)
+      copyToClipboard(body);
+    } else {
+      const index = shortCodesRef.findIndex(e => e === body);
 
-  const handleCopyText = (titre: string) => {
-    console.log(titre)
-    copyToClipboard(titre);
+      shortCodesRef.splice(index, 1);
+      alert("Code court annulé, n'oubliez pas de le supprimer du document word!");
+    }
+
+    setSelectedShortCodes(shortCodesRef);
   };
+
+  const handleCopyExtraText = (code: any) => {
+
+    let extraRef = [...diversDocData.extra_data];
+
+    const existed = extraRef.filter(e => e.fieldBody === code.body);
+    if (existed.length === 0) {
+      extraRef.push({
+        options: code.options,
+        data_type: code.data_type,
+        fieldName: code.titre,
+        fieldBody: code.body
+      })
+      copyToClipboard(code.body);
+    } else {
+      const index = extraRef.findIndex(e => e.fieldBody === code.body);
+
+      extraRef.splice(index, 1);
+      alert("Code court annulé, n'oubliez pas de le supprimer du document word!");
+    }
+
+    setDiversDocData((prevState: any) => ({
+      ...prevState,
+      extra_data: extraRef
+    }));
+  };
+
+  const isDataSelectedForSimpleShortCodes = (code: any) => {
+
+    let shortCodesRef = [...selectedShortCodes];
+
+    const existed = shortCodesRef.filter(e => e === code.body);
+
+    return existed.length === 0 ? false : true;
+  }
+
+  const isDataSelected = (code: any) => {
+    let extraRef = [...diversDocData.extra_data];
+    const existed = extraRef.filter(e => e.fieldName === code.titre);
+    return existed.length === 0 ? false : true;
+  }
 
   const copyToClipboard = (titre: string) => {
     if (titre === 'qr_code') {
@@ -769,7 +847,7 @@ const NewTemplateBody = () => {
                               {paramsShortCodes.map((code: any) =>
                                 <Button
                                   key={code._id}
-                                  variant="info"
+                                  variant={isDataSelectedForSimpleShortCodes(code) === true ? "danger" : "info"}
                                   onClick={() => handleCopyText(code.body)}
                                   size="sm"
                                   className="me-2 mb-2"
@@ -781,7 +859,7 @@ const NewTemplateBody = () => {
                               {selectedLangue === 'arabic' && (
                                 <>
                                   <Button
-                                    variant="info"
+                                    variant={isDataSelectedForSimpleShortCodes({ body: 'closed_parenthese' }) === true ? "danger" : "info"}
                                     onClick={() => handleCopyText('closed_parenthese')}
                                     size="sm"
                                     className="me-2 mb-2"
@@ -789,7 +867,7 @@ const NewTemplateBody = () => {
                                     {'('}
                                   </Button>
                                   <Button
-                                    variant="info"
+                                    variant={isDataSelectedForSimpleShortCodes({ body: 'open_parenthese' }) === true ? "danger" : "info"}
                                     onClick={() => handleCopyText('open_parenthese')}
                                     size="sm"
                                     className="me-2 mb-2"
@@ -809,7 +887,7 @@ const NewTemplateBody = () => {
                                 code.intended_for === "global" ? (
                                   <Button
                                     key={code._id}
-                                    variant="secondary"
+                                    variant={isDataSelectedForSimpleShortCodes(code) === true ? "danger" : "info"}
                                     onClick={() => handleCopyText(code.body)}
                                     size="sm"
                                     // onClick={() =>
@@ -817,7 +895,9 @@ const NewTemplateBody = () => {
                                     // }
                                     className="me-2 mb-2"
                                   >
-                                    {code.titre}
+                                    <div style={{ fontSize: "1.05rem" }} >
+                                      {code.titre}
+                                    </div>
                                   </Button>
                                 ) : (
                                   <></>
@@ -857,7 +937,7 @@ const NewTemplateBody = () => {
                                 code.intended_for !== "global" ? (
                                   <Button
                                     key={code._id}
-                                    variant="secondary"
+                                    variant={isDataSelectedForSimpleShortCodes(code) === true ? "danger" : "secondary"}
                                     size="sm"
                                     onClick={() => handleCopyText(code.body)}
                                     // onClick={() =>
@@ -865,11 +945,39 @@ const NewTemplateBody = () => {
                                     // }
                                     className="me-2 mb-2"
                                   >
-                                    {code.titre}
+                                    <div style={{ fontSize: "1.05rem" }} >
+                                      {code.titre}
+                                    </div>
                                   </Button>
                                 ) : (
                                   <></>
                                 )
+                              )}
+                            </Card.Body>
+                          </Card>
+                          <Card>
+                            <Card.Header as="h5">
+                              Divers
+                            </Card.Header>
+                            <Card.Body>
+                              {extraShortCodeList.map((code: any) =>
+
+                                <Button
+                                  key={code._id}
+                                  size="sm"
+                                  onClick={() => handleCopyExtraText(code)}
+                                  variant={isDataSelected(code) === true ? "danger" : "primary"}
+                                  // onClick={() =>
+                                  //   handleShortCodeInsertion(code.body)
+                                  // }
+                                  className="me-2 mb-2"
+                                >
+                                  <div style={{ fontSize: "1.05rem" }} >
+                                    {code.titre}
+                                  </div>
+
+                                </Button>
+
                               )}
                             </Card.Body>
                           </Card>

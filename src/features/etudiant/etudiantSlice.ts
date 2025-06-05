@@ -289,7 +289,7 @@ export const etudiantSlice = createApi({
           return {
             url: `/update-etudiant`,
             method: "PUT",
-            body: { id: _id, ...rest },
+            body: { _id: _id, ...rest },
           };
         },
         invalidatesTags: ["Etudiant"],

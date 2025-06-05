@@ -89,8 +89,49 @@ const AjouterPersonnels = () => {
     photo_profil: "",
     PhotoProfilFileExtension: "",
     PhotoProfilFileBase64String: "",
+    historique_positions: [
+      {
+        poste: "",
+        grade: "",
+        categorie: "",
+        date_affectation: "",
+        date_titularisation: "",
+        date_depart: "",
+      },
+    ],
   });
+  const handleHistoricChange = (
+    index: number,
+    field: string,
+    value: string
+  ) => {
+    const updated = [...formData.historique_positions];
+    updated[index][field] = value;
+    setFormData((prev: any) => ({ ...prev, historique_positions: updated }));
+  };
 
+  const addHistoricPosition = () => {
+    setFormData((prev: any) => ({
+      ...prev,
+      historique_positions: [
+        ...prev.historique_positions,
+        {
+          poste: "",
+          grade: "",
+          categorie: "",
+          date_affectation: "",
+          date_titularisation: "",
+          date_depart: "",
+        },
+      ],
+    }));
+  };
+
+  const removeHistoricPosition = (index: number) => {
+    const updated = [...formData.historique_positions];
+    updated.splice(index, 1);
+    setFormData((prev: any) => ({ ...prev, historique_positions: updated }));
+  };
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((prevState: any) => ({
       ...prevState,
@@ -1344,6 +1385,142 @@ const AjouterPersonnels = () => {
                               </Col>
                             </Row>
                           </Card.Body>
+                        </Col>
+                        <Col lg={12}>
+                          <h5 className="mb-3">Historique des positions</h5>
+                          {formData.historique_positions.map(
+                            (position: any, index: number) => (
+                              <Row
+                                key={index}
+                                className="align-items-end m-3 border-bottom "
+                              >
+                                <Col lg={4}>
+                                  <Form.Label>Poste</Form.Label>
+                                  <Form.Select
+                                    value={position.poste}
+                                    onChange={(e) =>
+                                      handleHistoricChange(
+                                        index,
+                                        "poste",
+                                        e.target.value
+                                      )
+                                    }
+                                  >
+                                    <option value="">
+                                      -- Choisir Poste --
+                                    </option>
+                                    {poste.map((item: any) => (
+                                      <option key={item._id} value={item._id}>
+                                        {item.poste_ar}
+                                      </option>
+                                    ))}
+                                  </Form.Select>
+                                </Col>
+                                <Col lg={4}>
+                                  <Form.Label>Grade</Form.Label>
+                                  <Form.Select
+                                    value={position.grade}
+                                    onChange={(e) =>
+                                      handleHistoricChange(
+                                        index,
+                                        "grade",
+                                        e.target.value
+                                      )
+                                    }
+                                  >
+                                    <option value="">
+                                      -- Choisir Grade --
+                                    </option>
+                                    {grade.map((item: any) => (
+                                      <option key={item._id} value={item._id}>
+                                        {item.grade_ar}
+                                      </option>
+                                    ))}
+                                  </Form.Select>
+                                </Col>
+                                <Col lg={4}>
+                                  <Form.Label>Catégorie</Form.Label>
+                                  <Form.Select
+                                    value={position.categorie}
+                                    onChange={(e) =>
+                                      handleHistoricChange(
+                                        index,
+                                        "categorie",
+                                        e.target.value
+                                      )
+                                    }
+                                  >
+                                    <option value="">
+                                      -- Choisir Catégorie --
+                                    </option>
+                                    {categorie.map((item: any) => (
+                                      <option key={item._id} value={item._id}>
+                                        {item.categorie_fr}
+                                      </option>
+                                    ))}
+                                  </Form.Select>
+                                </Col>
+                                <Col lg={4}>
+                                  <Form.Label>Date Affectation</Form.Label>
+                                  <Form.Control
+                                    type="date"
+                                    value={position.date_affectation}
+                                    onChange={(e) =>
+                                      handleHistoricChange(
+                                        index,
+                                        "date_affectation",
+                                        e.target.value
+                                      )
+                                    }
+                                  />
+                                </Col>
+                                <Col lg={4}>
+                                  <Form.Label>Date Titularisation</Form.Label>
+                                  <Form.Control
+                                    type="date"
+                                    value={position.date_titularisation}
+                                    onChange={(e) =>
+                                      handleHistoricChange(
+                                        index,
+                                        "date_titularisation",
+                                        e.target.value
+                                      )
+                                    }
+                                  />
+                                </Col>
+                                <Col lg={4}>
+                                  <Form.Label>Date Départ</Form.Label>
+                                  <Form.Control
+                                    type="date"
+                                    value={position.date_depart}
+                                    onChange={(e) =>
+                                      handleHistoricChange(
+                                        index,
+                                        "date_depart",
+                                        e.target.value
+                                      )
+                                    }
+                                  />
+                                </Col>
+                                <Col lg={3}>
+                                  <Button
+                                    variant="danger"
+                                    onClick={() =>
+                                      removeHistoricPosition(index)
+                                    }
+                                  >
+                                    Supprimer
+                                  </Button>
+                                </Col>
+                              </Row>
+                            )
+                          )}
+                          <Button
+                            variant="secondary"
+                            onClick={addHistoricPosition}
+                          >
+                            + Ajouter une position
+                          </Button>
                         </Col>
 
                         <Col lg={12}>

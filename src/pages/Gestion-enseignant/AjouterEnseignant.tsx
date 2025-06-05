@@ -15,7 +15,7 @@ import SimpleBar from "simplebar-react";
 import country from "Common/country";
 import Swal from "sweetalert2";
 import "flatpickr/dist/flatpickr.min.css";
-import { useAddEnseignantMutation } from "features/enseignant/enseignantSlice";
+import { Education, useAddEnseignantMutation } from "features/enseignant/enseignantSlice";
 import { useFetchEtatsEnseignantQuery } from "features/etatEnseignant/etatEnseignant";
 import { useFetchPostesEnseignantQuery } from "features/posteEnseignant/posteEnseignant";
 import { useFetchGradesEnseignantQuery } from "features/gradeEnseignant/gradeEnseignant";
@@ -125,8 +125,32 @@ const AjouterEnseignant = () => {
     PhotoProfilFileBase64String: "",
     situation_fr: "",
     situation_ar: "",
+     educations: [
+    { institution: "", degree: "", graduationYear: "" },
+  ],
+ 
   });
+const handleEducationChange = (index: number, field: keyof Education, value: string) => {
+  const updatedEducation = [...formData.educations];
+  updatedEducation[index][field] = value;
+  setFormData((prev: any) => ({
+    ...prev,
+    educations: updatedEducation,
+  }));
+};
+const addEducationEntry = () => {
+  setFormData((prev: any) => ({
+    ...prev,
+    educations: [...prev.educations, { institution: "", degree: "", graduationYear: "" }],
+  }));
+};
 
+const removeEducationEntry = (index: number) => {
+  setFormData((prev: any) => ({
+    ...prev,
+    educations: prev.educations.filter((_: any, i: number) => i !== index),
+  }));
+};
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((prevState: any) => ({
       ...prevState,
@@ -769,7 +793,7 @@ const AjouterEnseignant = () => {
                                 onChange={handleChange}
                               >
                                 <option value="">Sélectionner Classe</option>
-                                {grade.map((grade) => (
+                                {grade?.map((grade) => (
                                   <option key={grade._id} value={grade._id}>
                                     {grade.grade_ar}
                                   </option>
@@ -797,7 +821,7 @@ const AjouterEnseignant = () => {
                                 onChange={handleChange}
                               >
                                 <option value="">Sélectionner Etat</option>
-                                {etat_compte.map((etat_compte) => (
+                                {etat_compte?.map((etat_compte) => (
                                   <option
                                     key={etat_compte._id}
                                     value={etat_compte._id}
@@ -829,7 +853,7 @@ const AjouterEnseignant = () => {
                                 onChange={handleChange}
                               >
                                 <option value="">Sélectionner Poste</option>
-                                {poste.map((poste) => (
+                                {poste?.map((poste) => (
                                   <option key={poste._id} value={poste._id}>
                                     {poste.poste_fr}
                                   </option>
@@ -1406,7 +1430,7 @@ const AjouterEnseignant = () => {
                                 <option value="">
                                   Sélectionner Département
                                 </option>
-                                {departements.map((departements) => (
+                                {departements?.map((departements) => (
                                   <option
                                     key={departements._id}
                                     value={departements._id}
@@ -1442,7 +1466,7 @@ const AjouterEnseignant = () => {
                                 <option value="">
                                   Choisir Spécialité / إختر الإختصاص
                                 </option>
-                                {specilaite.map((specilaite) => (
+                                {specilaite?.map((specilaite) => (
                                   <option
                                     key={specilaite._id}
                                     value={specilaite._id}
@@ -1457,7 +1481,7 @@ const AjouterEnseignant = () => {
                       </Card.Body>
                     </Col>
 
-                    <Col lg={12}>
+                    {/* <Col lg={12}>
                       <Card>
                         <Card.Header>
                           <div className="d-flex">
@@ -1739,7 +1763,67 @@ const AjouterEnseignant = () => {
                           </Row>
                         </Card.Body>
                       </Card>
-                    </Col>
+                    </Col> */}
+
+{/* educations  */}
+
+{formData?.educations!.map((entry: Education, index: number) => (
+  <Col lg={12} key={index}>
+    <Card className="mb-3">
+      <Card.Header>
+        <div className="d-flex justify-content-between align-items-center">
+          <h5 className="card-title mb-0">( {index + 1} ) Informations éducatives </h5>
+          {formData?.educations!.length > 1 && (
+            <Button variant="danger" size="sm" onClick={() => removeEducationEntry(index)}>
+              Supprimer
+            </Button>
+          )}
+        </div>
+      </Card.Header>
+      <Card.Body>
+        <Row>
+          <Col lg={4}>
+            <div className="mb-3" style={{ direction: "rtl", textAlign: "right" }}>
+              <Form.Label>Établissement</Form.Label>
+              <Form.Control
+                type="text"
+                value={entry.institution}
+                onChange={(e) => handleEducationChange(index, "institution", e.target.value)}
+              />
+            </div>
+          </Col>
+          <Col lg={4}>
+            <div className="mb-3" style={{ direction: "rtl", textAlign: "right" }}>
+              <Form.Label>Diplôme </Form.Label>
+              <Form.Control
+                type="text"
+                value={entry.degree}
+                onChange={(e) => handleEducationChange(index, "degree", e.target.value)}
+              />
+            </div>
+          </Col>
+          <Col lg={4}>
+            <div className="mb-3" style={{ direction: "rtl", textAlign: "right" }}>
+              <Form.Label>Année de graduation </Form.Label>
+              <Flatpickr
+                value={entry.graduationYear}
+                onChange={(date) =>
+                  handleEducationChange(index, "graduationYear", date[0]?.toISOString() || "")
+                }
+                className="form-control flatpickr-input"
+                options={{ dateFormat: "Y" }}
+              />
+            </div>
+          </Col>
+        </Row>
+      </Card.Body>
+    </Card>
+  </Col>
+))}
+<Button variant="primary" onClick={addEducationEntry} className="mt-2">
+  + Ajouter un diplôme
+</Button>
+
                   </Card.Body>
                   <Card.Footer>
                     <Col lg={12}>
