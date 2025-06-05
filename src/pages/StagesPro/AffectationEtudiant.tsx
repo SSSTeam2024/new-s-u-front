@@ -84,8 +84,8 @@ const AffectationEtudiant: React.FC<AffectationProps> = ({
             </p>
           ) : (
             <p className="mt-1">
-              est désigné(e) pour effectuer un stage :{" "}
-              <strong>Projet Fin Etude</strong> dans votre établissement
+              est désigné(e) pour effectuer un stage : <strong>Ouvrier</strong>{" "}
+              dans votre établissement
             </p>
           )}
 

@@ -44,8 +44,8 @@ const Encadrement = () => {
       name: <span className="font-weight-bold fs-13">Binôme</span>,
       selector: (row: any) => (
         <span>
-          {row?.etudiant?.prenom_fr!}
-          {row?.etudiant?.nom_fr!}
+          {row?.binome?.prenom_fr!}
+          {row?.binome?.nom_fr!}
         </span>
       ),
       sortable: true,

@@ -16,6 +16,7 @@ import {
 } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
 import userImage from "assets/images/etudiant.png";
+import noImage from "assets/images/no_file.png";
 import {
   useFetchAllSocietesQuery,
   useGetByNameMutation,
@@ -320,6 +321,11 @@ const EditStagePfe = () => {
           </Button>
           <Form onSubmit={handleSubmit}>
             <Card>
+              <div className="p-2 text-center">
+                <h3>
+                  Stage PFE <i>{stageDetails.type_stage}</i>
+                </h3>
+              </div>
               <Card.Header className="bg-secondary-subtle text-dark-emphasis">
                 <span className="fs-20 fw-bold">Information Etudiant(e)</span>
               </Card.Header>
@@ -450,31 +456,33 @@ const EditStagePfe = () => {
                       <p className="mt-1">Affectation Stage Etudiant</p>
                     </span>
                   </Col>
-                  <Col>
-                    <span
-                      onClick={() => {
-                        setPersonType("binome");
-                        setShouldPrint(true);
-                      }}
-                      className="badge badge-soft-warning view-item-btn pe-auto"
-                    >
-                      <i
-                        className="ph ph-file-arrow-down"
-                        style={{
-                          transition: "transform 0.3s ease-in-out",
-                          cursor: "pointer",
-                          fontSize: "3.5em",
+                  {stageDetails.binome !== null && (
+                    <Col>
+                      <span
+                        onClick={() => {
+                          setPersonType("binome");
+                          setShouldPrint(true);
                         }}
-                        onMouseEnter={(e) =>
-                          (e.currentTarget.style.transform = "scale(1.3)")
-                        }
-                        onMouseLeave={(e) =>
-                          (e.currentTarget.style.transform = "scale(1)")
-                        }
-                      ></i>
-                      <p className="mt-1">Affectation Stage Binôme</p>
-                    </span>
-                  </Col>
+                        className="badge badge-soft-warning view-item-btn pe-auto"
+                      >
+                        <i
+                          className="ph ph-file-arrow-down"
+                          style={{
+                            transition: "transform 0.3s ease-in-out",
+                            cursor: "pointer",
+                            fontSize: "3.5em",
+                          }}
+                          onMouseEnter={(e) =>
+                            (e.currentTarget.style.transform = "scale(1.3)")
+                          }
+                          onMouseLeave={(e) =>
+                            (e.currentTarget.style.transform = "scale(1)")
+                          }
+                        ></i>
+                        <p className="mt-1">Affectation Stage Binôme</p>
+                      </span>
+                    </Col>
+                  )}
                 </Row>
               </Card.Body>
               <Row
@@ -490,62 +498,68 @@ const EditStagePfe = () => {
                   />
                 </div>
               </Row>
-              <Card.Header className="bg-primary opacity-50 text-white">
-                <span className="fs-20 fw-bold">Information Société</span>
-              </Card.Header>
-              <Card.Body>
-                <Row className="mb-2 d-flex align-items-center">
-                  <Col lg={2}>
-                    <span className="fs-16 fw-medium">Nom Société</span>
-                  </Col>
-                  <Col>
-                    <div className="hstack gap-2">
-                      <select
-                        className="form-select"
-                        onChange={handleSocieteChange}
-                        value={formData.selectedSociete}
-                      >
-                        {allSocites.map((societe) => (
-                          <option value={societe.nom} key={societe?._id!}>
-                            {societe.nom}
-                          </option>
-                        ))}
-                      </select>
-                      <Button
-                        variant="primary"
-                        onClick={() => setOpenModal(!openModal)}
-                      >
-                        <i className="ri-add-line"></i>
-                      </Button>
-                    </div>
-                  </Col>
-                  <Col className="text-end">
-                    <span className="fs-16 fw-medium">Encadrant Société</span>
-                  </Col>
-                  <Col>
-                    <select
-                      className="form-select"
-                      value={formData.encadrantSociete}
-                      onChange={handleChange("encadrantSociete")}
-                    >
-                      {societe &&
-                        societe?.encadrant?.map(
-                          (encadrant: any, index: number) => (
-                            <option key={index} value={encadrant}>
-                              {encadrant}
-                            </option>
-                          )
-                        )}
-                    </select>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col lg={2}>
-                    <span className="fs-16 fw-medium">Informations</span>
-                  </Col>
-                  <Col>{societe && societe?.infos}</Col>
-                </Row>
-              </Card.Body>
+              {stageDetails.type_stage === "Industriel" && (
+                <>
+                  <Card.Header className="bg-primary opacity-50 text-white">
+                    <span className="fs-20 fw-bold">Information Société</span>
+                  </Card.Header>
+                  <Card.Body>
+                    <Row className="mb-2 d-flex align-items-center">
+                      <Col lg={2}>
+                        <span className="fs-16 fw-medium">Nom Société</span>
+                      </Col>
+                      <Col>
+                        <div className="hstack gap-2">
+                          <select
+                            className="form-select"
+                            onChange={handleSocieteChange}
+                            value={formData.selectedSociete}
+                          >
+                            {allSocites.map((societe) => (
+                              <option value={societe.nom} key={societe?._id!}>
+                                {societe.nom}
+                              </option>
+                            ))}
+                          </select>
+                          <Button
+                            variant="primary"
+                            onClick={() => setOpenModal(!openModal)}
+                          >
+                            <i className="ri-add-line"></i>
+                          </Button>
+                        </div>
+                      </Col>
+                      <Col className="text-end">
+                        <span className="fs-16 fw-medium">
+                          Encadrant Société
+                        </span>
+                      </Col>
+                      <Col>
+                        <select
+                          className="form-select"
+                          value={formData.encadrantSociete}
+                          onChange={handleChange("encadrantSociete")}
+                        >
+                          {societe &&
+                            societe?.encadrant?.map(
+                              (encadrant: any, index: number) => (
+                                <option key={index} value={encadrant}>
+                                  {encadrant}
+                                </option>
+                              )
+                            )}
+                        </select>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col lg={2}>
+                        <span className="fs-16 fw-medium">Informations</span>
+                      </Col>
+                      <Col>{societe && societe?.infos}</Col>
+                    </Row>
+                  </Card.Body>
+                </>
+              )}
               <Card.Header className="bg-info-subtle text-dark-emphasis">
                 <Row>
                   <Col>
@@ -749,34 +763,38 @@ const EditStagePfe = () => {
                   <Col>{stageDetails.note}</Col>
                 </Row>
               </Card.Body>
-              <Card.Header className="bg-warning-subtle text-dark">
-                <span className="fs-20 fw-bold">Information Binôme</span>
-              </Card.Header>
-              <Card.Body>
-                <Row className="d-flex align-items-center">
-                  <Col>
-                    <span className="fs-16 fw-medium">Nom & Prénom</span>
-                  </Col>
-                  <Col>
-                    <span>
-                      {stageDetails.binome.prenom_fr}{" "}
-                      {stageDetails.binome.nom_fr}
-                    </span>
-                  </Col>
-                  <Col lg={1}>
-                    <span className="fs-16 fw-medium">N° Tél</span>
-                  </Col>
-                  <Col lg={2}>
-                    <span>{stageDetails.binome.num_phone}</span>
-                  </Col>
-                  <Col lg={1}>
-                    <span className="fs-16 fw-medium">Email</span>
-                  </Col>
-                  <Col>
-                    <span>{stageDetails.binome.email}</span>
-                  </Col>
-                </Row>
-              </Card.Body>
+              {stageDetails.binome !== null && (
+                <>
+                  <Card.Header className="bg-warning-subtle text-dark">
+                    <span className="fs-20 fw-bold">Information Binôme</span>
+                  </Card.Header>
+                  <Card.Body>
+                    <Row className="d-flex align-items-center">
+                      <Col>
+                        <span className="fs-16 fw-medium">Nom & Prénom</span>
+                      </Col>
+                      <Col>
+                        <span>
+                          {stageDetails.binome.prenom_fr}{" "}
+                          {stageDetails.binome.nom_fr}
+                        </span>
+                      </Col>
+                      <Col lg={1}>
+                        <span className="fs-16 fw-medium">N° Tél</span>
+                      </Col>
+                      <Col lg={2}>
+                        <span>{stageDetails.binome.num_phone}</span>
+                      </Col>
+                      <Col lg={1}>
+                        <span className="fs-16 fw-medium">Email</span>
+                      </Col>
+                      <Col>
+                        <span>{stageDetails.binome.email}</span>
+                      </Col>
+                    </Row>
+                  </Card.Body>
+                </>
+              )}
               <Card.Header className="bg-success-subtle text-dark">
                 <span className="fs-20 fw-bold">Les pièces jointes</span>
               </Card.Header>
@@ -887,13 +905,24 @@ const EditStagePfe = () => {
                     </div>
                   </Col>
                   <Col className="border-2 border-end">
+                    <p className="fs-15 fw-medium">Attestation de stage</p>
+                    {stageDetails.file_attestation.endsWith(".") && (
+                      <div className="text-center">
+                        <img
+                          className="rounded img-fluid h-80 object-cover"
+                          src={noImage}
+                          alt="Aucun Image Disponible"
+                          onError={(e) => {
+                            e.currentTarget.src = noImage;
+                          }}
+                          width="120"
+                        />
+                      </div>
+                    )}
                     <div
                       className="vstack gap-3"
                       style={{ position: "relative" }}
                     >
-                      <span className="fs-15 fw-medium">
-                        Attestation de stage
-                      </span>
                       {isImageFile(
                         `${basePath}/attestationFiles/${stageDetails.file_attestation}`
                       ) && (
@@ -936,7 +965,7 @@ const EditStagePfe = () => {
                       ) && (
                         <>
                           <iframe
-                            src={`${basePath}/propositionSigneFiles/${stageDetails.file_proposition_signe}`}
+                            src={`${basePath}/attestationFiles/${stageDetails.file_attestation}`}
                             style={{
                               border: "none",
                               width: "100%",
@@ -990,11 +1019,25 @@ const EditStagePfe = () => {
                     </div>
                   </Col>
                   <Col>
+                    <p className="fs-16 fw-medium">Rapport</p>
+                    {stageDetails.file_rapport &&
+                      stageDetails.file_rapport.includes("undefined") && (
+                        <div className="text-center">
+                          <img
+                            className="rounded img-fluid h-80 object-cover"
+                            src={noImage}
+                            alt="Aucun Image Disponible"
+                            onError={(e) => {
+                              e.currentTarget.src = noImage;
+                            }}
+                            width="120"
+                          />
+                        </div>
+                      )}
                     <div
                       className="vstack gap-3"
                       style={{ position: "relative" }}
                     >
-                      <span className="fs-15 fw-medium">Rapport</span>
                       {isImageFile(
                         `${basePath}/rapportFiles/${stageDetails.file_rapport}`
                       ) && (
@@ -1037,11 +1080,11 @@ const EditStagePfe = () => {
                       ) && (
                         <>
                           <iframe
-                            src={`${basePath}/propositionSigneFiles/${stageDetails.file_proposition_signe}`}
+                            src={`${basePath}/rapportFiles/${stageDetails.file_rapport}`}
                             style={{
                               border: "none",
-                              width: "100%",
-                              height: "200px",
+                              width: "500px",
+                              height: "290px",
                             }}
                             title="Rapport"
                           />

@@ -46,21 +46,21 @@ const AffectationEtudiant: React.FC<AffectationProps> = ({
         </Row>
 
         <div className="text-center">
-          <span>A Monsieur Le Directeur : </span>{" "}
-          <span className="fs-14 fw-bold">{stageDetails.societe.nom}</span>
+          <span>A Monsieur Le Directeur : </span>
+          {stageDetails.societe !== null && (
+            <span className="fs-14 fw-bold">{stageDetails.societe.nom}</span>
+          )}
         </div>
-
         <div>
           <span className="fs-13 fw-medium">
             <u>Objet : </u>
           </span>
           <span> Affectation de Stagiaire</span>
         </div>
-
         <div>
           <p>Monsieur,</p>
           <p>
-            Je vous remervie d'avoir bie, voulu accepter d'accueillir des
+            Je vous remercie d'avoir bien, voulu accepter d'accueillir des
             stagiaires de l'{lastVariable?.abreviation!},
           </p>
           <p>et j'ai le plaisir de vous informer que : </p>

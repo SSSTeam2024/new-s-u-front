@@ -46,22 +46,6 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     margin: 20,
   },
-  row: {
-    flexDirection: "row",
-  },
-  cellFooter: {
-    flex: 1,
-    padding: 5,
-    marginHorizontal: 20,
-    borderWidth: 1,
-    borderColor: "#000",
-    textAlign: "center",
-    fontSize: 10,
-    height: 100,
-    borderRadius: 5,
-    justifyContent: "center",
-    alignItems: "center",
-  },
 });
 
 interface PropositionProps {
@@ -132,30 +116,14 @@ const PropositionStagePDF: React.FC<PropositionProps> = ({
             paddingRight: 30,
           }}
         >
-          <View style={styles.row}>
-            <View style={styles.cellFooter}>
-              <Text style={{ fontSize: 12, marginBottom: 6 }}>
-                Enseignant Encadreur
+          <View>
+            <View style={{ alignItems: "flex-end" }}>
+              <Text style={{ fontSize: 12, marginBottom: 4 }}>
+                Monsieur Directeur
               </Text>
-              <Text style={{ fontSize: 12, marginBottom: 6 }}>
-                Nom et Prénom :{" "}
+              <Text style={{ fontSize: 12, marginBottom: 50, marginRight: 20 }}>
+                Signature
               </Text>
-              <Text
-                style={{ fontSize: 14, marginBottom: 6 }}
-              >{`${stageDetails.encadrant_univ.prenom_fr} ${stageDetails.encadrant_univ.nom_fr}`}</Text>
-              <Text style={{ fontSize: 12, marginBottom: 10 }}>Signature</Text>
-            </View>
-            <View style={styles.cellFooter}>
-              <Text style={{ fontSize: 12, marginBottom: 6 }}>
-                Enseignant Encadreur
-              </Text>
-              <Text style={{ fontSize: 12, marginBottom: 6 }}>
-                Nom et Prénom :{" "}
-              </Text>
-              <Text
-                style={{ fontSize: 14, marginBottom: 6 }}
-              >{`${stageDetails.encadrant_societe}`}</Text>
-              <Text style={{ fontSize: 12, marginBottom: 10 }}>Signature</Text>
             </View>
           </View>
         </View>

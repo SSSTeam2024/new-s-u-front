@@ -41,6 +41,16 @@ export const societeSlice = createApi({
         },
         invalidatesTags: ["Societe"],
       }),
+      getById: builder.mutation<any, {id: string}>({
+        query(payload) {
+          return {
+            url: "/get-by-id",
+            method: "POST",
+            body: payload,
+          };
+        },
+        invalidatesTags: ["Societe"],
+      }),
     //   getCycleByValue: builder.mutation<
     //     { id: string; cycle_fr: string; cycle_ar: string },
     //     Cycle
@@ -76,5 +86,6 @@ export const societeSlice = createApi({
 export const {
   useAddSocieteMutation,
   useFetchAllSocietesQuery,
-  useGetByNameMutation
+  useGetByNameMutation,
+  useGetByIdMutation
 } = societeSlice;

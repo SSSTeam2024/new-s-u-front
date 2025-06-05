@@ -804,7 +804,7 @@ const Navdata = () => {
     {
       id: "Stage",
       label: "Gestion des stages",
-      icon: "bi bi-shop-window",
+      icon: "bi bi-buildings",
       link: "/#",
       click: function (e: any) {
         e.preventDefault();
