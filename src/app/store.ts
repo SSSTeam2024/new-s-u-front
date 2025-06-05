@@ -88,6 +88,7 @@ import { resultatSlice } from "features/resultats/resultatsSlice";
 import { stagePfeSlice } from "features/stagesPfe/stagesPfeSlice";
 import { societeSlice } from "features/societe/societeSlice";
 import { stageProSlice } from "features/stagesPro/stagesProSlice";
+import { typeStageSlice } from "features/typeStage/typeStageSlice";
 
 export const store = configureStore({
   reducer: {
@@ -183,6 +184,8 @@ export const store = configureStore({
      [societeSlice.reducerPath]: societeSlice.reducer,
      //! Stage Pro
      [stageProSlice.reducerPath]: stageProSlice.reducer,
+          //! Type Stage
+     [typeStageSlice.reducerPath]: typeStageSlice.reducer,
     auth: authSlice,
     Layout: LayoutReducer,
     Profile: ProfileReducer,
@@ -267,7 +270,8 @@ export const store = configureStore({
       resultatSlice.middleware,
       stagePfeSlice.middleware,
       societeSlice.middleware,
-      stageProSlice.middleware
+      stageProSlice.middleware,
+      typeStageSlice.middleware
     ]);
   },
 });

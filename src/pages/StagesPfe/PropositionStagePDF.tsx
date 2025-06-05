@@ -151,9 +151,16 @@ const PropositionStagePDF: React.FC<PropositionProps> = ({
               <Text style={{ fontSize: 12, marginBottom: 6 }}>
                 Nom et Prénom :{" "}
               </Text>
-              <Text
-                style={{ fontSize: 14, marginBottom: 6 }}
-              >{`${stageDetails.encadrant_univ.prenom_fr} ${stageDetails.encadrant_univ.nom_fr}`}</Text>
+              {stageDetails.encadrant_univ === null ? (
+                <Text style={{ fontSize: 12, marginBottom: 6 }}>
+                  ...............
+                </Text>
+              ) : (
+                <Text
+                  style={{ fontSize: 14, marginBottom: 6 }}
+                >{`${stageDetails!.encadrant_univ!.prenom_fr!} ${stageDetails!
+                  .encadrant_univ!.nom_fr!}`}</Text>
+              )}
               <Text style={{ fontSize: 12, marginBottom: 10 }}>Signature</Text>
             </View>
             <View style={styles.cellFooter}>

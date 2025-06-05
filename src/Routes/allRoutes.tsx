@@ -259,6 +259,10 @@ import StagesPro from "pages/StagesPro";
 import EditStagePro from "pages/StagesPro/EditStagePro";
 import AddNewStagePro from "pages/StagesPro/AddNewStagePro";
 import AddNewStagePfe from "pages/StagesPfe/AddNewStagePfe";
+import TypeStage from "pages/TypeStage";
+import AjouterTypeStage from "pages/TypeStage/AjouterTypeStage";
+import DetailsTypeStage from "pages/TypeStage/DetialsTypeStage";
+import EditTypeStage from "pages/TypeStage/EditTypeStage";
 
 const authProtectedRoutes = [
   { path: "/dashboard", component: <Dashboard /> },
@@ -1206,15 +1210,15 @@ const authProtectedRoutes = [
   },
   //! Stages PFE
   {
-    path: "/gestion-des-stages/liste-stages-pfe",
+    path: "/gestion-des-stages/liste-stages",
     component: <StagesPfe />,
   },
   {
-    path: "/gestion-des-stages/visualiser-stage-pfe",
+    path: "/gestion-des-stages/visualiser-stage",
     component: <DetailsStagePfe />,
   },
   {
-    path: "/gestion-des-stages/modifier-stage-pfe",
+    path: "/gestion-des-stages/modifier-stage",
     component: <EditStagePfe />,
   },
   {
@@ -1222,7 +1226,7 @@ const authProtectedRoutes = [
     component: <Encadrement />,
   },
   {
-    path: "/gestion-des-stages/ajouter-stage-pfe",
+    path: "/gestion-des-stages/ajouter-stage",
     component: <AddNewStagePfe />,
   },
   //! Stages Pro
@@ -1237,6 +1241,22 @@ const authProtectedRoutes = [
   {
     path: "/gestion-des-stages/ajouter-stage-professionnel",
     component: <AddNewStagePro />,
+  },
+  {
+    path: "/gestion-des-stages/liste-types-stage",
+    component: <TypeStage />,
+  },
+  {
+    path: "/gestion-des-stages/ajouter-type-stage",
+    component: <AjouterTypeStage />,
+  },
+  {
+    path: "/gestion-des-stages/details-type-stage",
+    component: <DetailsTypeStage />,
+  },
+  {
+    path: "/gestion-des-stages/modifier-type-stage",
+    component: <EditTypeStage />,
   },
   // Accounts
   { path: "/account", component: <MyAccount /> },

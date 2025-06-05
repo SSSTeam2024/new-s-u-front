@@ -4,7 +4,11 @@ export interface Societe {
   _id?: string;
   nom: string;
   encadrant: string[];
-  infos: string
+  matricule: string;
+  adresse: string;
+  responsable: string;
+  siteweb: string;
+  phone: string;
 }
 export const societeSlice = createApi({
   reducerPath: "Societe",
@@ -31,7 +35,7 @@ export const societeSlice = createApi({
         },
         invalidatesTags: ["Societe"],
       }),
-      getByName: builder.mutation<any, {name: string}>({
+      getByName: builder.mutation<any, { name: string }>({
         query(payload) {
           return {
             url: "/get-by-name",
@@ -41,7 +45,7 @@ export const societeSlice = createApi({
         },
         invalidatesTags: ["Societe"],
       }),
-      getById: builder.mutation<any, {id: string}>({
+      getById: builder.mutation<any, { id: string }>({
         query(payload) {
           return {
             url: "/get-by-id",
@@ -51,34 +55,34 @@ export const societeSlice = createApi({
         },
         invalidatesTags: ["Societe"],
       }),
-    //   getCycleByValue: builder.mutation<
-    //     { id: string; cycle_fr: string; cycle_ar: string },
-    //     Cycle
-    //   >({
-    //     query(payload) {
-    //       return {
-    //         url: "/get-cycle-value",
-    //         method: "POST",
-    //         body: payload,
-    //       };
-    //     },
-    //     invalidatesTags: ["Cycle"],
-    //   }),
-    //   updateCycle: builder.mutation<void, Cycle>({
-    //     query: ({ _id, ...rest }) => ({
-    //       url: `/update-cycle/${_id}`,
-    //       method: "PUT",
-    //       body: rest,
-    //     }),
-    //     invalidatesTags: ["Cycle"],
-    //   }),
-    //   deleteCycle: builder.mutation<void, string>({
-    //     query: (_id) => ({
-    //       url: `delete-cycle/${_id}`,
-    //       method: "DELETE",
-    //     }),
-    //     invalidatesTags: ["Cycle"],
-    //   }),
+      //   getCycleByValue: builder.mutation<
+      //     { id: string; cycle_fr: string; cycle_ar: string },
+      //     Cycle
+      //   >({
+      //     query(payload) {
+      //       return {
+      //         url: "/get-cycle-value",
+      //         method: "POST",
+      //         body: payload,
+      //       };
+      //     },
+      //     invalidatesTags: ["Cycle"],
+      //   }),
+      //   updateCycle: builder.mutation<void, Cycle>({
+      //     query: ({ _id, ...rest }) => ({
+      //       url: `/update-cycle/${_id}`,
+      //       method: "PUT",
+      //       body: rest,
+      //     }),
+      //     invalidatesTags: ["Cycle"],
+      //   }),
+      //   deleteCycle: builder.mutation<void, string>({
+      //     query: (_id) => ({
+      //       url: `delete-cycle/${_id}`,
+      //       method: "DELETE",
+      //     }),
+      //     invalidatesTags: ["Cycle"],
+      //   }),
     };
   },
 });
@@ -87,5 +91,5 @@ export const {
   useAddSocieteMutation,
   useFetchAllSocietesQuery,
   useGetByNameMutation,
-  useGetByIdMutation
+  useGetByIdMutation,
 } = societeSlice;

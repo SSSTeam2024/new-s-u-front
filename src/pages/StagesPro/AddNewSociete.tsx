@@ -17,7 +17,11 @@ const AddNewSociete: React.FC<SocieteProps> = ({
   const initialSociete = {
     nom: "",
     encadrant: [""],
-    infos: "",
+    matricule: "",
+    adresse: "",
+    responsable: "",
+    siteweb: "",
+    phone: "",
   };
   const [societe, setSociete] = useState(initialSociete);
 
@@ -93,14 +97,14 @@ const AddNewSociete: React.FC<SocieteProps> = ({
         <Row className="mb-3">
           <Col>
             <Form.Label htmlFor="infos">Informations</Form.Label>
-            <textarea
+            {/* <textarea
               className="form-control"
               rows={3}
               value={societe.infos}
               onChange={onChange}
               name="infos"
               id="infos"
-            />
+            /> */}
           </Col>
         </Row>
         <Col lg={12}>
