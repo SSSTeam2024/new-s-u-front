@@ -1,0 +1,4 @@
+.grey-placeholder::placeholder {
+  color: grey;
+  opacity: 1;
+}

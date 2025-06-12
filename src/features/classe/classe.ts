@@ -84,7 +84,16 @@ export const classeSlice = createApi({
         },
         invalidatesTags: ["Classe"],
       }),
-
+fetchClassesByNiveauId: builder.mutation<Classe[], {niveauId: string}>({
+        query({niveauId}) {
+          return {
+            url: "/get-classes-by-niveau",
+            method: "POST",
+            body: {niveauId},
+          };
+        },
+        invalidatesTags: ["Classe"],
+      }),
       updateClasse: builder.mutation<void, any>({
         query: (payload) => ({
           url: `/update-classe`,
@@ -160,4 +169,5 @@ export const {
   useGetMatieresByClasseIdQuery,
   useGetClasseValueMutation,
   useAssignParcoursToClasseMutation,
+  useFetchClassesByNiveauIdMutation
 } = classeSlice;
