@@ -21,6 +21,12 @@ export interface Demande {
   extra_data?: ExtraObject[];
   createdAt: Date;
   updatedAt: Date;
+  added_by: string;
+  current_status: string;
+  status_history: {
+    value: string,
+    date: string
+  }[]
 }
 export const demandeEnseignantSlice = createApi({
   reducerPath: "DemandeEnseignantApi",

@@ -37,6 +37,7 @@ const AjouterDemandeEnseignant = () => {
   document.title = "Ajouter Demande Enseignant | ENIGA";
   const navigate = useNavigate();
   const user = useSelector((state: RootState) => selectCurrentUser(state));
+  console.log("user", user)
   const [addDemandeEnseignant] = useAddDemandeEnseignantMutation();
   const [getDiversDocExtra] = useGetDiversDocExtraByModelIdMutation();
   const { data: enseignants } = useFetchEnseignantsQuery();
@@ -49,6 +50,13 @@ const AjouterDemandeEnseignant = () => {
     ? templateBodies
     : [];
 
+  const formatDate = (date: Date) => {
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  };
+
   const [formData, setFormData] = useState</* Partial<Demande> */any>({
     enseignantId: "",
     title: "",
@@ -57,7 +65,12 @@ const AjouterDemandeEnseignant = () => {
     langue: "",
     nombre_copie: 1,
     response: "",
-    status: "en attente",
+    added_by: user?._id!,
+    current_status: "en attente",
+    status_history: [{
+      value: "en attente",
+      date: formatDate(new Date())
+    }],
     extra_data: [
       {
         name: "",
@@ -67,19 +80,10 @@ const AjouterDemandeEnseignant = () => {
     ],
     createdAt: undefined,
     updatedAt: undefined,
+
   });
 
   const [selectedLangue, setSelectedLangue] = useState<string>("");
-  // nombre de copie set
-  // const [blueCounter, setblueCounter] = useState(1);
-  // function countUP(id: any, prev_data_attr: any) {
-  //   id(prev_data_attr + 1);
-  // }
-
-  // function countDown(id: any, prev_data_attr: any) {
-  //   id(prev_data_attr - 1);
-  // }
-
   const [diversExtraData, setDiversExtraData] = useState<any>(null);
   const [diversExtraDataExceptional, setDiversExtraDataExceptional] = useState<any>(null);
   const [selectedExceptional, setSelectedExceptional] = useState<any>([
@@ -90,6 +94,8 @@ const AjouterDemandeEnseignant = () => {
       noms_enfants: ""
     }
   ]);
+
+
   const [docLabel, setDocLabel] = useState<string>("");
 
   const handleLangueChange = (langue: string) => {

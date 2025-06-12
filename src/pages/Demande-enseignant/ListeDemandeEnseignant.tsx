@@ -140,26 +140,26 @@ const ListeDemandeEnseignant = () => {
         disableFilters: true,
         filterable: true,
         accessor: (cellProps: any) => {
-          switch (cellProps.status) {
+          switch (cellProps.current_status) {
             case "traité":
               return (
                 <span className="badge bg-success-subtle text-success">
                   {" "}
-                  {cellProps.status}
+                  {cellProps.current_status}
                 </span>
               );
             case "rejeté":
               return (
                 <span className="badge bg-danger-subtle text-danger">
                   {" "}
-                  {cellProps.status}
+                  {cellProps.current_status}
                 </span>
               );
             default:
               return (
                 <span className="badge bg-secondary-subtle text-secondary">
                   {" "}
-                  {cellProps.status}
+                  {cellProps.current_status}
                 </span>
               );
           }
@@ -184,7 +184,7 @@ const ListeDemandeEnseignant = () => {
                   // data-bs-toggle="offcanvas"
                   >
                     <i
-                      className="ph ph-eye"
+                      className="ph ph-gear-six"
                       style={{
                         transition: "transform 0.3s ease-in-out",
                         cursor: "pointer",
@@ -202,7 +202,7 @@ const ListeDemandeEnseignant = () => {
               ) : (
                 <></>
               )}
-              {actionAuthorization(
+              {/* {actionAuthorization(
                 "/demandes-enseignant/edit-demande-enseignant",
                 user?.permissions!
               ) ? (
@@ -230,7 +230,7 @@ const ListeDemandeEnseignant = () => {
                 </li>
               ) : (
                 <></>
-              )}
+              )} */}
               {actionAuthorization(
                 "/demandes-enseignant/supprimer-demande-enseignant",
                 user?.permissions!
