@@ -128,8 +128,50 @@ const AjouterEnseignant = () => {
      educations: [
     { institution: "", degree: "", graduationYear: "" },
   ],
+   historique_positions: [
+      {
+        poste: "",
+        grade: "",
+        date_affectation: "",
+        date_titularisation: "",
+        date_depart: "",
+      },
+    ],
  
   });
+  const handleHistoricChange = (
+    index: number,
+    field: string,
+    value: string
+  ) => {
+    const updated = [...formData.historique_positions];
+    updated[index][field] = value;
+    setFormData((prev: any) => ({ ...prev, historique_positions: updated }));
+  };
+
+  const addHistoricPosition = () => {
+    setFormData((prev: any) => ({
+      ...prev,
+      historique_positions: [
+        ...prev.historique_positions,
+        {
+          poste: "",
+          grade: "",
+          date_affectation: "",
+          date_titularisation: "",
+          date_depart: "",
+        },
+      ],
+    }));
+  };
+
+  const removeHistoricPosition = (index: number) => {
+    const updated = [...formData.historique_positions];
+    updated.splice(index, 1);
+    setFormData((prev: any) => ({ ...prev, historique_positions: updated }));
+  };
+ 
+
 const handleEducationChange = (index: number, field: keyof Education, value: string) => {
   const updatedEducation = [...formData.educations];
   updatedEducation[index][field] = value;
@@ -1398,7 +1440,7 @@ const removeEducationEntry = (index: number) => {
                           </div>
                           <div className="flex-grow-1">
                             <h5 className="card-title">
-                              الشهادات العلمية /Diplômes Académiques
+                          الاختصاص العلمي /Spécialité Académique
                             </h5>
                           </div>
                         </div>
@@ -1766,13 +1808,31 @@ const removeEducationEntry = (index: number) => {
                     </Col> */}
 
 {/* educations  */}
+<Col>
+  <Card.Header>
+                        <div className="d-flex">
+                          <div className="flex-shrink-0 me-3">
+                            <div className="avatar-sm">
+                              <div className="avatar-title rounded-circle bg-light text-primary fs-20">
+                                <i className="bi bi-file-earmark-plus"></i>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex-grow-1">
+                            <h5 className="card-title">
+                              الشهادات العلمية /Diplômes Académiques
+                            </h5>
+                          </div>
+                        </div>
+                      </Card.Header>
+</Col>
 
 {formData?.educations!.map((entry: Education, index: number) => (
   <Col lg={12} key={index}>
     <Card className="mb-3">
       <Card.Header>
         <div className="d-flex justify-content-between align-items-center">
-          <h5 className="card-title mb-0">( {index + 1} ) Informations éducatives </h5>
+          <h5 className="card-title mb-0">Informations éducatives ( {index + 1} ) </h5>
           {formData?.educations!.length > 1 && (
             <Button variant="danger" size="sm" onClick={() => removeEducationEntry(index)}>
               Supprimer
@@ -1825,7 +1885,142 @@ const removeEducationEntry = (index: number) => {
 </Button>
 
                   </Card.Body>
+                  
+<Col lg={12}>
+                            <Card.Header>
+                        <div className="d-flex">
+                          <div className="flex-shrink-0 me-3">
+                            <div className="avatar-sm">
+                              <div className="avatar-title rounded-circle bg-light text-primary fs-20">
+                                <i className="bi bi-people-fill"></i>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex-grow-1">
+                            <h5 className="card-title">
+                              Historique des positions/ التسلسل المهني
+                            </h5>
+                          </div>
+                        </div>
+                      </Card.Header>
+                          {formData.historique_positions.map(
+                            (position: any, index: number) => (
+                              <Row
+                                key={index}
+                                className="align-items-end m-3 border-bottom "
+                              >
+                                <Col lg={4}>
+                                  <Form.Label>Poste / الخطة الوظيفية</Form.Label>
+                                  <Form.Select
+                                    value={position.poste}
+                                    onChange={(e) =>
+                                      handleHistoricChange(
+                                        index,
+                                        "poste",
+                                        e.target.value
+                                      )
+                                    }
+                                  >
+                                    <option value="">
+                                      -- Choisir Poste --
+                                    </option>
+                                    {poste.map((item: any) => (
+                                      <option key={item._id} value={item._id}>
+                                        {item.poste_ar}
+                                      </option>
+                                    ))}
+                                  </Form.Select>
+                                </Col>
+                                <Col lg={4}>
+                                  <Form.Label>Grade / الرتبة</Form.Label>
+                                  <Form.Select
+                                    value={position.grade}
+                                    onChange={(e) =>
+                                      handleHistoricChange(
+                                        index,
+                                        "grade",
+                                        e.target.value
+                                      )
+                                    }
+                                  >
+                                    <option value="">
+                                      -- Choisir Grade --
+                                    </option>
+                                    {grade.map((item: any) => (
+                                      <option key={item._id} value={item._id}>
+                                        {item.grade_ar}
+                                      </option>
+                                    ))}
+                                  </Form.Select>
+                                </Col>
+                               
+                                <Col lg={4}>
+                                  <Form.Label>Date Affectation / تاريخ الإنتداب</Form.Label>
+                                  <Form.Control
+                                    type="date"
+                                    value={position.date_affectation}
+                                    onChange={(e) =>
+                                      handleHistoricChange(
+                                        index,
+                                        "date_affectation",
+                                        e.target.value
+                                      )
+                                    }
+                                  />
+                                </Col>
+                                <Col lg={4}>
+                               <Form.Label>Date Titularisation / تاريخ الترسيم</Form.Label>
+                                  
+                                  <Form.Control
+                                    type="date"
+                                    value={position.date_titularisation}
+                                    onChange={(e) =>
+                                      handleHistoricChange(
+                                        index,
+                                        "date_titularisation",
+                                        e.target.value
+                                      )
+                                    }
+                                  />
+                                </Col>
+                                <Col lg={4}>
+                                  <Form.Label className="mt-2">Date Départ / تاريخ المغادرة</Form.Label>
+                                  <Form.Control
+                                    type="date"
+                                    value={position.date_depart}
+                                    onChange={(e) =>
+                                      handleHistoricChange(
+                                        index,
+                                        "date_depart",
+                                        e.target.value
+                                      )
+                                    }
+                                  />
+                                </Col>
+                                <Col lg={3}>
+                                  <Button
+                                    variant="danger"
+                                    onClick={() =>
+                                      removeHistoricPosition(index)
+                                    }
+                                  >
+                                    Supprimer
+                                  </Button>
+                                </Col>
+                              </Row>
+                            )
+                          )}
+                          <Button
+                            variant="secondary"
+                            onClick={addHistoricPosition}
+                          >
+                            + Ajouter une position
+                          </Button>
+                        </Col>
                   <Card.Footer>
+
+
+
                     <Col lg={12}>
                       <div className="hstack gap-2 justify-content-end">
                         <Button variant="primary" id="add-btn" type="submit">

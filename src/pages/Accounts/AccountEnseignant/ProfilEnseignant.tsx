@@ -26,6 +26,7 @@ import "swiper/css/scrollbar";
 import "swiper/css/effect-fade";
 import "swiper/css/effect-flip";
 import userImage from "assets/images/userImage.jpg";
+import moment from 'moment';
 
 const ProfilEnseignant = () => {
   const [showModal, setShowModal] = useState(false);
@@ -479,6 +480,87 @@ const ProfilEnseignant = () => {
               </Row>
               <Row className="p-2"></Row>
             </Card>
+            {enseignantDetails.educations && enseignantDetails.educations.length > 0 && (
+  <Card className="mt-4">
+    <Card.Body>
+ <h5 className="card-title">
+                                      الشهادات العلمية /Diplômes Académiques
+                                    </h5>      <div className="table-responsive">
+        <Table striped bordered hover size="sm" className="mb-0">
+          <thead>
+            <tr>
+              <th>Etablissement</th>
+              <th>diplome</th>
+              {/* <th>Catégorie</th> */}
+              <th>Date de graduation</th>
+              
+            </tr>
+          </thead>
+          <tbody>
+            {enseignantDetails.educations?.map((entry: any, index: number) => (
+              
+              <tr key={index}>
+                <td>{entry.poste?.poste_ar || '-'}</td>
+                <td>{entry.grade?.grade_ar || '-'}</td>
+                {/* <td>{entry.categorie?.categorie_fr || '-'}</td> */}
+                 <td>{entry.date_affectation ? moment(entry.date_affectation).format('DD/MM/YYYY') : '-'}</td>
+
+                {/* <td>{entry.date_affectation || '-'}</td> */}
+                {/* <td>{entry.date_titularisation || '-'}</td> */}
+               <td>{entry.date_titularisation ? moment(entry.date_titularisation).format('DD/MM/YYYY') : '-'}</td>
+
+                {/* <td>{entry.date_depart || 'En cours'}</td> */}
+                <td>{entry.date_depart ? moment(entry.date_depart).format('DD/MM/YYYY') : '-'}</td>
+
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      </div>
+    </Card.Body>
+  </Card>
+)}
+
+  {enseignantDetails.historique_positions && enseignantDetails.historique_positions.length > 0 && (
+  <Card className="mt-4">
+    <Card.Body>
+      <h5 className="text-muted">Historique des Postes/ التسلسل المهني</h5>
+      <div className="table-responsive">
+        <Table striped bordered hover size="sm" className="mb-0">
+          <thead>
+            <tr>
+              <th>Poste</th>
+              <th>Grade</th>
+              {/* <th>Catégorie</th> */}
+              <th>Date d'affectation</th>
+              <th>Date de titularisation</th>
+              <th>Date de départ</th>
+            </tr>
+          </thead>
+          <tbody>
+            {enseignantDetails.historique_positions.map((entry: any, index: number) => (
+              
+              <tr key={index}>
+                <td>{entry.poste?.poste_ar || '-'}</td>
+                <td>{entry.grade?.grade_ar || '-'}</td>
+                {/* <td>{entry.categorie?.categorie_fr || '-'}</td> */}
+                 <td>{entry.date_affectation ? moment(entry.date_affectation).format('DD/MM/YYYY') : '-'}</td>
+
+                {/* <td>{entry.date_affectation || '-'}</td> */}
+                {/* <td>{entry.date_titularisation || '-'}</td> */}
+               <td>{entry.date_titularisation ? moment(entry.date_titularisation).format('DD/MM/YYYY') : '-'}</td>
+
+                {/* <td>{entry.date_depart || 'En cours'}</td> */}
+                <td>{entry.date_depart ? moment(entry.date_depart).format('DD/MM/YYYY') : '-'}</td>
+
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      </div>
+    </Card.Body>
+  </Card>
+)}
 
             <Modal show={showModal} onHide={handleCloseModal}>
               <Modal.Body>
