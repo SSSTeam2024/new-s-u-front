@@ -249,7 +249,54 @@ const CloneDatabase = () => {
                       ) : (
                         <>
                           <div>
-                            <h3>Some Texte</h3>
+                            <p>
+                              En accédant ou en utilisant la base de données
+                              fournie, vous "Admin" acceptez les termes et
+                              conditions suivants :
+                            </p>
+
+                            <h6>1- Exigence de Clonage</h6>
+                            <p>
+                              L'Admin doit créer une copie ou un clone de la
+                              base de données originale avant d'effectuer toute
+                              opération, y compris mais sans s'y limiter :
+                              lecture, écriture, mise à jour ou suppression de
+                              données.
+                            </p>
+                            <h6>2- Interdiction d'Accès Direct</h6>
+                            <p>
+                              L'Admin est strictement interdit de modifier ou
+                              d'effectuer des opérations directement sur la base
+                              de données originale. Toute action doit être
+                              effectuée exclusivement sur la version clonée.
+                            </p>
+                            <h6>3- Responsabilité en cas de Violation</h6>
+                            <p>
+                              Toute interaction non autorisée avec la base de
+                              données originale, qu'elle soit intentionnelle ou
+                              accidentelle, sera considérée comme une violation
+                              de cet accord et pourra entraîner la perte
+                              d'accès, des mesures disciplinaires ou des
+                              conséquences juridiques, en fonction de la gravité
+                              de la violation.
+                            </p>
+                            <h6>4- Assurance de l'Intégrité des Données</h6>
+                            <p>
+                              L'Utilisateur est responsable de s'assurer que les
+                              opérations effectuées sur la base de données
+                              clonée ne compromettent pas l'intégrité, la
+                              sécurité ou la performance des données, dans
+                              l'éventualité où les données seraient
+                              ultérieurement migrées vers un environnement de
+                              production.
+                            </p>
+                            <h6>5- Audit et Surveillance</h6>
+                            <p>
+                              Le système peut enregistrer et auditer les accès
+                              et les opérations effectuées sur la base de
+                              données. En utilisant la base de données,
+                              l'Utilisateur consent à cette surveillance.
+                            </p>
                           </div>
                           <div>
                             <div className="form-check mb-2">
@@ -264,7 +311,8 @@ const CloneDatabase = () => {
                                 className="form-check-label"
                                 htmlFor="formCheck1"
                               >
-                                I read the terms conditions
+                                Je confirme avoir lu et compris les conditions
+                                générales.{" "}
                               </label>
                             </div>
                           </div>

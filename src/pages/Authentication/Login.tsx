@@ -32,11 +32,7 @@ const Login = () => {
       showConfirmButton: false,
       timer: 2200,
     });
-    if (migrationValue === true) {
-      navigate("/dashboard");
-    } else {
-      navigate("/migration");
-    }
+    navigate("/dashboard");
   };
 
   const msgError: string = "Wrong Credentials !";

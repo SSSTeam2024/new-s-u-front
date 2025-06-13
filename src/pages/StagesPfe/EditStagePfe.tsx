@@ -30,6 +30,7 @@ import { useFetchVaribaleGlobaleQuery } from "features/variableGlobale/variableG
 import PropositionStagePDF from "./PropositionStagePDF";
 import { useReactToPrint } from "react-to-print";
 import AffectationEtudiant from "./AffectationEtudiant";
+import { useFetchSallesQuery } from "features/salles/salles";
 
 function convertToBase64(
   file: File
@@ -49,24 +50,32 @@ function convertToBase64(
   });
 }
 
-function convertDateFormat(dateStr: any) {
+function convertDateFormat(dateStr: string) {
   if (!dateStr) return "";
-  const [day, month, year] = dateStr.split("/");
-  return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+
+  // Handle "DD/MM/YYYY"
+  if (dateStr.includes("/")) {
+    const [day, month, year] = dateStr.split("/");
+    return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+  }
+
+  // Assume already "YYYY-MM-DD"
+  return dateStr;
 }
 
 const EditStagePfe = () => {
-  document.title = "Modifier PFE | ENIGA";
+  document.title = "Modifier Stage | ENIGA";
 
   const navigate = useNavigate();
   const location = useLocation();
   const stageDetails = location.state;
 
+  console.log("stage details", stageDetails);
   const notifySuccess = () => {
     Swal.fire({
       position: "center",
       icon: "success",
-      title: "Stage Pfe a été modifié avec succès",
+      title: "Stage a été modifié avec succès",
       showConfirmButton: false,
       timer: 2500,
     });
@@ -87,6 +96,7 @@ const EditStagePfe = () => {
   //! Fetch Data
   const { data: allSocites = [] } = useFetchAllSocietesQuery();
   const { data: allEnseignants = [] } = useFetchEnseignantsQuery();
+  const { data: allSalles = [] } = useFetchSallesQuery();
   const { data: variableGlobales = [] } = useFetchVaribaleGlobaleQuery();
 
   //! Mutations
@@ -119,11 +129,26 @@ const EditStagePfe = () => {
     selectedSociete: stageDetails.societe?.nom || "",
     sujet: stageDetails.sujet || "",
     description: stageDetails.description || "",
-    encadrantSociete: stageDetails.encadrant_societe || "",
-    encadrantUniv: stageDetails.encadrant_univ?._id || "",
+    encadrantSociete1: stageDetails.encadrant_societe1 || "",
+    encadrantSociete2: stageDetails.encadrant_societe2 || "",
+    encadrantUniv1: stageDetails.encadrant_univ1?._id || null,
+    encadrantUniv2: stageDetails.encadrant_univ2?._id || null,
     avis: stageDetails.avis || "",
-    rapporteur: stageDetails.rapporteur?._id || "",
-    chef_jury: stageDetails.chef_jury?._id || "",
+    note: stageDetails.note || "",
+    mention: stageDetails.mention || "",
+    salle: stageDetails.salle || "",
+    remarque: stageDetails.remarque || "",
+    bibliographie: stageDetails.biblio || "",
+    motCle: stageDetails.mot_cle || "",
+    rapporteur1: stageDetails.rapporteur1?._id || null,
+    rapporteur2: stageDetails.rapporteur2?._id || null,
+    examinateur1: stageDetails.examinateur1?._id || null,
+    examinateur2: stageDetails.examinateur2?._id || null,
+    invite1: stageDetails.invite1?._id || null,
+    invite2: stageDetails.invite2?._id || null,
+    chef_jury: stageDetails.chef_jury?._id || null,
+    heureDebut: stageDetails.heure_debut || "",
+    heureFin: stageDetails.heure_fin || "",
     file_proposition_signe: stageDetails?.file_proposition_signe! || "",
     file_proposition_signe_base64: "",
     file_proposition_signe_extension: "",
@@ -230,14 +255,31 @@ const EditStagePfe = () => {
         _id: stageDetails._id,
         sujet: formData.sujet,
         description: formData.description,
+        mot_cle: formData.motCle,
+        biblio: formData.bibliographie,
+        salle: formData.salle,
+        remarque: formData.remarque,
+        mention: formData.mention,
+        note: formData.note,
+        heure_debut: formData.heureDebut,
+        heure_fin: formData.heureFin,
         date_debut: formData.dateDebut,
         date_fin: formData.dateFin,
         date_soutenance: formData.dateSoutenance,
         status_stage: formData.status,
-        encadrant_univ: formData.encadrantUniv,
-        encadrant_societe: formData.encadrantSociete,
+        encadrant_univ1: formData.encadrantUniv1,
+        encadrant_univ2: formData.encadrantUniv2,
+        encadrant_societe1: formData.encadrantSociete1,
+        encadrant_societe2: formData.encadrantSociete2,
         societe: societe._id,
         avis: formData.avis,
+        chef_jury: formData.chef_jury,
+        rapporteur1: formData.rapporteur1,
+        rapporteur2: formData.rapporteur2,
+        examinateur1: formData.examinateur1,
+        examinateur2: formData.examinateur2,
+        invite1: formData.invite1,
+        invite2: formData.invite2,
         file_proposition_signe: formData.file_proposition_signe,
         file_proposition_signe_base64: formData.file_proposition_signe_base64,
         file_proposition_signe_extension:
@@ -251,7 +293,7 @@ const EditStagePfe = () => {
       };
       await updateStage(updateData);
       notifySuccess();
-      navigate("/gestion-des-stages/liste-stages-pfe");
+      navigate("/gestion-des-stages/liste-stages");
     } catch (error) {
       notifyError(error);
     }
@@ -323,7 +365,7 @@ const EditStagePfe = () => {
             <Card>
               <div className="p-2 text-center">
                 <h3>
-                  Stage PFE <i>{stageDetails.type_stage}</i>
+                  <i>{stageDetails.type_stage.nom_fr}</i>
                 </h3>
               </div>
               <Card.Header className="bg-secondary-subtle text-dark-emphasis">
@@ -398,7 +440,7 @@ const EditStagePfe = () => {
               <Card.Body className="text-center">
                 <Row>
                   <Col>
-                    <PDFDownloadLink
+                    {/* <PDFDownloadLink
                       document={
                         <PropositionStagePDF
                           stageDetails={stageDetails}
@@ -408,12 +450,12 @@ const EditStagePfe = () => {
                       fileName="proposition_stage.pdf"
                       className="badge badge-soft-info view-item-btn"
                     >
-                      {/* <a
+                      <a
                       href={`${process.env.REACT_APP_API_URL}/files/propositionFiles/${stageDetails.file_proposition}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="badge badge-soft-info view-item-btn"
-                    > */}
+                    >
                       <i
                         className="ph ph-file-arrow-down"
                         style={{
@@ -429,9 +471,9 @@ const EditStagePfe = () => {
                         }
                       ></i>
                       <p className="mt-1">Proposition Stage</p>
-                    </PDFDownloadLink>
+                    </PDFDownloadLink> */}
                   </Col>
-                  <Col>
+                  {/* <Col>
                     <span
                       onClick={() => {
                         setPersonType("etudiant");
@@ -482,7 +524,7 @@ const EditStagePfe = () => {
                         <p className="mt-1">Affectation Stage Binôme</p>
                       </span>
                     </Col>
-                  )}
+                  )} */}
                 </Row>
               </Card.Body>
               <Row
@@ -498,15 +540,16 @@ const EditStagePfe = () => {
                   />
                 </div>
               </Row>
-              {stageDetails.type_stage === "Industriel" && (
+              {(stageDetails.type_stage.localite === "Externe" ||
+                stageDetails.type_stage.localite === "Externe/Interne") && (
                 <>
                   <Card.Header className="bg-primary opacity-50 text-white">
                     <span className="fs-20 fw-bold">Information Société</span>
                   </Card.Header>
                   <Card.Body>
                     <Row className="mb-2 d-flex align-items-center">
-                      <Col lg={2}>
-                        <span className="fs-16 fw-medium">Nom Société</span>
+                      <Col lg={1}>
+                        <span className="fs-16 fw-medium">Société</span>
                       </Col>
                       <Col>
                         <div className="hstack gap-2">
@@ -515,6 +558,7 @@ const EditStagePfe = () => {
                             onChange={handleSocieteChange}
                             value={formData.selectedSociete}
                           >
+                            <option value="">Choisir ...</option>
                             {allSocites.map((societe) => (
                               <option value={societe.nom} key={societe?._id!}>
                                 {societe.nom}
@@ -529,34 +573,88 @@ const EditStagePfe = () => {
                           </Button>
                         </div>
                       </Col>
-                      <Col className="text-end">
-                        <span className="fs-16 fw-medium">
-                          Encadrant Société
-                        </span>
-                      </Col>
-                      <Col>
-                        <select
-                          className="form-select"
-                          value={formData.encadrantSociete}
-                          onChange={handleChange("encadrantSociete")}
-                        >
-                          {societe &&
-                            societe?.encadrant?.map(
-                              (encadrant: any, index: number) => (
-                                <option key={index} value={encadrant}>
-                                  {encadrant}
-                                </option>
-                              )
-                            )}
-                        </select>
-                      </Col>
+                      {stageDetails.type_stage.encadrement.includes(
+                        "Encadrant Industriel 1"
+                      ) &&
+                      stageDetails.type_stage.encadrement.includes(
+                        "Encadrant Industriel 2"
+                      ) ? (
+                        <>
+                          <Col className="text-end">
+                            <span className="fs-15 fw-medium">
+                              Encadrant Société 1
+                            </span>
+                          </Col>
+                          <Col>
+                            <select
+                              className="form-select"
+                              value={formData.encadrantSociete1}
+                              onChange={handleChange("encadrantSociete1")}
+                            >
+                              {societe &&
+                                societe?.encadrant?.map(
+                                  (encadrant: any, index: number) => (
+                                    <option key={index} value={encadrant}>
+                                      {encadrant}
+                                    </option>
+                                  )
+                                )}
+                            </select>
+                          </Col>
+                          <Col className="text-end">
+                            <span className="fs-15 fw-medium">
+                              Encadrant Société 2
+                            </span>
+                          </Col>
+                          <Col>
+                            <select
+                              className="form-select"
+                              value={formData.encadrantSociete2}
+                              onChange={handleChange("encadrantSociete2")}
+                            >
+                              {societe &&
+                                societe?.encadrant?.map(
+                                  (encadrant: any, index: number) => (
+                                    <option key={index} value={encadrant}>
+                                      {encadrant}
+                                    </option>
+                                  )
+                                )}
+                            </select>
+                          </Col>
+                        </>
+                      ) : (
+                        <>
+                          <Col className="text-end">
+                            <span className="fs-16 fw-medium">
+                              Encadrant Société
+                            </span>
+                          </Col>
+                          <Col>
+                            <select
+                              className="form-select"
+                              value={formData.encadrantSociete1}
+                              onChange={handleChange("encadrantSociete1")}
+                            >
+                              {societe &&
+                                societe?.encadrant?.map(
+                                  (encadrant: any, index: number) => (
+                                    <option key={index} value={encadrant}>
+                                      {encadrant}
+                                    </option>
+                                  )
+                                )}
+                            </select>
+                          </Col>
+                        </>
+                      )}
                     </Row>
-                    <Row>
+                    {/* <Row>
                       <Col lg={2}>
                         <span className="fs-16 fw-medium">Informations</span>
                       </Col>
                       <Col>{societe && societe?.infos}</Col>
-                    </Row>
+                    </Row> */}
                   </Card.Body>
                 </>
               )}
@@ -611,37 +709,112 @@ const EditStagePfe = () => {
                     />
                   </Col>
                 </Row>
-                <Row className="mb-3 d-flex align-items-center">
-                  <Col lg={2}>
-                    <span className="fs-16 fw-medium">Encadrant</span>
-                  </Col>
-                  <Col lg={3}>
-                    <select
-                      className="form-select"
-                      onChange={handleChange("encadrantUniv")}
-                      value={formData.encadrantUniv}
-                    >
-                      {[...allEnseignants]
-                        .sort((a, b) => {
-                          if (a.prenom_fr < b.prenom_fr) {
-                            return -1;
-                          }
-                          if (a.prenom_fr > b.prenom_fr) {
-                            return 1;
-                          }
-                          return 0;
-                        })
-                        .map((enseignant) => (
-                          <option
-                            key={enseignant?._id!}
-                            value={enseignant?._id!}
-                          >
-                            {enseignant.prenom_fr} {enseignant.nom_fr}
-                          </option>
-                        ))}
-                    </select>
-                  </Col>
-                </Row>
+                {stageDetails.type_stage.avec_encadrement === "Oui" &&
+                (stageDetails.type_stage.encadrement.includes(
+                  "Encadrant Universitaire 1"
+                ) ||
+                  stageDetails.type_stage.encadrement.includes(
+                    "Encadrant Universitaire 2"
+                  )) &&
+                stageDetails.type_stage?.encadrement.includes(
+                  "Encadrant Universitaire 2"
+                ) ? (
+                  <Row className="mb-3 d-flex align-items-center">
+                    <Col lg={2}>
+                      <span className="fs-16 fw-medium">Encadrant 1</span>
+                    </Col>
+                    <Col lg={3}>
+                      <select
+                        className="form-select"
+                        onChange={handleChange("encadrantUniv1")}
+                        value={formData.encadrantUniv1}
+                      >
+                        <option value="">Choisir ...</option>
+                        {[...allEnseignants]
+                          .sort((a, b) => {
+                            if (a.prenom_fr < b.prenom_fr) {
+                              return -1;
+                            }
+                            if (a.prenom_fr > b.prenom_fr) {
+                              return 1;
+                            }
+                            return 0;
+                          })
+                          .map((enseignant) => (
+                            <option
+                              key={enseignant?._id!}
+                              value={enseignant?._id!}
+                            >
+                              {enseignant.prenom_fr} {enseignant.nom_fr}
+                            </option>
+                          ))}
+                      </select>
+                    </Col>
+                    <Col lg={2}>
+                      <span className="fs-16 fw-medium">Encadrant 2</span>
+                    </Col>
+                    <Col lg={3}>
+                      <select
+                        className="form-select"
+                        onChange={handleChange("encadrantUniv2")}
+                        value={formData.encadrantUniv2}
+                      >
+                        <option value="">Choisir ...</option>
+                        {[...allEnseignants]
+                          .sort((a, b) => {
+                            if (a.prenom_fr < b.prenom_fr) {
+                              return -1;
+                            }
+                            if (a.prenom_fr > b.prenom_fr) {
+                              return 1;
+                            }
+                            return 0;
+                          })
+                          .map((enseignant) => (
+                            <option
+                              key={enseignant?._id!}
+                              value={enseignant?._id!}
+                            >
+                              {enseignant.prenom_fr} {enseignant.nom_fr}
+                            </option>
+                          ))}
+                      </select>
+                    </Col>
+                  </Row>
+                ) : (
+                  <Row className="mb-3 d-flex align-items-center">
+                    <Col lg={2}>
+                      <span className="fs-16 fw-medium">Encadrant</span>
+                    </Col>
+                    <Col lg={3}>
+                      <select
+                        className="form-select"
+                        onChange={handleChange("encadrantUniv1")}
+                        value={formData.encadrantUniv1}
+                      >
+                        <option value="">Choisir ...</option>
+                        {[...allEnseignants]
+                          .sort((a, b) => {
+                            if (a.prenom_fr < b.prenom_fr) {
+                              return -1;
+                            }
+                            if (a.prenom_fr > b.prenom_fr) {
+                              return 1;
+                            }
+                            return 0;
+                          })
+                          .map((enseignant) => (
+                            <option
+                              key={enseignant?._id!}
+                              value={enseignant?._id!}
+                            >
+                              {enseignant.prenom_fr} {enseignant.nom_fr}
+                            </option>
+                          ))}
+                      </select>
+                    </Col>
+                  </Row>
+                )}
                 <Row className="mb-2 d-flex align-items-center">
                   <Col lg={2}>
                     <span className="fs-16 fw-medium">Sujet Projet</span>
@@ -674,95 +847,292 @@ const EditStagePfe = () => {
                 </Row>
                 <Row className="mb-2 d-flex align-items-center">
                   <Col lg={2}>
-                    <span className="fs-16 fw-medium">Rapporteur</span>
-                  </Col>
-                  <Col>
-                    <select
-                      className="form-select"
-                      onChange={handleChange("rapporteur")}
-                      value={formData.rapporteur}
-                    >
-                      {[...allEnseignants]
-                        .sort((a, b) => {
-                          if (a.prenom_fr < b.prenom_fr) {
-                            return -1;
-                          }
-                          if (a.prenom_fr > b.prenom_fr) {
-                            return 1;
-                          }
-                          return 0;
-                        })
-                        .map((enseignant) => (
-                          <option
-                            key={enseignant?._id!}
-                            value={enseignant?._id!}
-                          >
-                            {enseignant.prenom_fr} {enseignant.nom_fr}
-                          </option>
-                        ))}
-                    </select>
-                  </Col>
-                  <Col lg={2} className="text-end">
-                    <span className="fs-16 fw-medium">Chef Jury</span>
-                  </Col>
-                  <Col>
-                    <select
-                      className="form-select"
-                      onChange={handleChange("chef_jury")}
-                      value={formData.chef_jury}
-                    >
-                      {[...allEnseignants]
-                        .sort((a, b) => {
-                          if (a.prenom_fr < b.prenom_fr) {
-                            return -1;
-                          }
-                          if (a.prenom_fr > b.prenom_fr) {
-                            return 1;
-                          }
-                          return 0;
-                        })
-                        .map((enseignant) => (
-                          <option
-                            key={enseignant?._id!}
-                            value={enseignant?._id!}
-                          >
-                            {enseignant.prenom_fr} {enseignant.nom_fr}
-                          </option>
-                        ))}
-                    </select>
-                  </Col>
-                  <Col className="text-end">
-                    <span className="fs-16 fw-medium">Date Soutenance</span>
-                  </Col>
-                  <Col>
-                    <Form.Control
-                      type="date"
-                      value={formData.dateSoutenance}
-                      onChange={handleChange("dateSoutenance")}
-                      className="text-center"
-                    />
-                  </Col>
-                </Row>
-                <Row className="mb-2 d-flex align-items-center">
-                  <Col lg={2}>
-                    <span className="fs-16 fw-medium">Décision</span>
+                    <span className="fs-16 fw-medium">Mots clés</span>
                   </Col>
                   <Col>
                     <textarea
                       className="form-control"
                       rows={3}
-                      value={formData.avis}
-                      onChange={handleChange("avis")}
-                      name="avis"
-                      id="avis"
+                      value={formData.motCle}
+                      onChange={handleChange("motCle")}
+                      name="motCle"
+                      id="motCle"
                     />
                   </Col>
                 </Row>
-                <Row className="mb-2">
-                  <Col lg={2}></Col>
-                  <Col>{stageDetails.note}</Col>
+                <Row className="mb-2 d-flex align-items-center">
+                  <Col lg={2}>
+                    <span className="fs-16 fw-medium">Bibliographie</span>
+                  </Col>
+                  <Col>
+                    <textarea
+                      className="form-control"
+                      rows={3}
+                      value={formData.bibliographie}
+                      onChange={handleChange("bibliographie")}
+                      name="bibliographie"
+                      id="bibliographie"
+                    />
+                  </Col>
                 </Row>
               </Card.Body>
+              {stageDetails.type_stage.avec_soutenance === "Oui" && (
+                <>
+                  <Card.Header className="bg-dark-subtle text-white">
+                    <span className="fs-20 fw-bold">Soutenance</span>
+                  </Card.Header>
+                  <Card.Body>
+                    <Row className="mb-2">
+                      <Col lg={2}>
+                        <span className="fs-16 fw-medium">Chef Jury</span>
+                      </Col>
+                      <Col lg={3}>
+                        <select
+                          className="form-select"
+                          onChange={handleChange("chef_jury")}
+                          value={formData.chef_jury}
+                        >
+                          {[...allEnseignants]
+                            .sort((a, b) => {
+                              if (a.prenom_fr < b.prenom_fr) {
+                                return -1;
+                              }
+                              if (a.prenom_fr > b.prenom_fr) {
+                                return 1;
+                              }
+                              return 0;
+                            })
+                            .map((enseignant) => (
+                              <option
+                                key={enseignant?._id!}
+                                value={enseignant?._id!}
+                              >
+                                {enseignant.prenom_fr} {enseignant.nom_fr}
+                              </option>
+                            ))}
+                        </select>
+                      </Col>
+                    </Row>
+                    {stageDetails.type_stage.soutenance.includes(
+                      "Rapporteur 1"
+                    ) &&
+                      stageDetails.type_stage.soutenance.includes(
+                        "Rapporteur 2"
+                      ) && (
+                        <Row className="mb-2 d-flex align-items-center">
+                          <Col lg={2}>
+                            <span className="fs-16 fw-medium">
+                              Rapporteur 1
+                            </span>
+                          </Col>
+                          <Col>
+                            <select
+                              className="form-select"
+                              onChange={handleChange("rapporteur1")}
+                              value={formData.rapporteur1}
+                            >
+                              {[...allEnseignants]
+                                .sort((a, b) => {
+                                  if (a.prenom_fr < b.prenom_fr) {
+                                    return -1;
+                                  }
+                                  if (a.prenom_fr > b.prenom_fr) {
+                                    return 1;
+                                  }
+                                  return 0;
+                                })
+                                .map((enseignant) => (
+                                  <option
+                                    key={enseignant?._id!}
+                                    value={enseignant?._id!}
+                                  >
+                                    {enseignant.prenom_fr} {enseignant.nom_fr}
+                                  </option>
+                                ))}
+                            </select>
+                          </Col>
+                          <Col lg={2}>
+                            <span className="fs-16 fw-medium">
+                              Rapporteur 2
+                            </span>
+                          </Col>
+                          <Col>
+                            <select
+                              className="form-select"
+                              onChange={handleChange("rapporteur2")}
+                              value={formData.rapporteur2}
+                            >
+                              {[...allEnseignants]
+                                .sort((a, b) => {
+                                  if (a.prenom_fr < b.prenom_fr) {
+                                    return -1;
+                                  }
+                                  if (a.prenom_fr > b.prenom_fr) {
+                                    return 1;
+                                  }
+                                  return 0;
+                                })
+                                .map((enseignant) => (
+                                  <option
+                                    key={enseignant?._id!}
+                                    value={enseignant?._id!}
+                                  >
+                                    {enseignant.prenom_fr} {enseignant.nom_fr}
+                                  </option>
+                                ))}
+                            </select>
+                          </Col>
+                        </Row>
+                      )}
+                    {stageDetails.type_stage.soutenance.includes(
+                      "Rapporteur 1"
+                    ) && (
+                      <Row className="mb-2 d-flex align-items-center">
+                        <Col lg={2}>
+                          <span className="fs-16 fw-medium">Rapporteur</span>
+                        </Col>
+                        <Col lg={3}>
+                          <select
+                            className="form-select"
+                            onChange={handleChange("rapporteur1")}
+                            value={formData.rapporteur1}
+                          >
+                            {[...allEnseignants]
+                              .sort((a, b) => {
+                                if (a.prenom_fr < b.prenom_fr) {
+                                  return -1;
+                                }
+                                if (a.prenom_fr > b.prenom_fr) {
+                                  return 1;
+                                }
+                                return 0;
+                              })
+                              .map((enseignant) => (
+                                <option
+                                  key={enseignant?._id!}
+                                  value={enseignant?._id!}
+                                >
+                                  {enseignant.prenom_fr} {enseignant.nom_fr}
+                                </option>
+                              ))}
+                          </select>
+                        </Col>
+                      </Row>
+                    )}
+                    <Row className="mb-2">
+                      <Col lg={2}>
+                        <span className="fs-16 fw-medium">Salle</span>
+                      </Col>
+                      <Col lg={3}>
+                        <select
+                          className="form-select"
+                          onChange={handleChange("salle")}
+                          value={formData.salle}
+                        >
+                          {allSalles.map((salle) => (
+                            <option key={salle?._id!} value={salle?.salle}>
+                              {salle?.salle}
+                            </option>
+                          ))}
+                        </select>
+                      </Col>
+                    </Row>
+                    <Row className="mb-2">
+                      <Col lg={2}>
+                        <span className="fs-16 fw-medium">Date Soutenance</span>
+                      </Col>
+                      <Col>
+                        <Form.Control
+                          type="date"
+                          value={formData.dateSoutenance}
+                          onChange={handleChange("dateSoutenance")}
+                          className="text-center"
+                        />
+                      </Col>
+                      <Col className="text-end">
+                        <span className="fs-16 fw-medium">Heure Début</span>
+                      </Col>
+                      <Col>
+                        <Form.Control
+                          type="time"
+                          value={formData.heureDebut}
+                          onChange={handleChange("heureDebut")}
+                          className="text-center"
+                        />
+                      </Col>
+                      <Col className="text-end">
+                        <span className="fs-16 fw-medium">Heure Fin</span>
+                      </Col>
+                      <Col>
+                        <Form.Control
+                          type="time"
+                          value={formData.heureFin}
+                          onChange={handleChange("heureFin")}
+                          className="text-center"
+                        />
+                      </Col>
+                    </Row>
+                    <Row className="mb-2 d-flex align-items-center">
+                      <Col lg={2}>
+                        <span className="fs-16 fw-medium">Décision</span>
+                      </Col>
+                      <Col>
+                        <textarea
+                          className="form-control"
+                          rows={3}
+                          value={formData.avis}
+                          onChange={handleChange("avis")}
+                          name="avis"
+                          id="avis"
+                        />
+                      </Col>
+                    </Row>
+                    <Row className="mb-2">
+                      <Col lg={2}>
+                        <span className="fs-16 fw-medium">Note</span>
+                      </Col>
+                      <Col>
+                        <Form.Control
+                          type="text"
+                          value={formData.note}
+                          onChange={handleChange("note")}
+                          className="text-center"
+                        />
+                      </Col>
+                      <Col lg={2}>
+                        <span className="fs-16 fw-medium">Mention</span>
+                      </Col>
+                      <Col>
+                        <select
+                          className="form-select"
+                          onChange={handleChange("mention")}
+                          value={formData.mention}
+                        >
+                          <option value="Assez Bien">Assez Bien</option>
+                          <option value="Bien">Bien</option>
+                          <option value="Très Bien">Très Bien</option>
+                          <option value="Excellent">Excellent</option>
+                        </select>
+                      </Col>
+                    </Row>
+                    <Row className="mb-2 d-flex align-items-center">
+                      <Col lg={2}>
+                        <span className="fs-16 fw-medium">Remarques</span>
+                      </Col>
+                      <Col>
+                        <textarea
+                          className="form-control"
+                          rows={3}
+                          value={formData.remarque}
+                          onChange={handleChange("remarque")}
+                          name="remarque"
+                          id="remarque"
+                        />
+                      </Col>
+                    </Row>
+                  </Card.Body>
+                </>
+              )}
               {stageDetails.binome !== null && (
                 <>
                   <Card.Header className="bg-warning-subtle text-dark">
@@ -801,13 +1171,24 @@ const EditStagePfe = () => {
               <Card.Body>
                 <Row>
                   <Col className="border-2 border-end">
+                    <p className="fs-15 fw-medium">Proposition pfe signé</p>
+                    {stageDetails.file_proposition_signe.endsWith(".") && (
+                      <div className="text-center">
+                        <img
+                          className="rounded img-fluid h-80 object-cover"
+                          src={noImage}
+                          alt="Aucun Image Disponible"
+                          onError={(e) => {
+                            e.currentTarget.src = noImage;
+                          }}
+                          width="120"
+                        />
+                      </div>
+                    )}
                     <div
                       className="vstack gap-3"
                       style={{ position: "relative" }}
                     >
-                      <span className="fs-15 fw-medium">
-                        Proposition pfe signé
-                      </span>
                       {isImageFile(
                         `${basePath}/propositionSigneFiles/${stageDetails.file_proposition_signe}`
                       ) && (
