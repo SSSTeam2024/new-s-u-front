@@ -9,6 +9,7 @@ import {
   Image,
   Modal,
   Form,
+  Button,
 } from "react-bootstrap";
 import { Link, useLocation } from "react-router-dom";
 import DemandeTablePersonnel from "./DemandeTablePersonnel";
@@ -21,6 +22,7 @@ import "swiper/css/scrollbar";
 import "swiper/css/effect-fade";
 import "swiper/css/effect-flip";
 import userImage from "assets/images/userImage.jpg";
+import moment from 'moment';
 
 const ProfilPersonnel = () => {
   const [showModal, setShowModal] = useState(false);
@@ -28,6 +30,14 @@ const ProfilPersonnel = () => {
   const location = useLocation();
   const personnelDetails = location.state;
 
+  const [showFileModal, setShowFileModal] = useState(false);
+  const [fileUrl, setFileUrl] = useState('');
+  const [fileTitle, setFileTitle] = useState('')
+  const openFileModal = (url: string, title: string) => {
+    setFileUrl(url);
+    setFileTitle(title);
+    setShowFileModal(true);
+  };
   const handleImageClick = (imageSrc: any) => {
     setClickedImage(imageSrc);
     setShowModal(true);
@@ -37,6 +47,20 @@ const ProfilPersonnel = () => {
     setShowModal(false);
     setClickedImage(null);
   };
+  const getLatestPosition = () => {
+    if (!personnelDetails?.historique_positions?.length) return null;
+
+    // Sort by date_affectation descending
+    const sorted = [...personnelDetails.historique_positions].sort((a, b) => {
+      const dateA = new Date(a.date_affectation);
+      const dateB = new Date(b.date_affectation);
+      return dateB.getTime() - dateA.getTime(); // Latest first
+    });
+
+    return sorted[0]; // Latest entry
+  };
+  const latestPosition = getLatestPosition();
+  console.log("latest position", latestPosition.categorie)
   //Poste personnel
   const postePersonnelFR =
     typeof personnelDetails?.poste! === "object"
@@ -146,7 +170,7 @@ const ProfilPersonnel = () => {
                               <tr>
                                 <td>Poste</td>
                                 <td className="fw-medium">
-                                  {postePersonnelFR} / {posteEnseignantAR}
+                                  {latestPosition.poste.poste_fr}/{latestPosition.poste.poste_ar}
                                 </td>
                               </tr>
                               <tr>
@@ -278,31 +302,31 @@ const ProfilPersonnel = () => {
                         <tr>
                           <td>Catégorie: </td>
                           <td className="fw-medium">
-                            {categoriePersonnelFR} / {categoriePersonnelAR}
+                            {latestPosition.categorie.categorie_fr}/{latestPosition.categorie.categorie_ar}
                           </td>
                         </tr>
                         <tr>
                           <td>Grade: </td>
                           <td className="fw-medium">
-                            {gradeEnseignantFR} / {gradeEnseignantAR}
+                            {latestPosition.grade.grade_fr}/{latestPosition.grade.grade_ar}
                           </td>
                         </tr>
                         <tr>
                           <td>Date d'affectation: </td>
                           <td className="fw-medium">
-                            {personnelDetails.date_affectation}
+                            {latestPosition.date_affectation}
                           </td>
                         </tr>
                         <tr>
                           <td>Date délivrance: </td>
                           <td className="fw-medium">
-                            {personnelDetails.date_delivrance}
+                            {latestPosition.date_depart}
                           </td>
                         </tr>
                         <tr>
                           <td>Date de désignation: </td>
                           <td className="fw-medium">
-                            {personnelDetails.date_designation}
+                            {latestPosition.date_titularisation}
                           </td>
                         </tr>
                         <tr>
@@ -452,6 +476,76 @@ const ProfilPersonnel = () => {
                 </Col> */}
               </Row>
             </Card>
+            {personnelDetails.historique_positions && personnelDetails.historique_positions.length > 0 && (
+              <Card className="mt-4">
+                <Card.Body>
+                  <h5 className="text-muted">Historique des Postes/ التسلسل المهني</h5>
+                  <div className="table-responsive">
+                    <Table striped bordered hover size="sm" className="mb-0">
+                      <thead>
+                        <tr>
+                          <th>Poste</th>
+                          <th>Grade</th>
+                          <th>Catégorie</th>
+                          <th>Date d'affectation</th>
+                          <th>Fichier Affectation</th>
+                          <th>Date de titularisation</th>
+                          <th>Fichier Titularisation</th>
+                          <th>Date de départ</th>
+                          <th>Fichier Départ</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {personnelDetails.historique_positions.map((entry: any, index: number) => (
+                          <tr key={index}>
+                            <td>{entry.poste?.poste_fr || '-'}</td>
+                            <td>{entry.grade?.grade_fr || '-'}</td>
+                            <td>{entry.categorie?.categorie_fr || '-'}</td>
+
+                            <td>{entry.date_affectation ? moment(entry.date_affectation).format('DD/MM/YYYY') : '-'}</td>
+                            <td>
+                              <Button
+                                variant="outline-primary"
+                                size="sm"
+                                onClick={() => openFileModal(entry.fichier_affectation, 'Fichier Affectation')}
+                                disabled={!entry.fichier_affectation}
+                              >
+                                Affectation
+                              </Button>
+                            </td>
+
+                            <td>{entry.date_titularisation ? moment(entry.date_titularisation).format('DD/MM/YYYY') : '-'}</td>
+                            <td>
+                              <Button
+                                variant="outline-success"
+                                size="sm"
+                                onClick={() => openFileModal(entry.fichier_titularisation, 'Fichier Titularisation')}
+                                disabled={!entry.fichier_titularisation}
+                              >
+                                Titularisation
+                              </Button>
+                            </td>
+
+                            <td>{entry.date_depart ? moment(entry.date_depart).format('DD/MM/YYYY') : '-'}</td>
+                            <td>
+                              <Button
+                                variant="outline-danger"
+                                size="sm"
+                                onClick={() => openFileModal(entry.fichier_depart, 'Fichier Départ')}
+                                disabled={!entry.fichier_depart}
+                              >
+                                Départ
+                              </Button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </Table>
+                  </div>
+                </Card.Body>
+              </Card>
+            )}
+
 
             {/* documents */}
 
@@ -686,6 +780,23 @@ const ProfilPersonnel = () => {
           </Tab.Pane>
         </Tab.Content>
       </Tab.Container>
+
+      <Modal show={showFileModal} onHide={() => setShowFileModal(false)} size="lg" centered>
+        <Modal.Header closeButton>
+          <Modal.Title>{fileTitle}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {fileUrl ? (
+            <iframe
+              src={fileUrl}
+              title="Document Preview"
+              style={{ width: '100%', height: '500px', border: 'none' }}
+            />
+          ) : (
+            <p>Fichier introuvable.</p>
+          )}
+        </Modal.Body>
+      </Modal>
     </React.Fragment>
   );
 };

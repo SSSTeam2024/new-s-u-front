@@ -261,7 +261,7 @@ const ListePersonnels = () => {
                 <Link
                   to="/gestion-personnel/compte-personnel"
                   className="badge bg-info-subtle text-info view-item-btn"
-                  state={personnel}
+                  state={{ ...personnel }}
                 >
                   <i
                     className="ph ph-eye"

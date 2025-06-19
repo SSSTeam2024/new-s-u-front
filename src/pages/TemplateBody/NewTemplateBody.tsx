@@ -574,6 +574,15 @@ const NewTemplateBody = () => {
     alert('Code court copié!');
   };
 
+  let filtredExtraShortCodes = [];
+
+  if (langue === 'arabic') {
+
+    filtredExtraShortCodes = extraShortCodeList.filter(e => e.langue === 'arabic')
+  } else {
+    filtredExtraShortCodes = extraShortCodeList.filter(e => e.langue === 'french')
+  }
+
   return (
     <Container fluid className="page-content">
       <Row>
@@ -960,10 +969,10 @@ const NewTemplateBody = () => {
                               Divers
                             </Card.Header>
                             <Card.Body>
-                              {extraShortCodeList.map((code: any) =>
+                              {filtredExtraShortCodes.map((code: any) =>
 
                                 <Button
-                                  key={code._id}
+                                  key={code?._id!}
                                   size="sm"
                                   onClick={() => handleCopyExtraText(code)}
                                   variant={isDataSelected(code) === true ? "danger" : "primary"}
@@ -973,7 +982,7 @@ const NewTemplateBody = () => {
                                   className="me-2 mb-2"
                                 >
                                   <div style={{ fontSize: "1.05rem" }} >
-                                    {code.titre}
+                                    {code?.titre!}
                                   </div>
 
                                 </Button>

@@ -48,6 +48,13 @@ const AjouterDemandePersonnel = () => {
     ? templateBodies
     : [];
 
+  const formatDate = (date: Date) => {
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  };
+
   const [formData, setFormData] = useState<any>({
     personnelId: "",
     title: "",
@@ -55,8 +62,13 @@ const AjouterDemandePersonnel = () => {
     piece_demande: "",
     langue: "",
     nombre_copie: 1,
+    added_by: user?._id!,
     response: "",
-    status: "en attente",
+    current_status: "En attente",
+    status_history: [{
+      value: "En attente",
+      date: formatDate(new Date())
+    }],
     createdAt: undefined,
     updatedAt: undefined,
     extra_data: [
@@ -69,15 +81,6 @@ const AjouterDemandePersonnel = () => {
   });
 
   const [selectedLangue, setSelectedLangue] = useState<string>("");
-  // nombre de copie set
-  // const [blueCounter, setblueCounter] = useState(1);
-  // function countUP(id: any, prev_data_attr: any) {
-  //   id(prev_data_attr + 1);
-  // }
-
-  // function countDown(id: any, prev_data_attr: any) {
-  //   id(prev_data_attr - 1);
-  // }
   const [diversExtraData, setDiversExtraData] = useState<any>(null);
   const [diversExtraDataExceptional, setDiversExtraDataExceptional] = useState<any>(null);
   const [selectedExceptional, setSelectedExceptional] = useState<any>([
@@ -90,13 +93,6 @@ const AjouterDemandePersonnel = () => {
   ]);
   const [docLabel, setDocLabel] = useState<string>("");
 
-  // const handleLangueChange = (langue: string) => {
-  //   setSelectedLangue(langue);
-  //   setFormData((prevState) => ({
-  //     ...prevState,
-  //     langue: langue,
-  //   }));
-  // };
   const handleLangueChange = (langue: string) => {
     setSelectedLangue(langue);
     setFormData((prevState: any) => ({
@@ -240,8 +236,6 @@ const AjouterDemandePersonnel = () => {
       description: data,
     }));
   };
-
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
   const onSubmitDemandePersonnel = async (
     e: React.FormEvent<HTMLFormElement>

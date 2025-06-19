@@ -97,6 +97,12 @@ const AjouterPersonnels = () => {
         date_affectation: "",
         date_titularisation: "",
         date_depart: "",
+        fichier_affectationBase64: "",
+        fichier_affectationExtension: "",
+        fichier_titularisationBase64: "",
+        fichier_titularisationExtension: "",
+        fichier_departBase64: "",
+        fichier_departExtension: ""
       },
     ],
   });
@@ -122,6 +128,12 @@ const AjouterPersonnels = () => {
           date_affectation: "",
           date_titularisation: "",
           date_depart: "",
+          fichier_affectationBase64: "",
+        fichier_affectationExtension: "",
+        fichier_titularisationBase64: "",
+        fichier_titularisationExtension: "",
+        fichier_departBase64: "",
+        fichier_departExtension: ""
         },
       ],
     }));
@@ -146,6 +158,33 @@ const AjouterPersonnels = () => {
       [name]: value,
     }));
   };
+
+  const handleHistoricFileChange = async (
+  index: number,
+  field: string,
+  file: File | undefined
+) => {
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    const base64 = (reader.result as string).split(",")[1];
+    setFormData((prev: any) => {
+      const updated = [...prev.historique_positions];
+      updated[index] = {
+        ...updated[index],
+        [`${field}Base64`]: base64,
+        [`${field}Extension`]: file.name.split(".").pop(),
+      };
+      return {
+        ...prev,
+        historique_positions: updated,
+      };
+    });
+  };
+  reader.readAsDataURL(file);
+};
+
 
   // change state
   const handleWilayaChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -675,7 +714,7 @@ const AjouterPersonnels = () => {
                               style={{ direction: "rtl", textAlign: "right" }}
                             >
                               <Col lg={3}>
-                                <div className="mb-3">
+                                {/* <div className="mb-3">
                                   <Form.Label htmlFor="matricule">
                                     Matricule
                                   </Form.Label>
@@ -686,9 +725,9 @@ const AjouterPersonnels = () => {
                                     onChange={onChange}
                                     value={formData.matricule}
                                   />
-                                </div>
+                                </div> */}
                               </Col>
-                              <Col lg={3}>
+                              {/* <Col lg={3}>
                                 <div className="mb-3">
                                   <Form.Label htmlFor="mat_cnrps">
                                     Matricule CNRPS
@@ -701,9 +740,9 @@ const AjouterPersonnels = () => {
                                     value={formData.mat_cnrps}
                                   />
                                 </div>
-                              </Col>
+                              </Col> */}
                               <Col lg={3}>
-                                <div
+                                {/* <div
                                   className="mb-3"
                                   style={{
                                     direction: "rtl",
@@ -730,7 +769,7 @@ const AjouterPersonnels = () => {
                                       </option>
                                     ))}
                                   </select>
-                                </div>
+                                </div> */}
                               </Col>
 
                               <Col lg={3}>
@@ -766,7 +805,7 @@ const AjouterPersonnels = () => {
                                   </select>
                                 </div>
                               </Col>
-                              <Col lg={3}>
+                              {/* <Col lg={3}>
                                 <div
                                   className="mb-3"
                                   style={{
@@ -788,8 +827,8 @@ const AjouterPersonnels = () => {
                                     id="date_affectation"
                                   />
                                 </div>
-                              </Col>
-                              <Col lg={3}>
+                              </Col> */}
+                              {/* <Col lg={3}>
                                 <div
                                   className="mb-3"
                                   style={{
@@ -818,8 +857,8 @@ const AjouterPersonnels = () => {
                                     ))}
                                   </select>
                                 </div>
-                              </Col>
-                              <Col lg={3}>
+                              </Col> */}
+                              {/* <Col lg={3}>
                                 <div
                                   className="mb-3"
                                   style={{
@@ -851,8 +890,8 @@ const AjouterPersonnels = () => {
                                     ))}
                                   </select>
                                 </div>
-                              </Col>
-                              <Col lg={3}>
+                              </Col> */}
+                              {/* <Col lg={3}>
                                 <div
                                   className="mb-3"
                                   style={{
@@ -874,7 +913,7 @@ const AjouterPersonnels = () => {
                                     id="date_designation"
                                   />
                                 </div>
-                              </Col>
+                              </Col> */}
                               <Col lg={3}>
                                 <div
                                   className="mb-3"
@@ -1387,7 +1426,22 @@ const AjouterPersonnels = () => {
                           </Card.Body>
                         </Col>
                         <Col lg={12}>
-                          <h5 className="mb-3">Historique des positions</h5>
+                          <Card.Header>
+                            <div className="d-flex">
+                              <div className="flex-shrink-0 me-3">
+                                <div className="avatar-sm">
+                                  <div className="avatar-title rounded-circle bg-light text-primary fs-20">
+                                    <i className="bi bi-people-fill"></i>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="flex-grow-1">
+                               <h5 className="card-title">
+                              Historique des positions/ التسلسل المهني
+                            </h5>
+                              </div>
+                            </div>
+                          </Card.Header>
                           {formData.historique_positions.map(
                             (position: any, index: number) => (
                               <Row
@@ -1395,7 +1449,7 @@ const AjouterPersonnels = () => {
                                 className="align-items-end m-3 border-bottom "
                               >
                                 <Col lg={4}>
-                                  <Form.Label>Poste</Form.Label>
+                                  <Form.Label>Poste / الخطة الوظيفية</Form.Label>
                                   <Form.Select
                                     value={position.poste}
                                     onChange={(e) =>
@@ -1411,13 +1465,13 @@ const AjouterPersonnels = () => {
                                     </option>
                                     {poste.map((item: any) => (
                                       <option key={item._id} value={item._id}>
-                                        {item.poste_ar}
+                                        {item.poste_ar} / {item.poste_fr}
                                       </option>
                                     ))}
                                   </Form.Select>
                                 </Col>
                                 <Col lg={4}>
-                                  <Form.Label>Grade</Form.Label>
+                                  <Form.Label>Grade / الرتبة</Form.Label>
                                   <Form.Select
                                     value={position.grade}
                                     onChange={(e) =>
@@ -1433,13 +1487,13 @@ const AjouterPersonnels = () => {
                                     </option>
                                     {grade.map((item: any) => (
                                       <option key={item._id} value={item._id}>
-                                        {item.grade_ar}
+                                        {item.grade_ar} / {item.grade_fr}
                                       </option>
                                     ))}
                                   </Form.Select>
                                 </Col>
                                 <Col lg={4}>
-                                  <Form.Label>Catégorie</Form.Label>
+                                  <Form.Label>Catégorie / الصنف</Form.Label>
                                   <Form.Select
                                     value={position.categorie}
                                     onChange={(e) =>
@@ -1455,13 +1509,13 @@ const AjouterPersonnels = () => {
                                     </option>
                                     {categorie.map((item: any) => (
                                       <option key={item._id} value={item._id}>
-                                        {item.categorie_fr}
+                                        {item.categorie_ar} / {item.categorie_fr}
                                       </option>
                                     ))}
                                   </Form.Select>
                                 </Col>
                                 <Col lg={4}>
-                                  <Form.Label>Date Affectation</Form.Label>
+                                  <Form.Label>Date Affectation / تاريخ الإنتداب</Form.Label>
                                   <Form.Control
                                     type="date"
                                     value={position.date_affectation}
@@ -1473,9 +1527,19 @@ const AjouterPersonnels = () => {
                                       )
                                     }
                                   />
+                                    <Form.Label className="mt-2">Fichier Affectation</Form.Label>
+  <Form.Control
+  type="file"
+  onChange={(e) => {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (file) {
+      handleHistoricFileChange(index, "fichier_affectation", file);
+    }
+  }}
+/>
                                 </Col>
                                 <Col lg={4}>
-                                  <Form.Label>Date Titularisation</Form.Label>
+                                  <Form.Label>Date Titularisation / تاريخ الترسيم</Form.Label>
                                   <Form.Control
                                     type="date"
                                     value={position.date_titularisation}
@@ -1487,9 +1551,19 @@ const AjouterPersonnels = () => {
                                       )
                                     }
                                   />
+                                   <Form.Label className="mt-2">Fichier Titularisation</Form.Label>
+<Form.Control
+  type="file"
+  onChange={(e) => {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (file) {
+      handleHistoricFileChange(index, "fichier_titularisation", file);
+    }
+  }}
+/>
                                 </Col>
                                 <Col lg={4}>
-                                  <Form.Label>Date Départ</Form.Label>
+                                  <Form.Label className="mt-2">Date Départ / تاريخ المغادرة</Form.Label>
                                   <Form.Control
                                     type="date"
                                     value={position.date_depart}
@@ -1501,6 +1575,16 @@ const AjouterPersonnels = () => {
                                       )
                                     }
                                   />
+                                   <Form.Label className="mt-2">Fichier Départ</Form.Label>
+ <Form.Control
+  type="file"
+  onChange={(e) => {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (file) {
+      handleHistoricFileChange(index, "fichier_depart", file);
+    }
+  }}
+/>
                                 </Col>
                                 <Col lg={3}>
                                   <Button
