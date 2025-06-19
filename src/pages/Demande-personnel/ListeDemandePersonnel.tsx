@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useCallback } from "react";
 import {
+  Alert,
   Button,
   Card,
   Col,
@@ -30,10 +31,7 @@ const ListeDemandePersonnel = () => {
   const user = useSelector((state: RootState) => selectCurrentUser(state));
   const MySwal = withReactContent(Swal);
 
-  // Fetch reclamations query hook
   const { data: demandesPersonnel } = useFetchDemandePersonnelQuery();
-
-  // Mutation hooks
 
   const [deleteDemandePersonnel] = useDeleteDemandePersonnelMutation();
   const navigate = useNavigate();
@@ -55,23 +53,18 @@ const ListeDemandePersonnel = () => {
       }).then(async (result) => {
         if (result.isConfirmed) {
           await deleteDemandePersonnel(id).unwrap();
-          MySwal.fire(
-            "Deleted!",
-            "The reclamation has been deleted.",
-            "success"
-          );
+          MySwal.fire("Supprimée!", "Demande a été supprimée", "success");
         }
       });
     } catch (error) {
-      console.error("Failed to delete reclamation:", error);
+      console.error("Failed to delete demand:", error);
       MySwal.fire(
         "Error!",
-        "There was an error deleting the reclamation.",
+        "Une erreur s'est produite lors de la suppression de la demande.",
         "error"
       );
     }
   };
-
   const [modal_AddUserModals, setmodal_AddUserModals] =
     useState<boolean>(false);
   const [isMultiDeleteButton, setIsMultiDeleteButton] =
@@ -80,7 +73,6 @@ const ListeDemandePersonnel = () => {
     setmodal_AddUserModals(!modal_AddUserModals);
   }
 
-  // Checked All
   const checkedAll = useCallback(() => {
     const checkall = document.getElementById("checkAll") as HTMLInputElement;
     const ele = document.querySelectorAll(".userCheckBox");
@@ -103,6 +95,8 @@ const ListeDemandePersonnel = () => {
       ? setIsMultiDeleteButton(true)
       : setIsMultiDeleteButton(false);
   };
+
+  const [showHint, setShowHint] = useState(true);
 
   const columns = useMemo(
     () => [
@@ -148,26 +142,33 @@ const ListeDemandePersonnel = () => {
         disableFilters: true,
         filterable: true,
         accessor: (cellProps: any) => {
-          switch (cellProps.status) {
-            case "traité":
+          switch (cellProps.current_status) {
+            case "Approuvée":
               return (
                 <span className="badge bg-success-subtle text-success">
                   {" "}
-                  {cellProps.status}
+                  {cellProps.current_status}
                 </span>
               );
-            case "rejeté":
+            case "Réfusée":
               return (
                 <span className="badge bg-danger-subtle text-danger">
                   {" "}
-                  {cellProps.status}
+                  {cellProps.current_status}
+                </span>
+              );
+            case "Générée":
+              return (
+                <span className="badge bg-secondary-subtle text-secondary">
+                  {" "}
+                  {cellProps.current_status}
                 </span>
               );
             default:
               return (
-                <span className="badge bg-secondary-subtle text-secondary">
+                <span className="badge bg-warning-subtle text-warning">
                   {" "}
-                  {cellProps.status}
+                  {cellProps.current_status}
                 </span>
               );
           }
@@ -180,95 +181,77 @@ const ListeDemandePersonnel = () => {
         filterable: true,
         accessor: (cellProps: any) => {
           return (
-            <ul className="hstack gap-2 list-unstyled mb-0">
-              {actionAuthorization(
-                "/demandes-personnel/single-demande-personnel",
-                user?.permissions!
-              ) ? (
-                <li>
-                  <Link
-                    to="/demandes-personnel/single-demande-personnel"
-                    state={cellProps}
-                    className="badge bg-info-subtle text-info view-item-btn"
-                  >
-                    <i
-                      className="ph ph-eye"
-                      style={{
-                        transition: "transform 0.3s ease-in-out",
-                        cursor: "pointer",
-                        fontSize: "1.5em",
-                      }}
-                      onMouseEnter={(e) =>
-                        (e.currentTarget.style.transform = "scale(1.4)")
-                      }
-                      onMouseLeave={(e) =>
-                        (e.currentTarget.style.transform = "scale(1)")
-                      }
-                    ></i>
-                  </Link>
-                </li>
-              ) : (
-                <></>
+            <div>
+              <ul className="hstack gap-2 list-unstyled mb-1">
+                {actionAuthorization(
+                  "/demandes-personnel/single-demande-personnel",
+                  user?.permissions!
+                ) && (
+                    <li>
+                      <Link
+                        to="/demandes-personnel/single-demande-personnel"
+                        state={cellProps}
+                        className="badge bg-info-subtle text-info view-item-btn"
+                      >
+                        <i
+                          className="ph ph-gear-six"
+                          style={{
+                            transition: "transform 0.3s ease-in-out",
+                            cursor: "pointer",
+                            fontSize: "1.5em",
+                          }}
+                          onMouseEnter={(e) =>
+                            (e.currentTarget.style.transform = "scale(1.4)")
+                          }
+                          onMouseLeave={(e) =>
+                            (e.currentTarget.style.transform = "scale(1)")
+                          }
+                        ></i>
+                      </Link>
+                    </li>
+                  )}
+
+                {actionAuthorization(
+                  "/demandes-personnel/supprimer-demande-personnel",
+                  user?.permissions!
+                ) &&
+                  cellProps.current_status === "En attente" &&
+                  cellProps.added_by?._id === user?._id && (
+                    <li>
+                      <Link
+                        to="#"
+                        className="badge bg-danger-subtle text-danger remove-item-btn"
+                        onClick={() => handleDeleteDemande(cellProps._id)}
+                      >
+                        <i
+                          className="ph ph-trash"
+                          style={{
+                            transition: "transform 0.3s ease-in-out",
+                            cursor: "pointer",
+                            fontSize: "1.5em",
+                          }}
+                          onMouseEnter={(e) =>
+                            (e.currentTarget.style.transform = "scale(1.4)")
+                          }
+                          onMouseLeave={(e) =>
+                            (e.currentTarget.style.transform = "scale(1)")
+                          }
+                        ></i>
+                      </Link>
+                    </li>
+                  )}
+              </ul>
+
+              {cellProps.added_by && (
+                <div className="d-flex align-items-center text-muted small mt-1">
+                  <i className="bi bi-person-circle me-1"></i>
+                  <span className="fst-italic">
+                    Ajoutée par : <strong>{cellProps.added_by.login}</strong>
+                  </span>
+                </div>
               )}
-              {actionAuthorization(
-                "/demandes-personnel/edit-demande-personnel",
-                user?.permissions!
-              ) ? (
-                <li>
-                  <Link
-                    to="/demandes-personnel/edit-demande-personnel"
-                    className="badge bg-success-subtle text-success edit-item-btn"
-                    state={cellProps}
-                  >
-                    <i
-                      className="ph ph-pencil-line"
-                      style={{
-                        transition: "transform 0.3s ease-in-out",
-                        cursor: "pointer",
-                        fontSize: "1.5em",
-                      }}
-                      onMouseEnter={(e) =>
-                        (e.currentTarget.style.transform = "scale(1.4)")
-                      }
-                      onMouseLeave={(e) =>
-                        (e.currentTarget.style.transform = "scale(1)")
-                      }
-                    ></i>
-                  </Link>
-                </li>
-              ) : (
-                <></>
-              )}
-              {actionAuthorization(
-                "/demandes-personnel/supprimer-demande-personnel",
-                user?.permissions!
-              ) ? (
-                <li>
-                  <Link
-                    to="#"
-                    className="badge bg-danger-subtle text-danger remove-item-btn"
-                    onClick={() => handleDeleteDemande(cellProps._id)}
-                  >
-                    <i
-                      className="ph ph-trash"
-                      style={{
-                        transition: "transform 0.3s ease-in-out",
-                        cursor: "pointer",
-                        fontSize: "1.5em",
-                      }}
-                      onMouseEnter={(e) =>
-                        (e.currentTarget.style.transform = "scale(1.4)")
-                      }
-                      onMouseLeave={(e) =>
-                        (e.currentTarget.style.transform = "scale(1)")
-                      }
-                    ></i>
-                  </Link>
-                </li>
-              ) : (
-                <></>
-              )}
-            </ul>
+
+            </div>
           );
         },
       },
@@ -322,6 +305,19 @@ const ListeDemandePersonnel = () => {
               </Card>
               <Card>
                 <Card.Body className="p-0">
+                  {showHint && (
+                    <Alert
+                      variant="warning"
+                      dismissible
+                      onClose={() => setShowHint(false)}
+                      className="d-flex align-items-center gap-2 m-3"
+                    >
+                      <i className="ri-information-line fs-4"></i>
+                      <div>
+                        <strong>Remarque :</strong> Le bouton de suppression n'apparaît que pour les demandes avec le statut <strong>"En attente"</strong> et uniquement si vous êtes l'administrateur qui a ajouté la demande.
+                      </div>
+                    </Alert>
+                  )}
                   <TableContainer
                     columns={columns || []}
                     data={demandesPersonnel || []}

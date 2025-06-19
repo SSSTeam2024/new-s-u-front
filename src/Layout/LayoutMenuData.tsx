@@ -51,6 +51,7 @@ const Navdata = () => {
   const [isNotesExamen, setIsNotesExamen] = useState(false);
   const [isConge, setIsConge] = useState(false);
   const [isStage, setIsStage] = useState(false);
+  const [isDirecteurStage, setIsDirecteurStage] = useState(false);
   const [isDeplacement, setIsDeplacement] = useState(false);
   const [isParcours, setIsParcours] = useState(false);
   const [isNotesProfessionnelles, setIsNotesProfessionnelles] = useState(false);
@@ -102,6 +103,9 @@ const Navdata = () => {
     }
     if (iscurrentState !== "Stage") {
       setIsStage(false);
+    }
+    if (iscurrentState !== "DirecteurStage") {
+      setIsDirecteurStage(false);
     }
     if (iscurrentState !== "Migration") {
       setIsMigration(false);
@@ -230,6 +234,7 @@ const Navdata = () => {
     isMigration,
     isResultat,
     isStage,
+    isDirecteurStage,
   ]);
   let routes = userPermissions
     ? userPermissions.map((permission) => permission.path)
@@ -828,13 +833,57 @@ const Navdata = () => {
           parentId: "Stage",
           icon: "bi bi-person-fill-add",
         },
-        // {
-        //   id: "stage-pro",
-        //   label: "Stage Professionnel",
-        //   link: "/gestion-des-stages/liste-stages-professionnels",
-        //   parentId: "Stage",
-        //   icon: "bi bi-person-fill-add",
-        // },
+        {
+          id: "partenaires",
+          label: "Partenaires",
+          link: "/gestion-des-stages/liste-partenaires",
+          parentId: "Stage",
+          icon: "bi bi-person-fill-add",
+        },
+      ],
+    },
+    //! Directeur de stage
+    {
+      id: "DirecteurStage",
+      label: "Directeur des stages",
+      icon: "bi bi-buildings",
+      link: "/#",
+      click: function (e: any) {
+        e.preventDefault();
+        setIsDirecteurStage(!isDirecteurStage);
+        setIscurrentState("DirecteurStage");
+        updateIconSidebar(e);
+      },
+      stateVariables: isDirecteurStage,
+      subItems: [
+        {
+          id: "commission",
+          label: "Commissions",
+          link: "/directeur-de-stage/liste-des-commissions",
+          parentId: "DirecteurStage",
+          icon: "bi bi-person-fill-add",
+        },
+        {
+          id: "avis_commission",
+          label: "Avis de Commission",
+          link: "/directeur-de-stage/liste-des-avis-de-commission",
+          parentId: "DirecteurStage",
+          icon: "bi bi-person-fill-add",
+        },
+        {
+          id: "ajouter_avis_commission",
+          label: "Ajouter Avis de Commission",
+          link: "/directeur-de-stage/ajouter-avis-de-commission",
+          parentId: "DirecteurStage",
+          icon: "bi bi-person-fill-add",
+        },
+        {
+          id: "pv_generer",
+          label: "Liste des PV",
+          link: "/directeur-de-stage/liste-des-pv",
+          parentId: "DirecteurStage",
+          icon: "bi bi-person-fill-add",
+        },
       ],
     },
     //Gestion des congés

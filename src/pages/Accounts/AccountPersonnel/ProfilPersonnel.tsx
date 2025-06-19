@@ -50,20 +50,20 @@ const openFileModal = (filename: string, title: string) => {
     setShowModal(false);
     setClickedImage(null);
   };
- const getLatestPosition = () => {
-  if (!personnelDetails?.historique_positions?.length) return null;
+  const getLatestPosition = () => {
+    if (!personnelDetails?.historique_positions?.length) return null;
 
-  // Sort by date_affectation descending
-  const sorted = [...personnelDetails.historique_positions].sort((a, b) => {
-    const dateA = new Date(a.date_affectation);
-    const dateB = new Date(b.date_affectation);
-    return dateB.getTime() - dateA.getTime(); // Latest first
-  });
+    // Sort by date_affectation descending
+    const sorted = [...personnelDetails.historique_positions].sort((a, b) => {
+      const dateA = new Date(a.date_affectation);
+      const dateB = new Date(b.date_affectation);
+      return dateB.getTime() - dateA.getTime(); // Latest first
+    });
 
-  return sorted[0]; // Latest entry
-};
-const latestPosition = getLatestPosition();
-console.log("latest position",latestPosition.categorie)
+    return sorted[0]; // Latest entry
+  };
+  const latestPosition = getLatestPosition();
+  console.log("latest position", latestPosition.categorie)
   //Poste personnel
   const postePersonnelFR =
     typeof personnelDetails?.poste! === "object"
@@ -173,7 +173,7 @@ console.log("latest position",latestPosition.categorie)
                               <tr>
                                 <td>Poste</td>
                                 <td className="fw-medium">
-                                 {latestPosition.poste.poste_fr}/{latestPosition.poste.poste_ar}
+                                  {latestPosition.poste.poste_fr}/{latestPosition.poste.poste_ar}
                                 </td>
                               </tr>
                               <tr>
@@ -835,21 +835,21 @@ console.log("latest position",latestPosition.categorie)
       </Tab.Container>
 
       <Modal show={showFileModal} onHide={() => setShowFileModal(false)} size="lg" centered>
-  <Modal.Header closeButton>
-    <Modal.Title>{fileTitle}</Modal.Title>
-  </Modal.Header>
-  <Modal.Body>
-    {fileUrl ? (
-      <iframe
-        src={fileUrl}
-        title="Document Preview"
-        style={{ width: '100%', height: '500px', border: 'none' }}
-      />
-    ) : (
-      <p>Fichier introuvable.</p>
-    )}
-  </Modal.Body>
-</Modal>
+        <Modal.Header closeButton>
+          <Modal.Title>{fileTitle}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {fileUrl ? (
+            <iframe
+              src={fileUrl}
+              title="Document Preview"
+              style={{ width: '100%', height: '500px', border: 'none' }}
+            />
+          ) : (
+            <p>Fichier introuvable.</p>
+          )}
+        </Modal.Body>
+      </Modal>
     </React.Fragment>
   );
 };

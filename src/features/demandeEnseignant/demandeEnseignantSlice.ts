@@ -17,10 +17,19 @@ export interface Demande {
   langue: string;
   nombre_copie: number;
   response: string;
+  FileBase64?: string,
+  FileExtension?: string,
+  file?: string,
   status: string;
   extra_data?: ExtraObject[];
   createdAt: Date;
   updatedAt: Date;
+  added_by: string;
+  current_status: string;
+  status_history: {
+    value: string,
+    date: string
+  }[]
 }
 export const demandeEnseignantSlice = createApi({
   reducerPath: "DemandeEnseignantApi",

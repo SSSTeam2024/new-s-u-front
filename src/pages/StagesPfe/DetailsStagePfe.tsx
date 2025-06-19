@@ -56,7 +56,7 @@ const DetailsStagePfe = () => {
                     className="rounded-start img-fluid h-80 object-cover"
                     src={
                       stageDetails.etudiant.photo_profil
-                        ? `http://localhost:7000/files/etudiantFiles/PhotoProfil/${stageDetails.etudiant.photo_profil}`
+                        ? `${process.env.REACT_APP_API_URL}/files/etudiantFiles/PhotoProfil/${stageDetails.etudiant.photo_profil}`
                         : userImage
                     }
                     alt="Photo Profile"
