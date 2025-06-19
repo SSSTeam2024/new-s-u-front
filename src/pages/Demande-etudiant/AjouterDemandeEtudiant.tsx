@@ -37,10 +37,7 @@ const AjouterDemandeEtudiant = () => {
   const templateBody: TemplateBody[] = Array.isArray(templateBodies)
     ? templateBodies
     : [];
-  // Filter templates based on selected language and intended for students
-  // const studentTemplates = templateBody.filter(
-  //   (template) => template.langue === selectedLangue && template.intended_for === "etudiant"
-  // );
+
   const { data: classes } = useFetchClassesQuery();
   const classe: Classe[] = Array.isArray(classes) ? classes : [];
   const [selectedClasse, setSelectedClasse] = useState<string | null>(null); // To store selected class
@@ -56,6 +53,12 @@ const AjouterDemandeEtudiant = () => {
     )
     : etudiant; // Show all students if no class is selected
 
+  const formatDate = (date: Date) => {
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  };
   const [formData, setFormData] = useState<Partial<Demande>>({
     studentId: "",
     title: "",
@@ -64,7 +67,19 @@ const AjouterDemandeEtudiant = () => {
     langue: "",
     nombre_copie: 1,
     response: "",
-    status: "en attente",
+    added_by: user?._id!,
+    current_status: "En attente",
+    status_history: [{
+      value: "En attente",
+      date: formatDate(new Date())
+    }],
+    extra_data: [
+      {
+        name: "",
+        value: "",
+        body: ""
+      }
+    ],
     createdAt: undefined,
     updatedAt: undefined,
   });
@@ -117,7 +132,7 @@ const AjouterDemandeEtudiant = () => {
     }
   };
 
-  const onSubmitDemandeEnseignant = async (
+  const onSubmitDemandeEtudiant = async (
     e: React.FormEvent<HTMLFormElement>
   ) => {
     e.preventDefault();
@@ -183,7 +198,7 @@ const AjouterDemandeEtudiant = () => {
                   <div className="mb-3">
                     <Form
                       className="tablelist-form"
-                      onSubmit={onSubmitDemandeEnseignant}
+                      onSubmit={onSubmitDemandeEtudiant}
                     >
                       <Row>
                         <Col lg={6}>

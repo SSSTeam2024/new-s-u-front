@@ -27,7 +27,7 @@ const ProfilPersonnel = () => {
   const [clickedImage, setClickedImage] = useState(null);
   const location = useLocation();
   const personnelDetails = location.state;
-
+  console.log("personnelDetails", personnelDetails)
   const handleImageClick = (imageSrc: any) => {
     setClickedImage(imageSrc);
     setShowModal(true);

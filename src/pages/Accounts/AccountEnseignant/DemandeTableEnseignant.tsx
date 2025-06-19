@@ -12,15 +12,17 @@ import {
 import Breadcrumb from "Common/BreadCrumb";
 import CountUp from "react-countup";
 import TableContainer from "Common/TableContainer";
-import Flatpickr from "react-flatpickr";
-import dummyImg from "../../assets/images/users/user-dummy-img.jpg";
+import { actionAuthorization } from "utils/pathVerification";
 import { Link, useLocation } from "react-router-dom";
+import { RootState } from "app/store";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "features/account/authSlice";
 import img1 from "assets/images/users/avatar-1.jpg";
 import { useFetchDemandeEnseignantQuery } from "features/demandeEnseignant/demandeEnseignantSlice";
 
 const DemandeTableEnseignant = () => {
-  document.title = "table Demande Enseignant | ENIGA";
-
+  document.title = "Table Demande Enseignant | ENIGA";
+  const user = useSelector((state: RootState) => selectCurrentUser(state));
   const location = useLocation();
   const EnseignantDetails = location.state;
 
@@ -41,9 +43,7 @@ const DemandeTableEnseignant = () => {
     useState<boolean>(false);
   const [isMultiDeleteButton, setIsMultiDeleteButton] =
     useState<boolean>(false);
-  function tog_AddUserModals() {
-    setmodal_AddUserModals(!modal_AddUserModals);
-  }
+ 
 
   // Checked All
   const checkedAll = useCallback(() => {
@@ -72,24 +72,30 @@ const DemandeTableEnseignant = () => {
   const columns = useMemo(
     () => [
       {
-        Header: "Pièce demandée",
-        accessor: "title",
+        Header: "Titre Demande",
+        accessor: (row: any) => row.piece_demande?.title || "",
         disableFilters: true,
         filterable: true,
       },
       {
-        Header: "Description",
-        accessor: "description",
+        Header: "Ajouté par",
+        accessor: (row: any) => row.added_by?.login! || "",
+        disableFilters: true,
+        filterable: true,
+      }
+      ,
+
+      {
+        Header: "Langue",
+        accessor: (row: any) => {
+          if (row.langue === "arabic") return "Arabe";
+          if (row.langue === "french") return "Français";
+          return ""; // fallback if langue is undefined or other
+        },
         disableFilters: true,
         filterable: true,
       },
 
-      {
-        Header: "Langue",
-        accessor: "langue",
-        disableFilters: true,
-        filterable: true,
-      },
       {
         Header: "Nbr Copie",
         accessor: "nombre_copie",
@@ -110,26 +116,33 @@ const DemandeTableEnseignant = () => {
         disableFilters: true,
         filterable: true,
         accessor: (cellProps: any) => {
-          switch (cellProps.status) {
-            case "en cours":
+          switch (cellProps.current_status) {
+            case "Approuvée":
               return (
                 <span className="badge bg-success-subtle text-success">
                   {" "}
-                  {cellProps.status}
+                  {cellProps.current_status}
                 </span>
               );
-            case "Inactive":
+            case "Réfusée":
               return (
                 <span className="badge bg-danger-subtle text-danger">
                   {" "}
-                  {cellProps.status}
+                  {cellProps.current_status}
+                </span>
+              );
+            case "Générée":
+              return (
+                <span className="badge bg-secondary-subtle text-secondary">
+                  {" "}
+                  {cellProps.current_status}
                 </span>
               );
             default:
               return (
-                <span className="badge bg-success-subtle text-success">
+                <span className="badge bg-warning-subtle text-warning">
                   {" "}
-                  {cellProps.status}
+                  {cellProps.current_status}
                 </span>
               );
           }
@@ -137,79 +150,44 @@ const DemandeTableEnseignant = () => {
       },
 
       {
-        Header: "Actions",
+        Header: "Visualiser Demande",
         disableFilters: true,
         filterable: true,
         accessor: (cellProps: any) => {
           return (
-            <ul className="hstack gap-2 list-unstyled mb-0">
-              <li>
-                <Link
-                  to="/demandes-enseignant/single-demande-enseignant"
-                  state={cellProps}
-                  className="badge bg-info-subtle text-info view-item-btn"
-                  data-bs-toggle="offcanvas"
-                >
-                  <i
-                    className="ph ph-eye"
-                    style={{
-                      transition: "transform 0.3s ease-in-out",
-                      cursor: "pointer",
-                      fontSize: "1.5em",
-                    }}
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.transform = "scale(1.4)")
-                    }
-                    onMouseLeave={(e) =>
-                      (e.currentTarget.style.transform = "scale(1)")
-                    }
-                  ></i>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/demandes-enseignant/edit-demande-enseignant"
-                  className="badge bg-success-subtle text-success edit-item-btn"
-                  state={cellProps}
-                >
-                  <i
-                    className="ph ph-pencil-line"
-                    style={{
-                      transition: "transform 0.3s ease-in-out",
-                      cursor: "pointer",
-                      fontSize: "1.5em",
-                    }}
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.transform = "scale(1.4)")
-                    }
-                    onMouseLeave={(e) =>
-                      (e.currentTarget.style.transform = "scale(1)")
-                    }
-                  ></i>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="#"
-                  className="badge bg-danger-subtle text-danger remove-item-btn"
-                >
-                  <i
-                    className="ph ph-trash"
-                    style={{
-                      transition: "transform 0.3s ease-in-out",
-                      cursor: "pointer",
-                      fontSize: "1.5em",
-                    }}
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.transform = "scale(1.4)")
-                    }
-                    onMouseLeave={(e) =>
-                      (e.currentTarget.style.transform = "scale(1)")
-                    }
-                  ></i>
-                </Link>
-              </li>
-            </ul>
+            <div>
+              <ul className="hstack gap-2 list-unstyled mb-1">
+                {actionAuthorization(
+                  "/demandes-enseignant/single-demande-enseignant",
+                  user?.permissions!
+                ) && (
+                    <li>
+                      <Link
+                        to="/demandes-enseignant/single-demande-enseignant"
+                        state={cellProps}
+                        className="badge bg-info-subtle text-info view-item-btn"
+                      >
+                        <i
+                          className="ph ph-eye"
+                          style={{
+                            transition: "transform 0.3s ease-in-out",
+                            cursor: "pointer",
+                            fontSize: "1.5em",
+                          }}
+                          onMouseEnter={(e) =>
+                            (e.currentTarget.style.transform = "scale(1.4)")
+                          }
+                          onMouseLeave={(e) =>
+                            (e.currentTarget.style.transform = "scale(1)")
+                          }
+                        ></i>
+                      </Link>
+                    </li>
+                  )}
+
+              </ul>
+
+            </div>
           );
         },
       },

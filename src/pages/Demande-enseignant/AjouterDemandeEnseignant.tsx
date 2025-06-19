@@ -6,13 +6,9 @@ import {
   Container,
   Form,
   Row,
-  InputGroup,
-  FormControl,
+
 } from "react-bootstrap";
 import Flatpickr from "react-flatpickr";
-import Dropzone from "react-dropzone";
-import { CKEditor } from "@ckeditor/ckeditor5-react";
-import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import Swal from "sweetalert2";
 import "flatpickr/dist/flatpickr.min.css";
 import Select from "react-select";
@@ -37,7 +33,7 @@ const AjouterDemandeEnseignant = () => {
   document.title = "Ajouter Demande Enseignant | ENIGA";
   const navigate = useNavigate();
   const user = useSelector((state: RootState) => selectCurrentUser(state));
-  console.log("user", user)
+
   const [addDemandeEnseignant] = useAddDemandeEnseignantMutation();
   const [getDiversDocExtra] = useGetDiversDocExtraByModelIdMutation();
   const { data: enseignants } = useFetchEnseignantsQuery();
@@ -66,9 +62,9 @@ const AjouterDemandeEnseignant = () => {
     nombre_copie: 1,
     response: "",
     added_by: user?._id!,
-    current_status: "en attente",
+    current_status: "En attente",
     status_history: [{
-      value: "en attente",
+      value: "En attente",
       date: formatDate(new Date())
     }],
     extra_data: [
@@ -196,19 +192,17 @@ const AjouterDemandeEnseignant = () => {
     const day = String(date.getDate()).padStart(2, "0");
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const year = date.getFullYear();
-    console.log(day)
-    console.log(month)
-    console.log(year)
+
     let dataRef = [...selectedExceptional];
     dataRef[index].dates_naiss = day + "-" + month + "-" + year;
-    console.log(dataRef)
+
     setSelectedExceptional(dataRef);
   };
 
   const onSelectChangeTemplate = async (selectedOption: any) => {
 
     const extraData = await getDiversDocExtra(selectedOption.value).unwrap();
-    console.log(extraData);
+
     if (extraData.length > 0) {
       const normalExtraData = extraData[0].extra_data.filter(e => e.fieldBody !== 'noms_enfants' && e.fieldBody !== 'dates_naiss' && e.fieldBody !== 'status_fils' && e.fieldBody !== 'dates_etats');
       const exceptionalExtraData = extraData[0].extra_data.filter(e => e.fieldBody === 'noms_enfants' || e.fieldBody === 'dates_naiss' || e.fieldBody === 'status_fils' || e.fieldBody === 'dates_etats');
@@ -283,11 +277,8 @@ const AjouterDemandeEnseignant = () => {
       extraDataRef.push(dates_naiss)
       extraDataRef.push(noms_enfants)
 
-      console.log(selectedExceptional)
-
       let refForm = { ...formData };
       refForm.extra_data = extraDataRef
-      console.log(refForm);
 
       await addDemandeEnseignant(refForm).unwrap();
       notify();

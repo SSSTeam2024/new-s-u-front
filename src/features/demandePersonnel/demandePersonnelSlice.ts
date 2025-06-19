@@ -1,6 +1,12 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { GeneratedDoc } from "features/generatedDoc/generatedDocSlice";
 
+export interface ExtraObject {
+  name?: string,
+  value?: string,
+  body?: string
+}
+
 export interface Demande {
   _id: string,
   personnelId: string,
@@ -11,14 +17,20 @@ export interface Demande {
   langue: string,
   nombre_copie: number,
   response: string,
-  status: string,
+  FileBase64?: string,
+  FileExtension?: string,
+  file?: string,
+  status: string;
+  extra_data?: ExtraObject[];
   createdAt: Date,
   updatedAt: Date,
-  extra_data: {
-    name: string,
+  added_by: string;
+  current_status: string;
+  status_history: {
     value: string,
-    body: string
+    date: string
   }[]
+
 }
 export const demandePersonnelSlice = createApi({
   reducerPath: "demandePersonnelApi",
@@ -60,12 +72,12 @@ export const demandePersonnelSlice = createApi({
         invalidatesTags: ["Demandes"],
       }),
       updateDemandePersonnel: builder.mutation<void, Partial<Demande>>({
-        query(reclamation) {
-          const { _id, ...rest } = reclamation;
+        query(demande) {
+
           return {
-            url: `edit-demande-personnel/${_id}`,
+            url: `edit-demande-personnel`,
             method: "PUT",
-            body: rest,
+            body: demande,
           };
         },
         invalidatesTags: ["Demandes"],

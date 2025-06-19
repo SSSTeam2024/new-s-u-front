@@ -1,17 +1,14 @@
 import React, { useState, useMemo, useCallback } from "react";
 import {
+  Alert,
   Button,
   Card,
   Col,
   Container,
-  Form,
-  Modal,
   Row,
 } from "react-bootstrap";
 import Breadcrumb from "Common/BreadCrumb";
 import TableContainer from "Common/TableContainer";
-import Flatpickr from "react-flatpickr";
-import dummyImg from "../../assets/images/users/user-dummy-img.jpg";
 import { Link, useNavigate } from "react-router-dom";
 import { actionAuthorization } from "utils/pathVerification";
 import { RootState } from "app/store";
@@ -30,6 +27,7 @@ const ListeDemandeEnseignant = () => {
   document.title = "Demande Enseignant | ENIGA";
 
   const user = useSelector((state: RootState) => selectCurrentUser(state));
+  console.log("user", user)
 
   const MySwal = withReactContent(Swal);
 
@@ -55,14 +53,14 @@ const ListeDemandeEnseignant = () => {
       }).then(async (result) => {
         if (result.isConfirmed) {
           await deleteDemandeEnseignant(id).unwrap();
-          MySwal.fire("Deleted!", "Demande a été supprimée", "success");
+          MySwal.fire("Supprimée!", "Demande a été supprimée", "success");
         }
       });
     } catch (error) {
       console.error("Failed to delete demand:", error);
       MySwal.fire(
         "Error!",
-        "There was an error deleting the reclamation.",
+        "Une erreur s'est produite lors de la suppression de la demande.",
         "error"
       );
     }
@@ -98,6 +96,7 @@ const ListeDemandeEnseignant = () => {
       ? setIsMultiDeleteButton(true)
       : setIsMultiDeleteButton(false);
   };
+  const [showHint, setShowHint] = useState(true);
 
   const columns = useMemo(
     () => [
@@ -141,23 +140,30 @@ const ListeDemandeEnseignant = () => {
         filterable: true,
         accessor: (cellProps: any) => {
           switch (cellProps.current_status) {
-            case "traité":
+            case "Approuvée":
               return (
                 <span className="badge bg-success-subtle text-success">
                   {" "}
                   {cellProps.current_status}
                 </span>
               );
-            case "rejeté":
+            case "Réfusée":
               return (
                 <span className="badge bg-danger-subtle text-danger">
                   {" "}
                   {cellProps.current_status}
                 </span>
               );
-            default:
+            case "Générée":
               return (
                 <span className="badge bg-secondary-subtle text-secondary">
+                  {" "}
+                  {cellProps.current_status}
+                </span>
+              );
+            default:
+              return (
+                <span className="badge bg-warning-subtle text-warning">
                   {" "}
                   {cellProps.current_status}
                 </span>
@@ -169,105 +175,161 @@ const ListeDemandeEnseignant = () => {
         Header: "Actions",
         disableFilters: true,
         filterable: true,
+        // accessor: (cellProps: any) => {
+
+        //   return (
+        //     <ul className="hstack gap-2 list-unstyled mb-0">
+        //       {actionAuthorization(
+        //         "/demandes-enseignant/single-demande-enseignant",
+        //         user?.permissions!
+        //       ) ? (
+        //         <li>
+        //           <Link
+        //             to="/demandes-enseignant/single-demande-enseignant"
+        //             state={cellProps}
+        //             className="badge bg-info-subtle text-info view-item-btn"
+        //           // data-bs-toggle="offcanvas"
+        //           >
+        //             <i
+        //               className="ph ph-gear-six"
+        //               style={{
+        //                 transition: "transform 0.3s ease-in-out",
+        //                 cursor: "pointer",
+        //                 fontSize: "1.5em",
+        //               }}
+        //               onMouseEnter={(e) =>
+        //                 (e.currentTarget.style.transform = "scale(1.4)")
+        //               }
+        //               onMouseLeave={(e) =>
+        //                 (e.currentTarget.style.transform = "scale(1)")
+        //               }
+        //             ></i>
+        //           </Link>
+        //         </li>
+        //       ) : (
+        //         <></>
+        //       )}
+
+        //       {actionAuthorization(
+        //         "/demandes-enseignant/supprimer-demande-enseignant",
+        //         user?.permissions!
+        //       ) ? (
+
+        //         cellProps.current_status === "En attente" && cellProps.added_by._id === user?._id && (
+        //           <li>
+        //             <Link
+        //               to="#"
+        //               className="badge bg-danger-subtle text-danger remove-item-btn"
+        //               onClick={() => handleDeleteDemande(cellProps._id)}
+        //             >
+        //               <i
+        //                 className="ph ph-trash"
+        //                 style={{
+        //                   transition: "transform 0.3s ease-in-out",
+        //                   cursor: "pointer",
+        //                   fontSize: "1.5em",
+        //                 }}
+        //                 onMouseEnter={(e) =>
+        //                   (e.currentTarget.style.transform = "scale(1.4)")
+        //                 }
+        //                 onMouseLeave={(e) =>
+        //                   (e.currentTarget.style.transform = "scale(1)")
+        //                 }
+        //               ></i>
+        //             </Link>
+        //           </li>
+        //         )
+
+
+
+        //       ) : (
+        //         <></>
+        //       )}
+        //     </ul>
+        //   );
+        // },
         accessor: (cellProps: any) => {
+          console.log("cellProps", cellProps)
           return (
-            <ul className="hstack gap-2 list-unstyled mb-0">
-              {actionAuthorization(
-                "/demandes-enseignant/single-demande-enseignant",
-                user?.permissions!
-              ) ? (
-                <li>
-                  <Link
-                    to="/demandes-enseignant/single-demande-enseignant"
-                    state={cellProps}
-                    className="badge bg-info-subtle text-info view-item-btn"
-                  // data-bs-toggle="offcanvas"
-                  >
-                    <i
-                      className="ph ph-gear-six"
-                      style={{
-                        transition: "transform 0.3s ease-in-out",
-                        cursor: "pointer",
-                        fontSize: "1.5em",
-                      }}
-                      onMouseEnter={(e) =>
-                        (e.currentTarget.style.transform = "scale(1.4)")
-                      }
-                      onMouseLeave={(e) =>
-                        (e.currentTarget.style.transform = "scale(1)")
-                      }
-                    ></i>
-                  </Link>
-                </li>
-              ) : (
-                <></>
+            <div>
+              <ul className="hstack gap-2 list-unstyled mb-1">
+                {actionAuthorization(
+                  "/demandes-enseignant/single-demande-enseignant",
+                  user?.permissions!
+                ) && (
+                    <li>
+                      <Link
+                        to="/demandes-enseignant/single-demande-enseignant"
+                        state={cellProps}
+                        className="badge bg-info-subtle text-info view-item-btn"
+                      >
+                        <i
+                          className="ph ph-gear-six"
+                          style={{
+                            transition: "transform 0.3s ease-in-out",
+                            cursor: "pointer",
+                            fontSize: "1.5em",
+                          }}
+                          onMouseEnter={(e) =>
+                            (e.currentTarget.style.transform = "scale(1.4)")
+                          }
+                          onMouseLeave={(e) =>
+                            (e.currentTarget.style.transform = "scale(1)")
+                          }
+                        ></i>
+                      </Link>
+                    </li>
+                  )}
+
+                {actionAuthorization(
+                  "/demandes-enseignant/supprimer-demande-enseignant",
+                  user?.permissions!
+                ) &&
+                  cellProps.current_status === "En attente" &&
+                  cellProps.added_by?._id === user?._id && (
+                    <li>
+                      <Link
+                        to="#"
+                        className="badge bg-danger-subtle text-danger remove-item-btn"
+                        onClick={() => handleDeleteDemande(cellProps._id)}
+                      >
+                        <i
+                          className="ph ph-trash"
+                          style={{
+                            transition: "transform 0.3s ease-in-out",
+                            cursor: "pointer",
+                            fontSize: "1.5em",
+                          }}
+                          onMouseEnter={(e) =>
+                            (e.currentTarget.style.transform = "scale(1.4)")
+                          }
+                          onMouseLeave={(e) =>
+                            (e.currentTarget.style.transform = "scale(1)")
+                          }
+                        ></i>
+                      </Link>
+                    </li>
+                  )}
+              </ul>
+
+              {cellProps.added_by && (
+                <div className="d-flex align-items-center text-muted small mt-1">
+                  <i className="bi bi-person-circle me-1"></i>
+                  <span className="fst-italic">
+                    Ajoutée par : <strong>{cellProps.added_by.login}</strong>
+                  </span>
+                </div>
               )}
-              {/* {actionAuthorization(
-                "/demandes-enseignant/edit-demande-enseignant",
-                user?.permissions!
-              ) ? (
-                <li>
-                  <Link
-                    to="/demandes-enseignant/edit-demande-enseignant"
-                    className="badge bg-success-subtle text-success edit-item-btn"
-                    state={cellProps}
-                  >
-                    <i
-                      className="ph ph-pencil-line"
-                      style={{
-                        transition: "transform 0.3s ease-in-out",
-                        cursor: "pointer",
-                        fontSize: "1.5em",
-                      }}
-                      onMouseEnter={(e) =>
-                        (e.currentTarget.style.transform = "scale(1.4)")
-                      }
-                      onMouseLeave={(e) =>
-                        (e.currentTarget.style.transform = "scale(1)")
-                      }
-                    ></i>
-                  </Link>
-                </li>
-              ) : (
-                <></>
-              )} */}
-              {actionAuthorization(
-                "/demandes-enseignant/supprimer-demande-enseignant",
-                user?.permissions!
-              ) ? (
-                <li>
-                  <Link
-                    to="#"
-                    className="badge bg-danger-subtle text-danger remove-item-btn"
-                    onClick={() => handleDeleteDemande(cellProps._id)}
-                  >
-                    <i
-                      className="ph ph-trash"
-                      style={{
-                        transition: "transform 0.3s ease-in-out",
-                        cursor: "pointer",
-                        fontSize: "1.5em",
-                      }}
-                      onMouseEnter={(e) =>
-                        (e.currentTarget.style.transform = "scale(1.4)")
-                      }
-                      onMouseLeave={(e) =>
-                        (e.currentTarget.style.transform = "scale(1)")
-                      }
-                    ></i>
-                  </Link>
-                </li>
-              ) : (
-                <></>
-              )}
-            </ul>
+
+            </div>
           );
         },
+
       },
     ],
     [checkedAll]
   );
-  console.log("demande enseignant", demandesEnseignant);
+
   return (
     <React.Fragment>
       <div className="page-content">
@@ -309,22 +371,26 @@ const ListeDemandeEnseignant = () => {
                         Ajouter une demande
                       </Button>
                     </Col>
-                    {/* <Col sm={9} className="col-lg-auto">
-                                            <select className="form-select" data-choices data-choices-search-false name="choices-single-default" id="idStatus">
-                                                <option value="all">Tous</option>
-                                                <option value="Today">Today</option>
-                                                <option value="Yesterday">Yesterday</option>
-                                                <option value="Last 7 Days">Last 7 Days</option>
-                                                <option value="Last 30 Days">Last 30 Days</option>
-                                                <option defaultValue="This Month">This Month</option>
-                                                <option value="Last Month">Last Month</option>
-                                            </select>
-                                        </Col> */}
                   </Row>
                 </Card.Body>
               </Card>
               <Card>
                 <Card.Body className="p-0">
+                  {showHint && (
+                    <Alert
+                      variant="warning"
+                      dismissible
+                      onClose={() => setShowHint(false)}
+                      className="d-flex align-items-center gap-2 m-3"
+                    >
+                      <i className="ri-information-line fs-4"></i>
+                      <div>
+                        <strong>Remarque :</strong> Le bouton de suppression n'apparaît que pour les demandes avec le statut <strong>"En attente"</strong> et uniquement si vous êtes l'administrateur qui a ajouté la demande.
+                      </div>
+                    </Alert>
+                  )}
+
+
                   <TableContainer
                     columns={columns || []}
                     data={demandesEnseignant || []}
@@ -352,127 +418,7 @@ const ListeDemandeEnseignant = () => {
             </Col>
           </Row>
 
-          <Modal
-            className="fade"
-            show={modal_AddUserModals}
-            onHide={() => {
-              tog_AddUserModals();
-            }}
-            centered
-          >
-            <Modal.Header className="px-4 pt-4" closeButton>
-              <h5 className="modal-title" id="exampleModalLabel">
-                Add User
-              </h5>
-            </Modal.Header>
-            <Form className="tablelist-form">
-              <Modal.Body className="p-4">
-                <div
-                  id="alert-error-msg"
-                  className="d-none alert alert-danger py-2"
-                ></div>
-                <input type="hidden" id="id-field" />
 
-                <div className="text-center">
-                  <div className="position-relative d-inline-block">
-                    <div className="position-absolute  bottom-0 end-0">
-                      <label
-                        htmlFor="customer-image-input"
-                        className="mb-0"
-                        data-bs-toggle="tooltip"
-                        data-bs-placement="right"
-                        title="Select Image"
-                      >
-                        <div className="avatar-xs cursor-pointer">
-                          <div className="avatar-title bg-light border rounded-circle text-muted">
-                            <i className="ri-image-fill"></i>
-                          </div>
-                        </div>
-                      </label>
-                      <Form.Control
-                        className="d-none"
-                        defaultValue=""
-                        id="users-image-input"
-                        type="file"
-                        accept="image/png, image/gif, image/jpeg"
-                      />
-                    </div>
-                    <div className="avatar-lg p-1">
-                      <div className="avatar-title bg-light rounded-circle">
-                        <img
-                          src={dummyImg}
-                          alt="dummyImg"
-                          id="users-img-field"
-                          className="avatar-md rounded-circle object-cover"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mb-3">
-                  <Form.Label htmlFor="user-name">User Name</Form.Label>
-                  <Form.Control
-                    type="text"
-                    id="user-name-field"
-                    placeholder="Enter Name"
-                    required
-                  />
-                </div>
-                <div className="mb-3">
-                  <Form.Label htmlFor="email-field">User Email</Form.Label>
-                  <Form.Control
-                    type="email"
-                    id="email-field"
-                    placeholder="Enter Email"
-                    required
-                  />
-                </div>
-
-                <div className="mb-3">
-                  <Form.Label htmlFor="date-field">Date</Form.Label>
-                  <Flatpickr
-                    className="form-control flatpickr-input"
-                    placeholder="Select Date"
-                    options={{
-                      mode: "range",
-                      dateFormat: "d M, Y",
-                    }}
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="account-status" className="form-label">
-                    Account Status
-                  </label>
-                  <select
-                    className="form-select"
-                    required
-                    id="account-status-field"
-                  >
-                    <option defaultValue="">Account Status</option>
-                    <option value="Active">Active</option>
-                    <option value="Inactive">inactive</option>
-                  </select>
-                </div>
-              </Modal.Body>
-              <div className="modal-footer">
-                <div className="hstack gap-2 justify-content-end">
-                  <Button
-                    className="btn-ghost-danger"
-                    onClick={() => {
-                      tog_AddUserModals();
-                    }}
-                  >
-                    Close
-                  </Button>
-                  <Button variant="success" id="add-btn">
-                    Add User
-                  </Button>
-                </div>
-              </div>
-            </Form>
-          </Modal>
         </Container>
       </div>
     </React.Fragment>
