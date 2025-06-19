@@ -6,6 +6,13 @@ export interface Education {
   degree: string;
   graduationYear: string;
 }
+export interface HistoriquePosition {
+  poste?: string;
+  grade?: string;
+  date_affectation?: string;       
+  date_titularisation?: string;    
+  date_depart?: string;            
+}
 
 export interface Enseignant {
   dossier?: DossierAdministratif;
@@ -127,7 +134,8 @@ export interface Enseignant {
   papers?: string[];
   situation_fr?: string;
   situation_ar?: string;
-    educations?: Education[];
+  educations?: Education[];
+  historique_positions?: HistoriquePosition[]; 
 }
 
 export interface EnseignantGroupedByGrade {
@@ -201,6 +209,7 @@ export interface EnseignantExcel {
   papers?: string[];
   situation_fr?: string;
   educations?: Education[];
+  historique_positions?: HistoriquePosition[]; 
   situation_ar?: string;}
 
 export const enseignantSlice = createApi({
