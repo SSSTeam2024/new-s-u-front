@@ -47,7 +47,7 @@ const AjouterPersonnels = () => {
   const { data: poste = [] } = useFetchPostesPersonnelQuery();
   const { data: grade = [] } = useFetchGradesPersonnelQuery();
   const { data: categorie = [] } = useFetchCategoriesPersonnelQuery();
-  const { data: service = [] } = useFetchServicesPersonnelQuery();
+  const { data: servicePersonnel = [] } = useFetchServicesPersonnelQuery();
 
   const [formData, setFormData] = useState<any>({
     _id: "",
@@ -65,10 +65,10 @@ const AjouterPersonnels = () => {
     etat_civil: "",
     sexe: "",
     etat_compte: "",
-    poste: "",
-    grade: "",
-    categorie: "",
-    service: "",
+    // poste: "",
+    // grade: "",
+    // categorie: "",
+    // service: "",
 
     date_affectation: "",
     compte_courant: "",
@@ -102,9 +102,23 @@ const AjouterPersonnels = () => {
         fichier_titularisationBase64: "",
         fichier_titularisationExtension: "",
         fichier_departBase64: "",
-        fichier_departExtension: ""
+        fichier_departExtension: "",
       },
     ],
+     historique_services: [
+      {
+        service: "",
+        date_affectation: "",
+        fichier_affectation: "",
+        fichier_affectationBase64: "",
+        fichier_affectationExtension: "",
+        date_depart: "",
+       fichier_depart: "",
+       fichier_departBase64: "",
+       fichier_departExtension: "",
+      },
+    ],
+    
   });
   const handleHistoricChange = (
     index: number,
@@ -129,11 +143,11 @@ const AjouterPersonnels = () => {
           date_titularisation: "",
           date_depart: "",
           fichier_affectationBase64: "",
-        fichier_affectationExtension: "",
-        fichier_titularisationBase64: "",
-        fichier_titularisationExtension: "",
-        fichier_departBase64: "",
-        fichier_departExtension: ""
+          fichier_affectationExtension: "",
+          fichier_titularisationBase64: "",
+          fichier_titularisationExtension: "",
+          fichier_departBase64: "",
+          fichier_departExtension: "",
         },
       ],
     }));
@@ -160,29 +174,105 @@ const AjouterPersonnels = () => {
   };
 
   const handleHistoricFileChange = async (
-  index: number,
-  field: string,
-  file: File | undefined
-) => {
-  if (!file) return;
+    index: number,
+    field: string,
+    file: File | undefined
+  ) => {
+    if (!file) return;
 
-  const reader = new FileReader();
-  reader.onload = () => {
-    const base64 = (reader.result as string).split(",")[1];
-    setFormData((prev: any) => {
-      const updated = [...prev.historique_positions];
-      updated[index] = {
-        ...updated[index],
-        [`${field}Base64`]: base64,
-        [`${field}Extension`]: file.name.split(".").pop(),
-      };
-      return {
-        ...prev,
-        historique_positions: updated,
-      };
-    });
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64 = (reader.result as string).split(",")[1];
+      setFormData((prev: any) => {
+        const updated = [...prev.historique_positions];
+        updated[index] = {
+          ...updated[index],
+          [`${field}Base64`]: base64,
+          [`${field}Extension`]: file.name.split(".").pop(),
+        };
+        return {
+          ...prev,
+          historique_positions: updated,
+        };
+      });
+    };
+    reader.readAsDataURL(file);
   };
-  reader.readAsDataURL(file);
+  const handleHistoriqueServiceChange = (index:number, field:string, value:any) => {
+  const updated = [...formData.historique_services];
+  updated[index][field] = value;
+  setFormData({ ...formData, historique_services: updated });
+};
+
+// const handleServiceFileUpload = (index: number, field: string, event: React.ChangeEvent<HTMLInputElement>) => {
+//   const file = event.target.files?.[0];
+//   if (file) {
+//     const reader = new FileReader();
+//     reader.onload = () => {
+//       if (reader.result && typeof reader.result === "string") {
+//         const base64Data = reader.result.split(",")[1];
+//         const extension = file.name.split(".").pop() || "";
+
+//         const updated = [...formData.historique_services];
+//         updated[index][`${field}Base64`] = base64Data;
+//         updated[index][`${field}Extension`] = extension;
+
+//         setFormData({ ...formData, historique_services: updated });
+//       }
+//     };
+//     reader.readAsDataURL(file);
+//   }
+// };
+ const handleServiceFileUpload = async (
+    index: number,
+    field: string,
+    file: File | undefined
+  ) => {
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64 = (reader.result as string).split(",")[1];
+      setFormData((prev: any) => {
+        const updated = [...prev.historique_positions];
+        updated[index] = {
+          ...updated[index],
+          [`${field}Base64`]: base64,
+          [`${field}Extension`]: file.name.split(".").pop(),
+        };
+        return {
+          ...prev,
+          historique_positions: updated,
+        };
+      });
+    };
+    reader.readAsDataURL(file);
+  };
+
+const addHistoriqueService = () => {
+  setFormData({
+    ...formData,
+    historique_services: [
+      ...formData.historique_services,
+      {
+        service: "",
+        date_affectation: "",
+        fichier_affectation: "",
+        fichier_affectationBase64: "",
+        fichier_affectationExtension: "",
+        date_depart: "",
+        fichier_depart: "",
+        fichier_departBase64: "",
+        fichier_departExtension: "",
+      },
+    ],
+  });
+};
+
+const removeHistoriqueService = (index:any) => {
+  const updated = [...formData.historique_services];
+  updated.splice(index, 1);
+  setFormData({ ...formData, historique_services: updated });
 };
 
 
@@ -690,10 +780,43 @@ const AjouterPersonnels = () => {
                               </select>
                             </div>
                           </Col>
+                           <Col lg={3}>
+                                <div
+                                  className="mb-3"
+                                  style={{
+                                    direction: "rtl",
+                                    textAlign: "right",
+                                  }}
+                                >
+                                  <Form.Label htmlFor="etat_compte">
+                                    حالة الحساب
+                                  </Form.Label>
+                                  <select
+                                    className="form-select text-muted"
+                                    name="etat_compte"
+                                    id="etat_compte"
+                                    // required
+                                    value={formData?.etat_compte?.etat_fr!}
+                                    onChange={handleChange}
+                                  >
+                                    <option value="">
+                                      Séléctionner Etat / اختر الحالة
+                                    </option>
+                                    {etat_compte.map((etat_compte) => (
+                                      <option
+                                        key={etat_compte._id}
+                                        value={etat_compte._id}
+                                      >
+                                        {etat_compte.etat_fr}
+                                      </option>
+                                    ))}
+                                  </select>
+                                </div>
+                              </Col>
                         </Row>
 
                         <Col lg={12}>
-                          <Card.Header>
+                          {/* <Card.Header>
                             <div className="d-flex">
                               <div className="flex-shrink-0 me-3">
                                 <div className="avatar-sm">
@@ -708,7 +831,7 @@ const AjouterPersonnels = () => {
                                 </h5>
                               </div>
                             </div>
-                          </Card.Header>
+                          </Card.Header> */}
                           <Card.Body>
                             <Row
                               style={{ direction: "rtl", textAlign: "right" }}
@@ -772,39 +895,7 @@ const AjouterPersonnels = () => {
                                 </div> */}
                               </Col>
 
-                              <Col lg={3}>
-                                <div
-                                  className="mb-3"
-                                  style={{
-                                    direction: "rtl",
-                                    textAlign: "right",
-                                  }}
-                                >
-                                  <Form.Label htmlFor="etat_compte">
-                                    حالة الحساب
-                                  </Form.Label>
-                                  <select
-                                    className="form-select text-muted"
-                                    name="etat_compte"
-                                    id="etat_compte"
-                                    // required
-                                    value={formData?.etat_compte?.etat_fr!}
-                                    onChange={handleChange}
-                                  >
-                                    <option value="">
-                                      Séléctionner Etat / اختر الحالة
-                                    </option>
-                                    {etat_compte.map((etat_compte) => (
-                                      <option
-                                        key={etat_compte._id}
-                                        value={etat_compte._id}
-                                      >
-                                        {etat_compte.etat_fr}
-                                      </option>
-                                    ))}
-                                  </select>
-                                </div>
-                              </Col>
+                             
                               {/* <Col lg={3}>
                                 <div
                                   className="mb-3"
@@ -914,7 +1005,7 @@ const AjouterPersonnels = () => {
                                   />
                                 </div>
                               </Col> */}
-                              <Col lg={3}>
+                              {/* <Col lg={3}>
                                 <div
                                   className="mb-3"
                                   style={{
@@ -936,7 +1027,7 @@ const AjouterPersonnels = () => {
                                     <option value="">
                                       Séléctionner la Service / اختر الخدمة
                                     </option>
-                                    {service.map((service) => (
+                                    {servicePersonnel.map((service) => (
                                       <option
                                         key={service._id}
                                         value={service._id}
@@ -946,7 +1037,7 @@ const AjouterPersonnels = () => {
                                     ))}
                                   </select>
                                 </div>
-                              </Col>
+                              </Col> */}
                             </Row>
                           </Card.Body>
                         </Col>
@@ -1436,9 +1527,9 @@ const AjouterPersonnels = () => {
                                 </div>
                               </div>
                               <div className="flex-grow-1">
-                               <h5 className="card-title">
-                              Historique des positions/ التسلسل المهني
-                            </h5>
+                                <h5 className="card-title">
+                                  Historique des positions/ التسلسل المهني
+                                </h5>
                               </div>
                             </div>
                           </Card.Header>
@@ -1449,7 +1540,9 @@ const AjouterPersonnels = () => {
                                 className="align-items-end m-3 border-bottom "
                               >
                                 <Col lg={4}>
-                                  <Form.Label>Poste / الخطة الوظيفية</Form.Label>
+                                  <Form.Label>
+                                    Poste / الخطة الوظيفية
+                                  </Form.Label>
                                   <Form.Select
                                     value={position.poste}
                                     onChange={(e) =>
@@ -1509,13 +1602,16 @@ const AjouterPersonnels = () => {
                                     </option>
                                     {categorie.map((item: any) => (
                                       <option key={item._id} value={item._id}>
-                                        {item.categorie_ar} / {item.categorie_fr}
+                                        {item.categorie_ar} /{" "}
+                                        {item.categorie_fr}
                                       </option>
                                     ))}
                                   </Form.Select>
                                 </Col>
                                 <Col lg={4}>
-                                  <Form.Label>Date Affectation / تاريخ الإنتداب</Form.Label>
+                                  <Form.Label>
+                                    Date Affectation / تاريخ الإنتداب
+                                  </Form.Label>
                                   <Form.Control
                                     type="date"
                                     value={position.date_affectation}
@@ -1527,19 +1623,29 @@ const AjouterPersonnels = () => {
                                       )
                                     }
                                   />
-                                    <Form.Label className="mt-2">Fichier Affectation</Form.Label>
-  <Form.Control
-  type="file"
-  onChange={(e) => {
-    const file = (e.target as HTMLInputElement).files?.[0];
-    if (file) {
-      handleHistoricFileChange(index, "fichier_affectation", file);
-    }
-  }}
-/>
+                                  <Form.Label className="mt-2">
+                                    Fichier Affectation
+                                  </Form.Label>
+                                  <Form.Control
+                                    type="file"
+                                    onChange={(e) => {
+                                      const file = (
+                                        e.target as HTMLInputElement
+                                      ).files?.[0];
+                                      if (file) {
+                                        handleHistoricFileChange(
+                                          index,
+                                          "fichier_affectation",
+                                          file
+                                        );
+                                      }
+                                    }}
+                                  />
                                 </Col>
                                 <Col lg={4}>
-                                  <Form.Label>Date Titularisation / تاريخ الترسيم</Form.Label>
+                                  <Form.Label>
+                                    Date Titularisation / تاريخ الترسيم
+                                  </Form.Label>
                                   <Form.Control
                                     type="date"
                                     value={position.date_titularisation}
@@ -1551,19 +1657,29 @@ const AjouterPersonnels = () => {
                                       )
                                     }
                                   />
-                                   <Form.Label className="mt-2">Fichier Titularisation</Form.Label>
-<Form.Control
-  type="file"
-  onChange={(e) => {
-    const file = (e.target as HTMLInputElement).files?.[0];
-    if (file) {
-      handleHistoricFileChange(index, "fichier_titularisation", file);
-    }
-  }}
-/>
+                                  <Form.Label className="mt-2">
+                                    Fichier Titularisation
+                                  </Form.Label>
+                                  <Form.Control
+                                    type="file"
+                                    onChange={(e) => {
+                                      const file = (
+                                        e.target as HTMLInputElement
+                                      ).files?.[0];
+                                      if (file) {
+                                        handleHistoricFileChange(
+                                          index,
+                                          "fichier_titularisation",
+                                          file
+                                        );
+                                      }
+                                    }}
+                                  />
                                 </Col>
                                 <Col lg={4}>
-                                  <Form.Label className="mt-2">Date Départ / تاريخ المغادرة</Form.Label>
+                                  <Form.Label className="mt-2">
+                                    Date Départ / تاريخ المغادرة
+                                  </Form.Label>
                                   <Form.Control
                                     type="date"
                                     value={position.date_depart}
@@ -1575,16 +1691,24 @@ const AjouterPersonnels = () => {
                                       )
                                     }
                                   />
-                                   <Form.Label className="mt-2">Fichier Départ</Form.Label>
- <Form.Control
-  type="file"
-  onChange={(e) => {
-    const file = (e.target as HTMLInputElement).files?.[0];
-    if (file) {
-      handleHistoricFileChange(index, "fichier_depart", file);
-    }
-  }}
-/>
+                                  <Form.Label className="mt-2">
+                                    Fichier Départ
+                                  </Form.Label>
+                                  <Form.Control
+                                    type="file"
+                                    onChange={(e) => {
+                                      const file = (
+                                        e.target as HTMLInputElement
+                                      ).files?.[0];
+                                      if (file) {
+                                        handleHistoricFileChange(
+                                          index,
+                                          "fichier_depart",
+                                          file
+                                        );
+                                      }
+                                    }}
+                                  />
                                 </Col>
                                 <Col lg={3}>
                                   <Button
@@ -1605,6 +1729,108 @@ const AjouterPersonnels = () => {
                           >
                             + Ajouter une position
                           </Button>
+                        </Col>
+                        <Col lg={12}>
+                        <Card.Header>
+                            <div className="d-flex">
+                              <div className="flex-shrink-0 me-3">
+                                <div className="avatar-sm">
+                                  <div className="avatar-title rounded-circle bg-light text-primary fs-20">
+                                    <i className="bi bi-people-fill"></i>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="flex-grow-1">
+                              <h5 className="card-title">Historique des Services / تاريخ الخدمات</h5>
+                              </div>
+                            </div>
+                          </Card.Header>
+                          {formData.historique_services.map((service:any, index:any) => (
+  <Row key={index} className="align-items-end mb-3">
+    <Col md={3}>
+      <Form.Group controlId={`service-${index}`}>
+        <Form.Label>Service</Form.Label>
+        <Form.Select
+          value={service.service}
+          onChange={(e) =>
+            handleHistoriqueServiceChange(index, "service", e.target.value)
+          }
+        >
+          <option value="">-- Choisir --</option>
+          {servicePersonnel?.map((s:any) => (
+            <option key={s._id} value={s._id}>
+              {s.service_fr}
+            </option>
+          ))}
+        </Form.Select>
+      </Form.Group>
+    </Col>
+
+    <Col md={2}>
+      <Form.Group controlId={`date_affectation-${index}`}>
+        <Form.Label>Date d'affectation</Form.Label>
+        <Form.Control
+          type="date"
+          value={service.date_affectation}
+          onChange={(e) =>
+            handleHistoriqueServiceChange(index, "date_affectation", e.target.value)
+          }
+        />
+      </Form.Group>
+    </Col>
+
+    <Col md={2}>
+      <Form.Group controlId={`date_depart-${index}`}>
+        <Form.Label>Date de départ</Form.Label>
+        <Form.Control
+          type="date"
+          value={service.date_depart}
+          onChange={(e) =>
+            handleHistoriqueServiceChange(index, "date_depart", e.target.value)
+          }
+        />
+      </Form.Group>
+    </Col>
+
+    <Col md={2}>
+      <Form.Group controlId={`fichier_affectation-${index}`}>
+        <Form.Label>Fichier affectation</Form.Label>
+        <Form.Control
+          type="file"
+          accept=".pdf"
+          onChange={(e:any) => handleServiceFileUpload(index, "fichier_affectation", e)}
+        />
+      </Form.Group>
+    </Col>
+
+    <Col md={2}>
+      <Form.Group controlId={`fichier_depart-${index}`}>
+        <Form.Label>Fichier départ</Form.Label>
+        <Form.Control
+          type="file"
+          accept=".pdf"
+          onChange={(e:any) => handleServiceFileUpload(index, "fichier_depart", e)}
+        />
+      </Form.Group>
+    </Col>
+
+    <Col md={1}>
+      <Button
+        variant="danger"
+        onClick={() => removeHistoriqueService(index)}
+        className="mt-2"
+      >
+        &times;
+      </Button>
+    </Col>
+  </Row>
+))}
+
+<Button variant="primary" onClick={addHistoriqueService}>
+  + Ajouter un service
+</Button>
+
+
                         </Col>
 
                         <Col lg={12}>

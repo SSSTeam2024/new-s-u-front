@@ -33,8 +33,11 @@ const ProfilPersonnel = () => {
   const [showFileModal, setShowFileModal] = useState(false);
 const [fileUrl, setFileUrl] = useState('');
 const [fileTitle, setFileTitle] = useState('')
-const openFileModal = (url: string, title: string) => {
-  setFileUrl(url);
+const baseUrl = `${process.env.REACT_APP_API_URL}/files/personnelFiles/historique/`; // Change to your server base
+
+const openFileModal = (filename: string, title: string) => {
+  if (!filename) return;
+  setFileUrl(`${baseUrl}${filename}`);
   setFileTitle(title);
   setShowFileModal(true);
 };
@@ -295,7 +298,7 @@ console.log("latest position",latestPosition.categorie)
                   </div>
                 </Col>
                 <Col lg={6}>
-                  <h5 className="text-muted ">Enseignant</h5>
+                  <h5 className="text-muted ">Responsabilité actuelle</h5>
                   <div className="table-responsive">
                     <Table className="table-borderless table-sm m-0 p-0 ">
                       <tbody>
@@ -479,7 +482,7 @@ console.log("latest position",latestPosition.categorie)
            {personnelDetails.historique_positions && personnelDetails.historique_positions.length > 0 && (
   <Card className="mt-4">
     <Card.Body>
-      <h5 className="text-muted">Historique des Postes/ التسلسل المهني</h5>
+      <h5 className="text-muted">Historique Professionnel/ التسلسل المهني</h5>
       <div className="table-responsive">
         <Table striped bordered hover size="sm" className="mb-0">
         <thead>
@@ -535,6 +538,56 @@ console.log("latest position",latestPosition.categorie)
     disabled={!entry.fichier_depart}
   >
     Départ
+  </Button>
+</td>
+    </tr>
+  ))}
+</tbody>
+        </Table>
+      </div>
+    </Card.Body>
+  </Card>
+)}
+  {personnelDetails.historique_services && personnelDetails.historique_services.length > 0 && (
+  <Card className="mt-4">
+    <Card.Body>
+      <h5 className="text-muted">Historique des services/ التسلسل في الخدمات</h5>
+      <div className="table-responsive">
+        <Table striped bordered hover size="sm" className="mb-0">
+        <thead>
+  <tr>
+    <th>Service</th>
+    <th>Date d'affectation</th>
+    <th>Fichier Affectation</th>
+    <th>Date de fin</th>
+    <th>Fichier de fin</th>
+  </tr>
+</thead>
+         <tbody>
+  {personnelDetails.historique_services.map((entry: any, index: number) => (
+    <tr key={index}>
+      <td>{entry.service?.service_fr || '-'}</td> 
+      <td>{entry.date_affectation ? moment(entry.date_affectation).format('DD/MM/YYYY') : '-'}</td>
+    <td>
+  <Button
+    variant="outline-primary"
+    size="sm"
+    onClick={() => openFileModal(entry.fichier_affectation, 'Fichier Affectation')}
+    disabled={!entry.fichier_affectation}
+  >
+    fichier affectation
+  </Button>
+</td>
+      
+      <td>{entry.date_fin ? moment(entry.date_fin).format('DD/MM/YYYY') : '-'}</td>
+     <td>
+  <Button
+    variant="outline-success"
+    size="sm"
+    onClick={() => openFileModal(entry.fichier_fin, 'Fichier Titularisation')}
+    disabled={!entry.fichier_fin}
+  >
+    fichier fin
   </Button>
 </td>
     </tr>
