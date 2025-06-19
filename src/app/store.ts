@@ -91,6 +91,9 @@ import { stageProSlice } from "features/stagesPro/stagesProSlice";
 import { typeStageSlice } from "features/typeStage/typeStageSlice";
 import { extraShortCodeSlice } from "features/extraShortCode/extraShortCodeSlice";
 import { diversDocSlice } from "features/diversDocExtra/diversDocSlice";
+import { commissionSlice } from "features/commission/commissionSlice";
+import { avisCommissionSlice } from "features/avisCommission/avisCommissionSlice";
+import { generatedPvSlice } from "features/generatedPv/generatedPvSlice";
 
 export const store = configureStore({
   reducer: {
@@ -191,6 +194,12 @@ export const store = configureStore({
     //! extra short codes
     [extraShortCodeSlice.reducerPath]: extraShortCodeSlice.reducer,
     [diversDocSlice.reducerPath]: diversDocSlice.reducer,
+    //! Commission
+    [commissionSlice.reducerPath]: commissionSlice.reducer,
+    //! Avis Commission
+    [avisCommissionSlice.reducerPath]: avisCommissionSlice.reducer,
+    //! Generated Pv
+    [generatedPvSlice.reducerPath]: generatedPvSlice.reducer,
     auth: authSlice,
     Layout: LayoutReducer,
     Profile: ProfileReducer,
@@ -278,7 +287,10 @@ export const store = configureStore({
       stageProSlice.middleware,
       typeStageSlice.middleware,
       extraShortCodeSlice.middleware,
-      diversDocSlice.middleware
+      diversDocSlice.middleware,
+      commissionSlice.middleware,
+      avisCommissionSlice.middleware,
+      generatedPvSlice.middleware
     ]);
   },
 });

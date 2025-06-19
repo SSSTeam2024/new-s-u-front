@@ -263,6 +263,16 @@ import TypeStage from "pages/TypeStage";
 import AjouterTypeStage from "pages/TypeStage/AjouterTypeStage";
 import DetailsTypeStage from "pages/TypeStage/DetialsTypeStage";
 import EditTypeStage from "pages/TypeStage/EditTypeStage";
+import Societe from "pages/Societe";
+import AddNew from "pages/Societe/AddNew";
+import EditSociete from "pages/Societe/EditSociete";
+import AvisCommission from "pages/AvisCommission";
+import CreateCommission from "pages/AvisCommission/CreateCommission";
+import AddAvis from "pages/AvisCommission/AddAvis";
+import GenererPv from "pages/GenererPv";
+import ListeAvisCommission from "pages/AvisCommission/ListeAvisCommissions";
+import ListePv from "pages/GenererPv/ListePv";
+import DetailsPv from "pages/GenererPv/DetailsPv";
 
 const authProtectedRoutes = [
   { path: "/dashboard", component: <Dashboard /> },
@@ -1229,19 +1239,20 @@ const authProtectedRoutes = [
     path: "/gestion-des-stages/ajouter-stage",
     component: <AddNewStagePfe />,
   },
-  //! Stages Pro
+  //! Societes
   {
-    path: "/gestion-des-stages/liste-stages-professionnels",
-    component: <StagesPro />,
+    path: "/gestion-des-stages/liste-partenaires",
+    component: <Societe />,
   },
   {
-    path: "/gestion-des-stages/modifier-stage-professionnel",
-    component: <EditStagePro />,
+    path: "/gestion-des-stages/ajouter-partenaire",
+    component: <AddNew />,
   },
   {
-    path: "/gestion-des-stages/ajouter-stage-professionnel",
-    component: <AddNewStagePro />,
+    path: "/gestion-des-stages/modifier-partenaire",
+    component: <EditSociete />,
   },
+  //! Type Stage
   {
     path: "/gestion-des-stages/liste-types-stage",
     component: <TypeStage />,
@@ -1257,6 +1268,35 @@ const authProtectedRoutes = [
   {
     path: "/gestion-des-stages/modifier-type-stage",
     component: <EditTypeStage />,
+  },
+  //! Avis de Commission
+  {
+    path: "/directeur-de-stage/liste-des-commissions",
+    component: <AvisCommission />,
+  },
+  {
+    path: "/directeur-de-stage/ajouter-commission",
+    component: <CreateCommission />,
+  },
+  {
+    path: "/directeur-de-stage/liste-des-avis-de-commission",
+    component: <ListeAvisCommission />,
+  },
+  {
+    path: "/directeur-de-stage/ajouter-avis-de-commission",
+    component: <AddAvis />,
+  },
+  {
+    path: "/directeur-de-stage/generer-pv",
+    component: <GenererPv />,
+  },
+  {
+    path: "/directeur-de-stage/liste-des-pv",
+    component: <ListePv />,
+  },
+  {
+    path: "/directeur-de-stage/details-pv",
+    component: <DetailsPv />,
   },
   // Accounts
   { path: "/account", component: <MyAccount /> },
