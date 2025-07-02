@@ -2,12 +2,12 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { DossierAdministratif } from "features/dossierAdministratif/dossierAdministratif";
 
 export interface HistoriquePosition {
-  poste?: string;
-  grade?: string;
-  categorie?: string;
-  date_affectation?: string;       
-  date_titularisation?: string;    
-  date_depart?: string;            
+  poste?: any;
+  grade?: any;
+  categorie?: any;
+  date_affectation?: string;
+  date_titularisation?: string;
+  date_depart?: string;
 }
 
 export interface Personnel {
@@ -77,7 +77,7 @@ export interface Personnel {
   PhotoProfilFileExtension?: string;
   PhotoProfilFileBase64String?: string;
   papers?: string[];
-  historique_positions?: HistoriquePosition[]; 
+  historique_positions?: HistoriquePosition[];
 
 }
 
@@ -123,7 +123,7 @@ export interface PersonnelEXCEL {
   PhotoProfilFileExtension?: string;
   PhotoProfilFileBase64String?: string;
   papers?: string[];
-  historique_positions?: HistoriquePosition[]; 
+  historique_positions?: HistoriquePosition[];
 
 }
 export const personnelSlice = createApi({
@@ -167,11 +167,11 @@ export const personnelSlice = createApi({
         }),
         invalidatesTags: ["Personnel"],
       }),
-      getPersonnelById: builder.query<Personnel, string>({
-        query: (id) => ({
+      getPersonnelById: builder.query<Personnel, { _id: string }>({
+        query: ({ _id }) => ({
           url: `get-personnel`,
           method: "POST",
-          body: { personnelId: id }, // Adjust this to match your backend requirement
+          body: { _id }, // Adjust this to match your backend requirement
         }),
         providesTags: ["Personnel"],
       }),

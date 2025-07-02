@@ -75,7 +75,9 @@ const AjouterDemandePersonnel = () => {
       {
         name: "",
         value: "",
-        body: ""
+        body: "",
+        FileBase64: "",
+        FileExtension: ""
       }
     ],
   });
@@ -213,7 +215,13 @@ const AjouterDemandePersonnel = () => {
       setFormData((prevState: any) => ({
         ...prevState,
         piece_demande: selectedOption.value,
-        extra_data: normalExtraData.map(d => { return { name: d.fieldName, body: d.fieldBody } })
+        // extra_data: normalExtraData.map(d => { return { name: d.fieldName, body: d.fieldBody } })
+        extra_data: normalExtraData.map(d => ({
+          name: d.fieldName,
+          body: d.fieldBody,
+          value: d.data_type === 'file' ? null : '' // prepare file slots
+        }))
+
       }));
     } else {
       setDiversExtraData(null);
@@ -229,6 +237,7 @@ const AjouterDemandePersonnel = () => {
     setDocLabel(filteredDoc.title);
   };
 
+
   const onDescriptionChange = (event: any, editor: any) => {
     const data = editor.getData();
     setFormData((prevState: any) => ({
@@ -240,6 +249,7 @@ const AjouterDemandePersonnel = () => {
   const onSubmitDemandePersonnel = async (
     e: React.FormEvent<HTMLFormElement>
   ) => {
+    console.log(formData.extra_data)
     e.preventDefault();
     try {
       let extraDataRef = [...formData.extra_data];
@@ -286,14 +296,15 @@ const AjouterDemandePersonnel = () => {
       await addDemandePersonnel(refForm).unwrap();
       notify();
       navigate("/demandes-personnel/liste-demande-personnel");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Failed to create demande:", error);
       Swal.fire({
         icon: "error",
         title: "Erreur",
-        text: "Une erreur est survenue lors de la création de la demande.",
+        text: error?.data?.message || "Une erreur est survenue lors de la création de la demande.",
       });
     }
+
   };
 
   const notify = () => {
@@ -313,6 +324,64 @@ const AjouterDemandePersonnel = () => {
       template.langue === selectedLangue &&
       template.intended_for === "personnel"
   );
+
+  function convertToBase64(
+    file: File
+  ): Promise<{ base64Data: string; extension: string }> {
+    return new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.onload = () => {
+        const base64String = fileReader.result as string;
+        const [, base64Data] = base64String.split(",");
+        const extension = file.name.split(".").pop() ?? "";
+        resolve({ base64Data, extension });
+      };
+      fileReader.onerror = (error) => {
+        reject(error);
+      };
+      fileReader.readAsDataURL(file);
+    });
+  }
+
+  // const handleFileChange = async (index: number, e: any) => {
+  //   const file = e.target.files?.[0];
+  //   if (file) {
+  //     const { base64Data, extension } = await convertToBase64(file);
+
+  //     const updated = [...formData.extra_data];
+  //     updated[index] = {
+  //       ...updated[index],
+  //       value: file.name,
+  //       FileBase64: base64Data,
+  //       FileExtension: extension
+  //     };
+
+  //     setFormData((prev: any) => ({
+  //       ...prev,
+  //       extra_data: updated,
+  //     }));
+  //   }
+  // };
+
+  const handleFileChange = async (index: number, e: any) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const { base64Data, extension } = await convertToBase64(file);
+
+      const updated = [...formData.extra_data];
+      updated[index] = {
+        ...updated[index],
+        value: file.name,
+        FileBase64: base64Data,
+        FileExtension: extension,
+      };
+
+      setFormData((prev: any) => ({
+        ...prev,
+        extra_data: updated,
+      }));
+    }
+  };
 
   return (
     <React.Fragment>
@@ -470,6 +539,22 @@ const AjouterDemandePersonnel = () => {
                                           />
                                         </>
                                       )}
+                                      {d.data_type === "file" && (
+                                        <>
+                                          <Form.Label style={{ fontSize: '1rem', fontWeight: '600', fontFamily: 'system-ui' }}>
+                                            {d.fieldName}
+                                          </Form.Label>
+                                          <Form.Control
+                                            type="file"
+                                            accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
+                                            onChange={(e) => handleFileChange(index, e)}
+                                            required
+                                          />
+
+                                        </>
+                                      )}
+
+
                                     </Form.Group>
                                   </Col>
                                 ) : <>
@@ -522,6 +607,25 @@ const AjouterDemandePersonnel = () => {
                                             }}
                                             required
                                           />
+                                        </>
+                                      )}
+                                      {d.data_type === "file" && (
+                                        <>
+                                          <Form.Label style={{ fontSize: '1rem', fontWeight: '600', fontFamily: 'system-ui', float: 'right', textAlign: 'end' }}>
+                                            {d.fieldName}
+                                          </Form.Label>
+                                          <Form.Control
+                                            type="file"
+                                            accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
+                                            onChange={(e) => handleFileChange(index, e)}
+                                            required
+                                          />
+                                          {/* {formData.extra_data[index]?.value && (
+                                            <div className="mt-1 text-success">
+                                              Fichier sélectionné : {formData.extra_data[index].value}
+                                            </div>
+                                          )} */}
+
                                         </>
                                       )}
                                     </Form.Group>

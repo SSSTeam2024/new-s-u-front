@@ -53,7 +53,13 @@ const TemplateBodyDetail = () => {
 
                     <div className="mb-3">
                       <h4 className="card-title mb-0">Langue</h4>
-                      <p>{templateBody?.langue}</p>
+                      <p>
+                        {templateBody?.langue === 'french'
+                          ? 'Français'
+                          : templateBody?.langue === 'arabic'
+                            ? 'Arabe'
+                            : 'Langue inconnue'}
+                      </p>
                     </div>
 
                     <div className="mb-3">

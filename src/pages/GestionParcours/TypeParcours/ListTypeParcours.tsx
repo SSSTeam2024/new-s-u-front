@@ -394,7 +394,7 @@ const ListTypeParcours = () => {
               <Form className="tablelist-form" onSubmit={onSubmitTypeParcours}>
                 <Modal.Body className="p-4">
                   <Row>
-                    <Col lg={4}>
+                    <Col lg={12}>
                       <div className="mb-3">
                         <Form.Label htmlFor="name_type_parcours_fr">
                           Type Parcours(FR)
@@ -410,7 +410,7 @@ const ListTypeParcours = () => {
                       </div>
                     </Col>
 
-                    <Col lg={4}>
+                    <Col lg={12}>
                       <div className="mb-3">
                         <Form.Label htmlFor="name_type_parcours_ar">
                           Type Parcours(AR)
@@ -425,7 +425,7 @@ const ListTypeParcours = () => {
                         />
                       </div>
                     </Col>
-                    <Col lg={4}>
+                    <Col lg={12}>
                       <div className="mb-3">
                         <Form.Label htmlFor="abreviation">
                           Abréviation
@@ -475,7 +475,7 @@ const ListTypeParcours = () => {
               >
                 <Modal.Body className="p-4">
                   <Row>
-                    <Col lg={4}>
+                    <Col lg={12}>
                       <div className="mb-3">
                         <Form.Label htmlFor="name_type_parcours_fr">
                           Type Parcours(FR)
@@ -491,7 +491,7 @@ const ListTypeParcours = () => {
                       </div>
                     </Col>
 
-                    <Col lg={4}>
+                    <Col lg={12}>
                       <div className="mb-3">
                         <Form.Label htmlFor="name_type_parcours_ar">
                           Type Parcours(AR)
@@ -506,7 +506,7 @@ const ListTypeParcours = () => {
                         />
                       </div>
                     </Col>
-                    <Col lg={4}>
+                    <Col lg={12}>
                       <div className="mb-3">
                         <Form.Label htmlFor="abreviation">
                           Abréviation

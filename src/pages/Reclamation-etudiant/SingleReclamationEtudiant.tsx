@@ -24,12 +24,12 @@ const SingleReclamationEtudiant = () => {
     setMediaUrl(url);
     setShowModal(true);
   };
-  const currentStatus = location.state.status;
+  const currentStatus = location?.state?.status!;
   const photoUrls = location.state?.photos
     ? location.state?.photos.map(
-        (photo: any) =>
-          `${process.env.REACT_APP_API_URL}/files/reclamationEtudiantFiles/photo/${photo}`
-      )
+      (photo: any) =>
+        `${process.env.REACT_APP_API_URL}/files/reclamationEtudiantFiles/photo/${photo}`
+    )
     : [];
   const pdfUrl = location.state?.pdf
     ? `${process.env.REACT_APP_API_URL}/files/reclamationEtudiantFiles/pdf/${location.state.pdf}`
@@ -196,23 +196,23 @@ const SingleReclamationEtudiant = () => {
                                     <td className="">Description:</td>
                                     <td>
                                       <span className="mb-1 ">
-                                        {location.state.description}
+                                        {location?.state?.description!}
                                       </span>
                                     </td>
                                   </tr>
                                   <tr>
                                     <td className="">Date de création</td>
-                                    <td>{location.state.createdAt}</td>
+                                    <td>{location?.state?.createdAt!}</td>
                                   </tr>
                                   <tr>
                                     <td className="">Date d'exécution</td>
-                                    <td>{location.state.updatedAt}</td>
+                                    <td>{location?.state?.updatedAt!}</td>
                                   </tr>
                                   <tr>
                                     <td>Réponse :</td>
                                     <td>
                                       <span className="mb-1 ">
-                                        {location.state.response}
+                                        {location?.state?.response}!
                                       </span>
                                     </td>
                                   </tr>

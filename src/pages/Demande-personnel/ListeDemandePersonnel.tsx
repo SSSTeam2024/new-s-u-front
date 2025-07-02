@@ -32,6 +32,7 @@ const ListeDemandePersonnel = () => {
   const MySwal = withReactContent(Swal);
 
   const { data: demandesPersonnel } = useFetchDemandePersonnelQuery();
+  console.log("demandesPersonnel", demandesPersonnel)
 
   const [deleteDemandePersonnel] = useDeleteDemandePersonnelMutation();
   const navigate = useNavigate();
@@ -41,6 +42,7 @@ const ListeDemandePersonnel = () => {
   };
 
   const handleDeleteDemande = async (id: string) => {
+    console.log(id)
     try {
       await MySwal.fire({
         title: "Êtes-vous sûr ?",

@@ -88,9 +88,9 @@ const EditAdmin = () => {
 
     try {
       await updateUserPermissions({ userId, permissionIds }).unwrap();
-      toast.success("Permissions updated successfully!");
+      toast.success("Permissions mises à jour avec succès !");
     } catch (error) {
-      toast.error("Failed to update permissions. Please try again.");
+      toast.error("Échec de la mise à jour des permissions. Veuillez réessayer.");
     }
   };
 
@@ -137,7 +137,7 @@ const EditAdmin = () => {
             <Col lg={12}>
               <Card>
                 <Card.Header>
-                  <h5 className="card-title mb-0">Admin Details</h5>
+                  <h5 className="card-title mb-0">Détails Admin</h5>
                 </Card.Header>
                 <Card.Body>{/* Render admin details UI */}</Card.Body>
               </Card>
@@ -147,20 +147,20 @@ const EditAdmin = () => {
           <Col lg={12}>
             <Card>
               <Card.Header className="d-flex justify-content-between align-items-center">
-                <h5 className="card-title mb-0">User Permissions</h5>
+                <h5 className="card-title mb-0">Permissions d'utilisateurs</h5>
                 <Button
                   variant="info"
                   className="me-2"
                   onClick={() => handleCheckAll("all")}
                 >
-                  Check All
+                  Tout sélectionner
                 </Button>
                 <Button
                   variant="info"
                   className="me-2"
                   onClick={() => handleCheckAll("none")}
                 >
-                  Uncheck All
+                  Tout désélectionner
                 </Button>
               </Card.Header>
             </Card>
@@ -260,13 +260,16 @@ const EditAdmin = () => {
                 </Card>
               ))}
             </Col>
-            <Button
-              type="submit"
-              variant="primary"
-              disabled={isUpdatingPermissions}
-            >
-              {isUpdatingPermissions ? "Updating..." : "Update Permissions"}
-            </Button>
+            <div className="position-sticky bg-white p-3" style={{ top: 0, zIndex: 1000 }}>
+              <Button
+                type="submit"
+                variant="primary"
+                disabled={isUpdatingPermissions}
+              >
+                {isUpdatingPermissions ? "Mise à jour en cours..." : "Mettre à jour les permissions"}
+              </Button>
+            </div>
+
           </Form>
         </Container>
       </div>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Card,
   Nav,
@@ -11,7 +11,7 @@ import {
   Form,
   Button,
 } from "react-bootstrap";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import DemandeTablePersonnel from "./DemandeTablePersonnel";
 import ReclamationTable from "./ReclamationTablePersonnel";
 import "./hover.css";
@@ -23,16 +23,62 @@ import "swiper/css/effect-fade";
 import "swiper/css/effect-flip";
 import userImage from "assets/images/userImage.jpg";
 import moment from 'moment';
+import { Personnel, useGetPersonnelByIdQuery } from "features/personnel/personnelSlice";
 
 const ProfilPersonnel = () => {
   const [showModal, setShowModal] = useState(false);
+  const navigate = useNavigate();
   const [clickedImage, setClickedImage] = useState(null);
-  const location = useLocation();
-  const personnelDetails = location.state;
-
+  const [idFromRoute, setIdFromRoute] = useState<string | null>(null);
   const [showFileModal, setShowFileModal] = useState(false);
   const [fileUrl, setFileUrl] = useState('');
   const [fileTitle, setFileTitle] = useState('')
+  const location = useLocation();
+  // const personnelDetails = location.state;
+  // console.log("personnelDetails", personnelDetails);
+
+
+  const personnelDetails = location.state as
+    | Personnel
+    | { _id: string }
+    | undefined;
+  const passedId = personnelDetails
+    ? (personnelDetails as Personnel)._id
+    : undefined;
+
+  const { data: fetchedPersonnel, isLoading } = useGetPersonnelByIdQuery(
+    { _id: idFromRoute! },
+    { skip: !idFromRoute }
+  );
+
+  // Fetch the article by ID if passed, otherwise use location state data
+  const { data: fetchedArticle, isLoading: isLoadingById } =
+    useGetPersonnelByIdQuery(
+      { _id: passedId || "" },
+      {
+        skip: !passedId,
+      }
+    );
+
+  const personnalsDetails = passedId
+    ? fetchedArticle
+    : (personnelDetails as Personnel);
+
+
+  useEffect(() => {
+    if (!passedId && !personnalsDetails) {
+      navigate("/gestion-etudiant/liste-etudiants");
+    }
+  }, [passedId, personnalsDetails, navigate]);
+
+  if (isLoadingById || isLoading) {
+    return <p>Chargement...</p>; // or a loading spinner
+  }
+
+  if (!personnalsDetails) {
+    return <p>personnel non trouvé.</p>;
+  }
+
   const openFileModal = (url: string, title: string) => {
     setFileUrl(url);
     setFileTitle(title);
@@ -48,68 +94,68 @@ const ProfilPersonnel = () => {
     setClickedImage(null);
   };
   const getLatestPosition = () => {
-    if (!personnelDetails?.historique_positions?.length) return null;
+    if (!personnalsDetails?.historique_positions?.length) return null;
 
     // Sort by date_affectation descending
-    const sorted = [...personnelDetails.historique_positions].sort((a, b) => {
-      const dateA = new Date(a.date_affectation);
-      const dateB = new Date(b.date_affectation);
+    const sorted = [...personnalsDetails.historique_positions].sort((a: any, b: any) => {
+      const dateA = new Date(a?.date_affectation);
+      const dateB = new Date(b?.date_affectation);
       return dateB.getTime() - dateA.getTime(); // Latest first
     });
 
     return sorted[0]; // Latest entry
   };
   const latestPosition = getLatestPosition();
-  console.log("latest position", latestPosition.categorie)
+  console.log("latest position", latestPosition)
   //Poste personnel
-  const postePersonnelFR =
-    typeof personnelDetails?.poste! === "object"
-      ? personnelDetails?.poste?.poste_fr!
-      : personnelDetails?.poste!;
+  // const postePersonnelFR =
+  //   typeof personnelDetails?.poste! === "object"
+  //     ? personnelDetails?.poste?.poste_fr!
+  //     : personnelDetails?.poste!;
 
-  const posteEnseignantAR =
-    typeof personnelDetails?.poste! === "object"
-      ? personnelDetails?.poste?.poste_ar!
-      : personnelDetails?.poste!;
+  // const posteEnseignantAR =
+  //   typeof personnelDetails?.poste! === "object"
+  //     ? personnelDetails?.poste?.poste_ar!
+  //     : personnelDetails?.poste!;
   // etat compte enseignant
-  const etatCompteDisplayFR =
-    typeof personnelDetails?.etat_compte! === "object"
-      ? personnelDetails?.etat_compte?.etat_fr!
-      : personnelDetails?.etat_compte!;
+  // const etatCompteDisplayFR =
+  //   typeof personnalsDetails?.etat_compte! === "object"
+  //     ? personnalsDetails?.etat_compte?.etat_fr!
+  //     : personnalsDetails?.etat_compte!;
 
   const etatCompteDisplayAR =
-    typeof personnelDetails?.etat_compte! === "object"
-      ? personnelDetails?.etat_compte?.etat_ar!
-      : personnelDetails?.etat_compte!;
+    typeof personnalsDetails?.etat_compte! === "object"
+      ? personnalsDetails?.etat_compte?.etat_ar!
+      : personnalsDetails?.etat_compte!;
   // //specialite enseignant
   const categoriePersonnelFR =
-    typeof personnelDetails?.categorie! === "object"
-      ? personnelDetails?.categorie?.categorie_fr!
-      : personnelDetails?.categorie!;
+    typeof personnalsDetails?.categorie! === "object"
+      ? personnalsDetails?.categorie?.categorie_fr!
+      : personnalsDetails?.categorie!;
   const categoriePersonnelAR =
-    typeof personnelDetails?.categorie! === "object"
-      ? personnelDetails?.categorie?.categorie_ar!
-      : personnelDetails?.categorie!;
+    typeof personnalsDetails?.categorie! === "object"
+      ? personnalsDetails?.categorie?.categorie_ar!
+      : personnalsDetails?.categorie!;
 
   //grade enseignant
   const gradeEnseignantFR =
-    typeof personnelDetails?.grade! === "object"
-      ? personnelDetails?.grade?.grade_fr!
-      : personnelDetails?.grade!;
+    typeof personnalsDetails?.grade! === "object"
+      ? personnalsDetails?.grade?.grade_fr!
+      : personnalsDetails?.grade!;
   const gradeEnseignantAR =
-    typeof personnelDetails?.grade! === "object"
-      ? personnelDetails?.grade?.grade_ar!
-      : personnelDetails?.grade!;
+    typeof personnalsDetails?.grade! === "object"
+      ? personnalsDetails?.grade?.grade_ar!
+      : personnalsDetails?.grade!;
 
   //service personnel
   const servicePersonnelFR =
-    typeof personnelDetails?.service! === "object"
-      ? personnelDetails?.service?.service_fr!
-      : personnelDetails?.service!;
+    typeof personnalsDetails?.service! === "object"
+      ? personnalsDetails?.service?.service_fr!
+      : personnalsDetails?.service!;
   const servicePersonnelAR =
-    typeof personnelDetails?.service! === "object"
-      ? personnelDetails?.service?.service_ar!
-      : personnelDetails?.service!;
+    typeof personnalsDetails?.service! === "object"
+      ? personnalsDetails?.service?.service_ar!
+      : personnalsDetails?.service!;
   return (
     <React.Fragment>
       <Tab.Container defaultActiveKey="Profil">
@@ -139,8 +185,8 @@ const ProfilPersonnel = () => {
                   <img
                     className="rounded-start img-fluid h-70 object-cover"
                     src={
-                      personnelDetails.photo_profil
-                        ? `${process.env.REACT_APP_API_URL}/files/personnelFiles/PhotoProfil/${personnelDetails.photo_profil}`
+                      personnalsDetails.photo_profil
+                        ? `${process.env.REACT_APP_API_URL}/files/personnelFiles/PhotoProfil/${personnalsDetails.photo_profil}`
                         : userImage
                     }
                     alt="Photo Profile"
@@ -153,11 +199,11 @@ const ProfilPersonnel = () => {
                   <Card.Header>
                     <div className="flex-grow-1 card-title mb-0">
                       <h5>
-                        {personnelDetails.nom_fr} {personnelDetails.prenom_fr}
+                        {personnalsDetails.nom_fr} {personnalsDetails.prenom_fr}
                       </h5>
                       <p className="text-muted mb-0">
                         {" "}
-                        {personnelDetails.nom_ar} {personnelDetails.prenom_ar}
+                        {personnalsDetails.nom_ar} {personnalsDetails.prenom_ar}
                       </p>
                     </div>
                   </Card.Header>
@@ -170,13 +216,13 @@ const ProfilPersonnel = () => {
                               <tr>
                                 <td>Poste</td>
                                 <td className="fw-medium">
-                                  {latestPosition.poste.poste_fr}/{latestPosition.poste.poste_ar}
+                                  {latestPosition?.poste?.poste_fr!}/{latestPosition?.poste?.poste_ar!}
                                 </td>
                               </tr>
                               <tr>
                                 <td>CIN</td>
                                 <td className="fw-medium">
-                                  {personnelDetails.num_cin}
+                                  {personnalsDetails?.num_cin!}
                                 </td>
                               </tr>
                             </tbody>
@@ -192,7 +238,7 @@ const ProfilPersonnel = () => {
                                 <td className="fw-medium">
                                   <span className="badge badge-label bg-secondary fs-6">
                                     <i className="mdi mdi-circle-medium"></i>{" "}
-                                    2493600925
+                                    {personnalsDetails?.matricule!}
                                   </span>
                                 </td>
                               </tr>
@@ -201,8 +247,8 @@ const ProfilPersonnel = () => {
                                 <td className="fw-medium">
                                   <span className="badge badge-label bg-warning">
                                     <i className="mdi mdi-circle-medium"></i>{" "}
-                                    {etatCompteDisplayFR} /{" "}
-                                    {etatCompteDisplayAR}
+                                    {personnalsDetails?.etat_compte?.etat_fr!} /{" "}
+                                    {personnalsDetails?.etat_compte?.etat_ar!}
                                   </span>
                                 </td>
                               </tr>
@@ -224,70 +270,70 @@ const ProfilPersonnel = () => {
                       <tbody>
                         <tr>
                           <td>Genre:</td>
-                          <td className="fw-medium">{personnelDetails.sexe}</td>
+                          <td className="fw-medium">{personnalsDetails?.sexe!}</td>
                         </tr>
 
                         <tr>
                           <td>Nationnalité:</td>
                           <td className="fw-medium">
-                            {personnelDetails.nationalite}
+                            {personnalsDetails?.nationalite!}
                           </td>
                         </tr>
                         <tr>
                           <td>Etat civil:</td>
                           <td className="fw-medium">
-                            {personnelDetails.etat_civil}
+                            {personnalsDetails?.etat_civil!}
                           </td>
                         </tr>
                         <tr>
                           <td>Date de naissance:</td>
                           <td className="fw-medium">
-                            {personnelDetails.date_naissance}
+                            {personnalsDetails?.date_naissance!}
                           </td>
                         </tr>
                         <tr>
                           <td>Lieu de naissance:</td>
                           <td className="fw-medium">
-                            {personnelDetails.lieu_naissance_ar} /{" "}
-                            {personnelDetails.lieu_naissance_fr}
+                            {personnalsDetails?.lieu_naissance_ar!} /{" "}
+                            {personnalsDetails?.lieu_naissance_fr!}
                           </td>
                         </tr>
 
                         <tr>
                           <td> Adresse:</td>
                           <td className="fw-medium">
-                            {personnelDetails.adress_fr} /{" "}
-                            {personnelDetails.adress_ar}
+                            {personnalsDetails?.adress_fr!} /{" "}
+                            {personnalsDetails?.adress_ar!}
                           </td>
                         </tr>
                         <tr>
                           <td>Email:</td>
                           <td className="fw-medium">
-                            {personnelDetails.email}
+                            {personnalsDetails?.email!}
                           </td>
                         </tr>
                         <tr>
                           <td>Téléphone 1:</td>
                           <td className="fw-medium">
-                            {personnelDetails.num_phone1}
+                            {personnalsDetails?.num_phone1!}
                           </td>
                         </tr>
                         <tr>
                           <td>Téléphone 2:</td>
                           <td className="fw-medium">
-                            {personnelDetails.num_phone2}
+                            {personnalsDetails?.num_phone2!}
                           </td>
                         </tr>
                         <tr>
                           <td>Compte Courant:</td>
                           <td className="fw-medium">
-                            {personnelDetails.compte_courant}
+                            {personnalsDetails?.compte_courant!}
                           </td>
                         </tr>
                         <tr>
                           <td>RIB:</td>
                           <td className="fw-medium">
-                            {personnelDetails.identifinat_unique}
+                            {personnalsDetails?.identifinat_unique!}
                           </td>
                         </tr>
                       </tbody>
@@ -302,81 +348,81 @@ const ProfilPersonnel = () => {
                         <tr>
                           <td>Catégorie: </td>
                           <td className="fw-medium">
-                            {latestPosition.categorie.categorie_fr}/{latestPosition.categorie.categorie_ar}
+                            {latestPosition?.categorie?.categorie_fr!}/{latestPosition?.categorie?.categorie_ar!}
                           </td>
                         </tr>
                         <tr>
                           <td>Grade: </td>
                           <td className="fw-medium">
-                            {latestPosition.grade.grade_fr}/{latestPosition.grade.grade_ar}
+                            {latestPosition?.grade?.grade_fr!}/{latestPosition?.grade?.grade_ar!}
                           </td>
                         </tr>
                         <tr>
                           <td>Date d'affectation: </td>
                           <td className="fw-medium">
-                            {latestPosition.date_affectation}
+                            {latestPosition?.date_affectation!}
                           </td>
                         </tr>
                         <tr>
                           <td>Date délivrance: </td>
                           <td className="fw-medium">
-                            {latestPosition.date_depart}
+                            {latestPosition?.date_depart!}
                           </td>
                         </tr>
                         <tr>
                           <td>Date de désignation: </td>
                           <td className="fw-medium">
-                            {latestPosition.date_titularisation}
+                            {latestPosition?.date_titularisation!}
                           </td>
                         </tr>
                         <tr>
                           <td>Service:</td>
                           <td className="fw-medium">
-                            {servicePersonnelFR} / {servicePersonnelAR}{" "}
+                            {personnalsDetails?.service?.service_fr!} / {personnalsDetails?.service?.service_ar!}{" "}
                           </td>
                         </tr>
-                        {/* Diplome 1 */}
-                        {personnelDetails.certif1 && (
+
+                        {/* {personnalsDetails?.certif1 && (
                           <>
                             <tr>
                               <td>Diplome 1: </td>
                               <td className="fw-medium">
                                 {" "}
-                                {personnelDetails.certif1}
+                                {personnalsDetails.certif1}
                               </td>
                             </tr>
                             <tr>
                               <td>Année diplome 1: </td>
                               <td className="fw-medium">
                                 {" "}
-                                {personnelDetails.annee_certif1}
+                                {personnalsDetails.annee_certif1}
                               </td>
                             </tr>
                             <tr>
                               <td>Etablissement diplome 1: </td>
                               <td className="fw-medium">
                                 {" "}
-                                {personnelDetails.entreprise1}
+                                {personnalsDetails.entreprise1}
                               </td>
                             </tr>
                           </>
                         )}
 
-                        {/* Diplome 2 */}
-                        {personnelDetails.certif2 && (
+                
+                        {personnalsDetails.certif2 && (
                           <>
                             <tr>
                               <td>Diplome 2: </td>
                               <td className="fw-medium">
                                 {" "}
-                                {personnelDetails.certif2}
+                                {personnalsDetails.certif2}
                               </td>
                             </tr>
                             <tr>
                               <td>Année diplome 2: </td>
                               <td className="fw-medium">
                                 {" "}
-                                {personnelDetails.annee_certif2}
+                                {personnalsDetails.annee_certif2}
                               </td>
                             </tr>
                             <tr>
@@ -389,7 +435,7 @@ const ProfilPersonnel = () => {
                           </>
                         )}
 
-                        {/* Diplome 3 */}
+                    
                         {personnelDetails.certif3 && (
                           <>
                             <tr>
@@ -414,7 +460,7 @@ const ProfilPersonnel = () => {
                               </td>
                             </tr>
                           </>
-                        )}
+                        )} */}
                       </tbody>
                     </Table>
                   </div>
@@ -427,20 +473,20 @@ const ProfilPersonnel = () => {
                         <tr>
                           <td>Nom du conjoint:</td>
                           <td className="fw-medium">
-                            {personnelDetails.nom_conjoint}
+                            {personnalsDetails?.nom_conjoint!}
                           </td>
                         </tr>
 
                         <tr>
                           <td>Profession du conjoint:</td>
                           <td className="fw-medium">
-                            {personnelDetails.job_conjoint}
+                            {personnalsDetails.job_conjoint}
                           </td>
                         </tr>
                         <tr>
                           <td>Nombre des enfants:</td>
                           <td className="fw-medium">
-                            {personnelDetails.nombre_fils}
+                            {personnalsDetails.nombre_fils}
                           </td>
                         </tr>
                       </tbody>
@@ -476,7 +522,7 @@ const ProfilPersonnel = () => {
                 </Col> */}
               </Row>
             </Card>
-            {personnelDetails.historique_positions && personnelDetails.historique_positions.length > 0 && (
+            {personnalsDetails?.historique_positions && personnalsDetails?.historique_positions.length > 0 && (
               <Card className="mt-4">
                 <Card.Body>
                   <h5 className="text-muted">Historique des Postes/ التسلسل المهني</h5>
@@ -496,7 +542,7 @@ const ProfilPersonnel = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {personnelDetails.historique_positions.map((entry: any, index: number) => (
+                        {personnalsDetails?.historique_positions?.map((entry: any, index: number) => (
                           <tr key={index}>
                             <td>{entry.poste?.poste_fr || '-'}</td>
                             <td>{entry.grade?.grade_fr || '-'}</td>
