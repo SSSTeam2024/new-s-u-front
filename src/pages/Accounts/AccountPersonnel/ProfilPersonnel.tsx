@@ -341,7 +341,7 @@ const ProfilPersonnel = () => {
                   </div>
                 </Col>
                 <Col lg={6}>
-                  <h5 className="text-muted ">Enseignant</h5>
+                  <h5 className="text-muted ">Responsabilité actuelle</h5>
                   <div className="table-responsive">
                     <Table className="table-borderless table-sm m-0 p-0 ">
                       <tbody>

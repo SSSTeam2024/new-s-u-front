@@ -468,6 +468,12 @@ const EditProfilPersonnel = () => {
         date_affectation: "",
         date_titularisation: "",
         date_depart: "",
+        fichier_affectationBase64: "",
+        fichier_affectationExtension: "",
+        fichier_titularisationBase64: "",
+        fichier_titularisationExtension: "",
+        fichier_departBase64: "",
+        fichier_departExtension: ""
       },
     ],
   });
@@ -558,6 +564,12 @@ const EditProfilPersonnel = () => {
   date_affectation: entry.date_affectation || "",
   date_titularisation: entry.date_titularisation || "",
   date_depart: entry.date_depart || "",
+  fichier_affectationBase64: entry.fichier_affectationBase64 ||  "",
+        fichier_affectationExtension:entry.fichier_affectationExtension ||"",
+        fichier_titularisationBase64: entry.fichier_titularisationBase64||"",
+        fichier_titularisationExtension: entry.fichier_titularisationExtension||"",
+        fichier_departBase64: entry.fichier_departBase64||"",
+        fichier_departExtension: entry.fichier_departExtension||""
 })) || [],
       });
 
@@ -653,6 +665,31 @@ const handleHistoricChange = (index: number, field: string, value: string) => {
 (updated[index] as any)[field] = value;
   setFormData({ ...formData, historique_positions: updated });
 };
+ const handleHistoricFileChange = async (
+  index: number,
+  field: string,
+  file: File | undefined
+) => {
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    const base64 = (reader.result as string).split(",")[1];
+    setFormData((prev: any) => {
+      const updated = [...prev.historique_positions];
+      updated[index] = {
+        ...updated[index],
+        [`${field}Base64`]: base64,
+        [`${field}Extension`]: file.name.split(".").pop(),
+      };
+      return {
+        ...prev,
+        historique_positions: updated,
+      };
+    });
+  };
+  reader.readAsDataURL(file);
+};
 const addHistoricPosition = () => {
   setFormData({
     ...formData,
@@ -665,6 +702,12 @@ const addHistoricPosition = () => {
         date_affectation: "",
         date_titularisation: "",
         date_depart: "",
+         fichier_affectationBase64: "",
+        fichier_affectationExtension: "",
+        fichier_titularisationBase64: "",
+        fichier_titularisationExtension: "",
+        fichier_departBase64: "",
+        fichier_departExtension: ""
       },
     ],
   });
@@ -1250,7 +1293,7 @@ const removeHistoricPosition = (index: number) => {
                                     textAlign: "right",
                                   }}
                                 >
-                                  <Col lg={3}>
+                                  {/* <Col lg={3}>
                                     <div className="mb-3">
                                       <Form.Label htmlFor="matricule">
                                         Matricule
@@ -1263,8 +1306,8 @@ const removeHistoricPosition = (index: number) => {
                                         value={formData.matricule}
                                       />
                                     </div>
-                                  </Col>
-                                  <Col lg={3}>
+                                  </Col> */}
+                                  {/* <Col lg={3}>
                                     <div className="mb-3">
                                       <Form.Label htmlFor="mat_cnrps">
                                         Matricule CNRPS
@@ -1277,8 +1320,8 @@ const removeHistoricPosition = (index: number) => {
                                         value={formData.mat_cnrps}
                                       />
                                     </div>
-                                  </Col>
-                                  <Col lg={3}>
+                                  </Col> */}
+                                  {/* <Col lg={3}>
                                     <div
                                       className="mb-3"
                                       style={{
@@ -1310,7 +1353,7 @@ const removeHistoricPosition = (index: number) => {
                                         ))}
                                       </select>
                                     </div>
-                                  </Col>
+                                  </Col> */}
 
                                   <Col lg={3}>
                                     <div
@@ -1345,7 +1388,7 @@ const removeHistoricPosition = (index: number) => {
                                       </select>
                                     </div>
                                   </Col>
-                                  <Col lg={3}>
+                                  {/* <Col lg={3}>
                                     <div
                                       className="mb-3"
                                       style={{
@@ -1367,8 +1410,8 @@ const removeHistoricPosition = (index: number) => {
                                         id="date_affectation"
                                       />
                                     </div>
-                                  </Col>
-                                  <Col lg={3}>
+                                  </Col> */}
+                                  {/* <Col lg={3}>
                                     <div
                                       className="mb-3"
                                       style={{
@@ -1400,8 +1443,8 @@ const removeHistoricPosition = (index: number) => {
                                         ))}
                                       </select>
                                     </div>
-                                  </Col>
-                                  <Col lg={3}>
+                                  </Col> */}
+                                  {/* <Col lg={3}>
                                     <div
                                       className="mb-3"
                                       style={{
@@ -1433,8 +1476,8 @@ const removeHistoricPosition = (index: number) => {
                                         ))}
                                       </select>
                                     </div>
-                                  </Col>
-                                  <Col lg={3}>
+                                  </Col> */}
+                                  {/* <Col lg={3}>
                                     <div
                                       className="mb-3"
                                       style={{
@@ -1456,7 +1499,7 @@ const removeHistoricPosition = (index: number) => {
                                         id="date_designation"
                                       />
                                     </div>
-                                  </Col>
+                                  </Col> */}
                                   <Col lg={3}>
                                     <div
                                       className="mb-3"
@@ -2070,6 +2113,16 @@ const removeHistoricPosition = (index: number) => {
                                                                   )
                                                                 }
                                                               />
+                                                                 <Form.Label className="mt-2">Fichier Affectation</Form.Label>
+                                                                <Form.Control
+                                                                type="file"
+                                                                onChange={(e) => {
+                                                                  const file = (e.target as HTMLInputElement).files?.[0];
+                                                                  if (file) {
+                                                                    handleHistoricFileChange(index, "fichier_affectation", file);
+                                                                  }
+                                                                }}
+                                                              />
                                                             </Col>
                                                             <Col lg={4}>
                                                               <Form.Label>Date Titularisation</Form.Label>
@@ -2084,6 +2137,16 @@ const removeHistoricPosition = (index: number) => {
                                                                   )
                                                                 }
                                                               />
+                                                                <Form.Label className="mt-2">Fichier Titularisation</Form.Label>
+                                                              <Form.Control
+                                                                type="file"
+                                                                onChange={(e) => {
+                                                                  const file = (e.target as HTMLInputElement).files?.[0];
+                                                                  if (file) {
+                                                                    handleHistoricFileChange(index, "fichier_titularisation", file);
+                                                                  }
+                                                                }}
+                                                              />
                                                             </Col>
                                                             <Col lg={4}>
                                                               <Form.Label>Date Départ</Form.Label>
@@ -2097,6 +2160,16 @@ const removeHistoricPosition = (index: number) => {
                                                                     e.target.value
                                                                   )
                                                                 }
+                                                              />
+                                                                <Form.Label className="mt-2">Fichier Départ</Form.Label>
+                                                               <Form.Control
+                                                                type="file"
+                                                                onChange={(e) => {
+                                                                  const file = (e.target as HTMLInputElement).files?.[0];
+                                                                  if (file) {
+                                                                    handleHistoricFileChange(index, "fichier_depart", file);
+                                                                  }
+                                                                }}
                                                               />
                                                             </Col>
                                                             <Col lg={3}>

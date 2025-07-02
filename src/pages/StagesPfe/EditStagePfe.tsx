@@ -70,7 +70,6 @@ const EditStagePfe = () => {
   const location = useLocation();
   const stageDetails = location.state;
 
-  console.log("stage details", stageDetails);
   const notifySuccess = () => {
     Swal.fire({
       position: "center",

@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-export interface Societe {
+export interface SocieteModel {
   _id?: string;
   nom: string;
   encadrant: string[];
@@ -18,14 +18,14 @@ export const societeSlice = createApi({
   tagTypes: ["Societe"],
   endpoints(builder) {
     return {
-      fetchAllSocietes: builder.query<Societe[], number | void>({
+      fetchAllSocietes: builder.query<SocieteModel[], number | void>({
         query() {
           return `get-all`;
         },
         providesTags: ["Societe"],
       }),
 
-      addSociete: builder.mutation<void, Societe>({
+      addSociete: builder.mutation<void, SocieteModel>({
         query(payload) {
           return {
             url: "/create-new",
@@ -55,34 +55,21 @@ export const societeSlice = createApi({
         },
         invalidatesTags: ["Societe"],
       }),
-      //   getCycleByValue: builder.mutation<
-      //     { id: string; cycle_fr: string; cycle_ar: string },
-      //     Cycle
-      //   >({
-      //     query(payload) {
-      //       return {
-      //         url: "/get-cycle-value",
-      //         method: "POST",
-      //         body: payload,
-      //       };
-      //     },
-      //     invalidatesTags: ["Cycle"],
-      //   }),
-      //   updateCycle: builder.mutation<void, Cycle>({
-      //     query: ({ _id, ...rest }) => ({
-      //       url: `/update-cycle/${_id}`,
-      //       method: "PUT",
-      //       body: rest,
-      //     }),
-      //     invalidatesTags: ["Cycle"],
-      //   }),
-      //   deleteCycle: builder.mutation<void, string>({
-      //     query: (_id) => ({
-      //       url: `delete-cycle/${_id}`,
-      //       method: "DELETE",
-      //     }),
-      //     invalidatesTags: ["Cycle"],
-      //   }),
+        updateSociete: builder.mutation<void, SocieteModel>({
+          query: ({ _id, ...rest }) => ({
+            url: `/update/${_id}`,
+            method: "PUT",
+            body: rest,
+          }),
+          invalidatesTags: ["Societe"],
+        }),
+        deleteSociete: builder.mutation<void, string>({
+          query: (_id) => ({
+            url: `delete/${_id}`,
+            method: "DELETE",
+          }),
+          invalidatesTags: ["Societe"],
+        }),
     };
   },
 });
@@ -92,4 +79,6 @@ export const {
   useFetchAllSocietesQuery,
   useGetByNameMutation,
   useGetByIdMutation,
+  useDeleteSocieteMutation,
+  useUpdateSocieteMutation
 } = societeSlice;

@@ -2,12 +2,34 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { DossierAdministratif } from "features/dossierAdministratif/dossierAdministratif";
 
 export interface HistoriquePosition {
-  poste?: any;
-  grade?: any;
-  categorie?: any;
+  poste?: string;
+  grade?: string;
+  categorie?: string;
   date_affectation?: string;
   date_titularisation?: string;
   date_depart?: string;
+  fichier_affectation?: string;
+  fichier_titularisation?: string;
+  fichier_depart?: string;
+  fichier_affectationBase64?: string;
+  fichier_affectationExtension?: string;
+  fichier_titularisationBase64?: string;
+  fichier_titularisationExtension?: string;
+  fichier_departBase64?: string;
+  fichier_departExtension?: string;
+
+}
+export interface HistoriqueService {
+  service?: string;
+  date_affectation?: string;
+  fichier_affectation?: string;
+  fichier_affectationBase64?: string;
+  fichier_affectationExtension?: string;
+
+  date_depart?: string;
+  fichier_depart?: string;
+  fichier_departBase64?: string;
+  fichier_departExtension?: string;
 }
 
 export interface Personnel {
@@ -78,6 +100,7 @@ export interface Personnel {
   PhotoProfilFileBase64String?: string;
   papers?: string[];
   historique_positions?: HistoriquePosition[];
+  historique_services?: HistoriqueService[];
 
 }
 
@@ -124,6 +147,7 @@ export interface PersonnelEXCEL {
   PhotoProfilFileBase64String?: string;
   papers?: string[];
   historique_positions?: HistoriquePosition[];
+  historique_services?: HistoriqueService[];
 
 }
 export const personnelSlice = createApi({

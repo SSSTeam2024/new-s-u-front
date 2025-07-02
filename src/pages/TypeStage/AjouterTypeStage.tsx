@@ -27,7 +27,6 @@ const AjouterTypeStage = () => {
   const [selectedValidation, setSelectedValidation] = useState<string>("Non");
   const [selectedLocalite, setSelectedLocalite] = useState<string>("");
   const [selectedNiveau, setSelectedNiveau] = useState<string>("");
-  const [classes, setClasses] = useState<any[]>([]);
   const [optionColumnsTable, setOptionColumnsTable] = useState<any>(null);
   const [selectedColumnValues, setSelectedColumnValues] = useState<any[]>([]);
   const [selectedColumnEncadrement, setSelectedColumnEncadrement] = useState<
@@ -196,6 +195,16 @@ const AjouterTypeStage = () => {
     return day >= 1 && day <= 31 && month >= 1 && month <= 12;
   };
 
+  const [defaultCounter, setdefaultCounter] = useState(1);
+
+  function countUP(id: any, prev_data_attr: any) {
+    id(prev_data_attr + 1);
+  }
+
+  function countDown(id: any, prev_data_attr: any) {
+    id(prev_data_attr - 1);
+  }
+
   const notifySuccess = () => {
     Swal.fire({
       position: "center",
@@ -273,7 +282,7 @@ const AjouterTypeStage = () => {
       ...typeStage,
       niveau: selectedNiveau,
       classes: selectedColumnValues,
-      max_etudiant: selectedMaxEtudiant,
+      max_etudiant: defaultCounter.toString(),
       localite: selectedLocalite,
       choix: selectedChoix,
       avec_encadrement: selectedEncadrement,
@@ -314,6 +323,7 @@ const AjouterTypeStage = () => {
     }
 
     setErrors({});
+
     try {
       createNewType(typeStageData)
         .then(() => notifySuccess())
@@ -421,27 +431,35 @@ const AjouterTypeStage = () => {
                           <Form.Label>Max Candidat</Form.Label>
                         </Col>
                         <Col lg={3}>
-                          <select
-                            className="form-select"
-                            onChange={handleSelectedMaxEtudiant}
-                          >
-                            <option value="">Choisir ...</option>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                            <option value="6">6</option>
-                            <option value="7">7</option>
-                            <option value="8">8</option>
-                            <option value="9">9</option>
-                            <option value="10">10</option>
-                            <option value="11">11</option>
-                            <option value="12">12</option>
-                            <option value="13">13</option>
-                            <option value="14">14</option>
-                            <option value="15">15</option>
-                          </select>
+                          <div>
+                            <div className="input-step">
+                              <Button
+                                className="minus"
+                                onClick={() => {
+                                  countDown(setdefaultCounter, defaultCounter);
+                                }}
+                              >
+                                –
+                              </Button>
+                              <Form.Control
+                                type="number"
+                                className="product-quantity"
+                                value={defaultCounter}
+                                min="0"
+                                max="100"
+                                readOnly
+                              />
+                              <Button
+                                type="button"
+                                className="plus"
+                                onClick={() => {
+                                  countUP(setdefaultCounter, defaultCounter);
+                                }}
+                              >
+                                +
+                              </Button>
+                            </div>
+                          </div>
                         </Col>
                       </Row>
                       <Row className="mb-4 d-flex align-items-center">
