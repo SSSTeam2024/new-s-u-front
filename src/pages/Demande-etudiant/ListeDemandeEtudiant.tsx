@@ -111,11 +111,18 @@ const ListeDemandeEtudiant = () => {
         filterable: true,
       },
       {
+        Header: "Etudiant",
+        accessor: (row: any) => `${row.studentId?.nom_fr || ""} ${row.studentId?.prenom_fr || ""}`,
+        disableFilters: true,
+        filterable: true,
+      },
+      {
         Header: "CIN",
         accessor: (row: any) => row.studentId?.num_CIN || "",
         disableFilters: true,
         filterable: true,
       },
+
       {
         Header: "Classe",
         accessor: (row: any) =>

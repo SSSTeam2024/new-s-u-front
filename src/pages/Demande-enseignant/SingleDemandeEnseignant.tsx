@@ -29,6 +29,7 @@ const SingleDemandeEnseignant = () => {
   document.title = "Demande Enseignant | ENIGA";
 
   const location = useLocation();
+  console.log(location)
 
   const navigate = useNavigate();
 
@@ -253,6 +254,7 @@ const SingleDemandeEnseignant = () => {
       fileReader.readAsDataURL(file);
     });
   }
+  const regex = /extra_files\.(jpeg|png|jpg|pdf|docx)$/;
 
   return (
     <React.Fragment>
@@ -395,6 +397,21 @@ const SingleDemandeEnseignant = () => {
                         </tr>
                       </tbody>
                     </table>
+
+                    <div className="d-flex justify-content-end mt-3">
+                      {location.state.extra_data.map((extra: any) => (
+                        regex.test(extra.value) === true ?
+                          <button className="btn btn-info me-2"
+                            onClick={() => {
+
+                              const fileUrl = `${process.env.REACT_APP_API_URL}/files/demandeEnseignant/extraFilesDemande/${extra.value}`;
+                              window.open(fileUrl, '_blank', 'noopener,noreferrer');
+                            }}>
+                            {extra.name}
+                          </button>
+                          : <></>
+                      ))}
+                    </div>
                   </div>
                 </div>
 

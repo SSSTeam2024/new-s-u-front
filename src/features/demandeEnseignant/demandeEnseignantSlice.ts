@@ -4,7 +4,9 @@ import { GeneratedDoc } from "features/generatedDoc/generatedDocSlice";
 export interface ExtraObject {
   name?: string,
   value?: string,
-  body?: string
+  body?: string,
+  FileBase64?: string,
+  FileExtension?: string
 }
 
 export interface Demande {

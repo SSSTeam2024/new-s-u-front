@@ -259,10 +259,10 @@ const ListParcours = () => {
                     to="parcours/gestion-parcours/configurer-plan-parcours"
                     state={parcours}
                     className="badge bg-secondary-subtle text-secondary edit-item-btn"
-                    // onClick={(e) => {
-                    //   e.preventDefault();
-                    //   handleEditModal(domaineClasse);
-                    // }}
+                  // onClick={(e) => {
+                  //   e.preventDefault();
+                  //   handleEditModal(domaineClasse);
+                  // }}
                   >
                     <i
                       className="ph ph-gear-six"

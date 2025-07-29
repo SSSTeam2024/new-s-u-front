@@ -218,6 +218,8 @@ const SingleDemandePersonnel = () => {
     });
   }
 
+  const regex = /extra_files\.(jpeg|png|jpg|pdf|docx)$/;
+
   return (
     <React.Fragment>
       <div className="page-content">
@@ -249,7 +251,7 @@ const SingleDemandePersonnel = () => {
                         Visualiser
                       </Button>
                     )}
-                    {state.state.current_status === 'En attente' && updatedDemand === null && (
+                    {state?.state?.current_status === 'En attente' && updatedDemand === null && (
                       <Button
                         variant="danger"
                         className="btn btn-danger btn-label m-2"
@@ -359,6 +361,24 @@ const SingleDemandePersonnel = () => {
                         </tr>
                       </tbody>
                     </table>
+
+                    <div className="d-flex justify-content-end mt-3">
+                      {state.state.extra_data.map((extra: any) => (
+                        regex.test(extra.value) === true ?
+                          <button className="btn btn-info me-2"
+                            onClick={() => {
+
+                              const fileUrl = `${process.env.REACT_APP_API_URL}/files/demandePersonnel/extraFilesDemande/${extra.value}`;
+                              window.open(fileUrl, '_blank', 'noopener,noreferrer');
+                            }}>
+                            {extra.name}
+                          </button>
+                          : <></>
+                      ))}
+
+
+                    </div>
+
                   </div>
                 </div>
 
@@ -382,7 +402,7 @@ const SingleDemandePersonnel = () => {
                     <Button
                       onClick={() =>
                         navigate(`/gestion-personnel/compte-personnel`, {
-                          state: { _id: state.state?.personnelId._id },
+                          state: { _id: state.state?.personnelId?._id! },
                         })
                       }
                       type="button"
@@ -529,6 +549,7 @@ const SingleDemandePersonnel = () => {
                                   </div>
                                 </td>
                               </tr>
+
                             </>
                           )}
 

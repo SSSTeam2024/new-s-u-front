@@ -5,9 +5,9 @@ export interface HistoriquePosition {
   poste?: string;
   grade?: string;
   categorie?: string;
-  date_affectation?: string;       
-  date_titularisation?: string;    
-  date_depart?: string;     
+  date_affectation?: string;
+  date_titularisation?: string;
+  date_depart?: string;
   fichier_affectation?: string;
   fichier_titularisation?: string;
   fichier_depart?: string;
@@ -17,7 +17,7 @@ export interface HistoriquePosition {
   fichier_titularisationExtension?: string;
   fichier_departBase64?: string;
   fichier_departExtension?: string;
-       
+
 }
 export interface HistoriqueService {
   service?: string;
@@ -99,7 +99,7 @@ export interface Personnel {
   PhotoProfilFileExtension?: string;
   PhotoProfilFileBase64String?: string;
   papers?: string[];
-  historique_positions?: HistoriquePosition[]; 
+  historique_positions?: HistoriquePosition[];
   historique_services?: HistoriqueService[];
 
 }
@@ -146,7 +146,7 @@ export interface PersonnelEXCEL {
   PhotoProfilFileExtension?: string;
   PhotoProfilFileBase64String?: string;
   papers?: string[];
-  historique_positions?: HistoriquePosition[]; 
+  historique_positions?: HistoriquePosition[];
   historique_services?: HistoriqueService[];
 
 }
@@ -191,11 +191,11 @@ export const personnelSlice = createApi({
         }),
         invalidatesTags: ["Personnel"],
       }),
-      getPersonnelById: builder.query<Personnel, string>({
-        query: (id) => ({
+      getPersonnelById: builder.query<Personnel, { _id: string }>({
+        query: ({ _id }) => ({
           url: `get-personnel`,
           method: "POST",
-          body: { personnelId: id }, // Adjust this to match your backend requirement
+          body: { _id }, // Adjust this to match your backend requirement
         }),
         providesTags: ["Personnel"],
       }),

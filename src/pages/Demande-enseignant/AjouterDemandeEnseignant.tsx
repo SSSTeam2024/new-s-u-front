@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
   Card,
@@ -71,7 +71,9 @@ const AjouterDemandeEnseignant = () => {
       {
         name: "",
         value: "",
-        body: ""
+        body: "",
+        FileBase64: "",
+        FileExtension: ""
       }
     ],
     createdAt: undefined,
@@ -202,6 +204,7 @@ const AjouterDemandeEnseignant = () => {
   const onSelectChangeTemplate = async (selectedOption: any) => {
 
     const extraData = await getDiversDocExtra(selectedOption.value).unwrap();
+    console.log("extraData", extraData)
 
     if (extraData.length > 0) {
       const normalExtraData = extraData[0].extra_data.filter(e => e.fieldBody !== 'noms_enfants' && e.fieldBody !== 'dates_naiss' && e.fieldBody !== 'status_fils' && e.fieldBody !== 'dates_etats');
@@ -235,8 +238,6 @@ const AjouterDemandeEnseignant = () => {
     }));
   };
 
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-
   const onSubmitDemandeEnseignant = async (
     e: React.FormEvent<HTMLFormElement>
   ) => {
@@ -248,47 +249,47 @@ const AjouterDemandeEnseignant = () => {
         name: "dates_etats",
         value: "",
         body: "dates_etats"
-      }
+      };
       let status_fils = {
         name: "status_fils",
         value: "",
         body: "status_fils"
-      }
+      };
       let dates_naiss = {
         name: "dates_naiss",
         value: "",
         body: "dates_naiss"
-      }
+      };
       let noms_enfants = {
         name: "noms_enfants",
         value: "",
         body: "noms_enfants"
-      }
+      };
+
       for (const element of selectedExceptional) {
-        dates_etats.value += element.dates_etats + '#'
-        status_fils.value += element.status_fils + '#'
-        dates_naiss.value += element.dates_naiss + '#'
-        noms_enfants.value += element.noms_enfants + '#'
-
+        dates_etats.value += element.dates_etats + '#';
+        status_fils.value += element.status_fils + '#';
+        dates_naiss.value += element.dates_naiss + '#';
+        noms_enfants.value += element.noms_enfants + '#';
       }
 
-      extraDataRef.push(dates_etats)
-      extraDataRef.push(status_fils)
-      extraDataRef.push(dates_naiss)
-      extraDataRef.push(noms_enfants)
+      extraDataRef.push(dates_etats);
+      extraDataRef.push(status_fils);
+      extraDataRef.push(dates_naiss);
+      extraDataRef.push(noms_enfants);
 
       let refForm = { ...formData };
-      refForm.extra_data = extraDataRef
+      refForm.extra_data = extraDataRef;
 
       await addDemandeEnseignant(refForm).unwrap();
       notify();
       navigate("/demandes-enseignant/liste-demande-enseignant");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Failed to create demande:", error);
       Swal.fire({
         icon: "error",
         title: "Erreur",
-        text: "Une erreur est survenue lors de la création de la demande.",
+        text: error?.data?.message || "Une erreur est survenue lors de la création de la demande.",
       });
     }
   };
@@ -303,13 +304,121 @@ const AjouterDemandeEnseignant = () => {
     });
   };
 
-  // Filter templates based on selected language
   const filteredTemplates = templateBody.filter(
     (template) =>
-      selectedLangue && // Make sure selectedLangue is not empty
+      selectedLangue &&
       template.langue === selectedLangue &&
       template.intended_for === "enseignant"
   );
+
+
+  function convertToBase64(
+    file: File
+  ): Promise<{ base64Data: string; extension: string }> {
+    return new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.onload = () => {
+        const base64String = fileReader.result as string;
+        const [, base64Data] = base64String.split(",");
+        const extension = file.name.split(".").pop() ?? "";
+        resolve({ base64Data, extension });
+      };
+      fileReader.onerror = (error) => {
+        reject(error);
+      };
+      fileReader.readAsDataURL(file);
+    });
+  }
+  const handleFileChange = async (index: number, e: any) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const { base64Data, extension } = await convertToBase64(file);
+
+      const updated = [...formData.extra_data];
+      updated[index] = {
+        ...updated[index],
+        value: file.name,
+        FileBase64: base64Data,
+        FileExtension: extension,
+      };
+
+      setFormData((prev: any) => ({
+        ...prev,
+        extra_data: updated,
+      }));
+    }
+  };
+
+  // const handleFileChange = async (index: number, e: any) => {
+  //   const file = e.target.files?.[0];
+  //   if (file) {
+
+
+  //     const { base64Data, extension } = await convertToBase64(file);
+
+  //     const updated = [...formData.extra_data];
+  //     updated[index] = {
+  //       ...updated[index],
+  //       value: file.name,
+  //       FileBase64: base64Data,
+  //       FileExtension: extension
+  //     };
+
+  //     setFormData((prev: any) => ({
+  //       ...prev,
+  //       extra_data: updated,
+  //     }));
+  //   }
+  // };
+  // const [uploadedFiles, setUploadedFiles] = useState<{ [key: string]: File }>({});
+  // async function convertToBase64(
+  //   file: File
+  // ): Promise<{ base64Data: string; extension: string }> {
+  //   return new Promise((resolve, reject) => {
+  //     const fileReader = new FileReader();
+  //     fileReader.onload = () => {
+  //       const base64String = fileReader.result as string;
+  //       const [, base64Data] = base64String.split(",");
+  //       const extension = file.name.split(".").pop() ?? "";
+  //       resolve({ base64Data, extension });
+  //     };
+  //     fileReader.onerror = (error) => {
+  //       reject(error);
+  //     };
+  //     fileReader.readAsDataURL(file);
+  //   });
+  // }
+
+  // const handleFileChange = async (
+  //   index: number,
+  //   e: any
+  // ) => {
+  //   const file = e.target.files?.[0];
+  //   if (!file) return;
+
+  //   try {
+  //     const { base64Data, extension } = await convertToBase64(file);
+
+  //     // Clone current extra_data array (or create if undefined)
+  //     const updatedExtraData = [...(formData.extra_data || [])];
+
+  //     // Update the item at the index with file info
+  //     updatedExtraData[index] = {
+  //       ...updatedExtraData[index],
+  //       value: file.name,
+  //       FileBase64: base64Data,
+  //       FileExtension: extension,
+  //     };
+
+  //     // Update form data state
+  //     setFormData((prev: any) => ({
+  //       ...prev,
+  //       extra_data: updatedExtraData,
+  //     }));
+  //   } catch (error) {
+  //     console.error("Error converting file to base64:", error);
+  //   }
+  // };
 
   return (
     <React.Fragment>
@@ -468,6 +577,36 @@ const AjouterDemandeEnseignant = () => {
                                           />
                                         </>
                                       )}
+
+                                      {/* {d.data_type === "file" && (
+
+                                        <div key={d._id} className="mb-3">
+                                          <Form.Label style={{ fontSize: '1rem', fontWeight: '600', fontFamily: 'system-ui' }}>
+                                            {d.fieldName}
+                                          </Form.Label>
+                                          <Form.Control
+                                            type="file"
+                                            accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
+                                            onChange={(e) => handleFileChange(index, e)}
+                                            name={`file-${d._id}`} // optional, useful for submission
+                                          />
+                                        </div>
+                                      )} */}
+                                      {d.data_type === "file" && (
+                                        <div key={d._id} className="mb-3">
+                                          <Form.Label style={{ fontSize: '1rem', fontWeight: '600', fontFamily: 'system-ui' }}>
+                                            {d.fieldName}
+                                          </Form.Label>
+                                          <Form.Control
+                                            type="file"
+                                            accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
+                                            onChange={(e) => handleFileChange(index, e)}
+                                            name={`file-${d._id}`}
+                                          />
+                                        </div>
+                                      )}
+
+
                                     </Form.Group>
                                   </Col>
                                 ) : <>
@@ -520,6 +659,20 @@ const AjouterDemandeEnseignant = () => {
                                             }}
                                             required
                                           />
+                                        </>
+                                      )}
+                                      {d.data_type === "file" && (
+                                        <>
+                                          <Form.Label style={{ fontSize: '1rem', fontWeight: '600', fontFamily: 'system-ui', float: 'right', textAlign: 'end' }}>
+                                            {d.fieldName}
+                                          </Form.Label>
+                                          <Form.Control
+                                            type="file"
+                                            accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
+                                            onChange={(e) => handleFileChange(index, e)}
+
+                                          />
+
                                         </>
                                       )}
                                     </Form.Group>

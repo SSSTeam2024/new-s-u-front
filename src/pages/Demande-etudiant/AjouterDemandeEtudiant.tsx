@@ -142,12 +142,12 @@ const AjouterDemandeEtudiant = () => {
       await addDemandeEtudiant(formData).unwrap();
       notify();
       navigate("/demandes-etudiant/Liste-demandes-etudiant");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Failed to create demande:", error);
       Swal.fire({
         icon: "error",
         title: "Erreur",
-        text: "Une erreur est survenue lors de la création de la demande.",
+        text: error?.data?.message || "Une erreur est survenue lors de la création de la demande.",
       });
     }
   };
