@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Card,
   Nav,
@@ -11,7 +11,7 @@ import {
   Form,
   Button,
 } from "react-bootstrap";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import DemandeTablePersonnel from "./DemandeTablePersonnel";
 import ReclamationTable from "./ReclamationTablePersonnel";
 import "./hover.css";
@@ -23,64 +23,21 @@ import "swiper/css/effect-fade";
 import "swiper/css/effect-flip";
 import userImage from "assets/images/userImage.jpg";
 import moment from 'moment';
-import { Personnel, useGetPersonnelByIdQuery } from "features/personnel/personnelSlice";
 
 const ProfilPersonnel = () => {
   const [showModal, setShowModal] = useState(false);
-  const navigate = useNavigate();
   const [clickedImage, setClickedImage] = useState(null);
-  const [idFromRoute, setIdFromRoute] = useState<string | null>(null);
+  const location = useLocation();
+  const personnelDetails = location.state;
+
   const [showFileModal, setShowFileModal] = useState(false);
   const [fileUrl, setFileUrl] = useState('');
   const [fileTitle, setFileTitle] = useState('')
-  const location = useLocation();
-  // const personnelDetails = location.state;
-  // console.log("personnelDetails", personnelDetails);
+  const baseUrl = `${process.env.REACT_APP_API_URL}/files/personnelFiles/historique/`; // Change to your server base
 
-
-  const personnelDetails = location.state as
-    | Personnel
-    | { _id: string }
-    | undefined;
-  const passedId = personnelDetails
-    ? (personnelDetails as Personnel)._id
-    : undefined;
-
-  const { data: fetchedPersonnel, isLoading } = useGetPersonnelByIdQuery(
-    { _id: idFromRoute! },
-    { skip: !idFromRoute }
-  );
-
-  // Fetch the article by ID if passed, otherwise use location state data
-  const { data: fetchedArticle, isLoading: isLoadingById } =
-    useGetPersonnelByIdQuery(
-      { _id: passedId || "" },
-      {
-        skip: !passedId,
-      }
-    );
-
-  const personnalsDetails = passedId
-    ? fetchedArticle
-    : (personnelDetails as Personnel);
-
-
-  useEffect(() => {
-    if (!passedId && !personnalsDetails) {
-      navigate("/gestion-etudiant/liste-etudiants");
-    }
-  }, [passedId, personnalsDetails, navigate]);
-
-  if (isLoadingById || isLoading) {
-    return <p>Chargement...</p>; // or a loading spinner
-  }
-
-  if (!personnalsDetails) {
-    return <p>personnel non trouvé.</p>;
-  }
-
-  const openFileModal = (url: string, title: string) => {
-    setFileUrl(url);
+  const openFileModal = (filename: string, title: string) => {
+    if (!filename) return;
+    setFileUrl(`${baseUrl}${filename}`);
     setFileTitle(title);
     setShowFileModal(true);
   };
@@ -94,68 +51,68 @@ const ProfilPersonnel = () => {
     setClickedImage(null);
   };
   const getLatestPosition = () => {
-    if (!personnalsDetails?.historique_positions?.length) return null;
+    if (!personnelDetails?.historique_positions?.length) return null;
 
     // Sort by date_affectation descending
-    const sorted = [...personnalsDetails.historique_positions].sort((a: any, b: any) => {
-      const dateA = new Date(a?.date_affectation);
-      const dateB = new Date(b?.date_affectation);
+    const sorted = [...personnelDetails.historique_positions].sort((a, b) => {
+      const dateA = new Date(a.date_affectation);
+      const dateB = new Date(b.date_affectation);
       return dateB.getTime() - dateA.getTime(); // Latest first
     });
 
     return sorted[0]; // Latest entry
   };
   const latestPosition = getLatestPosition();
-  console.log("latest position", latestPosition)
+  console.log("latest position", latestPosition.categorie)
   //Poste personnel
-  // const postePersonnelFR =
-  //   typeof personnelDetails?.poste! === "object"
-  //     ? personnelDetails?.poste?.poste_fr!
-  //     : personnelDetails?.poste!;
+  const postePersonnelFR =
+    typeof personnelDetails?.poste! === "object"
+      ? personnelDetails?.poste?.poste_fr!
+      : personnelDetails?.poste!;
 
-  // const posteEnseignantAR =
-  //   typeof personnelDetails?.poste! === "object"
-  //     ? personnelDetails?.poste?.poste_ar!
-  //     : personnelDetails?.poste!;
+  const posteEnseignantAR =
+    typeof personnelDetails?.poste! === "object"
+      ? personnelDetails?.poste?.poste_ar!
+      : personnelDetails?.poste!;
   // etat compte enseignant
-  // const etatCompteDisplayFR =
-  //   typeof personnalsDetails?.etat_compte! === "object"
-  //     ? personnalsDetails?.etat_compte?.etat_fr!
-  //     : personnalsDetails?.etat_compte!;
+  const etatCompteDisplayFR =
+    typeof personnelDetails?.etat_compte! === "object"
+      ? personnelDetails?.etat_compte?.etat_fr!
+      : personnelDetails?.etat_compte!;
 
   const etatCompteDisplayAR =
-    typeof personnalsDetails?.etat_compte! === "object"
-      ? personnalsDetails?.etat_compte?.etat_ar!
-      : personnalsDetails?.etat_compte!;
+    typeof personnelDetails?.etat_compte! === "object"
+      ? personnelDetails?.etat_compte?.etat_ar!
+      : personnelDetails?.etat_compte!;
   // //specialite enseignant
   const categoriePersonnelFR =
-    typeof personnalsDetails?.categorie! === "object"
-      ? personnalsDetails?.categorie?.categorie_fr!
-      : personnalsDetails?.categorie!;
+    typeof personnelDetails?.categorie! === "object"
+      ? personnelDetails?.categorie?.categorie_fr!
+      : personnelDetails?.categorie!;
   const categoriePersonnelAR =
-    typeof personnalsDetails?.categorie! === "object"
-      ? personnalsDetails?.categorie?.categorie_ar!
-      : personnalsDetails?.categorie!;
+    typeof personnelDetails?.categorie! === "object"
+      ? personnelDetails?.categorie?.categorie_ar!
+      : personnelDetails?.categorie!;
 
   //grade enseignant
   const gradeEnseignantFR =
-    typeof personnalsDetails?.grade! === "object"
-      ? personnalsDetails?.grade?.grade_fr!
-      : personnalsDetails?.grade!;
+    typeof personnelDetails?.grade! === "object"
+      ? personnelDetails?.grade?.grade_fr!
+      : personnelDetails?.grade!;
   const gradeEnseignantAR =
-    typeof personnalsDetails?.grade! === "object"
-      ? personnalsDetails?.grade?.grade_ar!
-      : personnalsDetails?.grade!;
+    typeof personnelDetails?.grade! === "object"
+      ? personnelDetails?.grade?.grade_ar!
+      : personnelDetails?.grade!;
 
   //service personnel
   const servicePersonnelFR =
-    typeof personnalsDetails?.service! === "object"
-      ? personnalsDetails?.service?.service_fr!
-      : personnalsDetails?.service!;
+    typeof personnelDetails?.service! === "object"
+      ? personnelDetails?.service?.service_fr!
+      : personnelDetails?.service!;
   const servicePersonnelAR =
-    typeof personnalsDetails?.service! === "object"
-      ? personnalsDetails?.service?.service_ar!
-      : personnalsDetails?.service!;
+    typeof personnelDetails?.service! === "object"
+      ? personnelDetails?.service?.service_ar!
+      : personnelDetails?.service!;
   return (
     <React.Fragment>
       <Tab.Container defaultActiveKey="Profil">
@@ -185,8 +142,8 @@ const ProfilPersonnel = () => {
                   <img
                     className="rounded-start img-fluid h-70 object-cover"
                     src={
-                      personnalsDetails.photo_profil
-                        ? `${process.env.REACT_APP_API_URL}/files/personnelFiles/PhotoProfil/${personnalsDetails.photo_profil}`
+                      personnelDetails.photo_profil
+                        ? `${process.env.REACT_APP_API_URL}/files/personnelFiles/PhotoProfil/${personnelDetails.photo_profil}`
                         : userImage
                     }
                     alt="Photo Profile"
@@ -199,11 +156,11 @@ const ProfilPersonnel = () => {
                   <Card.Header>
                     <div className="flex-grow-1 card-title mb-0">
                       <h5>
-                        {personnalsDetails.nom_fr} {personnalsDetails.prenom_fr}
+                        {personnelDetails.nom_fr} {personnelDetails.prenom_fr}
                       </h5>
                       <p className="text-muted mb-0">
                         {" "}
-                        {personnalsDetails.nom_ar} {personnalsDetails.prenom_ar}
+                        {personnelDetails.nom_ar} {personnelDetails.prenom_ar}
                       </p>
                     </div>
                   </Card.Header>
@@ -216,13 +173,13 @@ const ProfilPersonnel = () => {
                               <tr>
                                 <td>Poste</td>
                                 <td className="fw-medium">
-                                  {latestPosition?.poste?.poste_fr!}/{latestPosition?.poste?.poste_ar!}
+                                  {latestPosition.poste.poste_fr}/{latestPosition.poste.poste_ar}
                                 </td>
                               </tr>
                               <tr>
                                 <td>CIN</td>
                                 <td className="fw-medium">
-                                  {personnalsDetails?.num_cin!}
+                                  {personnelDetails.num_cin}
                                 </td>
                               </tr>
                             </tbody>
@@ -238,7 +195,7 @@ const ProfilPersonnel = () => {
                                 <td className="fw-medium">
                                   <span className="badge badge-label bg-secondary fs-6">
                                     <i className="mdi mdi-circle-medium"></i>{" "}
-                                    {personnalsDetails?.matricule!}
+                                    2493600925
                                   </span>
                                 </td>
                               </tr>
@@ -247,8 +204,8 @@ const ProfilPersonnel = () => {
                                 <td className="fw-medium">
                                   <span className="badge badge-label bg-warning">
                                     <i className="mdi mdi-circle-medium"></i>{" "}
-                                    {personnalsDetails?.etat_compte?.etat_fr!} /{" "}
-                                    {personnalsDetails?.etat_compte?.etat_ar!}
+                                    {etatCompteDisplayFR} /{" "}
+                                    {etatCompteDisplayAR}
                                   </span>
                                 </td>
                               </tr>
@@ -270,70 +227,70 @@ const ProfilPersonnel = () => {
                       <tbody>
                         <tr>
                           <td>Genre:</td>
-                          <td className="fw-medium">{personnalsDetails?.sexe!}</td>
+                          <td className="fw-medium">{personnelDetails.sexe}</td>
                         </tr>
 
                         <tr>
                           <td>Nationnalité:</td>
                           <td className="fw-medium">
-                            {personnalsDetails?.nationalite!}
+                            {personnelDetails.nationalite}
                           </td>
                         </tr>
                         <tr>
                           <td>Etat civil:</td>
                           <td className="fw-medium">
-                            {personnalsDetails?.etat_civil!}
+                            {personnelDetails.etat_civil}
                           </td>
                         </tr>
                         <tr>
                           <td>Date de naissance:</td>
                           <td className="fw-medium">
-                            {personnalsDetails?.date_naissance!}
+                            {personnelDetails.date_naissance}
                           </td>
                         </tr>
                         <tr>
                           <td>Lieu de naissance:</td>
                           <td className="fw-medium">
-                            {personnalsDetails?.lieu_naissance_ar!} /{" "}
-                            {personnalsDetails?.lieu_naissance_fr!}
+                            {personnelDetails.lieu_naissance_ar} /{" "}
+                            {personnelDetails.lieu_naissance_fr}
                           </td>
                         </tr>
 
                         <tr>
                           <td> Adresse:</td>
                           <td className="fw-medium">
-                            {personnalsDetails?.adress_fr!} /{" "}
-                            {personnalsDetails?.adress_ar!}
+                            {personnelDetails.adress_fr} /{" "}
+                            {personnelDetails.adress_ar}
                           </td>
                         </tr>
                         <tr>
                           <td>Email:</td>
                           <td className="fw-medium">
-                            {personnalsDetails?.email!}
+                            {personnelDetails.email}
                           </td>
                         </tr>
                         <tr>
                           <td>Téléphone 1:</td>
                           <td className="fw-medium">
-                            {personnalsDetails?.num_phone1!}
+                            {personnelDetails.num_phone1}
                           </td>
                         </tr>
                         <tr>
                           <td>Téléphone 2:</td>
                           <td className="fw-medium">
-                            {personnalsDetails?.num_phone2!}
+                            {personnelDetails.num_phone2}
                           </td>
                         </tr>
                         <tr>
                           <td>Compte Courant:</td>
                           <td className="fw-medium">
-                            {personnalsDetails?.compte_courant!}
+                            {personnelDetails.compte_courant}
                           </td>
                         </tr>
                         <tr>
                           <td>RIB:</td>
                           <td className="fw-medium">
-                            {personnalsDetails?.identifinat_unique!}
+                            {personnelDetails.identifinat_unique}
                           </td>
                         </tr>
                       </tbody>
@@ -348,81 +305,81 @@ const ProfilPersonnel = () => {
                         <tr>
                           <td>Catégorie: </td>
                           <td className="fw-medium">
-                            {latestPosition?.categorie?.categorie_fr!}/{latestPosition?.categorie?.categorie_ar!}
+                            {latestPosition.categorie.categorie_fr}/{latestPosition.categorie.categorie_ar}
                           </td>
                         </tr>
                         <tr>
                           <td>Grade: </td>
                           <td className="fw-medium">
-                            {latestPosition?.grade?.grade_fr!}/{latestPosition?.grade?.grade_ar!}
+                            {latestPosition.grade.grade_fr}/{latestPosition.grade.grade_ar}
                           </td>
                         </tr>
                         <tr>
                           <td>Date d'affectation: </td>
                           <td className="fw-medium">
-                            {latestPosition?.date_affectation!}
+                            {latestPosition.date_affectation}
                           </td>
                         </tr>
                         <tr>
                           <td>Date délivrance: </td>
                           <td className="fw-medium">
-                            {latestPosition?.date_depart!}
+                            {latestPosition.date_depart}
                           </td>
                         </tr>
                         <tr>
                           <td>Date de désignation: </td>
                           <td className="fw-medium">
-                            {latestPosition?.date_titularisation!}
+                            {latestPosition.date_titularisation}
                           </td>
                         </tr>
                         <tr>
                           <td>Service:</td>
                           <td className="fw-medium">
-                            {personnalsDetails?.service?.service_fr!} / {personnalsDetails?.service?.service_ar!}{" "}
+                            {servicePersonnelFR} / {servicePersonnelAR}{" "}
                           </td>
                         </tr>
-
-                        {/* {personnalsDetails?.certif1 && (
+                        {/* Diplome 1 */}
+                        {personnelDetails.certif1 && (
                           <>
                             <tr>
                               <td>Diplome 1: </td>
                               <td className="fw-medium">
                                 {" "}
-                                {personnalsDetails.certif1}
+                                {personnelDetails.certif1}
                               </td>
                             </tr>
                             <tr>
                               <td>Année diplome 1: </td>
                               <td className="fw-medium">
                                 {" "}
-                                {personnalsDetails.annee_certif1}
+                                {personnelDetails.annee_certif1}
                               </td>
                             </tr>
                             <tr>
                               <td>Etablissement diplome 1: </td>
                               <td className="fw-medium">
                                 {" "}
-                                {personnalsDetails.entreprise1}
+                                {personnelDetails.entreprise1}
                               </td>
                             </tr>
                           </>
                         )}
 
-                
-                        {personnalsDetails.certif2 && (
+                        {/* Diplome 2 */}
+                        {personnelDetails.certif2 && (
                           <>
                             <tr>
                               <td>Diplome 2: </td>
                               <td className="fw-medium">
                                 {" "}
-                                {personnalsDetails.certif2}
+                                {personnelDetails.certif2}
                               </td>
                             </tr>
                             <tr>
                               <td>Année diplome 2: </td>
                               <td className="fw-medium">
                                 {" "}
-                                {personnalsDetails.annee_certif2}
+                                {personnelDetails.annee_certif2}
                               </td>
                             </tr>
                             <tr>
@@ -435,7 +392,7 @@ const ProfilPersonnel = () => {
                           </>
                         )}
 
-                    
+                        {/* Diplome 3 */}
                         {personnelDetails.certif3 && (
                           <>
                             <tr>
@@ -460,7 +417,7 @@ const ProfilPersonnel = () => {
                               </td>
                             </tr>
                           </>
-                        )} */}
+                        )}
                       </tbody>
                     </Table>
                   </div>
@@ -473,20 +430,20 @@ const ProfilPersonnel = () => {
                         <tr>
                           <td>Nom du conjoint:</td>
                           <td className="fw-medium">
-                            {personnalsDetails?.nom_conjoint!}
+                            {personnelDetails.nom_conjoint}
                           </td>
                         </tr>
 
                         <tr>
                           <td>Profession du conjoint:</td>
                           <td className="fw-medium">
-                            {personnalsDetails.job_conjoint}
+                            {personnelDetails.job_conjoint}
                           </td>
                         </tr>
                         <tr>
                           <td>Nombre des enfants:</td>
                           <td className="fw-medium">
-                            {personnalsDetails.nombre_fils}
+                            {personnelDetails.nombre_fils}
                           </td>
                         </tr>
                       </tbody>
@@ -522,10 +479,10 @@ const ProfilPersonnel = () => {
                 </Col> */}
               </Row>
             </Card>
-            {personnalsDetails?.historique_positions && personnalsDetails?.historique_positions.length > 0 && (
+            {personnelDetails.historique_positions && personnelDetails.historique_positions.length > 0 && (
               <Card className="mt-4">
                 <Card.Body>
-                  <h5 className="text-muted">Historique des Postes/ التسلسل المهني</h5>
+                  <h5 className="text-muted">Historique Professionnel/ التسلسل المهني</h5>
                   <div className="table-responsive">
                     <Table striped bordered hover size="sm" className="mb-0">
                       <thead>
@@ -542,7 +499,7 @@ const ProfilPersonnel = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {personnalsDetails?.historique_positions?.map((entry: any, index: number) => (
+                        {personnelDetails.historique_positions.map((entry: any, index: number) => (
                           <tr key={index}>
                             <td>{entry.poste?.poste_fr || '-'}</td>
                             <td>{entry.grade?.grade_fr || '-'}</td>
@@ -581,6 +538,56 @@ const ProfilPersonnel = () => {
                                 disabled={!entry.fichier_depart}
                               >
                                 Départ
+                              </Button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </Table>
+                  </div>
+                </Card.Body>
+              </Card>
+            )}
+            {personnelDetails.historique_services && personnelDetails.historique_services.length > 0 && (
+              <Card className="mt-4">
+                <Card.Body>
+                  <h5 className="text-muted">Historique des services/ التسلسل في الخدمات</h5>
+                  <div className="table-responsive">
+                    <Table striped bordered hover size="sm" className="mb-0">
+                      <thead>
+                        <tr>
+                          <th>Service</th>
+                          <th>Date d'affectation</th>
+                          <th>Fichier Affectation</th>
+                          <th>Date de fin</th>
+                          <th>Fichier de fin</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {personnelDetails.historique_services.map((entry: any, index: number) => (
+                          <tr key={index}>
+                            <td>{entry.service?.service_fr || '-'}</td>
+                            <td>{entry.date_affectation ? moment(entry.date_affectation).format('DD/MM/YYYY') : '-'}</td>
+                            <td>
+                              <Button
+                                variant="outline-primary"
+                                size="sm"
+                                onClick={() => openFileModal(entry.fichier_affectation, 'Fichier Affectation')}
+                                disabled={!entry.fichier_affectation}
+                              >
+                                fichier affectation
+                              </Button>
+                            </td>
+
+                            <td>{entry.date_fin ? moment(entry.date_fin).format('DD/MM/YYYY') : '-'}</td>
+                            <td>
+                              <Button
+                                variant="outline-success"
+                                size="sm"
+                                onClick={() => openFileModal(entry.fichier_fin, 'Fichier Titularisation')}
+                                disabled={!entry.fichier_fin}
+                              >
+                                fichier fin
                               </Button>
                             </td>
                           </tr>

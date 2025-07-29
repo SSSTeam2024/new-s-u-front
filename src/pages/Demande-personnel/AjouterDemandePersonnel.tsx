@@ -27,6 +27,7 @@ import {
 import {
   useFetchTemplateBodyQuery,
   TemplateBody,
+  useFetchTemplateBodyByAdminIdQuery,
 } from "features/templateBody/templateBodySlice";
 import { useNavigate } from "react-router-dom";
 import { RootState } from "app/store";
@@ -43,7 +44,11 @@ const AjouterDemandePersonnel = () => {
   const { data: personnels } = useFetchPersonnelsQuery();
   const personnel: Personnel[] = Array.isArray(personnels) ? personnels : [];
 
-  const { data: templateBodies } = useFetchTemplateBodyQuery();
+  const adminId = user?._id;
+  //Use the query that fetches templates by admin ID
+  const { data: templateBodies } = useFetchTemplateBodyByAdminIdQuery(adminId!, {
+    skip: !adminId,
+  });
   const templateBody: TemplateBody[] = Array.isArray(templateBodies)
     ? templateBodies
     : [];
@@ -53,6 +58,11 @@ const AjouterDemandePersonnel = () => {
     const month = (date.getMonth() + 1).toString().padStart(2, "0");
     const year = date.getFullYear();
     return `${day}-${month}-${year}`;
+  };
+  const getCurrentHhMmTime = (date: Date) => {
+    const hours = date.getHours().toString().padStart(2, "0");
+    const minutes = date.getMinutes().toString().padStart(2, "0");
+    return `${hours}:${minutes}`;
   };
 
   const [formData, setFormData] = useState<any>({
@@ -67,7 +77,9 @@ const AjouterDemandePersonnel = () => {
     current_status: "En attente",
     status_history: [{
       value: "En attente",
-      date: formatDate(new Date())
+      date: formatDate(new Date()),
+      time: getCurrentHhMmTime(new Date()),
+      handled_by: adminId!
     }],
     createdAt: undefined,
     updatedAt: undefined,

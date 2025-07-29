@@ -21,6 +21,7 @@ import withReactContent from "sweetalert2-react-content";
 import {
   useFetchDemandeEnseignantQuery,
   useDeleteDemandeEnseignantMutation,
+  useFetchDemandesByAdminIdQuery,
 } from "features/demandeEnseignant/demandeEnseignantSlice";
 
 const ListeDemandeEnseignant = () => {
@@ -31,7 +32,7 @@ const ListeDemandeEnseignant = () => {
 
   const MySwal = withReactContent(Swal);
 
-  const { data: demandesEnseignant } = useFetchDemandeEnseignantQuery();
+  const { data: demandesEnseignant } = useFetchDemandesByAdminIdQuery(user?._id!);
 
   const [deleteDemandeEnseignant] = useDeleteDemandeEnseignantMutation();
   const navigate = useNavigate();
@@ -171,83 +172,12 @@ const ListeDemandeEnseignant = () => {
           }
         },
       },
+
       {
         Header: "Actions",
         disableFilters: true,
         filterable: true,
-        // accessor: (cellProps: any) => {
 
-        //   return (
-        //     <ul className="hstack gap-2 list-unstyled mb-0">
-        //       {actionAuthorization(
-        //         "/demandes-enseignant/single-demande-enseignant",
-        //         user?.permissions!
-        //       ) ? (
-        //         <li>
-        //           <Link
-        //             to="/demandes-enseignant/single-demande-enseignant"
-        //             state={cellProps}
-        //             className="badge bg-info-subtle text-info view-item-btn"
-        //           // data-bs-toggle="offcanvas"
-        //           >
-        //             <i
-        //               className="ph ph-gear-six"
-        //               style={{
-        //                 transition: "transform 0.3s ease-in-out",
-        //                 cursor: "pointer",
-        //                 fontSize: "1.5em",
-        //               }}
-        //               onMouseEnter={(e) =>
-        //                 (e.currentTarget.style.transform = "scale(1.4)")
-        //               }
-        //               onMouseLeave={(e) =>
-        //                 (e.currentTarget.style.transform = "scale(1)")
-        //               }
-        //             ></i>
-        //           </Link>
-        //         </li>
-        //       ) : (
-        //         <></>
-        //       )}
-
-        //       {actionAuthorization(
-        //         "/demandes-enseignant/supprimer-demande-enseignant",
-        //         user?.permissions!
-        //       ) ? (
-
-        //         cellProps.current_status === "En attente" && cellProps.added_by._id === user?._id && (
-        //           <li>
-        //             <Link
-        //               to="#"
-        //               className="badge bg-danger-subtle text-danger remove-item-btn"
-        //               onClick={() => handleDeleteDemande(cellProps._id)}
-        //             >
-        //               <i
-        //                 className="ph ph-trash"
-        //                 style={{
-        //                   transition: "transform 0.3s ease-in-out",
-        //                   cursor: "pointer",
-        //                   fontSize: "1.5em",
-        //                 }}
-        //                 onMouseEnter={(e) =>
-        //                   (e.currentTarget.style.transform = "scale(1.4)")
-        //                 }
-        //                 onMouseLeave={(e) =>
-        //                   (e.currentTarget.style.transform = "scale(1)")
-        //                 }
-        //               ></i>
-        //             </Link>
-        //           </li>
-        //         )
-
-
-
-        //       ) : (
-        //         <></>
-        //       )}
-        //     </ul>
-        //   );
-        // },
         accessor: (cellProps: any) => {
           console.log("cellProps", cellProps)
           return (

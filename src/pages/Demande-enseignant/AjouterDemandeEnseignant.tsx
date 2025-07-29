@@ -23,12 +23,14 @@ import {
 import {
   useFetchTemplateBodyQuery,
   TemplateBody,
+  useFetchTemplateBodyByAdminIdQuery,
 } from "features/templateBody/templateBodySlice";
 import { useNavigate } from "react-router-dom";
 import { RootState } from "app/store";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "features/account/authSlice";
 import { useGetDiversDocExtraByModelIdMutation } from "features/diversDocExtra/diversDocSlice";
+import { useFetchExtraShortCodeQuery } from "features/extraShortCode/extraShortCodeSlice";
 const AjouterDemandeEnseignant = () => {
   document.title = "Ajouter Demande Enseignant | ENIGA";
   const navigate = useNavigate();
@@ -40,17 +42,24 @@ const AjouterDemandeEnseignant = () => {
   const enseignant: Enseignant[] = Array.isArray(enseignants)
     ? enseignants
     : [];
+  const { data: extraShortCodeList = [] } = useFetchExtraShortCodeQuery();
+  const adminId = user?._id; // make sure user is defined
 
-  const { data: templateBodies } = useFetchTemplateBodyQuery();
-  const templateBody: TemplateBody[] = Array.isArray(templateBodies)
-    ? templateBodies
-    : [];
-
+  // ✅ Use the query that fetches templates by admin ID
+  const { data: templateBodies } = useFetchTemplateBodyByAdminIdQuery(adminId!, {
+    skip: !adminId, // Avoid firing until adminId is ready
+  });
+  console.log("templateBodies", templateBodies)
   const formatDate = (date: Date) => {
     const day = date.getDate().toString().padStart(2, "0");
     const month = (date.getMonth() + 1).toString().padStart(2, "0");
     const year = date.getFullYear();
     return `${day}-${month}-${year}`;
+  };
+  const getCurrentHhMmTime = (date: Date) => {
+    const hours = date.getHours().toString().padStart(2, "0");
+    const minutes = date.getMinutes().toString().padStart(2, "0");
+    return `${hours}:${minutes}`;
   };
 
   const [formData, setFormData] = useState</* Partial<Demande> */any>({
@@ -65,7 +74,9 @@ const AjouterDemandeEnseignant = () => {
     current_status: "En attente",
     status_history: [{
       value: "En attente",
-      date: formatDate(new Date())
+      date: formatDate(new Date()),
+      time: getCurrentHhMmTime(new Date()),
+      handled_by: adminId!
     }],
     extra_data: [
       {
@@ -73,7 +84,8 @@ const AjouterDemandeEnseignant = () => {
         value: "",
         body: "",
         FileBase64: "",
-        FileExtension: ""
+        FileExtension: "",
+        filePath: "",
       }
     ],
     createdAt: undefined,
@@ -144,15 +156,68 @@ const AjouterDemandeEnseignant = () => {
     setSelectedExceptional(dataRef);
   };
 
+
+  const [requiredOptionFileIndexes, setRequiredOptionFileIndexes] = useState<number[]>([]);
+
+
+  // const onChangeExtraV2 = (index: number, selectedOption: any) => {
+  //   let extraDataRef = [...formData.extra_data];
+  //   extraDataRef[index].value = selectedOption.value;
+
+  //   // Optional debug log
+  //   console.log("Selected option value for index", index, ":", extraDataRef[index]);
+
+  //   const fileRequiredOptions = [
+  //     "congés de matérnité",
+  //     "congés de maladie",
+  //     "congés de disponibilité"
+  //   ];
+
+  //   setRequiredOptionFileIndexes((prev) => {
+  //     const isRequired = fileRequiredOptions.includes(selectedOption.value);
+
+  //     if (isRequired) {
+  //       return prev.includes(index) ? prev : [...prev, index];
+  //     } else {
+  //       return prev.filter((i) => i !== index);
+  //     }
+  //   });
+
+  //   setFormData((prevState: any) => ({
+  //     ...prevState,
+  //     extra_data: extraDataRef
+  //   }));
+  // };
+
   const onChangeExtraV2 = (index: number, selectedOption: any) => {
     let extraDataRef = [...formData.extra_data];
-
     extraDataRef[index].value = selectedOption.value;
+
+    // ✅ Debug: Confirm the selected congé value is correct
+    console.log("✅ Set congé value at index", index, ":", selectedOption.value);
+
+    const fileRequiredOptions = [
+      "congés de matérnité",
+      "congés de maladie",
+      "congés de disponibilité"
+    ];
+
+    setRequiredOptionFileIndexes((prev) => {
+      const isRequired = fileRequiredOptions.includes(selectedOption.value);
+
+      if (isRequired) {
+        return prev.includes(index) ? prev : [...prev, index];
+      } else {
+        return prev.filter((i) => i !== index);
+      }
+    });
+
     setFormData((prevState: any) => ({
       ...prevState,
       extra_data: extraDataRef
     }));
-  }
+  };
+
 
   const addLine = () => {
     let dataRef = [...selectedExceptional];
@@ -226,9 +291,10 @@ const AjouterDemandeEnseignant = () => {
       }));
     }
 
-    const filteredDoc = filteredTemplates.filter(t => t._id === selectedOption.value)[0];
-    setDocLabel(filteredDoc.title);
+    const filteredDoc = filteredTemplates?.filter((t: any) => t._id === selectedOption.value)[0];
+    setDocLabel(filteredDoc?.title ?? "");
   };
+
 
   const onDescriptionChange = (event: any, editor: any) => {
     const data = editor.getData();
@@ -238,54 +304,139 @@ const AjouterDemandeEnseignant = () => {
     }));
   };
 
-  const onSubmitDemandeEnseignant = async (
-    e: React.FormEvent<HTMLFormElement>
-  ) => {
+  // const onSubmitDemandeEnseignant = async (
+  //   e: React.FormEvent<HTMLFormElement>
+  // ) => {
+
+  //   e.preventDefault();
+  //   try {
+  //     let extraDataRef = [...formData.extra_data];
+
+  //     let dates_etats = {
+  //       name: "dates_etats",
+  //       value: "",
+  //       body: "dates_etats"
+  //     };
+  //     let status_fils = {
+  //       name: "status_fils",
+  //       value: "",
+  //       body: "status_fils"
+  //     };
+  //     let dates_naiss = {
+  //       name: "dates_naiss",
+  //       value: "",
+  //       body: "dates_naiss"
+  //     };
+  //     let noms_enfants = {
+  //       name: "noms_enfants",
+  //       value: "",
+  //       body: "noms_enfants"
+  //     };
+
+  //     for (const element of selectedExceptional) {
+  //       dates_etats.value += element.dates_etats + '#';
+  //       status_fils.value += element.status_fils + '#';
+  //       dates_naiss.value += element.dates_naiss + '#';
+  //       noms_enfants.value += element.noms_enfants + '#';
+  //     }
+
+  //     extraDataRef.push(dates_etats);
+  //     extraDataRef.push(status_fils);
+  //     extraDataRef.push(dates_naiss);
+  //     extraDataRef.push(noms_enfants);
+
+  //     let refForm = { ...formData };
+  //     refForm.extra_data = extraDataRef;
+
+  //     console.log("refForm", refForm)
+
+  //     await addDemandeEnseignant(refForm).unwrap();
+  //     notify();
+  //     navigate("/demandes-enseignant/liste-demande-enseignant");
+
+  //   } catch (error: any) {
+  //     console.error("Failed to create demande:", error);
+  //     Swal.fire({
+  //       icon: "error",
+  //       title: "Erreur",
+  //       text: error?.data?.message || "Une erreur est survenue lors de la création de la demande.",
+  //     });
+  //   }
+  // };
+  const onSubmitDemandeEnseignant = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       let extraDataRef = [...formData.extra_data];
 
-      let dates_etats = {
+      // Add children fields
+      const dates_etats = {
         name: "dates_etats",
-        value: "",
+        value: selectedExceptional.map((el: any) => el.dates_etats).join("#"),
         body: "dates_etats"
       };
-      let status_fils = {
+      const status_fils = {
         name: "status_fils",
-        value: "",
+        value: selectedExceptional.map((el: any) => el.status_fils).join("#"),
         body: "status_fils"
       };
-      let dates_naiss = {
+      const dates_naiss = {
         name: "dates_naiss",
-        value: "",
+        value: selectedExceptional.map((el: any) => el.dates_naiss).join("#"),
         body: "dates_naiss"
       };
-      let noms_enfants = {
+      const noms_enfants = {
         name: "noms_enfants",
-        value: "",
+        value: selectedExceptional.map((el: any) => el.noms_enfants).join("#"),
         body: "noms_enfants"
       };
 
-      for (const element of selectedExceptional) {
-        dates_etats.value += element.dates_etats + '#';
-        status_fils.value += element.status_fils + '#';
-        dates_naiss.value += element.dates_naiss + '#';
-        noms_enfants.value += element.noms_enfants + '#';
-      }
+      extraDataRef.push(dates_etats, status_fils, dates_naiss, noms_enfants);
 
-      extraDataRef.push(dates_etats);
-      extraDataRef.push(status_fils);
-      extraDataRef.push(dates_naiss);
-      extraDataRef.push(noms_enfants);
+      extraDataRef = extraDataRef.map((item, index) => {
+        if (item.body === "type_conge") {
+          const matchedShortCode = extraShortCodeList.find(code => code.body === "type_conge");
+          const isValidLabel = matchedShortCode?.options?.includes(item.value);
+          const looksLikeFile = typeof item.value === "string" && item.value.includes("_extra_files.");
 
-      let refForm = { ...formData };
-      refForm.extra_data = extraDataRef;
+          if (!isValidLabel || looksLikeFile) {
+            item.value = matchedShortCode?.options?.[0] || "congé";
+          }
+
+          // Look for file in `extraFiles` by index
+          const matchedFile = extraFiles.find(f => f.index === index && f.body === item.body);
+          if (matchedFile) {
+            return {
+              ...item,
+              filePath: matchedFile.fileName,
+              FileBase64: matchedFile.base64,
+              FileExtension: matchedFile.extension
+            };
+          }
+        }
+
+        return item;
+      });
+
+
+      const refForm = {
+        ...formData,
+        extra_data: extraDataRef,
+      };
+
+      // Debug before sending
+      console.log("📤 Final refForm:", refForm);
+      refForm.extra_data.forEach((item: any) => {
+        if (item.body === "type_conge") {
+          console.log("🚨 Sending type_conge value:", item.value);
+        }
+      });
 
       await addDemandeEnseignant(refForm).unwrap();
       notify();
       navigate("/demandes-enseignant/liste-demande-enseignant");
+
     } catch (error: any) {
-      console.error("Failed to create demande:", error);
+      console.error("❌ Failed to create demande:", error);
       Swal.fire({
         icon: "error",
         title: "Erreur",
@@ -304,8 +455,8 @@ const AjouterDemandeEnseignant = () => {
     });
   };
 
-  const filteredTemplates = templateBody.filter(
-    (template) =>
+  const filteredTemplates = templateBodies?.filter(
+    (template: any) =>
       selectedLangue &&
       template.langue === selectedLangue &&
       template.intended_for === "enseignant"
@@ -349,76 +500,68 @@ const AjouterDemandeEnseignant = () => {
     }
   };
 
-  // const handleFileChange = async (index: number, e: any) => {
+  // const handleFileChangePerOption = async (index: number, e: any) => {
   //   const file = e.target.files?.[0];
   //   if (file) {
-
-
   //     const { base64Data, extension } = await convertToBase64(file);
-
   //     const updated = [...formData.extra_data];
-  //     updated[index] = {
-  //       ...updated[index],
-  //       value: file.name,
-  //       FileBase64: base64Data,
-  //       FileExtension: extension
-  //     };
+
+  //     // ✅ SAFEGUARD: Prevent accidental overwrite of value
+  //     const originalValue = updated[index].value;
+  //     if (originalValue && originalValue.endsWith(".pdf")) {
+  //       console.warn("⚠️ Detected value overwrite, restoring correct label...");
+  //       updated[index].value = formData.extra_data[index].value;
+  //     }
+
+  //     // ✅ Store file metadata separately
+  //     updated[index].FileBase64 = base64Data;
+  //     updated[index].FileExtension = extension;
+  //     updated[index].FileName = file.name;
 
   //     setFormData((prev: any) => ({
   //       ...prev,
   //       extra_data: updated,
   //     }));
+
+  //     console.log("✅ Uploaded file for:", updated[index].value); // Should still be "congés de maladie"
+  //     console.log("📄 Original file name:", updated[index].FileName);
   //   }
   // };
-  // const [uploadedFiles, setUploadedFiles] = useState<{ [key: string]: File }>({});
-  // async function convertToBase64(
-  //   file: File
-  // ): Promise<{ base64Data: string; extension: string }> {
-  //   return new Promise((resolve, reject) => {
-  //     const fileReader = new FileReader();
-  //     fileReader.onload = () => {
-  //       const base64String = fileReader.result as string;
-  //       const [, base64Data] = base64String.split(",");
-  //       const extension = file.name.split(".").pop() ?? "";
-  //       resolve({ base64Data, extension });
-  //     };
-  //     fileReader.onerror = (error) => {
-  //       reject(error);
-  //     };
-  //     fileReader.readAsDataURL(file);
-  //   });
-  // }
+  const [extraFiles, setExtraFiles] = useState<
+    { index: number; body: string; fileName: string; base64: string; extension: string }[]
+  >([]);
 
-  // const handleFileChange = async (
-  //   index: number,
-  //   e: any
-  // ) => {
-  //   const file = e.target.files?.[0];
-  //   if (!file) return;
 
-  //   try {
-  //     const { base64Data, extension } = await convertToBase64(file);
+  const handleFileChangePerOption = async (index: number, e: any) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const { base64Data, extension } = await convertToBase64(file);
+      const extraDataItem = formData.extra_data[index];
 
-  //     // Clone current extra_data array (or create if undefined)
-  //     const updatedExtraData = [...(formData.extra_data || [])];
+      const updatedExtraFiles = [...extraFiles];
+      const existingIndex = updatedExtraFiles.findIndex(f => f.index === index && f.body === extraDataItem.body);
 
-  //     // Update the item at the index with file info
-  //     updatedExtraData[index] = {
-  //       ...updatedExtraData[index],
-  //       value: file.name,
-  //       FileBase64: base64Data,
-  //       FileExtension: extension,
-  //     };
+      const newEntry = {
+        index,
+        body: extraDataItem.body,
+        fileName: file.name,
+        base64: base64Data,
+        extension: extension,
+      };
 
-  //     // Update form data state
-  //     setFormData((prev: any) => ({
-  //       ...prev,
-  //       extra_data: updatedExtraData,
-  //     }));
-  //   } catch (error) {
-  //     console.error("Error converting file to base64:", error);
-  //   }
-  // };
+      if (existingIndex !== -1) {
+        updatedExtraFiles[existingIndex] = newEntry;
+      } else {
+        updatedExtraFiles.push(newEntry);
+      }
+
+      setExtraFiles(updatedExtraFiles);
+
+      console.log("✅ File saved for:", extraDataItem.value); // value still = label
+    }
+  };
+
+
 
   return (
     <React.Fragment>
@@ -500,7 +643,7 @@ const AjouterDemandeEnseignant = () => {
                               <Form.Group className="mb-3">
                                 <Form.Label>Pièce demandée</Form.Label>
                                 <Select
-                                  options={filteredTemplates.map(
+                                  options={filteredTemplates?.map(
                                     (template: any) => ({
                                       value: template._id,
                                       label: template.title,
@@ -525,7 +668,9 @@ const AjouterDemandeEnseignant = () => {
                           )}
 
                           {diversExtraData?.map((d: any, index: number) => (
+
                             <>
+                              {console.log("BODY", d.body)}
                               <Row key={index}>
                                 {selectedLangue === "french" ? (
                                   <Col lg={5}>
@@ -577,21 +722,6 @@ const AjouterDemandeEnseignant = () => {
                                           />
                                         </>
                                       )}
-
-                                      {/* {d.data_type === "file" && (
-
-                                        <div key={d._id} className="mb-3">
-                                          <Form.Label style={{ fontSize: '1rem', fontWeight: '600', fontFamily: 'system-ui' }}>
-                                            {d.fieldName}
-                                          </Form.Label>
-                                          <Form.Control
-                                            type="file"
-                                            accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
-                                            onChange={(e) => handleFileChange(index, e)}
-                                            name={`file-${d._id}`} // optional, useful for submission
-                                          />
-                                        </div>
-                                      )} */}
                                       {d.data_type === "file" && (
                                         <div key={d._id} className="mb-3">
                                           <Form.Label style={{ fontSize: '1rem', fontWeight: '600', fontFamily: 'system-ui' }}>
@@ -605,6 +735,23 @@ const AjouterDemandeEnseignant = () => {
                                           />
                                         </div>
                                       )}
+                                      {
+                                        formData.extra_data[index]?.body === "type_conge" &&
+                                        requiredOptionFileIndexes.includes(index) &&
+                                        formData.extra_data[index]?.value && (
+                                          <Form.Group className="mt-2">
+                                            <Form.Label style={{ fontSize: '1rem', fontWeight: '600', fontFamily: 'system-ui' }}>
+                                              {`Pièce jointe ${formData.extra_data[index]?.value?.replace("congés de ", "")}`}
+                                            </Form.Label>
+                                            <Form.Control
+                                              type="file"
+                                              accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
+                                              onChange={(e) => handleFileChangePerOption(index, e)}
+                                            />
+                                          </Form.Group>
+                                        )
+                                      }
+
 
 
                                     </Form.Group>
@@ -679,6 +826,7 @@ const AjouterDemandeEnseignant = () => {
                                   </Col>
                                 </>
                                 }
+
 
                               </Row>
                             </>
@@ -764,6 +912,7 @@ const AjouterDemandeEnseignant = () => {
                               </Row>
                             </>
                           )}
+                          {/* //TODO: Map here the files inputs based on selected holiday type with the same way that handles extra data file */}
                         </>
                       )}
                       <Col lg={6}>

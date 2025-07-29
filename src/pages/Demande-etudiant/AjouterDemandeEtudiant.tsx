@@ -18,6 +18,7 @@ import {
 import {
   useFetchTemplateBodyQuery,
   TemplateBody,
+  useFetchTemplateBodyByAdminIdQuery,
 } from "features/templateBody/templateBodySlice";
 import { Classe, useFetchClassesQuery } from "features/classe/classe";
 import { useNavigate } from "react-router-dom";
@@ -32,8 +33,12 @@ const AjouterDemandeEtudiant = () => {
   const [addDemandeEtudiant] = useAddDemandeEtudiantMutation();
   const { data: etudiants } = useFetchEtudiantsQuery();
   const etudiant: Etudiant[] = Array.isArray(etudiants) ? etudiants : [];
+  const adminId = user?._id;
 
-  const { data: templateBodies } = useFetchTemplateBodyQuery();
+  // Use the query that fetches templates by admin ID
+  const { data: templateBodies } = useFetchTemplateBodyByAdminIdQuery(adminId!, {
+    skip: !adminId,
+  });
   const templateBody: TemplateBody[] = Array.isArray(templateBodies)
     ? templateBodies
     : [];
@@ -46,6 +51,8 @@ const AjouterDemandeEtudiant = () => {
   const handleClassSelect = (selectedOption: any) => {
     setSelectedClasse(selectedOption.value); // Set selected class ID
   };
+
+
   // Filter students based on selected class
   const filteredEtudiants = selectedClasse
     ? etudiant?.filter(
@@ -59,6 +66,12 @@ const AjouterDemandeEtudiant = () => {
     const year = date.getFullYear();
     return `${day}-${month}-${year}`;
   };
+  const getCurrentHhMmTime = (date: Date) => {
+    const hours = date.getHours().toString().padStart(2, "0");
+    const minutes = date.getMinutes().toString().padStart(2, "0");
+    return `${hours}:${minutes}`;
+  };
+
   const [formData, setFormData] = useState<Partial<Demande>>({
     studentId: "",
     title: "",
@@ -71,7 +84,9 @@ const AjouterDemandeEtudiant = () => {
     current_status: "En attente",
     status_history: [{
       value: "En attente",
-      date: formatDate(new Date())
+      date: formatDate(new Date()),
+      time: getCurrentHhMmTime(new Date()),
+      handled_by: adminId!
     }],
     extra_data: [
       {

@@ -23,6 +23,7 @@ import withReactContent from "sweetalert2-react-content";
 import {
   useFetchDemandeEtudiantQuery,
   useDeleteDemandeEtudiantMutation,
+  useFetchDemandesByAdminIdQuery,
 } from "features/demandeEtudiant/demandeEtudiantSlice";
 
 const ListeDemandeEtudiant = () => {
@@ -32,9 +33,8 @@ const ListeDemandeEtudiant = () => {
 
   const MySwal = withReactContent(Swal);
 
-  // Fetch reclamations query hook
-  const { data: demandesEtudiant } = useFetchDemandeEtudiantQuery();
-
+  // const { data: demandesEtudiant } = useFetchDemandeEtudiantQuery();
+  const { data: demandesEtudiant } = useFetchDemandesByAdminIdQuery(user?._id!);
   // Mutation hooks
   const [deleteDemandeEtudiant] = useDeleteDemandeEtudiantMutation();
 

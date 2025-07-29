@@ -17,6 +17,7 @@ import "./body.css";
 import copy from "copy-to-clipboard";
 import { useFetchExtraShortCodeQuery } from "features/extraShortCode/extraShortCodeSlice";
 import { useCreateDiversDocExtraMutation } from "features/diversDocExtra/diversDocSlice";
+import { useFetchAllUsersQuery } from "features/account/accountSlice";
 
 function convertToBase64(
   file: File
@@ -42,6 +43,8 @@ const NewTemplateBody = () => {
   document.title = "Ajouter un Modèle | ENIGA";
 
   const navigate = useNavigate();
+  const { data: users = [] } = useFetchAllUsersQuery();
+  console.log("users", users)
   const [addNewTemplateBody, { isLoading }] = useAddNewTemplateBodyMutation();
   const [createDiversDocExtraElement] = useCreateDiversDocExtraMutation();
   const { data: shortCodeList = [] } = useFetchShortCodeQuery();
@@ -161,7 +164,11 @@ const NewTemplateBody = () => {
 
   const handleFormSubmit = async () => {
     try {
-      const result = await addNewTemplateBody(templateBody).unwrap();
+      const result = await addNewTemplateBody({
+        ...templateBody,
+        handled_by: selectedAdmins,
+      }).unwrap();
+
 
       const selectedFileData = selectedFiles.map((id) => {
         const shortCode = fileShortCodes.find((f) => f._id === id);
@@ -211,6 +218,50 @@ const NewTemplateBody = () => {
     }
   };
 
+  // const handleFormSubmit = async () => {
+  //   try {
+  //     const payload = {
+  //       ...templateBody,
+  //       handled_by: selectedAdmins,
+  //     };
+
+  //     // 🧪 Debug log
+  //     console.log("🧪 TemplateBody Payload:", payload);
+
+
+  //     const result = await addNewTemplateBody(payload).unwrap();
+
+  //     const selectedFileData = selectedFiles.map((id) => {
+  //       const shortCode = fileShortCodes.find((f) => f._id === id);
+  //       return {
+  //         _id: shortCode?._id,
+  //         fieldName: shortCode?.titre,
+  //         data_type: "file",
+  //         value: "",
+  //         FileBase64: "",
+  //         FileExtension: ""
+  //       };
+  //     });
+
+  //     let extraRef = [...diversDocData.extra_data, ...selectedFileData];
+
+  //     console.log("🧪 Extra Data to Attach:", extraRef);
+
+  //     // Skip all post-creation logic
+  //     Swal.fire({
+  //       icon: "info",
+  //       title: "Test uniquement",
+  //       text: "Création désactivée — vérifiez la console pour les données.",
+  //     });
+
+  //   } catch (error) {
+  //     Swal.fire({
+  //       icon: "error",
+  //       title: "Erreur",
+  //       text: "Une erreur est survenue lors de la simulation de la soumission.",
+  //     });
+  //   }
+  // };
 
   const handleNextStep = () => {
     setStep((prevStep) => prevStep + 1);
@@ -325,6 +376,7 @@ const NewTemplateBody = () => {
       prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
     );
   };
+  const [selectedAdmins, setSelectedAdmins] = useState<string[]>([]);
 
 
   return (
@@ -349,7 +401,7 @@ const NewTemplateBody = () => {
                 {step === 1 && (
                   <>
                     <Row>
-                      <Col lg={6}>
+                      <Col lg={3}>
                         <Form.Group controlId="title">
                           <Form.Label>Titre du modèle</Form.Label>
                           <Form.Control
@@ -394,6 +446,43 @@ const NewTemplateBody = () => {
                           </Form.Select>
                         </Form.Group>
                       </Col>
+                      <Col lg={3}>
+                        <Form.Group controlId="handled_by">
+                          <Form.Label>Administrateurs responsables</Form.Label>
+                          <Form.Select
+                            multiple
+                            value={selectedAdmins}
+                            onChange={(e) => {
+                              const selected = Array.from(e.target.selectedOptions, (option) => option.value);
+                              setSelectedAdmins(selected);
+                            }}
+                          >
+                            {users.map((user) => {
+                              const nom =
+                                user.nom_fr ||
+                                user.enseignantId?.nom_fr ||
+                                user.personnelId?.nom_fr ||
+                                "";
+                              const prenom =
+                                user.prenom_fr ||
+                                user.enseignantId?.prenom_fr ||
+                                user.personnelId?.prenom_fr ||
+                                "";
+                              if (!nom && !prenom) return null;
+
+                              return (
+                                <option key={user._id} value={user._id}>
+                                  {`${nom} ${prenom}`}
+                                </option>
+                              );
+                            })}
+                          </Form.Select>
+
+                        </Form.Group>
+                      </Col>
+
+
+
                     </Row>
                     <div className="d-flex justify-content-end mt-3">
                       <Button

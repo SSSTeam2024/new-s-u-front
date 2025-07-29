@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import { RootState } from "app/store";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "features/account/authSlice";
 import {
   Button,
   Card,
@@ -27,7 +30,7 @@ Font.register({
 
 const SingleDemandeEnseignant = () => {
   document.title = "Demande Enseignant | ENIGA";
-
+  const user = useSelector((state: RootState) => selectCurrentUser(state));
   const location = useLocation();
   console.log(location)
 
@@ -37,6 +40,7 @@ const SingleDemandeEnseignant = () => {
 
   const [handleDemande, { isLoading, isSuccess }] = useHandleDemandeEnseignantMutation();
   const [updateDemande, { isLoading: isUpdateLoading, isSuccess: isUpdateCompleted }] = useUpdateDemandeEnseignantMutation();
+
   const formatDate = (date: Date) => {
     const day = date.getDate().toString().padStart(2, "0");
     const month = (date.getMonth() + 1).toString().padStart(2, "0");
@@ -44,27 +48,11 @@ const SingleDemandeEnseignant = () => {
     return `${day}-${month}-${year}`;
   };
 
-  // const generateDocumentAndUpdateDemand = async () => {
-
-  //   try {
-  //     let newStatusHistory = location?.state?.status_history!;
-  //     newStatusHistory.push({
-  //       value: "Générée",
-  //       date: formatDate(new Date())
-  //     })
-  //     const result = await handleDemande({
-  //       demandId: location.state._id,
-  //       modelName: location.state?.piece_demande?.doc!,
-  //       modelLangage: location.state?.piece_demande?.langue!,
-  //       status_history: newStatusHistory
-  //     }).unwrap();
-
-  //     setUpdatedDemand(result);
-  //   } catch (error) {
-  //     console.log(error);
-  //     alert("Une erreur est servenu, veuillez réessayer plus tard!")
-  //   }
-  // }
+  const getCurrentHhMmTime = (date: Date) => {
+    const hours = date.getHours().toString().padStart(2, "0");
+    const minutes = date.getMinutes().toString().padStart(2, "0");
+    return `${hours}:${minutes}`;
+  };
 
   const generateDocumentAndUpdateDemand = async () => {
 
@@ -84,7 +72,9 @@ const SingleDemandeEnseignant = () => {
       let newStatusHistory = location?.state?.status_history!;
       newStatusHistory.push({
         value: "Générée",
-        date: formatDate(new Date())
+        date: formatDate(new Date()),
+        time: getCurrentHhMmTime(new Date()),
+        handled_by: user?._id!
       });
 
       const result = await handleDemande({
@@ -140,7 +130,9 @@ const SingleDemandeEnseignant = () => {
 
           demandData.status_history.push({
             value: "Approuvée",
-            date: formatDate(new Date())
+            date: formatDate(new Date()),
+            time: getCurrentHhMmTime(new Date()),
+            handled_by: user?._id!
           });
 
           demandData.current_status = "Approuvée";
@@ -190,7 +182,9 @@ const SingleDemandeEnseignant = () => {
 
           demandData.status_history.push({
             value: "Réfusée",
-            date: formatDate(new Date())
+            date: formatDate(new Date()),
+            time: getCurrentHhMmTime(new Date()),
+            handled_by: user?._id!
           });
 
           demandData.current_status = "Réfusée";
@@ -399,19 +393,22 @@ const SingleDemandeEnseignant = () => {
                     </table>
 
                     <div className="d-flex justify-content-end mt-3">
-                      {location.state.extra_data.map((extra: any) => (
-                        regex.test(extra.value) === true ?
-                          <button className="btn btn-info me-2"
+                      {location.state.extra_data.map((extra: any) =>
+                        extra.filePath ? (
+                          <button
+                            key={extra.body} // optional key if needed
+                            className="btn btn-info me-2"
                             onClick={() => {
-
-                              const fileUrl = `${process.env.REACT_APP_API_URL}/files/demandeEnseignant/extraFilesDemande/${extra.value}`;
+                              const fileUrl = `${process.env.REACT_APP_API_URL}/files/demandeEnseignant/extraFilesDemande/${extra.filePath}`;
                               window.open(fileUrl, '_blank', 'noopener,noreferrer');
-                            }}>
-                            {extra.name}
+                            }}
+                          >
+                            {extra.value || "Fichier joint"}
                           </button>
-                          : <></>
-                      ))}
+                        ) : null
+                      )}
                     </div>
+
                   </div>
                 </div>
 
@@ -663,7 +660,7 @@ const SingleDemandeEnseignant = () => {
                                         />
                                       </Form.Group>
                                       {
-                                        updatedDemand?.file! !== undefined || location.state?.file! !== undefined && (
+                                        (updatedDemand?.file! !== undefined || location.state?.file! !== undefined) && (
                                           <Form.Group className="mb-0">
                                             <Form.Label className="fw-semibold">
                                               Pièce jointe

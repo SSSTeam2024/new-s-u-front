@@ -23,6 +23,7 @@ import withReactContent from "sweetalert2-react-content";
 import {
   useFetchDemandePersonnelQuery,
   useDeleteDemandePersonnelMutation,
+  useFetchDemandesByAdminIdQuery,
 } from "features/demandePersonnel/demandePersonnelSlice";
 
 const ListeDemandePersonnel = () => {
@@ -31,7 +32,8 @@ const ListeDemandePersonnel = () => {
   const user = useSelector((state: RootState) => selectCurrentUser(state));
   const MySwal = withReactContent(Swal);
 
-  const { data: demandesPersonnel } = useFetchDemandePersonnelQuery();
+  // const { data: demandesPersonnel } = useFetchDemandePersonnelQuery();
+  const { data: demandesPersonnel } = useFetchDemandesByAdminIdQuery(user?._id!);
   console.log("demandesPersonnel", demandesPersonnel)
 
   const [deleteDemandePersonnel] = useDeleteDemandePersonnelMutation();

@@ -12,6 +12,7 @@ export interface TemplateBody {
   has_code: string;
   has_number: string;
   oldFileName?: string;
+  handled_by?: string[];
 }
 export const templateBodySlice = createApi({
   reducerPath: 'templateBody',
@@ -58,6 +59,11 @@ export const templateBodySlice = createApi({
         invalidatesTags: ['TemplateBody'], // 🔁 This will refetch the updated data
       }),
 
+      fetchTemplateBodyByAdminId: builder.query<TemplateBody[], string>({
+        query: (adminId) => `by-admin/${adminId}`,
+        providesTags: ['TemplateBody'],
+      }),
+
     };
 
   },
@@ -69,5 +75,6 @@ export const {
   useAddNewTemplateBodyMutation,
   useFetchTemplateBodyQuery,
   useDeleteTemplateBodyMutation,
-  useUpdateTemplateBodyMutation
+  useUpdateTemplateBodyMutation,
+  useFetchTemplateBodyByAdminIdQuery
 } = templateBodySlice;

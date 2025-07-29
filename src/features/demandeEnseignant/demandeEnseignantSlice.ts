@@ -7,6 +7,7 @@ export interface ExtraObject {
   body?: string,
   FileBase64?: string,
   FileExtension?: string
+  filePath?: string
 }
 
 export interface Demande {
@@ -30,7 +31,9 @@ export interface Demande {
   current_status: string;
   status_history: {
     value: string,
-    date: string
+    date: string,
+    handled_by: any,
+    time: string
   }[]
 }
 export const demandeEnseignantSlice = createApi({
@@ -119,6 +122,11 @@ export const demandeEnseignantSlice = createApi({
         },
         invalidatesTags: ["Demandes"],
       }),
+      fetchDemandesByAdminId: builder.query<Demande[], string>({
+        query: (adminId) => `by-admin/${adminId}`,
+        providesTags: ['Demandes'],
+      }),
+
     };
   },
 });
@@ -131,4 +139,5 @@ export const {
   useDeleteDemandeEnseignantMutation,
   useHandleDemandeEnseignantMutation,
   useDeleteManyDemandeEnseignantMutation,
+  useFetchDemandesByAdminIdQuery
 } = demandeEnseignantSlice;

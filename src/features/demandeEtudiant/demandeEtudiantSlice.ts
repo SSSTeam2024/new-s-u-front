@@ -27,7 +27,9 @@ export interface Demande {
   current_status: string;
   status_history: {
     value: string,
-    date: string
+    date: string,
+    handled_by: any,
+    time: string
   }[]
 }
 export const demandeEtudiantSlice = createApi({
@@ -117,6 +119,11 @@ export const demandeEtudiantSlice = createApi({
         },
         invalidatesTags: ["Demandes"],
       }),
+      fetchDemandesByAdminId: builder.query<Demande[], string>({
+        query: (adminId) => `by-admin/${adminId}`,
+        providesTags: ['Demandes'],
+      }),
+
     };
   },
 });
@@ -129,5 +136,6 @@ export const {
   useDeleteDemandeEtudiantMutation,
   useHandleDemandeEtudiantMutation,
   useDeleteManyDemandeEtudiantMutation,
+  useFetchDemandesByAdminIdQuery
 } = demandeEtudiantSlice;
 

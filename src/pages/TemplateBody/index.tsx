@@ -25,6 +25,7 @@ const TemplateBody = () => {
   const navigate = useNavigate();
 
   const { data: allTemplateBody = [] } = useFetchTemplateBodyQuery();
+  console.log("allTemplateBody", allTemplateBody)
   const [deleteTemplateBody] = useDeleteTemplateBodyMutation();
   const handleDeleteTemplate = async (id: string) => {
     try {
@@ -55,6 +56,8 @@ const TemplateBody = () => {
     french: "Français",
     arabic: "Arabe",
   };
+  const [showModal, setShowModal] = useState(false);
+  const [modalUsers, setModalUsers] = useState<any[]>([]);
   const columns = useMemo(
     () => [
       {
@@ -77,6 +80,56 @@ const TemplateBody = () => {
         disableFilters: true,
         filterable: true,
       },
+      {
+        Header: "Gérée par",
+        accessor: "handled_by",
+        Cell: ({ value }: { value: any[] }) => {
+          if (!Array.isArray(value) || value.length === 0) return "Aucun";
+
+          const validUsers = value.filter(
+            (user) => user?.prenom_fr && user?.nom_fr
+          );
+
+          if (validUsers.length === 0) return "Aucun";
+
+          const maxVisible = 3;
+          const visible = validUsers.slice(0, maxVisible);
+          const remaining = validUsers.length - maxVisible;
+
+          return (
+            <span>
+              {visible.map((user, index) => (
+                <span key={index}>
+                  {user.prenom_fr} {user.nom_fr}
+                  {index < visible.length - 1 ? ", " : ""}
+                </span>
+              ))}
+
+              {remaining > 0 && (
+                <>
+                  {" et "}
+                  <span
+                    onClick={() => {
+                      setModalUsers(value);
+                      setShowModal(true);
+                    }}
+                    className="fw-semibold text-info text-decoration-underline"
+                    style={{ cursor: "pointer", textUnderlineOffset: "2px" }}
+                  >
+                    {remaining} autre{remaining > 1 ? "s" : ""}
+                  </span>
+
+                </>
+              )}
+            </span>
+          );
+        },
+        disableFilters: true,
+        filterable: true,
+      }
+
+
+      ,
       {
         Header: "Action",
         disableFilters: true,
@@ -247,6 +300,30 @@ const TemplateBody = () => {
                   </div>
                   {/* </div> */}
                 </Card.Body>
+                <Modal show={showModal} onHide={() => setShowModal(false)} centered>
+                  <Modal.Header closeButton>
+                    <Modal.Title>Liste des utilisateurs</Modal.Title>
+                  </Modal.Header>
+                  <Modal.Body>
+                    <p className="mb-3 text-muted">
+                      Les utilisateurs suivants sont les administrateurs responsables du traitement de ce modèle :
+                    </p>
+                    <ul className="list-unstyled">
+                      {modalUsers.map((user, index) => (
+                        <li key={index}>
+                          - {user.prenom_fr} {user.nom_fr}
+                        </li>
+                      ))}
+                    </ul>
+                  </Modal.Body>
+                  <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShowModal(false)}>
+                      Fermer
+                    </Button>
+                  </Modal.Footer>
+                </Modal>
+
+
               </Card>
             </Col>
           </Row>
