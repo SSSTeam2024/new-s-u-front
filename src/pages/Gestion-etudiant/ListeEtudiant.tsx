@@ -487,6 +487,13 @@ const ListEtudiants = () => {
                       >
                         📄 بطاقة ارشادات
                       </Dropdown.Item>
+                      <Dropdown.Item
+                        as={Link}
+                        to="/gestion-etudiant/ar-print-fiche-academique"
+                        state={students}
+                      >
+                        📄 سيرة جامعية
+                      </Dropdown.Item>
                     </Dropdown.Menu>
                   </Dropdown>
                 </li>

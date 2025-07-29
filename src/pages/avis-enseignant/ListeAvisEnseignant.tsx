@@ -113,15 +113,15 @@ const ListeAvisEnseignant = () => {
           value.length > 80 ? value.slice(0, 80) + "..." : value,
       },
 
-      // {
-      //     Header: "Date",
-      //     accessor: "date_avis",
-      //     disableFilters: true,
-      //     filterable: true,
-      // },
       {
+          Header: "Date",
+          accessor: "createdAt",
+          disableFilters: true,
+          filterable: true,
+      },
+    {
         Header: "Auteur",
-        accessor: (row: any) => row.auteurId?.name || "",
+        accessor: (row: any) => row.auteurId?.login || "",
         disableFilters: true,
         filterable: true,
       },
@@ -135,7 +135,20 @@ const ListeAvisEnseignant = () => {
             variant="link"
             onClick={() => handleShowPdfModal(row.original.pdf)}
           >
-            Ouvrir PDF
+           <i
+                      className="bi bi-filetype-pdf me-2"
+                      style={{
+                        transition: "transform 0.3s ease-in-out",
+                        cursor: "pointer",
+                        fontSize: "1.5em",
+                      }}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.transform = "scale(1.4)")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.transform = "scale(1)")
+                      }
+                    ></i>
           </Button>
         ),
       },
@@ -146,7 +159,20 @@ const ListeAvisEnseignant = () => {
         filterable: true,
         Cell: ({ cell: { value } }: any) => (
           <Button variant="link" onClick={() => window.open(value, "_blank")}>
-            Aller au lien
+            <i
+                       className="bi bi-link-45deg me-2"
+                      style={{
+                        transition: "transform 0.3s ease-in-out",
+                        cursor: "pointer",
+                        fontSize: "1.5em",
+                      }}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.transform = "scale(1.4)")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.transform = "scale(1)")
+                      }
+                    ></i>
           </Button>
         ),
       },
@@ -167,7 +193,7 @@ const ListeAvisEnseignant = () => {
                     to="/avis-enseignant/single-avis-enseignant"
                     state={cellProps}
                     className="badge bg-info-subtle text-info view-item-btn"
-                    data-bs-toggle="offcanvas"
+                    // data-bs-toggle="offcanvas"
                   >
                     <i
                       className="ph ph-eye"

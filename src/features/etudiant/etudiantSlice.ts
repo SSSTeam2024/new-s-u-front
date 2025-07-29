@@ -38,6 +38,17 @@ export interface EtatCompte {
   etat_fr: string;
 }
 
+export interface HistoriqueEtudiant {
+  date_debut?: string;
+  date_fin?: string;
+  periode?: string;
+  situation?: string;
+  etablissement?: string;
+  fichier_depart?: string;
+  fichier_departExtension?: string;
+  fichier_departBase64?: string;
+}
+
 export interface Etudiant {
   _id?: string;
   nom_fr: string;
@@ -131,6 +142,7 @@ export interface Etudiant {
   matricule_number: string;
   passeport_number: string;
   cnss_number: string;
+  historique_etudiant?: HistoriqueEtudiant[];
 }
 export interface EtudiantExcel {
   _id?: string;
@@ -217,6 +229,7 @@ export interface EtudiantExcel {
   passeport_number: string;
   cnss_number: string;
   emails?: string[];
+  historique_etudiant?: HistoriqueEtudiant[];
 }
 export const etudiantSlice = createApi({
   reducerPath: "Etudiant",

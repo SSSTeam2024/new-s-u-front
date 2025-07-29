@@ -17,6 +17,7 @@ const ListeAvisEtudiant = () => {
   document.title = "Avis Etudiant | ENIGA";
   const user = useSelector((state: RootState) => selectCurrentUser(state));
   const { data: avisEtudiant } = useFetchAvisEtudiantQuery();
+  console.log("aviss",avisEtudiant)
   const { refetch } = useFetchAvisEtudiantQuery();
   const [deleteAvisEtudiant] = useDeleteAvisEtudiantMutation();
 
@@ -96,7 +97,13 @@ const ListeAvisEtudiant = () => {
         disableFilters: true,
         filterable: true,
         Cell: ({ value }: { value: string }) =>
-          value.length > 80 ? value.slice(0, 80) + "..." : value,
+          value.length > 50 ? value.slice(0, 50) + "..." : value,
+      },
+      {
+        Header: "Date",
+        accessor: "createdAt",
+        disableFilters: true,
+        filterable: true,
       },
       {
         Header: "Auteur",
@@ -114,7 +121,20 @@ const ListeAvisEtudiant = () => {
             variant="link"
             onClick={() => handleShowPdfModal(row.original.pdf)}
           >
-            Ouvrir PDF
+             <i
+                      className="bi bi-filetype-pdf me-2"
+                      style={{
+                        transition: "transform 0.3s ease-in-out",
+                        cursor: "pointer",
+                        fontSize: "1.5em",
+                      }}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.transform = "scale(1.4)")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.transform = "scale(1)")
+                      }
+                    ></i>
           </Button>
         ),
       },
@@ -125,7 +145,21 @@ const ListeAvisEtudiant = () => {
         filterable: true,
         Cell: ({ cell: { value } }: any) => (
           <Button variant="link" onClick={() => window.open(value, "_blank")}>
-            Aller au lien
+              
+                   <i
+                      className="bi bi-link-45deg me-2"
+                      style={{
+                        transition: "transform 0.3s ease-in-out",
+                        cursor: "pointer",
+                        fontSize: "1.5em",
+                      }}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.transform = "scale(1.4)")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.transform = "scale(1)")
+                      }
+                    ></i>
           </Button>
         ),
       },
@@ -145,7 +179,7 @@ const ListeAvisEtudiant = () => {
                     to="/avis-etudiant/single-avis-etudiant"
                     state={cellProps}
                     className="badge bg-info-subtle text-info view-item-btn"
-                    data-bs-toggle="offcanvas"
+                    // data-bs-toggle="offcanvas"
                   >
                     <i
                       className="ph ph-eye"

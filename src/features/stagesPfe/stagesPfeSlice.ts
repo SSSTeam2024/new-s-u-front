@@ -1,12 +1,14 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { Etudiant } from "features/etudiant/etudiantSlice";
+import { Enseignant } from "features/enseignant/enseignantSlice";
 
 export interface StagePfeModel {
   _id?: string;
-  etudiant: string;
+  etudiant: Etudiant | string;
   type_stage?: string | null;
   binome?: string | null;
-  encadrant_univ1?: string | null;
-  encadrant_univ2?: string | null;
+  encadrant_univ1?: Enseignant | null;
+  encadrant_univ2?: Enseignant | null;
   encadrant_societe1: string;
   encadrant_societe2: string;
   societe?: string | null;

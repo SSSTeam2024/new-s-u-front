@@ -15,9 +15,9 @@ import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import Swal from "sweetalert2";
 import {
-  useAddAvisPersonnelMutation,
-  AvisPersonnel,
-} from "features/avisPersonnel/avisPersonnelSlice";
+  useAddAvisEnseignantMutation,
+  AvisEnseignant,
+} from "features/avisEnseignant/avisEnseignantSlice";
 import {
   useFetchDepartementsQuery,
   Departement,
@@ -28,32 +28,42 @@ import { RootState } from "app/store";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "features/account/authSlice";
 import {
-  useFetchAvisPersonnelByIdQuery,
-  useUpdateAvisPersonnelMutation,
-} from "features/avisPersonnel/avisPersonnelSlice";
+  useFetchAvisEnseignantByIdQuery,
+  useUpdateAvisEnseignantMutation,
+} from "features/avisEnseignant/avisEnseignantSlice";
 
-const EditAvisPersonnel = () => {
-  document.title = "Modifier Avis Personnel | ENIGA";
+const EditAvisEnseignant = () => {
+  document.title = "Modifier Avis Enseignant | ENIGA";
 
   const user = useSelector((state: RootState) => selectCurrentUser(state));
 
   const navigate = useNavigate();
   const location = useLocation();
   const locationState = location.state as { _id: string };
-  const [addAvisEnseignant] = useAddAvisPersonnelMutation();
-  const { data: avisPersonnel, isLoading: isLoadingById } =
-    useFetchAvisPersonnelByIdQuery(
+  const [addAvisEnseignant] = useAddAvisEnseignantMutation();
+  const { data: avisEnseignant, isLoading: isLoadingById } =
+    useFetchAvisEnseignantByIdQuery(
       { _id: locationState._id },
       { skip: !locationState._id }
     );
-
-  const [formData, setFormData] = useState<AvisPersonnel | null>(null);
+  const { data: departements } = useFetchDepartementsQuery();
+  const departement: Departement[] = Array.isArray(departements)
+    ? departements
+    : [];
+  const [formData, setFormData] = useState<AvisEnseignant | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
-  const [updateAvisPersonnel, { isSuccess, isError, error }] =
-    useUpdateAvisPersonnelMutation();
+  const [updateAvisEnseignant, { isSuccess, isError, error }] =
+    useUpdateAvisEnseignantMutation();
 
- 
+  // useEffect(() => {
+  //   if (avisEnseignant) {
+  //     setFormData(avisEnseignant);
+  //     if (avisEnseignant.date_avis) {
+  //       setSelectedDate(new Date(avisEnseignant.date_avis));
+  //     }
+  //   }
+  // }, [avisEnseignant]);
 
   const onChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -84,8 +94,31 @@ const EditAvisPersonnel = () => {
     }
   };
 
-  
-  const onSubmitAvisPersonnel = async (e: React.FormEvent<HTMLFormElement>) => {
+  // const onSubmitAvisEnseignant = async (
+  //   e: React.FormEvent<HTMLFormElement>
+  // ) => {
+  //   e.preventDefault();
+  //   if (formData) {
+  //     try {
+  //       await updateAvisEnseignant(formData).unwrap();
+  //       Swal.fire({
+  //         icon: "success",
+  //         title: "Succès",
+  //         text: "Avis modifié avec succès",
+  //         timer: 2000,
+  //         showConfirmButton: false,
+  //       });
+  //       navigate("/avis-enseignant/liste-avis-enseignant");
+  //     } catch (err) {
+  //       Swal.fire({
+  //         icon: "error",
+  //         title: "Erreur",
+  //         text: getErrorMessage(err),
+  //       });
+  //     }
+  //   }
+  // };
+  const onSubmitAvisEnseignant = async (e: React.FormEvent<HTMLFormElement>) => {
   e.preventDefault();
   if (formData) {
     try {
@@ -100,7 +133,7 @@ const EditAvisPersonnel = () => {
         // Keep base64Strings + extensions as-is
       };
 
-      await updateAvisPersonnel(cleanedFormData).unwrap();
+      await updateAvisEnseignant(cleanedFormData).unwrap();
 
       Swal.fire({
         icon: "success",
@@ -109,7 +142,7 @@ const EditAvisPersonnel = () => {
         timer: 2000,
         showConfirmButton: false,
       });
-      navigate("/avis-personnel/liste-avis-personnel");
+      navigate("/avis-enseignant/liste-avis-enseignant");
     } catch (err) {
       Swal.fire({
         icon: "error",
@@ -136,19 +169,19 @@ const EditAvisPersonnel = () => {
 
 
  useEffect(() => {
-  if (avisPersonnel) {
+  if (avisEnseignant) {
     setFormData({
-      ...avisPersonnel,
-      gallery: avisPersonnel.gallery || [],
+      ...avisEnseignant,
+      gallery: avisEnseignant.gallery || [],
     });
 
-    if (avisPersonnel.date_avis) {
-      setSelectedDate(new Date(avisPersonnel.date_avis));
+    if (avisEnseignant.date_avis) {
+      setSelectedDate(new Date(avisEnseignant.date_avis));
     }
   } else {
     setFormData(null);
   }
-}, [avisPersonnel]);
+}, [avisEnseignant]);
 
   // ✅ Convert file to base64
   const convertToBase64 = (
@@ -257,7 +290,7 @@ const handleDeleteFile = (indexToRemove: number) => {
                   <div className="mb-3">
                     <Form
                       className="tablelist-form"
-                      onSubmit={onSubmitAvisPersonnel}
+                      onSubmit={onSubmitAvisEnseignant}
                     >
                       <input
                         type="hidden"
@@ -299,7 +332,21 @@ const handleDeleteFile = (indexToRemove: number) => {
                               />
                             </div>
                           </Col>
-                         
+                          <Col lg={4} md={6}>
+                            <div className="mb-3">
+                              <Form.Label htmlFor="choices-multiple-remove-button">
+                                <h4 className="card-title mb-0">Département</h4>
+                              </Form.Label>
+                              <Select
+                                options={departement.map((c) => ({
+                                  value: c._id,
+                                  label: c.name_fr,
+                                }))}
+                                onChange={onSelectChange}
+                                isMulti
+                              />
+                            </div>
+                          </Col>
                         </Row>
                         <Row>
                           <Col lg={12}>
@@ -398,7 +445,66 @@ const handleDeleteFile = (indexToRemove: number) => {
                                 </div>
                               </Card.Header>
                            
-                            
+                              {/* <Card.Body>
+                                <div className="dropzone my-dropzone">
+                                  <Dropzone
+                                    onDrop={(acceptedFiles) =>
+                                      handleAcceptedFiles(acceptedFiles)
+                                    }
+                                  >
+                                    {({ getRootProps, getInputProps }) => (
+                                      <div
+                                        className="dropzone dz-clickable text-center"
+                                        {...getRootProps()}
+                                      >
+                                        <div className="dz-message needsclick">
+                                          <div className="mb-3">
+                                            <i className="display-4 text-muted ri-upload-cloud-2-fill" />
+                                          </div>
+                                          <h5>
+                                            Déposez des photos ici ou cliquez
+                                            pour télécharger.
+                                          </h5>
+                                        </div>
+                                        <input {...getInputProps()} />
+                                      </div>
+                                    )}
+                                  </Dropzone>
+
+                                  <div className="mt-3">
+                                    {formData?.gallery?.map((image, index) => (
+                                      <div
+                                        key={index}
+                                        className="image-preview"
+                                      >
+                                        <img
+                                          src={
+                                            image.startsWith("data:image")
+                                              ? image
+                                              : `data:image/jpeg;base64,${image}`
+                                          }
+                                          alt={`Image ${index + 1}`}
+                                          className="img-thumbnail me-2 mb-2"
+                                          style={{
+                                            width: "150px",
+                                            height: "150px",
+                                            objectFit: "cover",
+                                          }}
+                                        />
+                                        <Button
+                                          variant="danger"
+                                          size="sm"
+                                          onClick={() =>
+                                            handleDeleteFile(index)
+                                          }
+                                        >
+                                          Supprimer
+                                        </Button>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              </Card.Body> */}
                               <Card.Body>
                                  <div className="dropzone my-dropzone">
       {/* Dropzone */}
@@ -461,7 +567,7 @@ const handleDeleteFile = (indexToRemove: number) => {
                               id="add-btn"
                               type="submit"
                             >
-                              Modifier Avis Personnel
+                              Modifier Avis Enseignant
                             </Button>
                           </div>
                         </Col>
@@ -478,4 +584,4 @@ const handleDeleteFile = (indexToRemove: number) => {
   );
 };
 
-export default EditAvisPersonnel;
+export default EditAvisEnseignant;

@@ -94,6 +94,7 @@ import { diversDocSlice } from "features/diversDocExtra/diversDocSlice";
 import { commissionSlice } from "features/commission/commissionSlice";
 import { avisCommissionSlice } from "features/avisCommission/avisCommissionSlice";
 import { generatedPvSlice } from "features/generatedPv/generatedPvSlice";
+import { encadrementSlice} from "features/encadrement/encadrementSlice"
 
 export const store = configureStore({
   reducer: {
@@ -200,6 +201,7 @@ export const store = configureStore({
     [avisCommissionSlice.reducerPath]: avisCommissionSlice.reducer,
     //! Generated Pv
     [generatedPvSlice.reducerPath]: generatedPvSlice.reducer,
+     [encadrementSlice.reducerPath]: encadrementSlice.reducer,
     auth: authSlice,
     Layout: LayoutReducer,
     Profile: ProfileReducer,
@@ -290,7 +292,8 @@ export const store = configureStore({
       diversDocSlice.middleware,
       commissionSlice.middleware,
       avisCommissionSlice.middleware,
-      generatedPvSlice.middleware
+      generatedPvSlice.middleware,
+      encadrementSlice.middleware
     ]);
   },
 });

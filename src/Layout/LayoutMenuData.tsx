@@ -570,6 +570,20 @@ const Navdata = () => {
           parentId: "application_enseignant",
           icon: "bi bi-person-exclamation",
         },
+         {
+          id: "Encadrement",
+          label: "Encadrement",
+          link: "/application-enseignant/encadrement",
+          parentId: "application_enseignant",
+          icon: "bi bi-person-exclamation",
+        },
+         {
+          id: "Ajouter-Encadrement",
+          label: "Ajouter Encadrement",
+          link: "/application-enseignant/ajouter-encadrement",
+          parentId: "application_enseignant",
+          icon: "bi bi-person-exclamation",
+        },
       ],
     },
     //gestion departement

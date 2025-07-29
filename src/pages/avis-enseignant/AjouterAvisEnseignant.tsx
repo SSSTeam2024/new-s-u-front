@@ -125,13 +125,34 @@ const AjouterAvisEnseignant = () => {
     });
   }
 
+  // const handleAcceptedFiles = async (files: File[]) => {
+  //   const base64Images = await Promise.all(
+  //     files.map(async (file: File) => {
+  //       const { base64Data, extension } = await convertToBase64(file);
+
+  //       return {
+  //         base64Data,
+  //         extension,
+  //         fileName: file.name,
+  //       };
+  //     })
+  //   );
+
+  //   setFormData((prevState) => ({
+  //     ...prevState,
+  //     gallery: base64Images.map((img) => img.base64Data + "." + img.extension),
+  //     galleryBase64Strings: base64Images.map((img) => img.base64Data),
+  //     galleryExtensions: base64Images.map((img) => img.extension),
+  //   }));
+  // };
+
   const handleAcceptedFiles = async (files: File[]) => {
     const base64Images = await Promise.all(
       files.map(async (file: File) => {
         const { base64Data, extension } = await convertToBase64(file);
 
         return {
-          base64Data,
+          base64Data, // Store base64 data for preview
           extension,
           fileName: file.name,
         };
@@ -140,7 +161,7 @@ const AjouterAvisEnseignant = () => {
 
     setFormData((prevState) => ({
       ...prevState,
-      gallery: base64Images.map((img) => img.base64Data + "." + img.extension),
+      gallery: base64Images.map((img) => img.base64Data), // Store base64 data only for gallery
       galleryBase64Strings: base64Images.map((img) => img.base64Data),
       galleryExtensions: base64Images.map((img) => img.extension),
     }));
@@ -370,9 +391,14 @@ const AjouterAvisEnseignant = () => {
                                         className="image-preview"
                                       >
                                         <img
-                                          src={image}
+                                          src={`data:image/jpeg;base64,${image}`} // Use base64 image data for preview
                                           alt={`Image ${index + 1}`}
-                                          className="img-thumbnail"
+                                          className="img-thumbnail me-2 mb-2"
+                                          style={{
+                                            width: "150px",
+                                            height: "150px",
+                                            objectFit: "cover",
+                                          }}
                                         />
                                         <Button
                                           variant="danger"

@@ -267,7 +267,7 @@ const AjouterAvisEtudiant = () => {
                         />
                       </Form.Group>
 
-                      <Form.Group className="mb-3">
+                      {/* <Form.Group className="mb-3">
                         <Form.Label>Galerie</Form.Label>
                         <Dropzone
                           onDrop={(acceptedFiles) =>
@@ -310,7 +310,88 @@ const AjouterAvisEtudiant = () => {
                             </div>
                           ))}
                         </div>
-                      </Form.Group>
+                      </Form.Group> */}
+                        <Row>
+                                                <Col lg={12}>
+                                                  <Card>
+                                                    <Card.Header>
+                                                      <div className="d-flex">
+                                                        <div className="flex-shrink-0 me-3">
+                                                          <div className="avatar-sm">
+                                                            <div className="avatar-title rounded-circle bg-light text-primary fs-20">
+                                                              <i className="bi bi-images"></i>
+                                                            </div>
+                                                          </div>
+                                                        </div>
+                                                        <div className="flex-grow-1">
+                                                          <h5 className="card-title mb-1">
+                                                            Gallerie de Photos
+                                                          </h5>
+                                                          <p className="text-muted mb-0">
+                                                            Ajouter des images à l'avis
+                                                          </p>
+                                                        </div>
+                                                      </div>
+                                                    </Card.Header>
+                                                    <Card.Body>
+                                                      <div className="dropzone my-dropzone">
+                                                        <Dropzone
+                                                          onDrop={(acceptedFiles) =>
+                                                            handleAcceptedFiles(acceptedFiles)
+                                                          }
+                                                        >
+                                                          {({ getRootProps, getInputProps }) => (
+                                                            <div
+                                                              className="dropzone dz-clickable text-center"
+                                                              {...getRootProps()}
+                                                            >
+                                                              <div className="dz-message needsclick">
+                                                                <div className="mb-3">
+                                                                  <i className="display-4 text-muted ri-upload-cloud-2-fill" />
+                                                                </div>
+                                                                <h5>
+                                                                  Déposez des photos ici ou cliquez
+                                                                  pour télécharger.
+                                                                </h5>
+                                                              </div>
+                                                              <input {...getInputProps()} />
+                                                            </div>
+                                                          )}
+                                                        </Dropzone>
+                                                        <div className="mt-3">
+                                                          {formData.gallery?.map((image, index) => (
+                                                            <div
+                                                              key={index}
+                                                              className="image-preview"
+                                                            >
+                                                              <img
+                                                                src={`data:image/jpeg;base64,${image}`} // Use base64 image data for preview
+                                                                alt={`Image ${index + 1}`}
+                                                                className="img-thumbnail me-2 mb-2"
+                                                                style={{
+                                                                  width: "150px",
+                                                                  height: "150px",
+                                                                  objectFit: "cover",
+                                                                }}
+                                                              />
+                                                              <Button
+                                                                variant="danger"
+                                                                size="sm"
+                                                                onClick={() =>
+                                                                  handleDeleteFile(index)
+                                                                }
+                                                              >
+                                                                Supprimer
+                                                              </Button>
+                                                            </div>
+                                                          ))}
+                                                        </div>
+                                                      </div>
+                                                    </Card.Body>
+                                                  </Card>
+                                                </Col>
+                                              </Row>
+                      
 
                       <div className="mb-3 text-end">
                         <Button type="submit" color="primary">
