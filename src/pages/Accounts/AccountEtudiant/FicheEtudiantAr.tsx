@@ -140,11 +140,15 @@ const FicheEtudiantAr: React.FC = () => {
                           </td>
                         </tr>
                         <tr>
-                          <td className="fw-bold">الجنسية:</td>
-                          <td>{detailsEtudiant.nationalite}</td>
+                          <td className="fw-bold">
+                            الجنسية:
+                            </td>
+                          <td>{detailsEtudiant.nationalite?.trim().toLowerCase() === 'tunisienne' ? 'تونسية' :detailsEtudiant.nationalite}</td>
                         </tr>
                         <tr>
-                          <td className="fw-bold">رقم بطاقة التعريف :</td>
+                          <td className="fw-bold">
+                            رقم بطاقة التعريف :
+                            </td>
                           <td>{detailsEtudiant.num_CIN}</td>
                         </tr>
                         <tr>

@@ -241,7 +241,7 @@ const ListeReclamationPersonnel = () => {
                     to="/reclamation-personnel/single-reclamation-personnel"
                     state={cellProps}
                     className="badge bg-info-subtle text-info view-item-btn"
-                    data-bs-toggle="offcanvas"
+                    // data-bs-toggle="offcanvas"
                   >
                     <i
                       className="ph ph-eye"

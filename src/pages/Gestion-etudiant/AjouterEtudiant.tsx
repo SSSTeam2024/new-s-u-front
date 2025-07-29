@@ -17,6 +17,7 @@ import Swal from "sweetalert2";
 import "flatpickr/dist/flatpickr.min.css";
 import {
   EtudiantExcel,
+  HistoriqueEtudiant,
   useAddEtudiantMutation,
 } from "features/etudiant/etudiantSlice";
 import { useFetchEtatsEtudiantQuery } from "features/etatEtudiants/etatEtudiants";
@@ -335,6 +336,17 @@ const AjouterEtudiant = () => {
     matricule_number: "",
     passeport_number: "",
     cnss_number: "",
+    historique_etudiant: [
+      {
+        date_debut: "",         
+        date_fin: "",       
+        periode: "",      
+        situation: "",   
+        etablissement: "",               
+        fichier_departBase64: "",
+        fichier_departExtension: ""         
+      }
+    ],
   });
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -597,6 +609,75 @@ const AjouterEtudiant = () => {
       files: newArray,
     });
   }, [newArray]);
+
+ 
+
+  const handleHistoriqueEtudiantChange = (
+  index: number,
+  field: keyof HistoriqueEtudiant,
+  value: string
+) => {
+  const updated = [...(formData.historique_etudiant || [])];
+  if (!updated[index]) updated[index] = {};
+  updated[index][field] = value;
+  setFormData(prev => ({
+    ...prev,
+    historique_etudiant: updated,
+  }));
+};
+
+  const addHistoriqueEtudiant = () => {
+    setFormData((prev: any) => ({
+      ...prev,
+      historique_etudiant: [
+        ...prev.historique_etudiant,
+        {
+        
+        date_debut: "",         
+        date_fin: "",       
+        periode: "",      
+        situation: "",   
+        etablissement: "",               
+        fichier_departBase64: "",
+        fichier_departExtension: ""         
+      
+        },
+      ],
+    }));
+  };
+
+  const removeHistoriqueEtudiant = (index: number) => {
+    const updated = [...(formData.historique_etudiant || [])];
+    updated.splice(index, 1);
+    setFormData((prev: any) => ({ ...prev, historique_etudiant: updated }));
+  };
+
+ const handleHistoriqueEtudiantFileChange = async (
+    index: number,
+    field: string,
+    file: File | undefined
+  ) => {
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64 = (reader.result as string).split(",")[1];
+      setFormData((prev: any) => {
+        const updated = [...prev.historique_etudiant];
+        updated[index] = {
+          ...updated[index],
+          [`${field}Base64`]: base64,
+          [`${field}Extension`]: file.name.split(".").pop(),
+        };
+        return {
+          ...prev,
+          historique_etudiant: updated,
+        };
+      });
+    };
+    reader.readAsDataURL(file);
+  };
+
 
   return (
     <React.Fragment>
@@ -1760,6 +1841,107 @@ const AjouterEtudiant = () => {
                             </Row>
                           </Card.Body>
                         </Col>
+
+
+    <Col lg={12}>
+  <Card.Header>
+    <div className="d-flex">
+      <div className="flex-shrink-0 me-3">
+        <div className="avatar-sm">
+          <div className="avatar-title rounded-circle bg-light text-primary fs-20">
+            <i className="bi bi-journal-text"></i>
+          </div>
+        </div>
+      </div>
+      <div className="flex-grow-1">
+        <h5 className="card-title">Historique Académique /  السيرة الجامعية</h5>
+      </div>
+    </div>
+  </Card.Header>
+
+  {formData.historique_etudiant?.map((historique, index) => (
+    <Row key={index} className="align-items-end m-3 border-bottom pb-3">
+      <Col lg={4}>
+        <Form.Label>Date début</Form.Label>
+        <Form.Control
+          type="date"
+          value={historique.date_debut || ""}
+          onChange={(e) =>
+            handleHistoriqueEtudiantChange(index, "date_debut", e.target.value)
+          }
+        />
+      </Col>
+
+      <Col lg={4}>
+        <Form.Label>Date fin</Form.Label>
+        <Form.Control
+          type="date"
+          value={historique.date_fin || ""}
+          onChange={(e) =>
+            handleHistoriqueEtudiantChange(index, "date_fin", e.target.value)
+          }
+        />
+      </Col>
+
+      <Col lg={4}>
+        <Form.Label>Période</Form.Label>
+        <Form.Control
+          type="text"
+          value={historique.periode || ""}
+          onChange={(e) =>
+            handleHistoriqueEtudiantChange(index, "periode", e.target.value)
+          }
+        />
+      </Col>
+
+      <Col lg={4} className="mt-3">
+        <Form.Label>Situation</Form.Label>
+        <Form.Control
+          type="text"
+          value={historique.situation || ""}
+          onChange={(e) =>
+            handleHistoriqueEtudiantChange(index, "situation", e.target.value)
+          }
+        />
+      </Col>
+
+      <Col lg={4} className="mt-3">
+        <Form.Label>Établissement</Form.Label>
+        <Form.Control
+          type="text"
+          value={historique.etablissement || ""}
+          onChange={(e) =>
+            handleHistoriqueEtudiantChange(index, "etablissement", e.target.value)
+          }
+        />
+      </Col>
+
+      <Col lg={4} className="mt-3">
+        <Form.Label>Fichier Départ</Form.Label>
+        <Form.Control
+          type="file"
+          onChange={(e) => {
+            const file = (e.target as HTMLInputElement).files?.[0];
+            if (file) {
+              handleHistoriqueEtudiantFileChange(index, "fichier_depart", file);
+            }
+          }}
+        />
+      </Col>
+
+      <Col lg={3} className="mt-3">
+        <Button variant="danger" onClick={() => removeHistoriqueEtudiant(index)}>
+          Supprimer
+        </Button>
+      </Col>
+    </Row>
+  ))}
+
+  <Button variant="secondary" onClick={addHistoriqueEtudiant}>
+    + Ajouter une ligne
+  </Button>
+</Col>
+
                         <Col lg={12}>
                           <div className="hstack gap-2 justify-content-end">
                             <Button

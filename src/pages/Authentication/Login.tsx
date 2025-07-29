@@ -181,7 +181,7 @@ const Login = () => {
                   <div className="text-center">
                     <p className="mb-0 text-muted">
                       ©{new Date().getFullYear()} ENIGA. Réalisé avec{" "}
-                      <i className="mdi mdi-heart text-danger"></i> l'équipe 3S
+                      <i className="mdi mdi-heart text-danger"></i> par l'équipe 3S
                     </p>
                   </div>
                 </Col>

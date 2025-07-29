@@ -4,6 +4,7 @@ import {
   Card,
   Col,
   Container,
+  Dropdown,
   Form,
   Modal,
   Row,
@@ -11,6 +12,10 @@ import {
 } from "react-bootstrap";
 import Breadcrumb from "Common/BreadCrumb";
 import CountUp from "react-countup";
+import { actionAuthorization } from "utils/pathVerification";
+import { RootState } from "app/store";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "features/account/authSlice";
 import { Link, useNavigate } from "react-router-dom";
 import TableContainer from "Common/TableContainer";
 import Swal from "sweetalert2";
@@ -84,6 +89,8 @@ export interface PersonnelFileEXEL {
 
 const ListePersonnels = () => {
   document.title = "Liste des personnels | ENIGA";
+    const user = useSelector((state: RootState) => selectCurrentUser(state));
+  
 
   const navigate = useNavigate();
 
@@ -92,6 +99,13 @@ const ListePersonnels = () => {
   }
   const { data = [] } = useFetchPersonnelsQuery();
   const [personnelCount, setPersonnelCount] = useState(0);
+
+  const getLatestPositionFromRow = (row: any) => {
+  if (!row?.historique_positions?.length) return null;
+  return [...row.historique_positions].sort(
+    (a, b) => new Date(b.date_affectation).getTime() - new Date(a.date_affectation).getTime()
+  )[0];
+};
 
   useEffect(() => {
     if (data) {
@@ -178,30 +192,63 @@ const ListePersonnels = () => {
       //   filterable: true,
       // },
 
-      {
-        Header: "Service",
-        accessor: (row: any) => row?.service?.service_fr || "",
-        disableFilters: true,
-        filterable: true,
-      },
-      {
-        Header: "Poste",
-        accessor: (row: any) => row?.poste?.poste_fr || "",
-        disableFilters: true,
-        filterable: true,
-      },
-      {
-        Header: "Grade",
-        accessor: (row: any) => row?.grade?.grade_fr || "",
-        disableFilters: true,
-        filterable: true,
-      },
-      {
-        Header: "Catégorie",
-        accessor: (row: any) => row?.categorie?.categorie_fr || "",
-        disableFilters: true,
-        filterable: true,
-      },
+   {
+  Header: "Service",
+  accessor: (row: any) => {
+    if (!row.historique_services?.length) return "—";
+    const latest = [...row.historique_services].sort(
+      (a, b) => new Date(b.date_affectation).getTime() - new Date(a.date_affectation).getTime()
+    )[0];
+    return latest?.service?.service_fr || "—";
+  },
+  disableFilters: true,
+  filterable: true,
+},
+      // {
+      //   Header: "Poste",
+      //   accessor: (row: any) => row?.poste?.poste_fr || "",
+      //   disableFilters: true,
+      //   filterable: true,
+      // },
+  //     {
+  // Header: "Poste",
+  // accessor: (row: any) => getLatestPositionFromRow(row)?.poste.poste_fr || "—",
+  //     },
+  {
+  Header: "Poste",
+  accessor: (row: any) => {
+    if (!row.historique_positions?.length) return "—";
+    const latest = [...row.historique_positions].sort(
+      (a, b) => new Date(b.date_affectation).getTime() - new Date(a.date_affectation).getTime()
+    )[0];
+    return latest?.poste.poste_fr || "—";
+  },
+  disableFilters: true,
+  filterable: true,
+},
+     {
+  Header: "Grade",
+  accessor: (row: any) => {
+    if (!row.historique_positions?.length) return "—";
+    const latest = [...row.historique_positions].sort(
+      (a, b) => new Date(b.date_affectation).getTime() - new Date(a.date_affectation).getTime()
+    )[0];
+    return latest?.grade.grade_fr || "—";
+  },
+  disableFilters: true,
+  filterable: true,
+},{
+  Header: "Catégorie",
+  accessor: (row: any) => {
+    if (!row.historique_positions?.length) return "—";
+    const latest = [...row.historique_positions].sort(
+      (a, b) => new Date(b.date_affectation).getTime() - new Date(a.date_affectation).getTime()
+    )[0];
+    return latest?.categorie.categorie_fr || "—";
+  },
+  disableFilters: true,
+  filterable: true,
+},
       {
         Header: "Tél",
         accessor: "num_phone1",
@@ -301,6 +348,61 @@ const ListePersonnels = () => {
                   ></i>
                 </Link>
               </li>
+              {actionAuthorization(
+                              "/gestion-personnel/print-compte-personnel",
+                              user?.permissions!
+                            ) ? (
+                              <li>
+                                <Dropdown>
+                                  <Dropdown.Toggle
+                                    as="span"
+                                    className="badge bg-secondary-subtle text-secondary"
+                                    style={{ display: "inline-block", cursor: "pointer" }}
+                                  >
+                                    <i
+                                      className="bi bi-printer"
+                                      style={{
+                                        transition: "transform 0.3s ease-in-out",
+                                        cursor: "pointer",
+                                        fontSize: "1.5em",
+                                      }}
+                                      onMouseEnter={(e) =>
+                                        (e.currentTarget.style.transform = "scale(1.4)")
+                                      }
+                                      onMouseLeave={(e) =>
+                                        (e.currentTarget.style.transform = "scale(1)")
+                                      }
+                                    ></i>
+                                  </Dropdown.Toggle>
+              
+                                  <Dropdown.Menu>
+                                    <Dropdown.Item
+                                      as={Link}
+                                      to="/gestion-personnel/print-compte-personnel"
+                                      state={personnel}
+                                    >
+                                      📄Fiche personnel
+                                    </Dropdown.Item>
+                                    <Dropdown.Item
+                                      as={Link}
+                                      to="/gestion-personnel/ar-print-compte-personnel"
+                                      state={personnel}
+                                    >
+                                      📄  بطاقة ارشادات
+                                    </Dropdown.Item>
+                                     <Dropdown.Item
+                                      as={Link}
+                                      to="/gestion-personnel/ar-print-fiche-personnel"
+                                      state={personnel}
+                                    >
+                                      📄 بطاقة التسلسل المهني
+                                    </Dropdown.Item>
+                                  </Dropdown.Menu>
+                                </Dropdown>
+                              </li>
+                            ) : (
+                              <></>
+                            )}
               <li>
                 <Link
                   to="#"

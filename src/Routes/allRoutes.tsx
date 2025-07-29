@@ -213,6 +213,9 @@ import FicheEtudiant from "pages/Accounts/AccountEtudiant/FicheEtudiant";
 import FicheEtudiantAr from "pages/Accounts/AccountEtudiant/FicheEtudiantAr";
 import FicheEnseignant from "pages/Accounts/AccountEnseignant/FicheEnseignant";
 import FicheEnseignantAr from "pages/Accounts/AccountEnseignant/FicheEnseignantAr";
+import FichePersonnel from "pages/Accounts/AccountPersonnel/FichePersonnel";
+import FichePersonnelAr from "pages/Accounts/AccountPersonnel/FichePersonnelAr";
+
 import Messagerie from "pages/Messagerie/Messagerie";
 import Messages from "pages/Messages/Messages";
 import SingleMessage from "pages/Messages/SingleMessage";
@@ -273,6 +276,15 @@ import GenererPv from "pages/GenererPv";
 import ListeAvisCommission from "pages/AvisCommission/ListeAvisCommissions";
 import ListePv from "pages/GenererPv/ListePv";
 import DetailsPv from "pages/GenererPv/DetailsPv";
+import FicheProAr from "pages/Accounts/AccountPersonnel/FicheProAr";
+import FicheProPersonnelAr from "pages/Accounts/AccountPersonnel/FicheProAr";
+import FicheProEnseignantAr from "pages/Accounts/AccountEnseignant/FicheProEnseignantAr";
+import HistoriqueAcademique from "pages/Accounts/AccountEtudiant/FicheAcademique";
+import EditAvisEnseignant from "pages/avis-enseignant/EditAvisEnseignant";
+import EditAvisPersonnel from "pages/avis-personnel/editAvisPersonnel";
+import EncadrementRecapitulatif from "pages/ApplicationEnseignant/Encadrement/Encadrement";
+import AjouterEncadrement from "pages/ApplicationEnseignant/Encadrement/AjouterEncadrement";
+import EncadrementPrintPage from "pages/ApplicationEnseignant/Encadrement/EncadrementPrint";
 
 const authProtectedRoutes = [
   { path: "/dashboard", component: <Dashboard /> },
@@ -347,6 +359,10 @@ const authProtectedRoutes = [
     path: "/avis-enseignant/single-avis-enseignant",
     component: <SingleAvisEnseignant />,
   },
+   {
+    path: "/avis-enseignant/edit-avis-enseignant",
+    component: <EditAvisEnseignant />,
+  },
   // avis personnel
   {
     path: "/avis-personnel/liste-avis-personnel",
@@ -359,6 +375,10 @@ const authProtectedRoutes = [
   {
     path: "/avis-personnel/single-avis-personnel",
     component: <SingleAvisPersonnel />,
+  },
+  {
+    path: "/avis-personnel/edit-avis-personnel",
+    component: <EditAvisPersonnel />,
   },
   // actualite
   { path: "/actualite/liste-actualite", component: <ListeActualite /> },
@@ -392,6 +412,10 @@ const authProtectedRoutes = [
   {
     path: "/gestion-etudiant/ar-print-compte-etudiant",
     component: <FicheEtudiantAr />,
+  },
+ {
+    path: "/gestion-etudiant/ar-print-fiche-academique",
+    component: <HistoriqueAcademique />,
   },
 
   //! Gestion des Notes Examen
@@ -438,6 +462,18 @@ const authProtectedRoutes = [
     path: "/application-enseignant/modifier-support-cours",
     component: <EditCours />,
   },
+   {
+    path: "/application-enseignant/encadrement",
+    component: <EncadrementRecapitulatif />,
+  },
+   {
+    path: "/application-enseignant/ajouter-encadrement",
+    component: <AjouterEncadrement />,
+  },
+     {
+    path: "/application-enseignant/print-encadrement",
+    component: <EncadrementPrintPage />,
+  },
   //gestion enseignant
   {
     path: "/gestion-enseignant/ajouter-enseignant",
@@ -466,6 +502,10 @@ const authProtectedRoutes = [
   {
     path: "/gestion-enseignant/ar-print-compte-enseignant",
     component: <FicheEnseignantAr />,
+  },
+   {
+    path: "/gestion-enseignant/ar-print-fiche-enseignant",
+    component: <FicheProEnseignantAr />,
   },
 
   // Dossier Administratif Enseignant
@@ -509,6 +549,18 @@ const authProtectedRoutes = [
   {
     path: "/gestion-personnel/edit-compte-personnel",
     component: <EditProfilPersonnel />,
+  },
+  {
+    path: "/gestion-personnel/print-compte-personnel",
+    component: <FichePersonnel />,
+  },
+   {
+    path: "/gestion-personnel/ar-print-compte-personnel",
+    component: <FichePersonnelAr />,
+  },
+   {
+    path: "/gestion-personnel/ar-print-fiche-personnel",
+    component: <FicheProPersonnelAr />,
   },
   //Dossier administratif personnel
   {

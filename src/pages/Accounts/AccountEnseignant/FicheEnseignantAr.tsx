@@ -34,6 +34,8 @@ const FicheEnseignantAr: React.FC = () => {
   const lastVariable =
     Variables.length > 0 ? Variables[Variables.length - 1] : null;
 
+    
+
   return (
     <React.Fragment>
       <div className="page-content">

@@ -61,7 +61,7 @@ export const avisPersonnelSlice = createApi({
       updateAvisPersonnel: builder.mutation<void, AvisPersonnel>({
         query(avisPersonnel) {
           return {
-            url: `edit-demande-personnel`,
+            url: `edit-avis-personnel`,
             method: "PUT",
             body: avisPersonnel,
           };
@@ -71,7 +71,7 @@ export const avisPersonnelSlice = createApi({
       deleteAvisPersonnel: builder.mutation<AvisPersonnel, { _id: string }>({
         query(_id) {
           return {
-            url: `delete-demande-personnel`,
+            url: `delete-avis-personnel`,
             method: "DELETE",
             body: { _id },
           };

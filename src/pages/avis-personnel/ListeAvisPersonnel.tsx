@@ -109,16 +109,21 @@ const ListeAvisEtudiant = () => {
         disableFilters: true,
         filterable: true,
       },
-
-      // {
-      //     Header: "Date",
-      //     accessor: "date_avis",
-      //     disableFilters: true,
-      //     filterable: true,
-      // },
+ {
+  Header: "Date",
+  accessor: "createdAt",
+  disableFilters: true,
+  filterable: true,
+  Cell: ({ value }: { value: string }) => {
+    const date = new Date(value);
+    return `${date.getDate().toString().padStart(2, '0')}/${
+      (date.getMonth() + 1).toString().padStart(2, '0')
+    }/${date.getFullYear()}`;
+  },
+},
       {
         Header: "Auteur",
-        accessor: (row: any) => row.auteurId?.name || "",
+        accessor: (row: any) => row.auteurId?.login || "",
         disableFilters: true,
         filterable: true,
       },
@@ -132,7 +137,20 @@ const ListeAvisEtudiant = () => {
             variant="link"
             onClick={() => handleShowPdfModal(row.original.pdf)}
           >
-            Ouvrir PDF
+             <i
+                      className="bi bi-filetype-pdf me-2"
+                      style={{
+                        transition: "transform 0.3s ease-in-out",
+                        cursor: "pointer",
+                        fontSize: "1.5em",
+                      }}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.transform = "scale(1.4)")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.transform = "scale(1)")
+                      }
+                    ></i>
           </Button>
         ),
       },
@@ -143,7 +161,20 @@ const ListeAvisEtudiant = () => {
         filterable: true,
         Cell: ({ cell: { value } }: any) => (
           <Button variant="link" onClick={() => window.open(value, "_blank")}>
-            Aller au lien
+            <i
+                       className="bi bi-link-45deg me-2"
+                      style={{
+                        transition: "transform 0.3s ease-in-out",
+                        cursor: "pointer",
+                        fontSize: "1.5em",
+                      }}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.transform = "scale(1.4)")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.transform = "scale(1)")
+                      }
+                    ></i>
           </Button>
         ),
       },
@@ -161,10 +192,10 @@ const ListeAvisEtudiant = () => {
               ) ? (
                 <li>
                   <Link
-                    to="/avis-enseignant/single-avis-enseignant"
+                    to="/avis-personnel/single-avis-personnel"
                     state={cellProps}
                     className="badge bg-info-subtle text-info view-item-btn"
-                    data-bs-toggle="offcanvas"
+                    // data-bs-toggle="offcanvas"
                   >
                     <i
                       className="ph ph-eye"
@@ -192,6 +223,7 @@ const ListeAvisEtudiant = () => {
                 <li>
                   <Link
                     to="/avis-personnel/edit-avis-personnel"
+                    state={cellProps}
                     className="badge bg-success-subtle text-success edit-item-btn"
                   >
                     <i

@@ -395,6 +395,14 @@ const ListEnseignants = () => {
                       >
                         📄 بطاقة ارشادات
                       </Dropdown.Item>
+                       <Dropdown.Item
+                        as={Link}
+                        to="/gestion-enseignant/ar-print-fiche-enseignant"
+                        state={enseignant}
+                      >
+                        📄 بطاقة مهنية
+                      </Dropdown.Item>
+                    
                     </Dropdown.Menu>
                   </Dropdown>
                 </li>

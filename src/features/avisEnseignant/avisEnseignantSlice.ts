@@ -62,7 +62,7 @@ export const avisEnseignantSlice = createApi({
       updateAvisEnseignant: builder.mutation<void, AvisEnseignant>({
         query(avisEnseignant) {
           return {
-            url: `edit-demande-enseignant`,
+            url: `edit-avis-enseignant`,
             method: "PUT",
             body: avisEnseignant,
           };
@@ -72,7 +72,7 @@ export const avisEnseignantSlice = createApi({
       deleteAvisEnseignant: builder.mutation<AvisEnseignant, { _id: string }>({
         query(_id) {
           return {
-            url: `delete-demande-enseignant`,
+            url: `delete-avis-enseignant`,
             method: "DELETE",
             body: { _id },
           };
