@@ -1019,113 +1019,121 @@ const StagesPfe = () => {
               <div className="text-muted text-center py-4">
                 Ce type de stage ne nécessite pas de jury.
               </div>
-            ) :
-              stageDetails?.chef_jury! === null && stageDetails?.rapporteur1 === null && stageDetails?.rapporteur2 === null && stageDetails?.invite1 === null && stageDetails?.invite2 === null && stageDetails?.examinateur1 === null && stageDetails?.examinateur2 === null
-                ?
-                <div className="text-muted text-center py-4">
-                  Aucun jury assigné pour ce stage.
-                </div>
-                :
-                <div className="bg-white border rounded shadow-sm p-4">
-                  {stageDetails?.type_stage?.soutenance?.includes("Présentant de Jury") && (
+            ) : stageDetails?.chef_jury === null &&
+              stageDetails?.rapporteur1 === null &&
+              stageDetails?.rapporteur2 === null &&
+              stageDetails?.invite1 === null &&
+              stageDetails?.invite2 === null &&
+              stageDetails?.examinateur1 === null &&
+              stageDetails?.examinateur2 === null ? (
+              <div className="text-muted text-center py-4">
+                Aucun jury assigné pour ce stage.
+              </div>
+            ) : (
+              <div className="bg-white border rounded shadow-sm p-4">
+                {/* Présentant de Jury */}
+                {stageDetails?.type_stage?.soutenance?.includes("Présentant de Jury") && (
+                  <Row className="align-items-center mb-3">
+                    <Col lg={4} className="fw-semibold text-secondary">
+                      Présentant de Jury
+                    </Col>
+                    <Col className="text-dark">
+                      {stageDetails?.chef_jury?.prenom_fr} {stageDetails?.chef_jury?.nom_fr}
+                    </Col>
+                  </Row>
+                )}
+
+                {/* Rapporteurs */}
+
+                {stageDetails?.type_stage?.soutenance?.includes("Rapporteur 1") &&
+                  stageDetails?.type_stage?.soutenance?.includes("Rapporteur 2") ? (
+                  <>
                     <Row className="align-items-center mb-3">
                       <Col lg={4} className="fw-semibold text-secondary">
-                        Présentant de Jury
-                      </Col>
-                      <Col className="text-dark">
-                        {stageDetails?.chef_jury?.prenom_fr!} {stageDetails?.chef_jury?.nom_fr!}
-                      </Col>
-                    </Row>
-                  )}
-
-                  {stageDetails?.type_stage?.soutenance?.includes("Rapporteur 1") &&
-                    stageDetails?.type_stage?.soutenance?.includes("Rapporteur 2") && (
-                      <Row className="align-items-center mb-3">
-                        <Col lg={4} className="fw-semibold text-secondary">
-                          Rapporteur 1
-                        </Col>
-                        <Col className="text-dark">
-                          {stageDetails.rapporteur1.prenom_fr} {stageDetails.rapporteur1.nom_fr}
-                        </Col>
-                        <Col lg={4} className="fw-semibold text-secondary">
-                          Rapporteur 2
-                        </Col>
-                        <Col className="text-dark">
-                          {stageDetails.rapporteur2.prenom_fr} {stageDetails.rapporteur2.nom_fr}
-                        </Col>
-                      </Row>
-                    )}
-
-                  {stageDetails?.type_stage?.soutenance?.includes("Rapporteur 1") && (
-                    <Row className="align-items-center mb-3">
-                      <Col lg={4} className="fw-semibold text-secondary">
-                        Rapporteur
+                        Rapporteur 1
                       </Col>
                       <Col className="text-dark">
                         {stageDetails.rapporteur1.prenom_fr} {stageDetails.rapporteur1.nom_fr}
                       </Col>
                     </Row>
-                  )}
-
-                  {stageDetails?.type_stage?.soutenance?.includes("Invité 1") && (
                     <Row className="align-items-center mb-3">
                       <Col lg={4} className="fw-semibold text-secondary">
-                        Invité
+                        Rapporteur 2
                       </Col>
                       <Col className="text-dark">
-                        {stageDetails.invite1.prenom_fr} {stageDetails.invite1.nom_fr}
+                        {stageDetails.rapporteur2.prenom_fr} {stageDetails.rapporteur2.nom_fr}
                       </Col>
                     </Row>
-                  )}
+                  </>
+                ) : stageDetails?.type_stage?.soutenance?.includes("Rapporteur 1") ? (
+                  <Row className="align-items-center mb-3">
+                    <Col lg={4} className="fw-semibold text-secondary">
+                      Rapporteur
+                    </Col>
+                    <Col className="text-dark">
+                      {stageDetails.rapporteur1.prenom_fr} {stageDetails.rapporteur1.nom_fr}
+                    </Col>
+                  </Row>
+                ) : null}
 
-                  {stageDetails?.type_stage?.soutenance?.includes("Invité 1") &&
-                    stageDetails?.type_stage?.soutenance?.includes("Invité 2") && (
-                      <Row className="align-items-center mb-3">
-                        <Col lg={4} className="fw-semibold text-secondary">
-                          Invité 1
-                        </Col>
-                        <Col className="text-dark">
-                          {stageDetails.invite1.prenom_fr} {stageDetails.invite1.nom_fr}
-                        </Col>
-                        <Col lg={4} className="fw-semibold text-secondary">
-                          Invité 2
-                        </Col>
-                        <Col className="text-dark">
-                          {stageDetails.invite2.prenom_fr} {stageDetails.invite2.nom_fr}
-                        </Col>
-                      </Row>
-                    )}
 
-                  {stageDetails?.type_stage?.soutenance?.includes("Examinateur 1") && (
-                    <Row className="align-items-center mb-3">
-                      <Col lg={4} className="fw-semibold text-secondary">
-                        Examinateur
-                      </Col>
-                      <Col className="text-dark">
-                        {stageDetails.examinateur1.prenom_fr} {stageDetails.examinateur1.nom_fr}
-                      </Col>
-                    </Row>
-                  )}
+                {/* Invités */}
+                {stageDetails?.type_stage?.soutenance?.includes("Invité 1") &&
+                  stageDetails?.type_stage?.soutenance?.includes("Invité 2") ? (
+                  <Row className="align-items-center mb-3">
+                    <Col lg={4} className="fw-semibold text-secondary">
+                      Invité 1
+                    </Col>
+                    <Col className="text-dark">
+                      {stageDetails.invite1.prenom_fr} {stageDetails.invite1.nom_fr}
+                    </Col>
+                    <Col lg={4} className="fw-semibold text-secondary">
+                      Invité 2
+                    </Col>
+                    <Col className="text-dark">
+                      {stageDetails.invite2.prenom_fr} {stageDetails.invite2.nom_fr}
+                    </Col>
+                  </Row>
+                ) : stageDetails?.type_stage?.soutenance?.includes("Invité 1") ? (
+                  <Row className="align-items-center mb-3">
+                    <Col lg={4} className="fw-semibold text-secondary">
+                      Invité
+                    </Col>
+                    <Col className="text-dark">
+                      {stageDetails.invite1.prenom_fr} {stageDetails.invite1.nom_fr}
+                    </Col>
+                  </Row>
+                ) : null}
 
-                  {stageDetails?.type_stage?.soutenance?.includes("Examinateur 1") &&
-                    stageDetails?.type_stage?.soutenance?.includes("Examinateur 2") && (
-                      <Row className="align-items-center mb-3">
-                        <Col lg={4} className="fw-semibold text-secondary">
-                          Examinateur 1
-                        </Col>
-                        <Col className="text-dark">
-                          {stageDetails.examinateur1.prenom_fr} {stageDetails.examinateur1.nom_fr}
-                        </Col>
-                        <Col lg={4} className="fw-semibold text-secondary">
-                          Examinateur 2
-                        </Col>
-                        <Col className="text-dark">
-                          {stageDetails.examinateur2.prenom_fr} {stageDetails.examinateur2.nom_fr}
-                        </Col>
-                      </Row>
-                    )}
-                </div>
-            }
+                {/* Examinateurs */}
+                {stageDetails?.type_stage?.soutenance?.includes("Examinateur 1") &&
+                  stageDetails?.type_stage?.soutenance?.includes("Examinateur 2") ? (
+                  <Row className="align-items-center mb-3">
+                    <Col lg={4} className="fw-semibold text-secondary">
+                      Examinateur 1
+                    </Col>
+                    <Col className="text-dark">
+                      {stageDetails.examinateur1.prenom_fr} {stageDetails.examinateur1.nom_fr}
+                    </Col>
+                    <Col lg={4} className="fw-semibold text-secondary">
+                      Examinateur 2
+                    </Col>
+                    <Col className="text-dark">
+                      {stageDetails.examinateur2.prenom_fr} {stageDetails.examinateur2.nom_fr}
+                    </Col>
+                  </Row>
+                ) : stageDetails?.type_stage?.soutenance?.includes("Examinateur 1") ? (
+                  <Row className="align-items-center mb-3">
+                    <Col lg={4} className="fw-semibold text-secondary">
+                      Examinateur
+                    </Col>
+                    <Col className="text-dark">
+                      {stageDetails.examinateur1.prenom_fr} {stageDetails.examinateur1.nom_fr}
+                    </Col>
+                  </Row>
+                ) : null}
+              </div>
+            )}
           </Modal.Body>
 
           <Modal.Footer className="border-0 pt-1">
@@ -1134,6 +1142,7 @@ const StagesPfe = () => {
             </Button>
           </Modal.Footer>
         </Modal>
+
 
 
         <Modal show={showSoutenanceDateModal} onHide={() => setShowSoutenanceDateModal(false)} centered size="lg">
