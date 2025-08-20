@@ -69,6 +69,7 @@ const EditStagePfe = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const stageDetails = location.state;
+  console.log("stageDetails", stageDetails)
 
   const notifySuccess = () => {
     Swal.fire({
@@ -91,6 +92,7 @@ const EditStagePfe = () => {
       timer: 2500,
     });
   };
+
 
   //! Fetch Data
   const { data: allSocites = [] } = useFetchAllSocietesQuery();
@@ -183,11 +185,11 @@ const EditStagePfe = () => {
 
   const handleChange =
     (key: keyof typeof formData) =>
-    (
-      e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-    ) => {
-      setFormData((prev) => ({ ...prev, [key]: e.target.value }));
-    };
+      (
+        e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+      ) => {
+        setFormData((prev) => ({ ...prev, [key]: e.target.value }));
+      };
 
   const handleSocieteChange = async (e: ChangeEvent<HTMLSelectElement>) => {
     const name = e.target.value;
@@ -541,122 +543,122 @@ const EditStagePfe = () => {
               </Row>
               {(stageDetails.type_stage.localite === "Externe" ||
                 stageDetails.type_stage.localite === "Externe/Interne") && (
-                <>
-                  <Card.Header className="bg-primary opacity-50 text-white">
-                    <span className="fs-20 fw-bold">Information Société</span>
-                  </Card.Header>
-                  <Card.Body>
-                    <Row className="mb-2 d-flex align-items-center">
-                      <Col lg={1}>
-                        <span className="fs-16 fw-medium">Société</span>
-                      </Col>
-                      <Col>
-                        <div className="hstack gap-2">
-                          <select
-                            className="form-select"
-                            onChange={handleSocieteChange}
-                            value={formData.selectedSociete}
-                          >
-                            <option value="">Choisir ...</option>
-                            {allSocites.map((societe) => (
-                              <option value={societe.nom} key={societe?._id!}>
-                                {societe.nom}
-                              </option>
-                            ))}
-                          </select>
-                          <Button
-                            variant="primary"
-                            onClick={() => setOpenModal(!openModal)}
-                          >
-                            <i className="ri-add-line"></i>
-                          </Button>
-                        </div>
-                      </Col>
-                      {stageDetails.type_stage.encadrement.includes(
-                        "Encadrant Industriel 1"
-                      ) &&
-                      stageDetails.type_stage.encadrement.includes(
-                        "Encadrant Industriel 2"
-                      ) ? (
-                        <>
-                          <Col className="text-end">
-                            <span className="fs-15 fw-medium">
-                              Encadrant Société 1
-                            </span>
-                          </Col>
-                          <Col>
+                  <>
+                    <Card.Header className="bg-primary opacity-50 text-white">
+                      <span className="fs-20 fw-bold">Information Société</span>
+                    </Card.Header>
+                    <Card.Body>
+                      <Row className="mb-2 d-flex align-items-center">
+                        <Col lg={1}>
+                          <span className="fs-16 fw-medium">Société</span>
+                        </Col>
+                        <Col>
+                          <div className="hstack gap-2">
                             <select
                               className="form-select"
-                              value={formData.encadrantSociete1}
-                              onChange={handleChange("encadrantSociete1")}
+                              onChange={handleSocieteChange}
+                              value={formData.selectedSociete}
                             >
-                              {societe &&
-                                societe?.encadrant?.map(
-                                  (encadrant: any, index: number) => (
-                                    <option key={index} value={encadrant}>
-                                      {encadrant}
-                                    </option>
-                                  )
-                                )}
+                              <option value="">Choisir ...</option>
+                              {allSocites.map((societe) => (
+                                <option value={societe.nom} key={societe?._id!}>
+                                  {societe.nom}
+                                </option>
+                              ))}
                             </select>
-                          </Col>
-                          <Col className="text-end">
-                            <span className="fs-15 fw-medium">
-                              Encadrant Société 2
-                            </span>
-                          </Col>
-                          <Col>
-                            <select
-                              className="form-select"
-                              value={formData.encadrantSociete2}
-                              onChange={handleChange("encadrantSociete2")}
+                            <Button
+                              variant="primary"
+                              onClick={() => setOpenModal(!openModal)}
                             >
-                              {societe &&
-                                societe?.encadrant?.map(
-                                  (encadrant: any, index: number) => (
-                                    <option key={index} value={encadrant}>
-                                      {encadrant}
-                                    </option>
-                                  )
-                                )}
-                            </select>
-                          </Col>
-                        </>
-                      ) : (
-                        <>
-                          <Col className="text-end">
-                            <span className="fs-16 fw-medium">
-                              Encadrant Société
-                            </span>
-                          </Col>
-                          <Col>
-                            <select
-                              className="form-select"
-                              value={formData.encadrantSociete1}
-                              onChange={handleChange("encadrantSociete1")}
-                            >
-                              {societe &&
-                                societe?.encadrant?.map(
-                                  (encadrant: any, index: number) => (
-                                    <option key={index} value={encadrant}>
-                                      {encadrant}
-                                    </option>
-                                  )
-                                )}
-                            </select>
-                          </Col>
-                        </>
-                      )}
-                    </Row>
-                    {/* <Row>
+                              <i className="ri-add-line"></i>
+                            </Button>
+                          </div>
+                        </Col>
+                        {stageDetails.type_stage.encadrement.includes(
+                          "Encadrant Industriel 1"
+                        ) &&
+                          stageDetails.type_stage.encadrement.includes(
+                            "Encadrant Industriel 2"
+                          ) ? (
+                          <>
+                            <Col className="text-end">
+                              <span className="fs-15 fw-medium">
+                                Encadrant Société 1
+                              </span>
+                            </Col>
+                            <Col>
+                              <select
+                                className="form-select"
+                                value={formData.encadrantSociete1}
+                                onChange={handleChange("encadrantSociete1")}
+                              >
+                                {societe &&
+                                  societe?.encadrant?.map(
+                                    (encadrant: any, index: number) => (
+                                      <option key={index} value={encadrant}>
+                                        {encadrant}
+                                      </option>
+                                    )
+                                  )}
+                              </select>
+                            </Col>
+                            <Col className="text-end">
+                              <span className="fs-15 fw-medium">
+                                Encadrant Société 2
+                              </span>
+                            </Col>
+                            <Col>
+                              <select
+                                className="form-select"
+                                value={formData.encadrantSociete2}
+                                onChange={handleChange("encadrantSociete2")}
+                              >
+                                {societe &&
+                                  societe?.encadrant?.map(
+                                    (encadrant: any, index: number) => (
+                                      <option key={index} value={encadrant}>
+                                        {encadrant}
+                                      </option>
+                                    )
+                                  )}
+                              </select>
+                            </Col>
+                          </>
+                        ) : (
+                          <>
+                            <Col className="text-end">
+                              <span className="fs-16 fw-medium">
+                                Encadrant Société
+                              </span>
+                            </Col>
+                            <Col>
+                              <select
+                                className="form-select"
+                                value={formData.encadrantSociete1}
+                                onChange={handleChange("encadrantSociete1")}
+                              >
+                                {societe &&
+                                  societe?.encadrant?.map(
+                                    (encadrant: any, index: number) => (
+                                      <option key={index} value={encadrant}>
+                                        {encadrant}
+                                      </option>
+                                    )
+                                  )}
+                              </select>
+                            </Col>
+                          </>
+                        )}
+                      </Row>
+                      {/* <Row>
                       <Col lg={2}>
                         <span className="fs-16 fw-medium">Informations</span>
                       </Col>
                       <Col>{societe && societe?.infos}</Col>
                     </Row> */}
-                  </Card.Body>
-                </>
-              )}
+                    </Card.Body>
+                  </>
+                )}
               <Card.Header className="bg-info-subtle text-dark-emphasis">
                 <Row>
                   <Col>
@@ -709,15 +711,15 @@ const EditStagePfe = () => {
                   </Col>
                 </Row>
                 {stageDetails.type_stage.avec_encadrement === "Oui" &&
-                (stageDetails.type_stage.encadrement.includes(
-                  "Encadrant Universitaire 1"
-                ) ||
-                  stageDetails.type_stage.encadrement.includes(
+                  (stageDetails.type_stage.encadrement.includes(
+                    "Encadrant Universitaire 1"
+                  ) ||
+                    stageDetails.type_stage.encadrement.includes(
+                      "Encadrant Universitaire 2"
+                    )) &&
+                  stageDetails.type_stage?.encadrement.includes(
                     "Encadrant Universitaire 2"
-                  )) &&
-                stageDetails.type_stage?.encadrement.includes(
-                  "Encadrant Universitaire 2"
-                ) ? (
+                  ) ? (
                   <Row className="mb-3 d-flex align-items-center">
                     <Col lg={2}>
                       <span className="fs-16 fw-medium">Encadrant 1</span>
@@ -883,159 +885,211 @@ const EditStagePfe = () => {
                   <Card.Body>
                     <Row className="mb-2">
                       <Col lg={2}>
-                        <span className="fs-16 fw-medium">Chef Jury</span>
+                        <span className="fs-16 fw-medium">Présentant Jury</span>
                       </Col>
                       <Col lg={3}>
-                        <select
-                          className="form-select"
-                          onChange={handleChange("chef_jury")}
-                          value={formData.chef_jury}
-                        >
-                          {[...allEnseignants]
-                            .sort((a, b) => {
-                              if (a.prenom_fr < b.prenom_fr) {
-                                return -1;
-                              }
-                              if (a.prenom_fr > b.prenom_fr) {
-                                return 1;
-                              }
-                              return 0;
-                            })
-                            .map((enseignant) => (
-                              <option
-                                key={enseignant?._id!}
-                                value={enseignant?._id!}
-                              >
-                                {enseignant.prenom_fr} {enseignant.nom_fr}
-                              </option>
-                            ))}
-                        </select>
+                        {allEnseignants.find(e => e._id === formData.chef_jury) ? (
+                          <input
+                            type="text"
+                            className="form-control"
+                            value={`${allEnseignants.find(e => e._id === formData.chef_jury)?.prenom_fr} ${allEnseignants.find(e => e._id === formData.chef_jury)?.nom_fr}`}
+                            readOnly
+                          />
+                        ) : (
+                          <span className="text-secondary">Aucun présentant jury affecté</span>
+                        )}
                       </Col>
                     </Row>
-                    {stageDetails.type_stage.soutenance.includes(
-                      "Rapporteur 1"
-                    ) &&
-                      stageDetails.type_stage.soutenance.includes(
-                        "Rapporteur 2"
-                      ) && (
+
+
+                    {stageDetails.type_stage.soutenance.includes("Rapporteur 1") &&
+                      stageDetails.type_stage.soutenance.includes("Rapporteur 2") && (
                         <Row className="mb-2 d-flex align-items-center">
                           <Col lg={2}>
-                            <span className="fs-16 fw-medium">
-                              Rapporteur 1
-                            </span>
+                            <span className="fs-16 fw-medium">Rapporteur 1</span>
                           </Col>
                           <Col>
-                            <select
-                              className="form-select"
-                              onChange={handleChange("rapporteur1")}
-                              value={formData.rapporteur1}
-                            >
-                              {[...allEnseignants]
-                                .sort((a, b) => {
-                                  if (a.prenom_fr < b.prenom_fr) {
-                                    return -1;
-                                  }
-                                  if (a.prenom_fr > b.prenom_fr) {
-                                    return 1;
-                                  }
-                                  return 0;
-                                })
-                                .map((enseignant) => (
-                                  <option
-                                    key={enseignant?._id!}
-                                    value={enseignant?._id!}
-                                  >
-                                    {enseignant.prenom_fr} {enseignant.nom_fr}
-                                  </option>
-                                ))}
-                            </select>
+                            <input
+                              type="text"
+                              className="form-control"
+                              value={
+                                allEnseignants.find(e => e._id === formData.rapporteur1)
+                                  ? `${allEnseignants.find(e => e._id === formData.rapporteur1)?.prenom_fr} ${allEnseignants.find(e => e._id === formData.rapporteur1)?.nom_fr}`
+                                  : ""
+                              }
+                              readOnly
+                            />
                           </Col>
                           <Col lg={2}>
-                            <span className="fs-16 fw-medium">
-                              Rapporteur 2
-                            </span>
+                            <span className="fs-16 fw-medium">Rapporteur 2</span>
                           </Col>
                           <Col>
-                            <select
-                              className="form-select"
-                              onChange={handleChange("rapporteur2")}
-                              value={formData.rapporteur2}
-                            >
-                              {[...allEnseignants]
-                                .sort((a, b) => {
-                                  if (a.prenom_fr < b.prenom_fr) {
-                                    return -1;
-                                  }
-                                  if (a.prenom_fr > b.prenom_fr) {
-                                    return 1;
-                                  }
-                                  return 0;
-                                })
-                                .map((enseignant) => (
-                                  <option
-                                    key={enseignant?._id!}
-                                    value={enseignant?._id!}
-                                  >
-                                    {enseignant.prenom_fr} {enseignant.nom_fr}
-                                  </option>
-                                ))}
-                            </select>
+                            <input
+                              type="text"
+                              className="form-control"
+                              value={
+                                allEnseignants.find(e => e._id === formData.rapporteur2)
+                                  ? `${allEnseignants.find(e => e._id === formData.rapporteur2)?.prenom_fr} ${allEnseignants.find(e => e._id === formData.rapporteur2)?.nom_fr}`
+                                  : ""
+                              }
+                              readOnly
+                            />
                           </Col>
                         </Row>
                       )}
-                    {stageDetails.type_stage.soutenance.includes(
-                      "Rapporteur 1"
-                    ) && (
+
+                    {stageDetails.type_stage.soutenance.includes("Rapporteur 1") && !stageDetails.type_stage.soutenance.includes("Rapporteur 2") && (
                       <Row className="mb-2 d-flex align-items-center">
                         <Col lg={2}>
                           <span className="fs-16 fw-medium">Rapporteur</span>
                         </Col>
                         <Col lg={3}>
-                          <select
-                            className="form-select"
-                            onChange={handleChange("rapporteur1")}
-                            value={formData.rapporteur1}
-                          >
-                            {[...allEnseignants]
-                              .sort((a, b) => {
-                                if (a.prenom_fr < b.prenom_fr) {
-                                  return -1;
-                                }
-                                if (a.prenom_fr > b.prenom_fr) {
-                                  return 1;
-                                }
-                                return 0;
-                              })
-                              .map((enseignant) => (
-                                <option
-                                  key={enseignant?._id!}
-                                  value={enseignant?._id!}
-                                >
-                                  {enseignant.prenom_fr} {enseignant.nom_fr}
-                                </option>
-                              ))}
-                          </select>
+                          <input
+                            type="text"
+                            className="form-control"
+                            value={
+                              allEnseignants.find(e => e._id === formData.rapporteur1)
+                                ? `${allEnseignants.find(e => e._id === formData.rapporteur1)?.prenom_fr} ${allEnseignants.find(e => e._id === formData.rapporteur1)?.nom_fr}`
+                                : ""
+                            }
+                            readOnly
+                          />
                         </Col>
                       </Row>
                     )}
+
+                    {stageDetails.type_stage.soutenance.includes("Invité 1") && !stageDetails.type_stage.soutenance.includes("Invité 2") && (
+                      <Row className="mb-2 d-flex align-items-center">
+                        <Col lg={2}>
+                          <span className="fs-16 fw-medium">Invité</span>
+                        </Col>
+                        <Col lg={3}>
+                          <input
+                            type="text"
+                            className="form-control"
+                            value={
+                              allEnseignants.find(e => e._id === formData.invite1)
+                                ? `${allEnseignants.find(e => e._id === formData.invite1)?.prenom_fr} ${allEnseignants.find(e => e._id === formData.invite1)?.nom_fr}`
+                                : ""
+                            }
+                            readOnly
+                          />
+                        </Col>
+                      </Row>
+                    )}
+
+                    {stageDetails.type_stage.soutenance.includes("Invité 1") &&
+                      stageDetails.type_stage.soutenance.includes("Invité 2") && (
+                        <Row className="mb-2 d-flex align-items-center">
+                          <Col lg={2}>
+                            <span className="fs-16 fw-medium">Invité 1</span>
+                          </Col>
+                          <Col>
+                            <input
+                              type="text"
+                              className="form-control"
+                              value={
+                                allEnseignants.find(e => e._id === formData.invite1)
+                                  ? `${allEnseignants.find(e => e._id === formData.invite1)?.prenom_fr} ${allEnseignants.find(e => e._id === formData.invite1)?.nom_fr}`
+                                  : ""
+                              }
+                              readOnly
+                            />
+                          </Col>
+                          <Col lg={2}>
+                            <span className="fs-16 fw-medium">Invité 2</span>
+                          </Col>
+                          <Col>
+                            <input
+                              type="text"
+                              className="form-control"
+                              value={
+                                allEnseignants.find(e => e._id === formData.invite2)
+                                  ? `${allEnseignants.find(e => e._id === formData.invite2)?.prenom_fr} ${allEnseignants.find(e => e._id === formData.invite2)?.nom_fr}`
+                                  : ""
+                              }
+                              readOnly
+                            />
+                          </Col>
+                        </Row>
+                      )}
+
+                    {stageDetails.type_stage.soutenance.includes("Examinateur 1") && !stageDetails.type_stage.soutenance.includes("Examinateur 2") && (
+                      <Row className="mb-2 d-flex align-items-center">
+                        <Col lg={2}>
+                          <span className="fs-16 fw-medium">Examinateur</span>
+                        </Col>
+                        <Col lg={3}>
+                          <input
+                            type="text"
+                            className="form-control"
+                            value={
+                              allEnseignants.find(e => e._id === formData.examinateur1)
+                                ? `${allEnseignants.find(e => e._id === formData.examinateur1)?.prenom_fr} ${allEnseignants.find(e => e._id === formData.examinateur1)?.nom_fr}`
+                                : ""
+                            }
+                            readOnly
+                          />
+                        </Col>
+                      </Row>
+                    )}
+
+                    {stageDetails.type_stage.soutenance.includes("Examinateur 1") &&
+                      stageDetails.type_stage.soutenance.includes("Examinateur 2") && (
+                        <Row className="mb-2 d-flex align-items-center">
+                          <Col lg={2}>
+                            <span className="fs-16 fw-medium">Examinateur 1</span>
+                          </Col>
+                          <Col>
+                            <input
+                              type="text"
+                              className="form-control"
+                              value={
+                                allEnseignants.find(e => e._id === formData.examinateur1)
+                                  ? `${allEnseignants.find(e => e._id === formData.examinateur1)?.prenom_fr} ${allEnseignants.find(e => e._id === formData.examinateur1)?.nom_fr}`
+                                  : ""
+                              }
+                              readOnly
+                            />
+                          </Col>
+                          <Col lg={2}>
+                            <span className="fs-16 fw-medium">Examinateur 2</span>
+                          </Col>
+                          <Col>
+                            <input
+                              type="text"
+                              className="form-control"
+                              value={
+                                allEnseignants.find(e => e._id === formData.examinateur2)
+                                  ? `${allEnseignants.find(e => e._id === formData.examinateur2)?.prenom_fr} ${allEnseignants.find(e => e._id === formData.examinateur2)?.nom_fr}`
+                                  : ""
+                              }
+                              readOnly
+                            />
+                          </Col>
+                        </Row>
+                      )}
+
                     <Row className="mb-2">
                       <Col lg={2}>
                         <span className="fs-16 fw-medium">Salle</span>
                       </Col>
                       <Col lg={3}>
-                        <select
-                          className="form-select"
-                          onChange={handleChange("salle")}
-                          value={formData.salle}
-                        >
-                          {allSalles.map((salle) => (
-                            <option key={salle?._id!} value={salle?.salle}>
-                              {salle?.salle}
-                            </option>
-                          ))}
-                        </select>
+                        {formData.salle && allSalles.find(s => s.salle === formData.salle) ? (
+                          <input
+                            type="text"
+                            className="form-control"
+                            value={allSalles.find(s => s.salle === formData.salle)?.salle || ""}
+                            readOnly
+                          />
+                        ) : (
+                          <span className="text-info">Aucune salle affectée</span>
+                        )}
                       </Col>
                     </Row>
+
+
+
                     <Row className="mb-2">
                       <Col lg={2}>
                         <span className="fs-16 fw-medium">Date Soutenance</span>
@@ -1046,6 +1100,7 @@ const EditStagePfe = () => {
                           value={formData.dateSoutenance}
                           onChange={handleChange("dateSoutenance")}
                           className="text-center"
+                          readOnly
                         />
                       </Col>
                       <Col className="text-end">
@@ -1057,6 +1112,7 @@ const EditStagePfe = () => {
                           value={formData.heureDebut}
                           onChange={handleChange("heureDebut")}
                           className="text-center"
+                          readOnly
                         />
                       </Col>
                       <Col className="text-end">
@@ -1068,6 +1124,7 @@ const EditStagePfe = () => {
                           value={formData.heureFin}
                           onChange={handleChange("heureFin")}
                           className="text-center"
+                          readOnly
                         />
                       </Col>
                     </Row>
@@ -1105,14 +1162,18 @@ const EditStagePfe = () => {
                         <select
                           className="form-select"
                           onChange={handleChange("mention")}
-                          value={formData.mention}
+                          value={formData.mention || ""}
                         >
+                          <option value="" disabled>
+                            Sélectionner
+                          </option>
                           <option value="Assez Bien">Assez Bien</option>
                           <option value="Bien">Bien</option>
                           <option value="Très Bien">Très Bien</option>
                           <option value="Excellent">Excellent</option>
                         </select>
                       </Col>
+
                     </Row>
                     <Row className="mb-2 d-flex align-items-center">
                       <Col lg={2}>
@@ -1132,6 +1193,7 @@ const EditStagePfe = () => {
                   </Card.Body>
                 </>
               )}
+
               {stageDetails.binome !== null && (
                 <>
                   <Card.Header className="bg-warning-subtle text-dark">
@@ -1191,81 +1253,81 @@ const EditStagePfe = () => {
                       {isImageFile(
                         `${basePath}/propositionSigneFiles/${stageDetails.file_proposition_signe}`
                       ) && (
-                        <>
-                          <img
-                            src={`${basePath}/propositionSigneFiles/${stageDetails.file_proposition_signe}`}
-                            alt="Proposition PFE Signé"
-                            style={{ width: "100%", height: "auto" }}
-                          />
-                          <Button
-                            variant="primary"
-                            onClick={() =>
-                              handleShowPropositionSigneModal(
-                                `${basePath}/propositionSigneFiles/${stageDetails.file_proposition_signe}`
-                              )
-                            }
-                            style={{
-                              position: "absolute",
-                              top: 36,
-                              left: 10,
-                              width: "94%",
-                              height: "91%",
-                              backgroundColor: "rgba(0, 0, 0, 0.5)",
-                              color: "#fff",
-                              border: "none",
-                              cursor: "pointer",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              fontSize: "16px",
-                              zIndex: 10,
-                            }}
-                          >
-                            Afficher l'Image
-                          </Button>
-                        </>
-                      )}
+                          <>
+                            <img
+                              src={`${basePath}/propositionSigneFiles/${stageDetails.file_proposition_signe}`}
+                              alt="Proposition PFE Signé"
+                              style={{ width: "100%", height: "auto" }}
+                            />
+                            <Button
+                              variant="primary"
+                              onClick={() =>
+                                handleShowPropositionSigneModal(
+                                  `${basePath}/propositionSigneFiles/${stageDetails.file_proposition_signe}`
+                                )
+                              }
+                              style={{
+                                position: "absolute",
+                                top: 36,
+                                left: 10,
+                                width: "94%",
+                                height: "91%",
+                                backgroundColor: "rgba(0, 0, 0, 0.5)",
+                                color: "#fff",
+                                border: "none",
+                                cursor: "pointer",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                fontSize: "16px",
+                                zIndex: 10,
+                              }}
+                            >
+                              Afficher l'Image
+                            </Button>
+                          </>
+                        )}
                       {isPDFFile(
                         `${basePath}/propositionSigneFiles/${stageDetails.file_proposition_signe}`
                       ) && (
-                        <>
-                          <iframe
-                            src={`${basePath}/propositionSigneFiles/${stageDetails.file_proposition_signe}`}
-                            style={{
-                              border: "none",
-                              width: "100%",
-                              height: "250px",
-                            }}
-                            title="Proposition PFE Signé"
-                          />
-                          <Button
-                            variant="primary"
-                            onClick={() =>
-                              handleShowPropositionSigneModal(
-                                `${basePath}/propositionSigneFiles/${stageDetails.file_proposition_signe}`
-                              )
-                            }
-                            style={{
-                              position: "absolute",
-                              top: 36,
-                              left: 10,
-                              width: "94%",
-                              height: "91%",
-                              backgroundColor: "rgba(0, 0, 0, 0.5)",
-                              color: "#fff",
-                              border: "none",
-                              cursor: "pointer",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              fontSize: "16px",
-                              zIndex: 10,
-                            }}
-                          >
-                            Afficher PDF
-                          </Button>
-                        </>
-                      )}
+                          <>
+                            <iframe
+                              src={`${basePath}/propositionSigneFiles/${stageDetails.file_proposition_signe}`}
+                              style={{
+                                border: "none",
+                                width: "100%",
+                                height: "250px",
+                              }}
+                              title="Proposition PFE Signé"
+                            />
+                            <Button
+                              variant="primary"
+                              onClick={() =>
+                                handleShowPropositionSigneModal(
+                                  `${basePath}/propositionSigneFiles/${stageDetails.file_proposition_signe}`
+                                )
+                              }
+                              style={{
+                                position: "absolute",
+                                top: 36,
+                                left: 10,
+                                width: "94%",
+                                height: "91%",
+                                backgroundColor: "rgba(0, 0, 0, 0.5)",
+                                color: "#fff",
+                                border: "none",
+                                cursor: "pointer",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                fontSize: "16px",
+                                zIndex: 10,
+                              }}
+                            >
+                              Afficher PDF
+                            </Button>
+                          </>
+                        )}
                     </div>
                     <div className="text-center">
                       <input
@@ -1306,81 +1368,81 @@ const EditStagePfe = () => {
                       {isImageFile(
                         `${basePath}/attestationFiles/${stageDetails.file_attestation}`
                       ) && (
-                        <>
-                          <img
-                            src={`${basePath}/attestationFiles/${stageDetails.file_attestation}`}
-                            alt="Attestation de stage"
-                            style={{ width: "100%", height: "auto" }}
-                          />
-                          <Button
-                            variant="primary"
-                            onClick={() =>
-                              handleShowAttestationModal(
-                                `${basePath}/attestationFiles/${stageDetails.file_attestation}`
-                              )
-                            }
-                            style={{
-                              position: "absolute",
-                              top: 36,
-                              left: 10,
-                              width: "94%",
-                              height: "91%",
-                              backgroundColor: "rgba(0, 0, 0, 0.5)",
-                              color: "#fff",
-                              border: "none",
-                              cursor: "pointer",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              fontSize: "16px",
-                              zIndex: 10,
-                            }}
-                          >
-                            Afficher l'Image
-                          </Button>
-                        </>
-                      )}
+                          <>
+                            <img
+                              src={`${basePath}/attestationFiles/${stageDetails.file_attestation}`}
+                              alt="Attestation de stage"
+                              style={{ width: "100%", height: "auto" }}
+                            />
+                            <Button
+                              variant="primary"
+                              onClick={() =>
+                                handleShowAttestationModal(
+                                  `${basePath}/attestationFiles/${stageDetails.file_attestation}`
+                                )
+                              }
+                              style={{
+                                position: "absolute",
+                                top: 36,
+                                left: 10,
+                                width: "94%",
+                                height: "91%",
+                                backgroundColor: "rgba(0, 0, 0, 0.5)",
+                                color: "#fff",
+                                border: "none",
+                                cursor: "pointer",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                fontSize: "16px",
+                                zIndex: 10,
+                              }}
+                            >
+                              Afficher l'Image
+                            </Button>
+                          </>
+                        )}
                       {isPDFFile(
                         `${basePath}/attestationFiles/${stageDetails.file_attestation}`
                       ) && (
-                        <>
-                          <iframe
-                            src={`${basePath}/attestationFiles/${stageDetails.file_attestation}`}
-                            style={{
-                              border: "none",
-                              width: "100%",
-                              height: "200px",
-                            }}
-                            title="Attestation de stage"
-                          />
-                          <Button
-                            variant="primary"
-                            onClick={() =>
-                              handleShowAttestationModal(
-                                `${basePath}/attestationFiles/${stageDetails.file_attestation}`
-                              )
-                            }
-                            style={{
-                              position: "absolute",
-                              top: 36,
-                              left: 10,
-                              width: "94%",
-                              height: "91%",
-                              backgroundColor: "rgba(0, 0, 0, 0.5)",
-                              color: "#fff",
-                              border: "none",
-                              cursor: "pointer",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              fontSize: "16px",
-                              zIndex: 10,
-                            }}
-                          >
-                            Afficher PDF
-                          </Button>
-                        </>
-                      )}
+                          <>
+                            <iframe
+                              src={`${basePath}/attestationFiles/${stageDetails.file_attestation}`}
+                              style={{
+                                border: "none",
+                                width: "100%",
+                                height: "200px",
+                              }}
+                              title="Attestation de stage"
+                            />
+                            <Button
+                              variant="primary"
+                              onClick={() =>
+                                handleShowAttestationModal(
+                                  `${basePath}/attestationFiles/${stageDetails.file_attestation}`
+                                )
+                              }
+                              style={{
+                                position: "absolute",
+                                top: 36,
+                                left: 10,
+                                width: "94%",
+                                height: "91%",
+                                backgroundColor: "rgba(0, 0, 0, 0.5)",
+                                color: "#fff",
+                                border: "none",
+                                cursor: "pointer",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                fontSize: "16px",
+                                zIndex: 10,
+                              }}
+                            >
+                              Afficher PDF
+                            </Button>
+                          </>
+                        )}
                     </div>
                     <div className="text-center">
                       <input
@@ -1421,81 +1483,81 @@ const EditStagePfe = () => {
                       {isImageFile(
                         `${basePath}/rapportFiles/${stageDetails.file_rapport}`
                       ) && (
-                        <>
-                          <img
-                            src={`${basePath}/rapportFiles/${stageDetails.file_rapport}`}
-                            alt="Rapport"
-                            style={{ width: "100%", height: "auto" }}
-                          />
-                          <Button
-                            variant="primary"
-                            onClick={() =>
-                              handleShowRapportModal(
-                                `${basePath}/rapportFiles/${stageDetails.file_rapport}`
-                              )
-                            }
-                            style={{
-                              position: "absolute",
-                              top: 36,
-                              left: 10,
-                              width: "94%",
-                              height: "91%",
-                              backgroundColor: "rgba(0, 0, 0, 0.5)",
-                              color: "#fff",
-                              border: "none",
-                              cursor: "pointer",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              fontSize: "16px",
-                              zIndex: 10,
-                            }}
-                          >
-                            Afficher l'Image
-                          </Button>
-                        </>
-                      )}
+                          <>
+                            <img
+                              src={`${basePath}/rapportFiles/${stageDetails.file_rapport}`}
+                              alt="Rapport"
+                              style={{ width: "100%", height: "auto" }}
+                            />
+                            <Button
+                              variant="primary"
+                              onClick={() =>
+                                handleShowRapportModal(
+                                  `${basePath}/rapportFiles/${stageDetails.file_rapport}`
+                                )
+                              }
+                              style={{
+                                position: "absolute",
+                                top: 36,
+                                left: 10,
+                                width: "94%",
+                                height: "91%",
+                                backgroundColor: "rgba(0, 0, 0, 0.5)",
+                                color: "#fff",
+                                border: "none",
+                                cursor: "pointer",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                fontSize: "16px",
+                                zIndex: 10,
+                              }}
+                            >
+                              Afficher l'Image
+                            </Button>
+                          </>
+                        )}
                       {isPDFFile(
                         `${basePath}/rapportFiles/${stageDetails.file_rapport}`
                       ) && (
-                        <>
-                          <iframe
-                            src={`${basePath}/rapportFiles/${stageDetails.file_rapport}`}
-                            style={{
-                              border: "none",
-                              width: "500px",
-                              height: "290px",
-                            }}
-                            title="Rapport"
-                          />
-                          <Button
-                            variant="primary"
-                            onClick={() =>
-                              handleShowRapportModal(
-                                `${basePath}/rapportFiles/${stageDetails.file_rapport}`
-                              )
-                            }
-                            style={{
-                              position: "absolute",
-                              top: 36,
-                              left: 10,
-                              width: "94%",
-                              height: "91%",
-                              backgroundColor: "rgba(0, 0, 0, 0.5)",
-                              color: "#fff",
-                              border: "none",
-                              cursor: "pointer",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              fontSize: "16px",
-                              zIndex: 10,
-                            }}
-                          >
-                            Afficher PDF
-                          </Button>
-                        </>
-                      )}
+                          <>
+                            <iframe
+                              src={`${basePath}/rapportFiles/${stageDetails.file_rapport}`}
+                              style={{
+                                border: "none",
+                                width: "500px",
+                                height: "290px",
+                              }}
+                              title="Rapport"
+                            />
+                            <Button
+                              variant="primary"
+                              onClick={() =>
+                                handleShowRapportModal(
+                                  `${basePath}/rapportFiles/${stageDetails.file_rapport}`
+                                )
+                              }
+                              style={{
+                                position: "absolute",
+                                top: 36,
+                                left: 10,
+                                width: "94%",
+                                height: "91%",
+                                backgroundColor: "rgba(0, 0, 0, 0.5)",
+                                color: "#fff",
+                                border: "none",
+                                cursor: "pointer",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                fontSize: "16px",
+                                zIndex: 10,
+                              }}
+                            >
+                              Afficher PDF
+                            </Button>
+                          </>
+                        )}
                     </div>
                     <div className="text-center">
                       <input

@@ -1,10 +1,11 @@
-import React, { useState } from "react";
-import { Card, Col, Container, Form, Row } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
+import { Button, Card, Col, Container, Form, Modal, Row } from "react-bootstrap";
 import DataTable from "react-data-table-component";
 import Breadcrumb from "Common/BreadCrumb";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import {
+  useAssignJuryMutation,
   useDeleteStagePfeMutation,
   useFetchAllStagePfeQuery,
 } from "features/stagesPfe/stagesPfeSlice";
@@ -13,11 +14,17 @@ import { formatDate } from "utils/formatDate";
 import { useFetchAllTypeStageQuery } from "features/typeStage/typeStageSlice";
 import { useFetchEnseignantsQuery } from "features/enseignant/enseignantSlice";
 
+import withReactContent from "sweetalert2-react-content";
+import DisponibiliteSoutenance from "./DisponibiliteSoutenance";
+import DecisionSoutenance from "./DecisionSoutenance";
+
 const StagesPfe = () => {
   document.title = "Liste Stages | ENIGA";
 
   const { data = [] } = useFetchAllStagePfeQuery();
+  console.log("data", data)
   const { data: allTypesStage = [] } = useFetchAllTypeStageQuery();
+  console.log("allTypesStage", allTypesStage)
   const { data: allEnseignants = [] } = useFetchEnseignantsQuery();
 
   const [deleteStagePfe] = useDeleteStagePfeMutation();
@@ -39,6 +46,11 @@ const StagesPfe = () => {
   const [avancementPerType, setAvancementPerType] = useState<string>("");
   const [selectedType, setSelectedType] = useState("Tous");
   const [etatPerType, setEtatPerType] = useState<string>("");
+  const [jury, setJury] = useState<boolean>(false);
+
+  const handleChangeJury = () => {
+    setJury(!jury);
+  };
 
   const handleChange = (event: any) => {
     setSelectedType(event.target.value);
@@ -112,7 +124,8 @@ const StagesPfe = () => {
         }
       });
   };
-
+  const [showSoutenanceDateModal, setShowSoutenanceDateModal] = useState(false);
+  const [showDecisionModal, setShowDecisionModal] = useState(false);
   const columns = [
     {
       name: <span className="font-weight-bold fs-13">Etudiant</span>,
@@ -182,6 +195,11 @@ const StagesPfe = () => {
       sortable: true,
     },
     {
+      name: <span className="font-weight-bold fs-13">Membres Jury</span>,
+      selector: (row: any) => <Link to="#" state={row} onClick={handleChangeJury}>{row.type_stage.soutenance?.length}</Link>,
+      sortable: true,
+    },
+    {
       name: <span className="font-weight-bold fs-13">Date Demande</span>,
       selector: (row: any) => formatDate(row?.createdAt!),
       sortable: true,
@@ -192,14 +210,14 @@ const StagesPfe = () => {
       cell: (row: any) => {
         return (
           <ul className="hstack gap-2 list-unstyled mb-0">
-            {/* <li>
+            <li>
               <Link
-                to="/gestion-des-stages/visualiser-stage-pfe"
-                className="badge badge-soft-info view-item-btn"
+                to="/gestion-des-stages/modifier-stage"
+                className="badge badge-soft-success edit-item-btn"
                 state={row}
               >
                 <i
-                  className="ph ph-eye"
+                  className="ph ph-pencil-simple-line"
                   style={{
                     transition: "transform 0.3s ease-in-out",
                     cursor: "pointer",
@@ -213,15 +231,55 @@ const StagesPfe = () => {
                   }
                 ></i>
               </Link>
-            </li> */}
+            </li>
             <li>
-              <Link
-                to="/gestion-des-stages/modifier-stage"
-                className="badge badge-soft-success edit-item-btn"
-                state={row}
+              <span
+                className="badge badge-soft-secondary edit-item-btn"
+                style={{ cursor: "pointer" }}
+                onClick={() => {
+                  setSelectedStage(row);
+                  setShowJuryModal(true);
+                }}
               >
                 <i
-                  className="ph ph-pencil-simple-line"
+                  className="ph ph-users-three"
+                  style={{
+                    transition: "transform 0.3s ease-in-out",
+                    fontSize: "1.5em",
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.3)")}
+                  onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+                ></i>
+              </span>
+            </li>
+            <li>
+              <Link to="#" className="badge badge-soft-warning remove-item-btn" onClick={() => {
+                setSelectedStage(row);
+                setShowSoutenanceDateModal(true);
+              }}>
+                <i
+                  className="ph ph-exam"
+                  style={{
+                    transition: "transform 0.3s ease-in-out",
+                    cursor: "pointer",
+                    fontSize: "1.5em",
+                  }}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.transform = "scale(1.3)")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.transform = "scale(1)")
+                  }
+                ></i>
+              </Link>
+            </li>
+            <li>
+              <Link to="#" className="badge badge-soft-info remove-item-btn" onClick={() => {
+                setSelectedStage(row);
+                setShowDecisionModal(true);
+              }}>
+                <i
+                  className="ph ph-megaphone"
                   style={{
                     transition: "transform 0.3s ease-in-out",
                     cursor: "pointer",
@@ -333,6 +391,144 @@ const StagesPfe = () => {
     return filteredStagePfe.reverse();
   };
 
+
+  const [showJuryModal, setShowJuryModal] = useState(false);
+  const [selectedStage, setSelectedStage] = useState<any>(null);
+
+
+  const [assignJury] = useAssignJuryMutation();
+
+  const [juryRoles, setJuryRoles] = useState<{ [key: string]: string }>({});
+  useEffect(() => {
+    if (selectedStage) {
+      const initialRoles: { [key: string]: string } = {};
+
+      selectedStage?.type_stage?.soutenance?.forEach((role: string) => {
+        switch (role) {
+          case "Rapporteur 1":
+            initialRoles[role] = typeof selectedStage.rapporteur1 === "object"
+              ? selectedStage.rapporteur1?._id
+              : selectedStage.rapporteur1 || "";
+            break;
+          case "Rapporteur 2":
+            initialRoles[role] = typeof selectedStage.rapporteur2 === "object"
+              ? selectedStage.rapporteur2?._id
+              : selectedStage.rapporteur2 || "";
+            break;
+          case "Examinateur 1":
+            initialRoles[role] = typeof selectedStage.examinateur1 === "object"
+              ? selectedStage.examinateur1?._id
+              : selectedStage.examinateur1 || "";
+            break;
+          case "Examinateur 2":
+            initialRoles[role] = typeof selectedStage.examinateur2 === "object"
+              ? selectedStage.examinateur2?._id
+              : selectedStage.examinateur2 || "";
+            break;
+          case "Invité 1":
+            initialRoles[role] = typeof selectedStage.invite1 === "object"
+              ? selectedStage.invite1?._id
+              : selectedStage.invite1 || "";
+            break;
+          case "Invité 2":
+            initialRoles[role] = typeof selectedStage.invite2 === "object"
+              ? selectedStage.invite2?._id
+              : selectedStage.invite2 || "";
+            break;
+          case "Présentant de Jury":
+            initialRoles[role] = typeof selectedStage.chef_jury === "object"
+              ? selectedStage.chef_jury?._id
+              : selectedStage.chef_jury || "";
+            break;
+          default:
+            break;
+        }
+      });
+
+      setJuryRoles(initialRoles);
+    }
+  }, [selectedStage]);
+
+
+  const handleSelectChange = (role: string, value: string) => {
+    setJuryRoles((prev) => ({
+      ...prev,
+      [role]: value,
+    }));
+  };
+  const handleSaveJury = () => {
+    const payload: any = {};
+
+    Object.entries(juryRoles).forEach(([role, value]) => {
+      switch (role) {
+        case "Rapporteur 1":
+          payload.rapporteur1 = value;
+          break;
+        case "Rapporteur 2":
+          payload.rapporteur2 = value;
+          break;
+        case "Examinateur 1":
+          payload.examinateur1 = value;
+          break;
+        case "Examinateur 2":
+          payload.examinateur2 = value;
+          break;
+        case "Invité 1":
+          payload.invite1 = value;
+          break;
+        case "Invité 2":
+          payload.invite2 = value;
+          break;
+        case "Présentant de Jury":
+          payload.chef_jury = value;
+          break;
+        default:
+          break;
+      }
+    });
+    console.log("payload", payload)
+    assignJury({ id: selectedStage._id, data: payload })
+      .unwrap()
+      .then(() => {
+        // ✅ Update stage locally
+        setSelectedStage((prev: any) => ({
+          ...prev,
+          ...payload,
+        }));
+
+        // ✅ Show success toast
+        Swal.fire({
+          toast: true,
+          position: "top-end",
+          icon: "success",
+          title: "Jury assigné avec succès",
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+        });
+
+        // ✅ Close modal and reset roles
+        setShowJuryModal(false);
+        setJuryRoles({});
+      })
+      .catch((err) => {
+        console.error("Erreur d’assignation :", err);
+        Swal.fire({
+          toast: true,
+          position: "top-end",
+          icon: "error",
+          title: "Erreur lors de l'affectation du jury",
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+        });
+      });
+  };
+
+  const location = useLocation();
+  const stageDetails = location.state;
+
+  console.log("stageDetails", stageDetails);
   return (
     <React.Fragment>
       <div className="page-content">
@@ -592,6 +788,372 @@ const StagesPfe = () => {
             </Card.Body>
           </Card>
         </Container>
+        <Modal show={showJuryModal} onHide={() => setShowJuryModal(false)} centered>
+          <Modal.Header closeButton>
+            <Modal.Title>Assigner les membres du jury</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            {selectedStage?.type_stage?.avec_soutenance === "Oui" ? (
+              <>
+                {selectedStage.type_stage.soutenance?.map((role: string, index: number) => (
+                  <div key={index} className="mb-3">
+                    <label className="form-label">{role}</label>
+                    <select
+                      className="form-select"
+                      value={juryRoles[role] || ""}
+                      onChange={(e) => handleSelectChange(role, e.target.value)}
+                    >
+                      <option value="">-- Sélectionner un enseignant --</option>
+                      {allEnseignants?.map((ens: any) => (
+                        <option key={ens._id} value={ens._id}>
+                          {ens?.prenom_fr} {ens?.nom_fr}
+                        </option>
+                      ))}
+                    </select>
+
+                  </div>
+                ))}
+              </>
+            ) : (
+              <p className="text-muted">Ce type de stage ne nécessite pas de soutenance.</p>
+            )}
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={() => setShowJuryModal(false)}>
+              Annuler
+            </Button>
+            <Button variant="primary" onClick={handleSaveJury}>
+              Enregistrer
+            </Button>
+
+          </Modal.Footer>
+        </Modal>
+
+        {/* <Modal show={jury} onHide={() => setJury(false)} centered>
+          <Modal.Header closeButton>
+            <Modal.Title>Les membres du jury</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            {stageDetails?.type_stage?.avec_soutenance === "Non" ? (
+              <p className="text-muted text-center">Ce type de stage ne nécessite pas de jury.</p>)
+              :
+              stageDetails?.chef_jury! === null && stageDetails?.rapporteur1 === null && stageDetails?.rapporteur2 === null && stageDetails?.invite1 === null && stageDetails?.invite2 === null && stageDetails?.examinateur1 === null && stageDetails?.examinateur2 === null
+                ?
+                <p className="text-muted text-center">Aucun jury assigné pour ce stage.</p>
+                :
+                <>
+                  {stageDetails?.type_stage?.soutenance?.includes(
+                    "Présentant de Jury"
+                  ) && (
+                      <Row className="mb-2 d-flex align-items-center">
+                        <Col lg={5}>
+                          <span className="fs-16 fw-medium">Présentant de Jury</span>
+                        </Col>
+                        <Col>
+                          <span
+                          >
+                            {stageDetails?.chef_jury?.prenom_fr!} {stageDetails?.chef_jury?.nom_fr!}
+                          </span>
+                        </Col>
+                      </Row>
+                    )}
+                  {stageDetails?.type_stage?.soutenance?.includes(
+                    "Rapporteur 1"
+                  ) &&
+                    stageDetails?.type_stage?.soutenance?.includes(
+                      "Rapporteur 2"
+                    ) && (
+                      <Row className="mb-2 d-flex align-items-center">
+                        <Col lg={3}>
+                          <span className="fs-16 fw-medium">
+                            Rapporteur 1
+                          </span>
+                        </Col>
+                        <Col>
+                          <span
+                          >
+                            {stageDetails.rapporteur1.prenom_fr} {stageDetails.rapporteur1.nom_fr}
+                          </span>
+                        </Col>
+                        <Col lg={3}>
+                          <span className="fs-16 fw-medium">
+                            Rapporteur 2
+                          </span>
+                        </Col>
+                        <Col>
+                          <span
+                          >
+                            {stageDetails.rapporteur2.prenom_fr} {stageDetails.rapporteur2.nom_fr}
+                          </span>
+                        </Col>
+                      </Row>
+                    )}
+                  {stageDetails?.type_stage?.soutenance?.includes(
+                    "Rapporteur 1"
+                  ) && (
+                      <Row className="mb-2 d-flex align-items-center">
+                        <Col lg={3}>
+                          <span className="fs-16 fw-medium">Rapporteur</span>
+                        </Col>
+                        <Col>
+                          <span
+                          >
+                            {stageDetails.rapporteur1.prenom_fr} {stageDetails.rapporteur1.nom_fr}
+                          </span>
+                        </Col>
+                      </Row>
+                    )}
+                  {stageDetails?.type_stage?.soutenance?.includes(
+                    "Invité 1"
+                  ) && (
+                      <Row className="mb-2 d-flex align-items-center">
+                        <Col lg={3}>
+                          <span className="fs-16 fw-medium">Invité</span>
+                        </Col>
+                        <Col lg={3}>
+                          <span
+                          >
+                            {stageDetails.invite1.prenom_fr} {stageDetails.invite1.nom_fr}
+                          </span>
+                        </Col>
+                      </Row>
+                    )}
+                  {stageDetails?.type_stage?.soutenance?.includes(
+                    "Invité 1"
+                  ) &&
+                    stageDetails?.type_stage?.soutenance?.includes(
+                      "Invité 2"
+                    ) && (
+                      <Row className="mb-2 d-flex align-items-center">
+                        <Col lg={3}>
+                          <span className="fs-16 fw-medium">
+                            Invité 1
+                          </span>
+                        </Col>
+                        <Col>
+                          <span
+                          >
+                            {stageDetails.invite1.prenom_fr} {stageDetails.invite1.nom_fr}
+                          </span>
+                        </Col>
+                        <Col lg={3}>
+                          <span className="fs-16 fw-medium">
+                            Invité 2
+                          </span>
+                        </Col>
+                        <Col>
+                          <span
+                          >
+                            {stageDetails.invite2.prenom_fr} {stageDetails.invite2.nom_fr}
+                          </span>
+                        </Col>
+                      </Row>
+                    )}
+                  {stageDetails?.type_stage?.soutenance?.includes(
+                    "Examinateur 1"
+                  ) && (
+                      <Row className="mb-2 d-flex align-items-center">
+                        <Col lg={3}>
+                          <span className="fs-16 fw-medium">Examinateur</span>
+                        </Col>
+                        <Col lg={3}>
+                          <span
+                          >
+                            {stageDetails.examinateur1.prenom_fr} {stageDetails.examinateur1.nom_fr}
+                          </span>
+                        </Col>
+                      </Row>
+                    )}
+                  {stageDetails?.type_stage?.soutenance?.includes(
+                    "Examinateur 1"
+                  ) &&
+                    stageDetails?.type_stage?.soutenance?.includes(
+                      "Examinateur 2"
+                    ) && (
+                      <Row className="mb-2 d-flex align-items-center">
+                        <Col lg={3}>
+                          <span className="fs-16 fw-medium">
+                            Examinateur 1
+                          </span>
+                        </Col>
+                        <Col>
+                          <span
+                          >
+                            {stageDetails.examinateur1.prenom_fr} {stageDetails.examinateur1.nom_fr}
+                          </span>
+                        </Col>
+                        <Col lg={3}>
+                          <span className="fs-16 fw-medium">
+                            Examinateur 2
+                          </span>
+                        </Col>
+                        <Col>
+                          <span
+                          >
+                            {stageDetails.examinateur2.prenom_fr} {stageDetails.examinateur2.nom_fr}
+                          </span>
+                        </Col>
+                      </Row>
+                    )}
+                </>
+            }
+
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={() => setShowJuryModal(false)}>
+              Annuler
+            </Button>
+
+          </Modal.Footer>
+        </Modal> */}
+
+        <Modal show={jury} onHide={() => setJury(false)} centered size="lg">
+          <Modal.Header closeButton className="border-0 pb-1">
+            <Modal.Title className="fs-4 fw-bold text-primary">
+              Les membres du jury
+            </Modal.Title>
+          </Modal.Header>
+
+          <Modal.Body className="bg-light px-4 py-3 rounded">
+            {stageDetails?.type_stage?.avec_soutenance === "Non" ? (
+              <div className="text-muted text-center py-4">
+                Ce type de stage ne nécessite pas de jury.
+              </div>
+            ) :
+              stageDetails?.chef_jury! === null && stageDetails?.rapporteur1 === null && stageDetails?.rapporteur2 === null && stageDetails?.invite1 === null && stageDetails?.invite2 === null && stageDetails?.examinateur1 === null && stageDetails?.examinateur2 === null
+                ?
+                <div className="text-muted text-center py-4">
+                  Aucun jury assigné pour ce stage.
+                </div>
+                :
+                <div className="bg-white border rounded shadow-sm p-4">
+                  {stageDetails?.type_stage?.soutenance?.includes("Présentant de Jury") && (
+                    <Row className="align-items-center mb-3">
+                      <Col lg={4} className="fw-semibold text-secondary">
+                        Présentant de Jury
+                      </Col>
+                      <Col className="text-dark">
+                        {stageDetails?.chef_jury?.prenom_fr!} {stageDetails?.chef_jury?.nom_fr!}
+                      </Col>
+                    </Row>
+                  )}
+
+                  {stageDetails?.type_stage?.soutenance?.includes("Rapporteur 1") &&
+                    stageDetails?.type_stage?.soutenance?.includes("Rapporteur 2") && (
+                      <Row className="align-items-center mb-3">
+                        <Col lg={4} className="fw-semibold text-secondary">
+                          Rapporteur 1
+                        </Col>
+                        <Col className="text-dark">
+                          {stageDetails.rapporteur1.prenom_fr} {stageDetails.rapporteur1.nom_fr}
+                        </Col>
+                        <Col lg={4} className="fw-semibold text-secondary">
+                          Rapporteur 2
+                        </Col>
+                        <Col className="text-dark">
+                          {stageDetails.rapporteur2.prenom_fr} {stageDetails.rapporteur2.nom_fr}
+                        </Col>
+                      </Row>
+                    )}
+
+                  {stageDetails?.type_stage?.soutenance?.includes("Rapporteur 1") && (
+                    <Row className="align-items-center mb-3">
+                      <Col lg={4} className="fw-semibold text-secondary">
+                        Rapporteur
+                      </Col>
+                      <Col className="text-dark">
+                        {stageDetails.rapporteur1.prenom_fr} {stageDetails.rapporteur1.nom_fr}
+                      </Col>
+                    </Row>
+                  )}
+
+                  {stageDetails?.type_stage?.soutenance?.includes("Invité 1") && (
+                    <Row className="align-items-center mb-3">
+                      <Col lg={4} className="fw-semibold text-secondary">
+                        Invité
+                      </Col>
+                      <Col className="text-dark">
+                        {stageDetails.invite1.prenom_fr} {stageDetails.invite1.nom_fr}
+                      </Col>
+                    </Row>
+                  )}
+
+                  {stageDetails?.type_stage?.soutenance?.includes("Invité 1") &&
+                    stageDetails?.type_stage?.soutenance?.includes("Invité 2") && (
+                      <Row className="align-items-center mb-3">
+                        <Col lg={4} className="fw-semibold text-secondary">
+                          Invité 1
+                        </Col>
+                        <Col className="text-dark">
+                          {stageDetails.invite1.prenom_fr} {stageDetails.invite1.nom_fr}
+                        </Col>
+                        <Col lg={4} className="fw-semibold text-secondary">
+                          Invité 2
+                        </Col>
+                        <Col className="text-dark">
+                          {stageDetails.invite2.prenom_fr} {stageDetails.invite2.nom_fr}
+                        </Col>
+                      </Row>
+                    )}
+
+                  {stageDetails?.type_stage?.soutenance?.includes("Examinateur 1") && (
+                    <Row className="align-items-center mb-3">
+                      <Col lg={4} className="fw-semibold text-secondary">
+                        Examinateur
+                      </Col>
+                      <Col className="text-dark">
+                        {stageDetails.examinateur1.prenom_fr} {stageDetails.examinateur1.nom_fr}
+                      </Col>
+                    </Row>
+                  )}
+
+                  {stageDetails?.type_stage?.soutenance?.includes("Examinateur 1") &&
+                    stageDetails?.type_stage?.soutenance?.includes("Examinateur 2") && (
+                      <Row className="align-items-center mb-3">
+                        <Col lg={4} className="fw-semibold text-secondary">
+                          Examinateur 1
+                        </Col>
+                        <Col className="text-dark">
+                          {stageDetails.examinateur1.prenom_fr} {stageDetails.examinateur1.nom_fr}
+                        </Col>
+                        <Col lg={4} className="fw-semibold text-secondary">
+                          Examinateur 2
+                        </Col>
+                        <Col className="text-dark">
+                          {stageDetails.examinateur2.prenom_fr} {stageDetails.examinateur2.nom_fr}
+                        </Col>
+                      </Row>
+                    )}
+                </div>
+            }
+          </Modal.Body>
+
+          <Modal.Footer className="border-0 pt-1">
+            <Button variant="outline-secondary" onClick={() => setShowJuryModal(false)}>
+              Fermer
+            </Button>
+          </Modal.Footer>
+        </Modal>
+
+
+        <Modal show={showSoutenanceDateModal} onHide={() => setShowSoutenanceDateModal(false)} centered size="lg">
+          <Modal.Header closeButton>
+            <Modal.Title>Soutenance</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <DisponibiliteSoutenance showSoutenanceDateModal={showSoutenanceDateModal} setShowSoutenanceDateModal={setShowSoutenanceDateModal} stage={selectedStage} />
+          </Modal.Body>
+        </Modal>
+
+        <Modal show={showDecisionModal} onHide={() => setShowDecisionModal(false)} centered size="lg">
+          <Modal.Header closeButton>
+            <Modal.Title>Décision</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <DecisionSoutenance showDecisionModal={showDecisionModal} setShowDecisionModal={setShowDecisionModal} stage={selectedStage} />
+          </Modal.Body>
+        </Modal>
+
       </div>
     </React.Fragment>
   );

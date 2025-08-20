@@ -13,17 +13,17 @@ export interface StagePfeModel {
   encadrant_societe2: string;
   societe?: string | null;
   status_stage: string;
-  date_debut: string; 
+  date_debut: string;
   date_fin: string;
   date_soutenance: string;
-  sujet: string; 
-  description: string; 
+  sujet: string;
+  description: string;
   avis: string;
   mention?: string;
-  mot_cle?: string; 
-  biblio?:string; 
-  salle?: string; 
-  remarque?: string; 
+  mot_cle?: string;
+  biblio?: string;
+  salle?: string;
+  remarque?: string;
   note: string;
   rapporteur1?: string;
   rapporteur2?: string;
@@ -34,7 +34,7 @@ export interface StagePfeModel {
   chef_jury?: string;
   createdAt?: string;
   heure_debut?: string;
-  heure_fin?:string;
+  heure_fin?: string;
   file_affectation_etudiant_base64?: string;
   file_affectation_etudiant_extension?: string;
   file_affectation_binome_base64?: string;
@@ -69,15 +69,25 @@ export const stagePfeSlice = createApi({
         providesTags: ["StagePfe"],
       }),
       addNewPfe: builder.mutation<void, StagePfeModel>({
-              query(payload) {
-                return {
-                  url: "/create-new",
-                  method: "POST",
-                  body: payload,
-                };
-              },
-              invalidatesTags: ["StagePfe"],
-            }),
+        query(payload) {
+          return {
+            url: "/create-new",
+            method: "POST",
+            body: payload,
+          };
+        },
+        invalidatesTags: ["StagePfe"],
+      }),
+      getDisponibilite: builder.mutation<any, { date: string, heureDebut: string, heureFin: string, avecSoutenance: string }>({
+        query(payload) {
+          return {
+            url: "/disponibilite",
+            method: "POST",
+            body: payload,
+          };
+        },
+        invalidatesTags: ["StagePfe"],
+      }),
       updateStagePfe: builder.mutation<void, Partial<StagePfeModel>>({
         query: ({ _id, ...rest }) => ({
           url: `/update-one/${_id}`,
@@ -93,6 +103,15 @@ export const stagePfeSlice = createApi({
         }),
         invalidatesTags: ["StagePfe"],
       }),
+      assignJury: builder.mutation<void, { id: string; data: Partial<StagePfeModel> }>({
+        query: ({ id, data }) => ({
+          url: `assign-jury/${id}`,
+          method: "PUT",
+          body: data,
+        }),
+        invalidatesTags: ["StagePfe"],
+      }),
+
     };
   },
 });
@@ -102,4 +121,6 @@ export const {
   useAddNewPfeMutation,
   useFetchAllStagePfeQuery,
   useUpdateStagePfeMutation,
+  useAssignJuryMutation,
+  useGetDisponibiliteMutation
 } = stagePfeSlice;

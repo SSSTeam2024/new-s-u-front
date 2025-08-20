@@ -130,12 +130,12 @@ const AjouterTypeStage = () => {
       label: "Rapporteur 2",
     },
     {
-      value: "Eximinateur 1",
-      label: "Eximinateur 1",
+      value: "Examinateur 1",
+      label: "Examinateur 1",
     },
     {
-      value: "Eximinateur 2",
-      label: "Eximinateur 2",
+      value: "Examinateur 2",
+      label: "Examinateur 2",
     },
     {
       value: "Invité 1",
